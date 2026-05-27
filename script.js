@@ -331,6 +331,41 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    // Update the custom language dropdown button to show current language
+    const currentLangText = document.getElementById('current-lang-text');
+    const currentLangFlag = document.getElementById('current-lang-flag');
+    if (currentLangText) {
+        currentLangText.textContent = currentLang.toUpperCase();
+    }
+    if (currentLangFlag) {
+        if (currentLang === 'tr') {
+            currentLangFlag.src = 'https://flagcdn.com/w20/tr.png';
+            currentLangFlag.alt = 'TR';
+        } else if (currentLang === 'en') {
+            currentLangFlag.src = 'https://flagcdn.com/w20/gb.png';
+            currentLangFlag.alt = 'EN';
+        } else if (currentLang === 'ar') {
+            currentLangFlag.src = 'https://flagcdn.com/w20/sy.png';
+            currentLangFlag.alt = 'AR';
+        }
+    }
+
+    // Custom language dropdown toggle
+    const langBtn = document.getElementById('lang-btn');
+    const langDropdown = document.querySelector('.lang-dropdown');
+    if (langBtn && langDropdown) {
+        langBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langDropdown.classList.toggle('active');
+        });
+        
+        // Close language dropdown when clicking outside
+        document.addEventListener('click', () => {
+            langDropdown.classList.remove('active');
+        });
+    }
+
+
     // Translate the page
     const elementsToTranslate = document.querySelectorAll('[data-i18n]');
     if (translations[currentLang]) {
@@ -389,6 +424,32 @@ document.addEventListener('DOMContentLoaded', () => {
             navbar.style.boxShadow = 'var(--shadow-sm)';
         }
     });
+
+    // Mobile navigation toggle
+    const navToggle = document.querySelector('.nav-toggle');
+    const navLinks = document.querySelector('.nav-links');
+    if (navToggle && navLinks) {
+        navToggle.addEventListener('click', () => {
+            navToggle.classList.toggle('active');
+            navLinks.classList.toggle('active');
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!navToggle.contains(e.target) && !navLinks.contains(e.target)) {
+                navToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+            }
+        });
+        
+        // Close menu when clicking a link
+        navLinks.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                navToggle.classList.remove('active');
+                navLinks.classList.remove('active');
+            });
+        });
+    }
 
     // Typewriter effect for Hero section
     const typewriterEl = document.getElementById('hero-typewriter');

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mahmud Bayerli | Firnas Technologies</title>
+    <link rel="icon" type="image/png" href="asset/firnas_logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background: #051421;
+            color: #ffffff;
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 12px;
+            box-sizing: border-box;
+            background-image: radial-gradient(rgba(0, 184, 212, 0.05) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+        .profile-container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(5, 20, 33, 0.75);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(0, 184, 212, 0.18);
+            border-radius: 32px;
+            padding: 3.5rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), inset 0 0 25px rgba(0, 184, 212, 0.05);
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2.5rem;
+            border-bottom: 1px solid rgba(0, 184, 212, 0.15);
+            padding-bottom: 2.5rem;
+            margin-bottom: 2.5rem;
+        }
+        .profile-avatar-wrapper {
+            position: relative;
+            flex-shrink: 0;
+        }
+        .profile-avatar {
+            width: 180px;
+            height: 180px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--accent);
+            box-shadow: 0 0 25px var(--accent-glow);
+        }
+        .profile-title h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            font-family: var(--font-display);
+            margin: 0 0 0.5rem 0;
+            background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 184, 212, 0.1));
+        }
+        .profile-role {
+            font-size: 1.15rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .profile-company {
+            font-size: 1rem;
+            color: #94a3b8;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 3rem;
+        }
+        .profile-bio h2, .profile-skills-section h2 {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #ffffff;
+            margin-bottom: 1.25rem;
+            font-family: var(--font-display);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .profile-bio h2 i, .profile-skills-section h2 i {
+            color: var(--accent);
+        }
+        .profile-bio p {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            line-height: 1.7;
+            margin-bottom: 1.5rem;
+        }
+        .skill-tag {
+            display: inline-block;
+            background: rgba(0, 184, 212, 0.08);
+            border: 1px solid rgba(0, 184, 212, 0.25);
+            color: var(--accent);
+            padding: 0.5rem 1.125rem;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin: 0 0.5rem 0.75rem 0;
+            transition: all 0.3s ease;
+        }
+        .skill-tag:hover {
+            background: rgba(0, 184, 212, 0.18);
+            border-color: #00e5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 212, 0.2);
+        }
+        .social-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+        .btn-social {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0.75rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: #ffffff;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .btn-social:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0, 184, 212, 0.2);
+        }
+        .close-btn-container {
+            margin-top: 3rem;
+            text-align: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            padding-top: 2rem;
+        }
+        .btn-close {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.85rem 2.25rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #00e5ff 100%);
+            border: none;
+            color: #051421;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(0, 184, 212, 0.25);
+        }
+        .btn-close:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 184, 212, 0.4);
+        }
+        @media (max-width: 768px) {
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+            .profile-grid {
+                grid-template-columns: 1fr;
+                gap: 2.5rem;
+            }
+            .profile-container {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="profile-header">
+            <div class="profile-avatar-wrapper">
+                <img src="asset/bayerli_foto.png" alt="Mahmud Bayerli" class="profile-avatar">
+            </div>
+            <div class="profile-title">
+                <h1 data-i18n="mb_name">Mahmud Bayerli</h1>
+                <p class="profile-role" data-i18n="team_2_role">Elektronik Birim Sorumlusu</p>
+                <p class="profile-company">
+                    <img src="asset/firnas_logo.png" alt="Firnas" style="height: 24px;">
+                    <strong>Firnas Technologies</strong>
+                </p>
+            </div>
+        </div>
+
+        <div class="profile-grid">
+            <div class="profile-bio">
+                <h2><i class="fas fa-user"></i> <span data-i18n="mb_profile">Profil</span></h2>
+                <p data-i18n="mb_bio_p1">Mahmud Bayerli, Firnas Technologies bünyesinde Elektronik Sistemler, Gömülü Yazılım ve Donanım Geliştirme süreçlerinden sorumlu kıdemli elektronik mühendisidir. Çift işlemcili uçuş kontrol kartlarının şematik tasarımı, PCB çizimi ve sensör fizyon entegrasyonu üzerine uzmanlaşmıştır.</p>
+                <p data-i18n="mb_bio_p2">Amiral gemimiz olan programlanabilir eğitim dronu <strong>FiCo</strong>'nun stabilite algoritmalarının, ultrasonik, kızılötesi ve optik akış sensörlerinin entegrasyonunun ve gömülü uçuş yazılımlarının geliştirilmesinde kritik rol oynamıştır. Küresel insani teknoloji ve ümmet kalkınması hedefleri doğrultusunda, otonom sistemlerde bağımsız elektronik altyapılar inşa etmeye devam etmektedir.</p>
+                
+                <div class="social-buttons" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.5rem;">
+                    <a href="https://www.linkedin.com/in/mahmut-bayerli/" target="_blank" rel="noopener noreferrer" class="btn-social"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+                </div>
+            </div>
+
+            <div class="profile-skills-section">
+                <h2><i class="fas fa-bolt"></i> <span data-i18n="mb_skills">Uzmanlıklar</span></h2>
+                <div class="skills-list">
+                    <span class="skill-tag" data-i18n="mb_skill_1">Gömülü Sistemler (C/C++)</span>
+                    <span class="skill-tag" data-i18n="mb_skill_2">PCB & Şematik Tasarım</span>
+                    <span class="skill-tag" data-i18n="mb_skill_3">Sensör Füzyonu</span>
+                    <span class="skill-tag" data-i18n="mb_skill_4">Mikrodenetleyiciler (ARM)</span>
+                    <span class="skill-tag" data-i18n="mb_skill_5">Elektronik Test & AR-GE</span>
+                    <span class="skill-tag" data-i18n="mb_skill_6">Güç Yönetimi</span>
+                    <span class="skill-tag" data-i18n="mb_skill_7">İletişim Protokolleri</span>
+                </div>
+                
+                <h2 style="margin-top: 2rem;"><i class="fas fa-trophy"></i> <span data-i18n="mb_achievements">Başarılar</span></h2>
+                <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 0;" data-i18n="mb_ach_desc">
+                    TEKNOFEST İnsansız Hava Araçları En Özgün Tasarım Ödülü, Uluslararası İHA Yarışması Birinciliği, Elektronik Tasarım İnovasyon Ödülü ve Deneyap Elektronik Eğitmenliği.
+                </p>
+            </div>
+        </div>
+
+        <div class="close-btn-container">
+            <a href="hakkimizda.html" class="btn-close" onclick="window.close(); return false;"><i class="fas fa-arrow-left"></i> <span data-i18n="mb_close">Geri Dön / Kapat</span></a>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

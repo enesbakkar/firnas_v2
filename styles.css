@@ -2490,7 +2490,8 @@ html, body {
   transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.clickable-member:hover .member-socials {
+.clickable-member:hover .member-socials,
+.team-member:hover .member-socials {
   margin-top: 1.25rem;
   max-height: 50px;
   opacity: 1;
