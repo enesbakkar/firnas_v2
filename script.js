@@ -1,0 +1,319 @@
+const translations = {
+    "tr": {
+        "nav_home": "Ana Sayfa",
+        "nav_about": "Hakkımızda",
+        "nav_projects": "Projelerimiz",
+        "nav_contact": "İletişim",
+        "hero_badge": "Yazılım & Havacılık",
+        "hero_title": "Geleceği Kodluyor,<br>Sınırları Aşıyoruz.",
+        "hero_subtitle": "Firnas Technologies olarak, kurumsal çözümlerimizle yazılım, yapay zeka ve otonom havacılık sistemlerinde yenilikçi teknolojiler üretiyoruz.",
+        "hero_btn_projects": "Projelerimizi İnceleyin",
+        "hero_btn_about": "Kurumsal",
+        "focus_title": "Odağımız: <span class='text-accent'>FiCo</span>",
+        "focus_desc": "Geleceğin mühendislerini yetiştiren, profesyonel AR-GE ekibimiz tarafından geliştirilmiş eğitici dron platformu.",
+        "focus_sub_title": "Gelişmiş Öğrenme Ekosistemi",
+        "focus_sub_desc": "FiCo (Firnas Copter), öğrencilerin STEM becerilerini uluslararası standartlarda geliştirmeleri için kurumsal mühendislik prensipleriyle tasarlanmıştır.",
+        "feature_1": "<strong>Profesyonel Kodlama:</strong> Hem blok tabanlı hem de ileri seviye yazılım dilleriyle uyumlu altyapı.",
+        "feature_2": "<strong>Yapay Zeka Modülleri:</strong> Görüntü işleme ve otonom karar alma yetenekleri.",
+        "feature_3": "<strong>Kurumsal Destek:</strong> Kurumlar ve okullar için özel eğitim müfredatı.",
+        "services_title": "Hizmetlerimiz ve <span class='text-accent'>Çözümlerimiz</span>",
+        "services_desc": "Güçlü yazılım altyapımızla geliştirdiğimiz ileri teknoloji alanları.",
+        "srv_1_title": "Otonom Sistemler",
+        "srv_1_desc": "İnsansız araçlar için yüksek hassasiyetli rota planlama ve otonom karar alma yazılımları geliştiriyoruz.",
+        "srv_2_title": "Görüntü İşleme",
+        "srv_2_desc": "Endüstriyel ve askeri standartlarda, gerçek zamanlı yapay zeka tabanlı nesne tanıma ve takip sistemleri.",
+        "srv_3_title": "Eğitim Teknolojileri",
+        "srv_3_desc": "Kurumların ihtiyaçlarına yönelik özelleştirilebilir, yenilikçi eğitim platformları ve simülasyonlar.",
+        "footer_desc": "İnsani ve yenilikçi vizyonuyla, kurumsal yazılım ve havacılık çözümleri üreten teknoloji merkezi.",
+        "footer_corp": "Kurumsal",
+        "footer_contact": "İletişim",
+        "footer_rights": "© 2026 Firnas Technologies. Tüm hakları saklıdır.",
+        
+        "about_header_title": "Kurumsal <span class='text-accent'>Kimliğimiz</span>",
+        "about_header_desc": "Geçmişin ilhamıyla geleceğin yazılım ve havacılık teknolojilerini inşa eden teknoloji merkezi.",
+        "about_content_title": "İlhamımızı Gökyüzünden,<br>Gücümüzü <span class='text-accent'>Yazılımdan</span> Alıyoruz",
+        "about_content_p1": "Adımız, tarihteki ilk planör uçuşunu gerçekleştiren büyük mucit <strong>Abbas Kasım İbn Firnas</strong>'tan gelmektedir. Onun cesareti ve bilime olan tutkusu, kurumsal vizyonumuzun temelini oluşturuyor.",
+        "about_content_p2": "Firnas Technologies olarak, sadece bir donanım sağlayıcısı değil; aynı zamanda donanımları zeki kılan algoritmaları ve sistemleri üreten profesyonel bir <strong>yazılım ve teknoloji şirketiyiz</strong>. Amacımız, ülkemizin bağımsız teknoloji hedeflerine katkıda bulunmaktır.",
+        "about_team_title": "Yönetim ve <span class='text-accent'>Mühendislik Ekibi</span>",
+        "about_team_desc": "Başarılarımızın arkasındaki uzman kadromuz.",
+        "team_1_role": "Kurucu",
+        "team_2_role": "Elektronik Birim Sorumlusu",
+        "team_3_name": "Yazılım Ekibi",
+        "team_3_role": "Sistem ve Otonomi Geliştirme",
+        
+        "projects_header_title": "Ürünler ve <span class='text-accent'>Projeler</span>",
+        "projects_header_desc": "Yerli kaynaklarla geliştirdiğimiz, profesyonel havacılık ve yazılım çözümlerimiz.",
+        "proj_1_badge": "Eğitim Teknolojileri",
+        "proj_1_desc": "FiCo, kurumların ve okulların mühendislik eğitimlerinde kullanabileceği, donanımı ve yazılımı tamamen yerli olan profesyonel eğitim dronudur.",
+        "proj_1_f1": "Yerli Uçuş Kontrol Sistemleri",
+        "proj_1_f2": "Açık Kaynak Geliştirme Platformu",
+        "proj_1_f3": "Kurumsal AR-GE ve Yapay Zeka Desteği",
+        "proj_2_desc": "Savunma sanayisi standartlarına uygun olarak tasarlanan ÜSKA, otonom yapay zeka sistemleriyle donatılmış profesyonel bir İnsansız Hava Aracıdır.",
+        "proj_2_f1": "Endüstriyel Veri Analizi",
+        "proj_2_f2": "Gerçek Zamanlı Görüntü İşleme",
+        "proj_2_f3": "Yüksek Otonomi Algoritmaları",
+        "proj_3_desc": "Güvenlik ihtiyaçlarına yönelik olarak geliştirilen MUHAFIZ, yapay zeka güdümlü hassas bir takip ve savunma sistemi konseptidir.",
+        "proj_3_f1": "Gelişmiş Sensör Füzyonu",
+        "proj_3_f2": "Otonom Karar Alma Yeteneği",
+        "proj_3_f3": "Kriptolu Veri İletişimi",
+        
+        "contact_header_title": "Kurumsal <span class='text-accent'>İletişim</span>",
+        "contact_header_desc": "Projelerimiz ve kurumsal hizmetlerimiz hakkında detaylı bilgi almak için bizimle iletişime geçin.",
+        "contact_info_title": "İletişim Bilgileri",
+        "contact_email_title": "E-Posta",
+        "contact_phone_title": "Telefon / Müşteri Hizmetleri",
+        "contact_address_title": "Merkez Ofis",
+        "contact_address_val": "İstanbul, Türkiye",
+        "contact_form_title": "Mesaj Gönderin",
+        "contact_label_name": "Ad Soyad / Kurum Adı",
+        "contact_label_email": "Kurumsal E-Posta",
+        "contact_label_subject": "Konu Seçimi",
+        "contact_opt_1": "Ürün Bilgisi (FiCo)",
+        "contact_opt_2": "Kurumsal İşbirliği",
+        "contact_opt_3": "Teknik Destek",
+        "contact_opt_4": "Diğer",
+        "contact_label_msg": "Detaylı Mesajınız",
+        "contact_btn_send": "Talebi İlet"
+    },
+    "en": {
+        "nav_home": "Home",
+        "nav_about": "About Us",
+        "nav_projects": "Projects",
+        "nav_contact": "Contact",
+        "hero_badge": "Software & Aviation",
+        "hero_title": "Coding the Future,<br>Crossing Boundaries.",
+        "hero_subtitle": "As Firnas Technologies, we produce innovative technologies in software, artificial intelligence and autonomous aviation systems with our corporate solutions.",
+        "hero_btn_projects": "Explore Projects",
+        "hero_btn_about": "Corporate",
+        "focus_title": "Our Focus: <span class='text-accent'>FiCo</span>",
+        "focus_desc": "Educational drone platform developed by our professional R&D team, raising the engineers of the future.",
+        "focus_sub_title": "Advanced Learning Ecosystem",
+        "focus_sub_desc": "FiCo (Firnas Copter) is designed with corporate engineering principles for students to develop their STEM skills at international standards.",
+        "feature_1": "<strong>Professional Coding:</strong> Infrastructure compatible with both block-based and advanced software languages.",
+        "feature_2": "<strong>AI Modules:</strong> Image processing and autonomous decision-making capabilities.",
+        "feature_3": "<strong>Corporate Support:</strong> Special education curriculum for institutions and schools.",
+        "services_title": "Services and <span class='text-accent'>Solutions</span>",
+        "services_desc": "Advanced technology areas we developed with our strong software infrastructure.",
+        "srv_1_title": "Autonomous Systems",
+        "srv_1_desc": "We develop high-precision route planning and autonomous decision-making software for unmanned vehicles.",
+        "srv_2_title": "Image Processing",
+        "srv_2_desc": "Real-time AI-based object recognition and tracking systems in industrial and military standards.",
+        "srv_3_title": "Educational Tech",
+        "srv_3_desc": "Customizable, innovative educational platforms and simulations tailored to corporate needs.",
+        "footer_desc": "A technology center producing corporate software and aviation solutions with a global and humanitarian vision.",
+        "footer_corp": "Corporate",
+        "footer_contact": "Contact",
+        "footer_rights": "© 2026 Firnas Technologies. All rights reserved.",
+        
+        "about_header_title": "Corporate <span class='text-accent'>Identity</span>",
+        "about_header_desc": "A technology center building future software and aviation technologies inspired by the past.",
+        "about_content_title": "Inspired by the Sky,<br>Empowered by <span class='text-accent'>Software</span>",
+        "about_content_p1": "Our name comes from the great inventor <strong>Abbas Qasim Ibn Firnas</strong>, who performed the first glider flight in history. His courage and passion for science form the foundation of our corporate vision.",
+        "about_content_p2": "As Firnas Technologies, we are not just a hardware provider; we are a professional <strong>software and technology company</strong> that produces the algorithms and systems that make hardware smart. Our goal is to contribute to our country's independent technology targets.",
+        "about_team_title": "Management and <span class='text-accent'>Engineering Team</span>",
+        "about_team_desc": "The expert staff behind our success.",
+        "team_1_role": "Founder",
+        "team_2_role": "Electronic Unit Manager",
+        "team_3_name": "Software Team",
+        "team_3_role": "System and Autonomy Development",
+        
+        "projects_header_title": "Products and <span class='text-accent'>Projects</span>",
+        "projects_header_desc": "Professional aviation and software solutions developed with local resources.",
+        "proj_1_badge": "Educational Technologies",
+        "proj_1_desc": "FiCo is a professional educational drone with entirely local hardware and software, designed for institutional and school engineering education.",
+        "proj_1_f1": "Local Flight Control Systems",
+        "proj_1_f2": "Open Source Development Platform",
+        "proj_1_f3": "Corporate R&D and AI Support",
+        "proj_2_desc": "Designed in accordance with defense industry standards, ÜSKA is a professional Unmanned Aerial Vehicle equipped with autonomous AI systems.",
+        "proj_2_f1": "Industrial Data Analysis",
+        "proj_2_f2": "Real-Time Image Processing",
+        "proj_2_f3": "High Autonomy Algorithms",
+        "proj_3_desc": "Developed for security needs, MUHAFIZ is an AI-guided precision tracking and defense system concept.",
+        "proj_3_f1": "Advanced Sensor Fusion",
+        "proj_3_f2": "Autonomous Decision Making",
+        "proj_3_f3": "Encrypted Data Communication",
+        
+        "contact_header_title": "Corporate <span class='text-accent'>Contact</span>",
+        "contact_header_desc": "Contact us to get detailed information about our projects and corporate services.",
+        "contact_info_title": "Contact Information",
+        "contact_email_title": "E-Mail",
+        "contact_phone_title": "Phone / Customer Service",
+        "contact_address_title": "Head Office",
+        "contact_address_val": "Istanbul, Turkey",
+        "contact_form_title": "Send a Message",
+        "contact_label_name": "Name Surname / Company Name",
+        "contact_label_email": "Corporate E-Mail",
+        "contact_label_subject": "Select Subject",
+        "contact_opt_1": "Product Information (FiCo)",
+        "contact_opt_2": "Corporate Collaboration",
+        "contact_opt_3": "Technical Support",
+        "contact_opt_4": "Other",
+        "contact_label_msg": "Detailed Message",
+        "contact_btn_send": "Submit Request"
+    },
+    "ar": {
+        "nav_home": "الرئيسية",
+        "nav_about": "معلومات عنا",
+        "nav_projects": "مشاريعنا",
+        "nav_contact": "اتصل بنا",
+        "hero_badge": "البرمجيات والطيران",
+        "hero_title": "نبرمج المستقبل،<br>ونتجاوز الحدود.",
+        "hero_subtitle": "بصفتنا Firnas Technologies، ننتج تقنيات مبتكرة في البرمجيات والذكاء الاصطناعي وأنظمة الطيران المستقلة مع حلولنا المؤسسية.",
+        "hero_btn_projects": "اكتشف المشاريع",
+        "hero_btn_about": "مؤسسي",
+        "focus_title": "تركيزنا: <span class='text-accent'>FiCo</span>",
+        "focus_desc": "منصة الطائرات بدون طيار التعليمية التي طورها فريق البحث والتطوير المحترف لدينا، لتربية مهندسي المستقبل.",
+        "focus_sub_title": "نظام بيئي تعليمي متقدم",
+        "focus_sub_desc": "تم تصميم FiCo (Firnas Copter) بمبادئ هندسية مؤسسية للطلاب لتطوير مهاراتهم في مجالات العلوم والتكنولوجيا والهندسة والرياضيات وفقًا للمعايير الدولية.",
+        "feature_1": "<strong>برمجة احترافية:</strong> بنية تحتية متوافقة مع كل من اللغات القائمة على الكتل ولغات البرمجيات المتقدمة.",
+        "feature_2": "<strong>وحدات الذكاء الاصطناعي:</strong> معالجة الصور وقدرات اتخاذ القرار المستقلة.",
+        "feature_3": "<strong>دعم مؤسسي:</strong> منهج تعليمي خاص للمؤسسات والمدارس.",
+        "services_title": "خدماتنا و <span class='text-accent'>حلولنا</span>",
+        "services_desc": "مجالات التكنولوجيا المتقدمة التي طورناها ببنيتنا التحتية القوية للبرمجيات.",
+        "srv_1_title": "الأنظمة المستقلة",
+        "srv_1_desc": "نقوم بتطوير تخطيط مسار عالي الدقة وبرامج اتخاذ قرار مستقلة للمركبات غير المأهولة.",
+        "srv_2_title": "معالجة الصور",
+        "srv_2_desc": "أنظمة التعرف على الأشياء وتتبعها بالذكاء الاصطناعي في الوقت الفعلي بالمعايير الصناعية والعسكرية.",
+        "srv_3_title": "تكنولوجيا التعليم",
+        "srv_3_desc": "منصات تعليمية ومحاكاة مبتكرة وقابلة للتخصيص مصممة لاحتياجات الشركات.",
+        "footer_desc": "مركز تكنولوجي ينتج برمجيات مؤسسية وحلول طيران برؤية تكنولوجية وطنية.",
+        "footer_corp": "مؤسسي",
+        "footer_contact": "اتصل بنا",
+        "footer_rights": "© 2026 Firnas Technologies. كل الحقوق محفوظة.",
+        
+        "about_header_title": "هويتنا <span class='text-accent'>المؤسسية</span>",
+        "about_header_desc": "مركز تكنولوجي يبني تقنيات برمجيات وطيران مستقبلية مستوحاة من الماضي.",
+        "about_content_title": "إلهامنا من السماء،<br>وقوتنا من <span class='text-accent'>البرمجيات</span>",
+        "about_content_p1": "يأتي اسمنا من المخترع العظيم <strong>عباس بن فرناس</strong>، الذي قام بأول رحلة طيران شراعي في التاريخ. شجاعته وشغفه بالعلم يشكلان أساس رؤيتنا المؤسسية.",
+        "about_content_p2": "بصفتنا Firnas Technologies، لسنا مجرد مزود للأجهزة؛ بل نحن <strong>شركة برمجيات وتكنولوجيا</strong> محترفة تنتج الخوارزميات والأنظمة التي تجعل الأجهزة ذكية. هدفنا هو المساهمة في أهداف التكنولوجيا المستقلة لبلدنا.",
+        "about_team_title": "فريق الإدارة و <span class='text-accent'>الهندسة</span>",
+        "about_team_desc": "الموظفون الخبراء وراء نجاحنا.",
+        "team_1_role": "مؤسس",
+        "team_2_role": "مدير الوحدة الإلكترونية",
+        "team_3_name": "فريق البرمجيات",
+        "team_3_role": "تطوير النظام والاستقلالية",
+        
+        "projects_header_title": "المنتجات و <span class='text-accent'>المشاريع</span>",
+        "projects_header_desc": "حلول طيران وبرمجيات احترافية تم تطويرها بموارد محلية.",
+        "proj_1_badge": "تقنيات التعليم",
+        "proj_1_desc": "FiCo هي طائرة بدون طيار تعليمية احترافية بأجهزة وبرامج محلية بالكامل، مصممة للتعليم الهندسي المؤسسي والمدرسي.",
+        "proj_1_f1": "أنظمة التحكم في الطيران المحلية",
+        "proj_1_f2": "منصة تطوير مفتوحة المصدر",
+        "proj_1_f3": "دعم البحث والتطوير المؤسسي والذكاء الاصطناعي",
+        "proj_2_desc": "تم تصميم ÜSKA وفقًا لمعايير صناعة الدفاع، وهي طائرة بدون طيار احترافية مزودة بأنظمة ذكاء اصطناعي مستقلة.",
+        "proj_2_f1": "تحليل البيانات الصناعية",
+        "proj_2_f2": "معالجة الصور في الوقت الفعلي",
+        "proj_2_f3": "خوارزميات استقلالية عالية",
+        "proj_3_desc": "تم تطوير MUHAFIZ لتلبية الاحتياجات الأمنية، وهو مفهوم نظام تتبع ودفاع دقيق موجه بالذكاء الاصطناعي.",
+        "proj_3_f1": "دمج المستشعرات المتقدم",
+        "proj_3_f2": "اتخاذ القرار المستقل",
+        "proj_3_f3": "اتصال بيانات مشفر",
+        
+        "contact_header_title": "الاتصال <span class='text-accent'>المؤسسي</span>",
+        "contact_header_desc": "اتصل بنا للحصول على معلومات مفصلة حول مشاريعنا وخدماتنا المؤسسية.",
+        "contact_info_title": "معلومات الاتصال",
+        "contact_email_title": "البريد الإلكتروني",
+        "contact_phone_title": "الهاتف / خدمة العملاء",
+        "contact_address_title": "المكتب الرئيسي",
+        "contact_address_val": "اسطنبول، تركيا",
+        "contact_form_title": "ارسل رسالة",
+        "contact_label_name": "الاسم واللقب / اسم الشركة",
+        "contact_label_email": "البريد الإلكتروني المؤسسي",
+        "contact_label_subject": "اختر الموضوع",
+        "contact_opt_1": "معلومات المنتج (FiCo)",
+        "contact_opt_2": "التعاون المؤسسي",
+        "contact_opt_3": "الدعم الفني",
+        "contact_opt_4": "أخرى",
+        "contact_label_msg": "رسالة مفصلة",
+        "contact_btn_send": "إرسال الطلب"
+    }
+};\n
+function changeLanguage(lang) {
+    localStorage.setItem('site_lang', lang);
+    window.location.reload();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    // Check URL for language or localStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    let urlLang = urlParams.get('lang');
+    
+    let currentLang = 'tr';
+    if (urlLang) {
+        currentLang = urlLang;
+        localStorage.setItem('site_lang', currentLang);
+        // Clean URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    } else {
+        currentLang = localStorage.getItem('site_lang') || 'tr';
+    }
+    
+    // Set the select box to correct language
+    const langSelectors = document.querySelectorAll('.lang-selector select');
+    langSelectors.forEach(select => {
+        const options = Array.from(select.options);
+        const targetOption = options.find(opt => opt.value === currentLang) || options[0];
+        if (targetOption) {
+            targetOption.selected = true;
+        }
+    });
+
+    // Translate the page
+    const elementsToTranslate = document.querySelectorAll('[data-i18n]');
+    if (translations[currentLang]) {
+        elementsToTranslate.forEach(el => {
+            const key = el.getAttribute('data-i18n');
+            if (translations[currentLang][key]) {
+                el.innerHTML = translations[currentLang][key];
+            }
+        });
+
+        // Add direction for Arabic
+        if (currentLang === 'ar') {
+            document.body.style.direction = 'rtl';
+            document.body.style.textAlign = 'right';
+            // Fix specific layout issues for RTL
+            const navLinks = document.querySelectorAll('.nav-links');
+            navLinks.forEach(nav => {
+                nav.style.flexDirection = 'row-reverse';
+            });
+            const contentGrids = document.querySelectorAll('.content-grid');
+            contentGrids.forEach(grid => {
+                grid.style.direction = 'rtl';
+            });
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.style.textAlign = 'right';
+                input.style.direction = 'rtl';
+            });
+        } else {
+            document.body.style.direction = 'ltr';
+            document.body.style.textAlign = 'left';
+            const navLinks = document.querySelectorAll('.nav-links');
+            navLinks.forEach(nav => {
+                nav.style.flexDirection = 'row';
+            });
+            const contentGrids = document.querySelectorAll('.content-grid');
+            contentGrids.forEach(grid => {
+                grid.style.direction = 'ltr';
+            });
+            const inputs = document.querySelectorAll('input, textarea, select');
+            inputs.forEach(input => {
+                input.style.textAlign = 'left';
+                input.style.direction = 'ltr';
+            });
+        }
+    }
+
+    // Navbar scroll effect
+    const navbar = document.querySelector('.navbar');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+            navbar.classList.add('scrolled');
+            navbar.style.boxShadow = '0 10px 25px rgba(0, 184, 212, 0.15)';
+        } else {
+            navbar.classList.remove('scrolled');
+            navbar.style.boxShadow = 'var(--shadow-sm)';
+        }
+    });
+});

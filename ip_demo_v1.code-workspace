@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "ip_demo_v1",
+			"path": "../ip_demo_v1"
+		},
+		{
+			"name": "first_project",
+			"path": "."
+		}
+	],
+	"settings": {}
+}
