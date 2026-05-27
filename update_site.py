@@ -24,8 +24,8 @@ new_translations = """const translations = {
         "hero_subtitle": "Firnas Technologies olarak, kurumsal çözümlerimizle yazılım, yapay zeka ve otonom havacılık sistemlerinde yenilikçi teknolojiler üretiyoruz.",
         "hero_btn_projects": "Projelerimizi İnceleyin",
         "hero_btn_about": "Kurumsal",
-        "focus_title": "Odağımız: <span class='text-accent'>FiCo</span>",
-        "focus_desc": "Geleceğin mühendislerini yetiştiren, profesyonel AR-GE ekibimiz tarafından geliştirilmiş eğitici dron platformu.",
+        "focus_title": "FiCo: Eğitimde STEM Devrimi",
+        "focus_desc": "Sıradan bir drone değil; tamamen yerli donanım, açık kaynak geliştirme altyapısı ve yapay zeka entegrasyonu ile donatılmış programlanabilir bir öğrenme ekosistemi.",
         "focus_sub_title": "Gelişmiş Öğrenme Ekosistemi",
         "focus_sub_desc": "FiCo (Firnas Copter), öğrencilerin STEM becerilerini uluslararası standartlarda geliştirmeleri için kurumsal mühendislik prensipleriyle tasarlanmıştır.",
         "feature_1": "<strong>Profesyonel Kodlama:</strong> Hem blok tabanlı hem de ileri seviye yazılım dilleriyle uyumlu altyapı.",
@@ -88,7 +88,31 @@ new_translations = """const translations = {
         "contact_opt_3": "Teknik Destek",
         "contact_opt_4": "Diğer",
         "contact_label_msg": "Detaylı Mesajınız",
-        "contact_btn_send": "Talebi İlet"
+        "contact_btn_send": "Talebi İlet",
+        "hero_prefix": "Firnas Teknoloji;",
+        "hero_sub_prefix": "Yarının ",
+        "hero_typewriter_1": "Teknolojisi",
+        "hero_typewriter_2": "Hayalleri",
+        "hero_typewriter_3": "Macerası",
+        "hero_btn_explore": "Ekosistemi Keşfet",
+        "fico_preorder": "Ön Sipariş Ver",
+        "fico_hs_1_title": "Sensör Fizyonu",
+        "fico_hs_1_desc": "Yerleşik ultrasonik, kızılötesi ve optik akış sensörleri ile kapalı alanlarda ve GPS olmayan laboratuvarlarda milimetrik uçuş sabitleme sağlar.",
+        "fico_hs_2_title": "Karbon-Fiber Gövde",
+        "fico_hs_2_desc": "Çarpmalara karşı %100 dayanıklı, ultra hafif ve modüler karbon-fiber kafes gövdesi ile sınıf ortamında tamamen güvenli eğitim uçuşları sunar.",
+        "fico_hs_3_title": "Yapay Zeka İşlemci",
+        "fico_hs_3_desc": "Üzerindeki yardımcı işlemci kartı sayesinde Python tabanlı görüntü işleme, gerçeğe yakın nesne tespiti ve makine öğrenimi modellerini havada çalıştırır.",
+        "fico_hs_4_title": "Gelişmiş Otonom Kart",
+        "fico_hs_4_desc": "Özgün mühendislikle geliştirilen stabilite algoritmaları ve çift işlemcili uçuş kontrolörü sayesinde üstün havada asili kalma (hover) kararlılığı sunar.",
+        "contact_title": "İletişim",
+        "contact_socials": "Sosyal Medya",
+        "contact_locations_title": "Lokasyonlarımız",
+        "location_live": "Canlı",
+        "location_office_title": "Merkez Ofis",
+        "location_office_coords": "41.0343° N, 28.7909° E",
+        "location_workshop_title": "Üretim Atölyesi",
+        "location_workshop_coords": "41.0267° N, 29.0142° E",
+        "location_expand_hint": "Genişletmek için tıklayın"
     },
     "en": {
         "nav_home": "Home",
@@ -100,8 +124,8 @@ new_translations = """const translations = {
         "hero_subtitle": "As Firnas Technologies, we produce innovative technologies in software, artificial intelligence and autonomous aviation systems with our corporate solutions.",
         "hero_btn_projects": "Explore Projects",
         "hero_btn_about": "Corporate",
-        "focus_title": "Our Focus: <span class='text-accent'>FiCo</span>",
-        "focus_desc": "Educational drone platform developed by our professional R&D team, raising the engineers of the future.",
+        "focus_title": "FiCo: STEM Revolution in Education",
+        "focus_desc": "Not just an ordinary drone; a programmable learning ecosystem equipped with entirely local hardware, open-source development infrastructure, and artificial intelligence integration.",
         "focus_sub_title": "Advanced Learning Ecosystem",
         "focus_sub_desc": "FiCo (Firnas Copter) is designed with corporate engineering principles for students to develop their STEM skills at international standards.",
         "feature_1": "<strong>Professional Coding:</strong> Infrastructure compatible with both block-based and advanced software languages.",
@@ -164,7 +188,31 @@ new_translations = """const translations = {
         "contact_opt_3": "Technical Support",
         "contact_opt_4": "Other",
         "contact_label_msg": "Detailed Message",
-        "contact_btn_send": "Submit Request"
+        "contact_btn_send": "Submit Request",
+        "hero_prefix": "Firnas Technologies;",
+        "hero_sub_prefix": "",
+        "hero_typewriter_1": "Technology of Tomorrow",
+        "hero_typewriter_2": "Dreams of Tomorrow",
+        "hero_typewriter_3": "Adventure of Tomorrow",
+        "hero_btn_explore": "Explore Ecosystem",
+        "fico_preorder": "Pre-Order Now",
+        "fico_hs_1_title": "Sensor Fusion",
+        "fico_hs_1_desc": "Integrated ultrasonic, infrared and optical flow sensors provide millimeter-level flight stabilization in indoor spaces and GPS-free laboratories.",
+        "fico_hs_2_title": "Carbon-Fiber Frame",
+        "fico_hs_2_desc": "Crash-resistant cage frame structure is modular, extremely lightweight, and ensures entirely safe educational flights in classrooms.",
+        "fico_hs_3_title": "AI Auxiliary Processor",
+        "fico_hs_3_desc": "Features an on-board coprocessor card that runs Python-based image processing, real-time object detection, and machine learning models in mid-air.",
+        "fico_hs_4_title": "Advanced Autonomous Board",
+        "fico_hs_4_desc": "Delivers superior hover stability thanks to dual processors and proprietary stability control flight algorithms built on high engineering standards.",
+        "contact_title": "Contact",
+        "contact_socials": "Social Media",
+        "contact_locations_title": "Our Locations",
+        "location_live": "Live",
+        "location_office_title": "Headquarters",
+        "location_office_coords": "41.0343° N, 28.7909° E",
+        "location_workshop_title": "Production Workshop",
+        "location_workshop_coords": "41.0267° N, 29.0142° E",
+        "location_expand_hint": "Click to expand"
     },
     "ar": {
         "nav_home": "الرئيسية",
@@ -176,8 +224,8 @@ new_translations = """const translations = {
         "hero_subtitle": "بصفتنا Firnas Technologies، ننتج تقنيات مبتكرة في البرمجيات والذكاء الاصطناعي وأنظمة الطيران المستقلة مع حلولنا المؤسسية.",
         "hero_btn_projects": "اكتشف المشاريع",
         "hero_btn_about": "مؤسسي",
-        "focus_title": "تركيزنا: <span class='text-accent'>FiCo</span>",
-        "focus_desc": "منصة الطائرات بدون طيار التعليمية التي طورها فريق البحث والتطوير المحترف لدينا، لتربية مهندسي المستقبل.",
+        "focus_title": "FiCo: ثورة STEM في التعليم",
+        "focus_desc": "ليس مجرد طائرة بدون طيار عادية؛ بل هو نظام بيئي تعليمي قابل للبرمجة مجهز بأجهزة محلية بالكامل وبنية تحتية للتطوير مفتوحة المصدر وتكامل الذكاء الاصطناعي.",
         "focus_sub_title": "نظام بيئي تعليمي متقدم",
         "focus_sub_desc": "تم تصميم FiCo (Firnas Copter) بمبادئ هندسية مؤسسية للطلاب لتطوير مهاراتهم في مجالات العلوم والتكنولوجيا والهندسة والرياضيات وفقًا للمعايير الدولية.",
         "feature_1": "<strong>برمجة احترافية:</strong> بنية تحتية متوافقة مع كل من اللغات القائمة على الكتل ولغات البرمجيات المتقدمة.",
@@ -240,7 +288,31 @@ new_translations = """const translations = {
         "contact_opt_3": "الدعم الفني",
         "contact_opt_4": "أخرى",
         "contact_label_msg": "رسالة مفصلة",
-        "contact_btn_send": "إرسال الطلب"
+        "contact_btn_send": "إرسال الطلب",
+        "hero_prefix": "فرناس للتكنولوجيا؛",
+        "hero_sub_prefix": "",
+        "hero_typewriter_1": "تكنولوجيا الغد",
+        "hero_typewriter_2": "أحلام الغد",
+        "hero_typewriter_3": "مغامرة الغد",
+        "hero_btn_explore": "استكشف النظام البيئي",
+        "fico_preorder": "اطلب مسبقاً",
+        "fico_hs_1_title": "دمج المستشعرات",
+        "fico_hs_1_desc": "توفر مستشعرات الموجات فوق الصوتية والأشعة تحت الحمراء والتدفق البصري المدمجة تثبيتًا للطيران على مستوى المليمتر في المناطق المغلقة والمختبرات الخالية من نظام تحديد المواقع العالمي (GPS).",
+        "fico_hs_2_title": "هيكل من ألياف الكربون",
+        "fico_hs_2_desc": "يوفر هيكل القفص المصنوع من ألياف الكربون المقاوم للاصطدام بنسبة 100% والخفيف للغاية والمعياري رحلات تعليمية آمنة تمامًا في الفصول الدراسية.",
+        "fico_hs_3_title": "معالج الذكاء الاصطناعي",
+        "fico_hs_3_desc": "يمكّن معالجة الصور المستندة إلى لغة Python واكتشاف الكائنات في الوقت الفعلي ونماذج التعلم الآلي من العمل مباشرة في الهواء.",
+        "fico_hs_4_title": "وحدة التحكم المتقدمة في الطيران",
+        "fico_hs_4_desc": "توفر وحدة التحكم ثنائية النواة وخوارزميات الاستقرار المطورة محليًا ثباتًا فائقًا في التحليق.",
+        "contact_title": "اتصل بنا",
+        "contact_socials": "وسائل التواصل الاجتماعي",
+        "contact_locations_title": "مواقعنا",
+        "location_live": "مباشر",
+        "location_office_title": "المكتب الرئيسي",
+        "location_office_coords": "41.0343° N, 28.7909° E",
+        "location_workshop_title": "ورشة الإنتاج",
+        "location_workshop_coords": "41.0267° N, 29.0142° E",
+        "location_expand_hint": "انقر للتوسيع"
     }
 };"""
 
@@ -298,11 +370,6 @@ document.addEventListener('DOMContentLoaded', () => {
             contentGrids.forEach(grid => {
                 grid.style.direction = 'rtl';
             });
-            const featureLists = document.querySelectorAll('.feature-list li');
-            featureLists.forEach(li => {
-                li.style.paddingLeft = '0';
-                li.style.paddingRight = '0'; // default styling can be handled via CSS better, but this handles basic RTL
-            });
             const inputs = document.querySelectorAll('input, textarea, select');
             inputs.forEach(input => {
                 input.style.textAlign = 'right';
@@ -314,6 +381,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const navLinks = document.querySelectorAll('.nav-links');
             navLinks.forEach(nav => {
                 nav.style.flexDirection = 'row';
+            });
+            const contentGrids = document.querySelectorAll('.content-grid');
+            contentGrids.forEach(grid => {
+                grid.style.direction = 'ltr';
             });
             const inputs = document.querySelectorAll('input, textarea, select');
             inputs.forEach(input => {
@@ -334,7 +405,169 @@ document.addEventListener('DOMContentLoaded', () => {
             navbar.style.boxShadow = 'var(--shadow-sm)';
         }
     });
+
+    // Typewriter effect for Hero section
+    const typewriterEl = document.getElementById('hero-typewriter');
+    if (typewriterEl) {
+        const prefixEl = document.getElementById('hero-prefix');
+        const subPrefixEl = document.getElementById('hero-sub-prefix');
+        
+        // Translate prefix & sub-prefix
+        if (prefixEl && translations[currentLang]["hero_prefix"]) {
+            prefixEl.innerHTML = translations[currentLang]["hero_prefix"];
+        }
+        if (subPrefixEl && translations[currentLang]["hero_sub_prefix"]) {
+            subPrefixEl.innerHTML = translations[currentLang]["hero_sub_prefix"];
+        }
+        
+        const words = [
+            translations[currentLang]["hero_typewriter_1"] || "Teknolojisi",
+            translations[currentLang]["hero_typewriter_2"] || "Hayalleri",
+            translations[currentLang]["hero_typewriter_3"] || "Macerası"
+        ];
+        
+        let wordIndex = 0;
+        let charIndex = 0;
+        let isDeleting = false;
+        let delay = 100; // Typing speed
+        
+        function type() {
+            const currentWord = words[wordIndex];
+            
+            if (isDeleting) {
+                typewriterEl.textContent = currentWord.substring(0, charIndex - 1);
+                charIndex--;
+                delay = 40; // Deleting speed
+            } else {
+                typewriterEl.textContent = currentWord.substring(0, charIndex + 1);
+                charIndex++;
+                delay = 80; // Typing speed
+            }
+            
+            if (!isDeleting && charIndex === currentWord.length) {
+                delay = 2000; // Wait time at complete word
+                isDeleting = true;
+            } else if (isDeleting && charIndex === 0) {
+                isDeleting = false;
+                wordIndex = (wordIndex + 1) % words.length;
+                delay = 500; // Pause before starting next word
+            }
+            
+            setTimeout(type, delay);
+        }
+        
+        // Start typing after initial delay
+        setTimeout(type, 300);
+    }
+    
+    // Start terminal simulator
+    typeTerminal();
 });
+
+// Interactive LocationMap Card Controller
+function toggleMapCard(card, url) {
+    if (card.classList.contains('expanded')) {
+        window.open(url, '_blank', 'noopener,noreferrer');
+        return;
+    }
+    
+    // Close other expanded cards
+    document.querySelectorAll('.location-map-card').forEach(c => {
+        if (c !== card) {
+            c.classList.remove('expanded');
+            const hint = c.querySelector('.map-click-hint');
+            if (hint) {
+                const currentLang = localStorage.getItem('site_lang') || 'tr';
+                if (currentLang === 'tr') {
+                    hint.textContent = 'Genişletmek için tıklayın';
+                } else if (currentLang === 'ar') {
+                    hint.textContent = 'انقر للتوسيع';
+                } else {
+                    hint.textContent = 'Click to expand';
+                }
+            }
+        }
+    });
+    
+    // Expand selected card
+    card.classList.add('expanded');
+    const hint = card.querySelector('.map-click-hint');
+    if (hint) {
+        const currentLang = localStorage.getItem('site_lang') || 'tr';
+        if (currentLang === 'tr') {
+            hint.textContent = 'Haritada açmak için tekrar tıklayın';
+        } else if (currentLang === 'ar') {
+            hint.textContent = 'انقر مجدداً لفتح الخريطة';
+        } else {
+            hint.textContent = 'Click again to open in Google Maps';
+        }
+    }
+}
+
+// Active Hotspot Switcher
+function activateHotspot(specId) {
+    document.querySelectorAll('.hotspot').forEach(hs => {
+        hs.classList.remove('active');
+    });
+    document.querySelectorAll('.fico-spec-content').forEach(content => {
+        content.classList.remove('active');
+    });
+    
+    const activeHs = document.getElementById('hs-' + specId);
+    if (activeHs) activeHs.classList.add('active');
+    
+    const activeSpec = document.getElementById('spec-' + specId);
+    if (activeSpec) activeSpec.classList.add('active');
+}
+
+// FiCo Terminal Simulator
+let terminalIndex = 0;
+const terminalLines = [
+    "import fico_drone",
+    "drone = fico_drone.connect()",
+    "drone.takeoff(altitude=1.2)",
+    "// [INFO] Uçuş stabilizasyonu aktif.",
+    "drone.detect_object('ball', color='red')",
+    "// [AI] Kırmızı nesne algılandı! Rota güncelleniyor...",
+    "drone.follow_target()",
+    "// [SYSTEM] Otonom STEM görevi tamamlandı."
+];
+
+function typeTerminal() {
+    const term = document.getElementById("fico-terminal");
+    if (!term) return;
+    
+    if (terminalIndex < terminalLines.length) {
+        let line = terminalLines[terminalIndex];
+        let p = document.createElement("p");
+        p.style.margin = "0 0 8px 0";
+        if (line.startsWith("//")) {
+            p.style.color = "var(--accent)";
+        } else {
+            p.style.color = "#a6e22e";
+        }
+        term.appendChild(p);
+        
+        let charIndex = 0;
+        function typeChar() {
+            if (charIndex < line.length) {
+                p.textContent += line[charIndex];
+                charIndex++;
+                setTimeout(typeChar, 30);
+            } else {
+                terminalIndex++;
+                setTimeout(typeTerminal, 1000);
+            }
+        }
+        typeChar();
+    } else {
+        setTimeout(() => {
+            term.innerHTML = "";
+            terminalIndex = 0;
+            typeTerminal();
+        }, 5000);
+    }
+}
 """
 
 write_file('c:\\Users\\enesb\\OneDrive\\Belgeler\\software_projects\\first_project\\script.js', new_translations + "\n" + js_logic)
