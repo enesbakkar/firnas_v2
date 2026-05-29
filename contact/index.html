@@ -56,7 +56,7 @@
         <div class="container contact-grid">
             <div style="display: flex; flex-direction: column; justify-content: center;">
                 <h1 style="font-size: clamp(2.2rem, 8vw, 4rem); font-weight: 900; color: var(--primary); margin-bottom: 1.5rem;" data-i18n="contact_title">İletişim</h1>
-                <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 3rem;">Projelerimiz ve kurumsal hizmetlerimiz hakkında detaylı bilgi almak için ekibimizle iletişime geçin.</p>
+                <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 3rem;" data-i18n="contact_header_desc">Projelerimiz ve kurumsal hizmetlerimiz hakkında detaylı bilgi almak için ekibimizle iletişime geçin.</p>
                 <div style="display: flex; flex-direction: column; gap: 2rem;">
                     <div style="display: flex; align-items: center; gap: 1.5rem;">
                         <div style="width: 60px; height: 60px; border-radius: 16px; background: var(--bg-white); box-shadow: var(--shadow-glass); display: flex; align-items: center; justify-content: center; font-size: 1.5rem; color: var(--accent);">
@@ -231,9 +231,10 @@
                     <div class="form-group">
                         <label data-i18n="contact_label_subject">Konu</label>
                         <select class="form-control" id="contact-subject" required>
-                            <option data-i18n="contact_opt_1">FiCo Talebi</option>
+                            <option data-i18n="contact_opt_1">Ürün Bilgisi (FiCo)</option>
                             <option data-i18n="contact_opt_2">Kurumsal İşbirliği</option>
-                            <option data-i18n="contact_opt_3">AR-GE Desteği</option>
+                            <option data-i18n="contact_opt_3">Teknik Destek</option>
+                            <option data-i18n="contact_opt_4">Diğer</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -255,8 +256,8 @@
                         Firnas Technologies
                     </a>
                 </div>
-                <div>
-                    <h4 style="margin-bottom: 1.5rem; font-family: var(--font-sans);">Kurumsal</h4>
+                 <div>
+                    <h4 style="margin-bottom: 1.5rem; font-family: var(--font-sans);" data-i18n="footer_corp">Kurumsal</h4>
                     <ul class="footer-links">
                         <li><a href="/" data-i18n="nav_home">Ana Sayfa</a></li>
                         <li><a href="/about/" data-i18n="nav_about">Hakkımızda</a></li>

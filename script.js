@@ -97,7 +97,93 @@ const translations = {
         "location_office_coords": "41.0343° N, 28.7909° E",
         "location_workshop_title": "Üretim Atölyesi",
         "location_workshop_coords": "41.0267° N, 29.0142° E",
-        "location_expand_hint": "Genişletmek için tıklayın"
+        "location_expand_hint": "Genişletmek için tıklayın",
+        
+        // About Page Missing Translations
+        "about_title": "Gökyüzünden İlham, Yazılımdan Güç Alıyoruz.",
+        "about_bio": "İsmimiz, havacılık tarihinin öncüsü Abbas Kasım İbn Firnas'tan geliyor. Bizler, mazlumlara sahip çıkma, küresel barış ve ümmet bilinciyle insanlık yararına üreten yenilikçi bir teknoloji topluluğuyuz.",
+        "about_goal": "Firnas Technologies olarak hedefimiz; otonom sistemler, yapay zeka entegrasyonu ve yenilikçi eğitim teknolojileri (FiCo) alanlarında mazlum coğrafyalara umut olmak, küresel barışı desteklemek ve ümmetin kalkınmasına katkıda bulunmaktır. Havacılık standartlarında yüksek mühendislik vizyonuyla yarının akıllı algoritmalarını inşa ediyoruz.",
+        "about_nav_team_title": "Ekibimiz",
+        "about_nav_team_desc": "Vizyonumuzu gerçeğe dönüştüren AR-GE ve yazılım kadromuz.",
+        "about_nav_ach_title": "Başarılarımız",
+        "about_nav_ach_desc": "Ulusal ve uluslararası yarışmalarda elde ettiğimiz başarılar.",
+        "about_nav_partners_title": "Paydaşlarımız",
+        "about_nav_partners_desc": "Gelişim yolculuğumuzda yanımızda olan ekosistem ortaklarımız.",
+        "team_click_hint": "Detaylar için tıklayınız",
+        "about_achievements_title": "Başarılarımız & Yarışmalar",
+        "about_achievements_subtitle": "Küresel barış, insani teknoloji ve ümmet bilinciyle katıldığımız prestijli yarışmalar ve elde ettiğimiz başarılar.",
+        "ach_tgb_badge": "ULUSLARARASI BİRİNCİLİK",
+        "ach_tgb_title": "Uluslararası Proje Yarışmasında Birincilik Ödülü!",
+        "ach_tgb_desc": "FiCo projemizle katıldığımız Türkiye Girişimci Buluşması kapsamında düzenlenen Uluslararası Proje Kategorisi'nde ekibimiz 1.'lik ödülüne layık görülmüştür. Yenilikçi vizyonumuzun ve teknolojik altyapımızın uluslararası düzeyde tescillendiği bu anlamlı başarı, bizleri gelecekte daha büyük teknolojik adımlar atmaya teşvik etmektedir.",
+        "ach_1_title": "TEKNOFEST Adana",
+        "ach_1_desc": "Savaşan İHA kategorisinde elde edilen saha tecrübesi ve teknik liderlik.",
+        "ach_2_title": "Imagine Tomorrow İnovasyon Yarışması",
+        "ach_2_desc": "Eğitim dronu (FiCo) ekosistemi ile sergilenen girişimcilik ve iş modeli vizyonu.",
+        "ach_3_title": "T3 Vakfı & Deneyap Teknoloji Atölyeleri",
+        "ach_3_desc": "Esenyurt başta olmak üzere, geleceğin mühendislerini yetiştirme yolunda sağlanan Eğitmen Mentörlüğü ve ekosistem katkısı.",
+        "about_partners_title": "Paydaşlarımız & Destekçilerimiz",
+        "about_partners_subtitle": "Yolculuğumuzda bizlere inanan, vizyonumuzu paylaşan ve destek veren değerli paydaşlarımız.",
+        "partner_ihh_title": "İstanbul Genç İHH",
+        "partner_ihh_role": "Stratejik Paydaş",
+        "partner_iic_title": "International Incubation Center",
+        "partner_iic_role": "Kuluçka Merkezi",
+        "partner_iyiligin_mucitleri_title": "İyiliğin Mucitleri",
+        "partner_iyiligin_mucitleri_role": "Sosyal İnovasyon Ortağı",
+        "partner_atolye_uskudar_title": "Atölye Üsküdar",
+        "partner_atolye_uskudar_role": "Girişimcilik Merkezi",
+        "partner_avcim_title": "AVÇİM",
+        "partner_avcim_role": "İnovasyon Merkezi",
+        "partner_role_tech": "Teknoloji Paydaşı",
+        "partner_role_edu": "Eğitim Paydaşı",
+        "partner_role_award": "Ödül & Proje Ortağı",
+        
+        // Enes Bakkar Profile Missing Translations
+        "eb_name": "Enes Bakkar",
+        "eb_profile": "Profil",
+        "eb_bio_p1": "Enes Bakkar, Firnas Technologies bünyesinde Mekanik Tasarım, Donanım Mimarisi ve Araştırma-Geliştirme (AR-GE) faaliyetlerinden sorumlu lider mühendistir. Havacılık, insansız hava araçları (İHA/Drone) ve otonom sistemlerin mekanik yapısal entegrasyonu üzerine uzmanlaşmıştır.",
+        "eb_bio_p2": "Flagship projemiz olan programlanabilir eğitim dronu <strong>FiCo</strong>'nun karbon-fiber hafif kafes gövdesinin ve aerodinamik yapısının tamamen özgün olarak tasarlanmasında, mukavemet testlerinin yapılmasında ve donanım bileşenlerinin entegrasyonunda kritik rol oynamıştır. Küresel insani teknoloji ve ümmet kalkınması hedefleri doğrultusunda, yarının teknolojisini üreten genç nesilleri yetiştirmek için özgün ve kaliteli donanımlar tasarlamaya devam etmektedir.",
+        "eb_skills": "Uzmanlıklar",
+        "eb_skill_1": "CAD/CAM Tasarım",
+        "eb_skill_2": "Aerodinamik & Mukavemet",
+        "eb_skill_3": "İHA / Drone Mimarisi",
+        "eb_skill_4": "Karbon Fiber & 3D Üretim",
+        "eb_skill_5": "Robotik Entegrasyon",
+        "eb_skill_6": "Donanım Test & AR-GE",
+        "eb_skill_7": "Otonom Sistemler",
+        "eb_achievements": "Başarılar",
+        "eb_ach_desc": "Uluslararası Proje Yarışması Birincilik Ödülü, TEKNOFEST Savaşan İHA Mühendislik Liderliği, Imagine Tomorrow Girişimcilik Derecesi ve Deneyap Teknoloji Mentorluğu.",
+        "eb_close": "Geri Dön / Kapat",
+        
+        // Mahmud Bayerli Profile Missing Translations
+        "mb_name": "Mahmud Bayerli",
+        "mb_profile": "Profil",
+        "mb_bio_p1": "Mahmud Bayerli, Firnas Technologies bünyesinde Elektronik Sistemler, Gömülü Yazılım ve Donanım Geliştirme süreçlerinden sorumlu kıdemli elektronik mühendisidir. Çift işlemcili uçuş kontrol kartlarının şematik tasarımı, PCB çizimi ve sensör fizyon entegrasyonu üzerine uzmanlaşmıştır.",
+        "mb_bio_p2": "Amiral gemimiz olan programlanabilir eğitim dronu <strong>FiCo</strong>'nun stabilite algoritmalarının, ultrasonik, kızılötesi ve optik akış sensörlerinin entegrasyonunun ve gömülü uçuş yazılımlarının geliştirilmesinde kritik rol oynamıştır. Küresel insani teknoloji ve ümmet kalkınması hedefleri doğrultusunda, otonom sistemlerde bağımsız elektronik altyapılar inşa etmeye devam etmektedir.",
+        "mb_skills": "Uzmanlıklar",
+        "mb_skill_1": "Gömülü Sistemler (C/C++)",
+        "mb_skill_2": "PCB & Şematik Tasarım",
+        "mb_skill_3": "Sensör Füzyonu",
+        "mb_skill_4": "Mikrodenetleyiciler (ARM)",
+        "mb_skill_5": "Elektronik Test & AR-GE",
+        "mb_skill_6": "Güç Yönetimi",
+        "mb_skill_7": "İletişim Protokolleri",
+        "mb_achievements": "Başarılar",
+        "mb_ach_desc": "TEKNOFEST İnsansız Hava Araçları En Özgün Tasarım Ödülü, Uluslararası İHA Yarışması Birinciliği, Elektronik Tasarım İnovasyon Ödülü ve Deneyap Elektronik Eğitmenliği.",
+        "mb_close": "Geri Dön / Kapat",
+        
+        // Added Translations
+        "team_title": "Ekibimiz",
+        "team_1_name": "Enes Bakkar",
+        "team_2_name": "Mahmud Bayerli",
+        "partner_deneyap_title": "Deneyap Atölyeleri",
+        "partner_tgb_title": "TGB (Girişimci Buluşması)",
+        "profile_links": "Bağlantılar",
+        "contact_label_org": "Kurum Adı",
+        "projects_title": "Ürün Portföyü",
+        "proj_2_title": "ÜSKA",
+        "proj_3_title": "MUHAFIZ",
+        "badge_defense": "Savunma Sanayii",
+        "badge_air_defense": "Hava Savunma"
     },
     "en": {
         "nav_home": "Home",
@@ -197,7 +283,93 @@ const translations = {
         "location_office_coords": "41.0343° N, 28.7909° E",
         "location_workshop_title": "Production Workshop",
         "location_workshop_coords": "41.0267° N, 29.0142° E",
-        "location_expand_hint": "Click to expand"
+        "location_expand_hint": "Click to expand",
+        
+        // About Page Missing Translations (EN)
+        "about_title": "Inspired by the Sky, Empowered by Software.",
+        "about_bio": "Our name comes from Abbas Qasim Ibn Firnas, the pioneer of aviation history. We are an innovative technology community producing for the benefit of humanity with a focus on global peace and solidarity.",
+        "about_goal": "As Firnas Technologies, our goal is to bring hope to oppressed geographies, support global peace, and contribute to development in the fields of autonomous systems, AI integration, and innovative educational technologies (FiCo). We build tomorrow's smart algorithms with a high engineering vision at aviation standards.",
+        "about_nav_team_title": "Our Team",
+        "about_nav_team_desc": "Our R&D and software team turning our vision into reality.",
+        "about_nav_ach_title": "Our Achievements",
+        "about_nav_ach_desc": "Our achievements in national and international competitions.",
+        "about_nav_partners_title": "Our Partners",
+        "about_nav_partners_desc": "Our ecosystem partners standing by us in our development journey.",
+        "team_click_hint": "Click for details",
+        "about_achievements_title": "Our Achievements & Competitions",
+        "about_achievements_subtitle": "The prestigious competitions we participated in and our achievements for global peace, humanitarian technology, and solidarity.",
+        "ach_tgb_badge": "INTERNATIONAL FIRST PLACE",
+        "ach_tgb_title": "First Place Award in the International Project Competition!",
+        "ach_tgb_desc": "Our team was awarded 1st place in the International Project Category within the scope of the Turkey Entrepreneurship Meeting we participated in with our FiCo project. This meaningful success, which registers our innovative vision and technological infrastructure at an international level, encourages us to take larger technological steps in the future.",
+        "ach_1_title": "TEKNOFEST Adana",
+        "ach_1_desc": "Field experience and technical leadership gained in the Fighting UAV category.",
+        "ach_2_title": "Imagine Tomorrow Innovation Competition",
+        "ach_2_desc": "Entrepreneurship and business model vision exhibited with the educational drone (FiCo) ecosystem.",
+        "ach_3_title": "T3 Foundation & Deneyap Technology Workshops",
+        "ach_3_desc": "Trainer Mentorship and ecosystem contribution provided on the path to training future engineers, particularly in Esenyurt.",
+        "about_partners_title": "Our Partners & Supporters",
+        "about_partners_subtitle": "Our valuable partners who believe in us, share our vision, and support us in our journey.",
+        "partner_ihh_title": "Istanbul Youth IHH",
+        "partner_ihh_role": "Strategic Partner",
+        "partner_iic_title": "International Incubation Center",
+        "partner_iic_role": "Incubation Center",
+        "partner_iyiligin_mucitleri_title": "Inventors of Goodness",
+        "partner_iyiligin_mucitleri_role": "Social Innovation Partner",
+        "partner_atolye_uskudar_title": "Workshop Uskudar",
+        "partner_atolye_uskudar_role": "Entrepreneurship Center",
+        "partner_avcim_title": "AVCIM",
+        "partner_avcim_role": "Innovation Center",
+        "partner_role_tech": "Technology Partner",
+        "partner_role_edu": "Educational Partner",
+        "partner_role_award": "Award & Project Partner",
+        
+        // Enes Bakkar Profile Missing Translations (EN)
+        "eb_name": "Enes Bakkar",
+        "eb_profile": "Profile",
+        "eb_bio_p1": "Enes Bakkar is the lead engineer responsible for Mechanical Design, Hardware Architecture, and Research & Development (R&D) activities within Firnas Technologies. He specializes in the mechanical structural integration of aviation, unmanned aerial vehicles (UAV/Drone), and autonomous systems.",
+        "eb_bio_p2": "He played a critical role in the completely original design of the carbon-fiber lightweight cage frame and aerodynamic structure, strength tests, and hardware component integration of our flagship project, the programmable educational drone <strong>FiCo</strong>. In line with the goals of global humanitarian technology and community development, he continues to design original and high-quality hardware to train young generations who will produce tomorrow's technology.",
+        "eb_skills": "Expertise",
+        "eb_skill_1": "CAD/CAM Design",
+        "eb_skill_2": "Aerodynamics & Strength",
+        "eb_skill_3": "UAV / Drone Architecture",
+        "eb_skill_4": "Carbon Fiber & 3D Production",
+        "eb_skill_5": "Robotics Integration",
+        "eb_skill_6": "Hardware Testing & R&D",
+        "eb_skill_7": "Autonomous Systems",
+        "eb_achievements": "Achievements",
+        "eb_ach_desc": "International Project Competition First Place Award, TEKNOFEST Fighting UAV Engineering Leadership, Imagine Tomorrow Entrepreneurship Degree, and Deneyap Technology Mentorship.",
+        "eb_close": "Go Back / Close",
+        
+        // Mahmud Bayerli Profile Missing Translations (EN)
+        "mb_name": "Mahmud Bayerli",
+        "mb_profile": "Profile",
+        "mb_bio_p1": "Mahmud Bayerli is the senior electronics engineer responsible for Electronic Systems, Embedded Software, and Hardware Development processes within Firnas Technologies. He specializes in the schematic design of dual-processor flight control boards, PCB layout, and sensor fusion integration.",
+        "mb_bio_p2": "He played a critical role in the development of the stability algorithms, the integration of ultrasonic, infrared, and optical flow sensors, and the embedded flight software of our flagship programmable educational drone <strong>FiCo</strong>. In line with the goals of global humanitarian technology and community development, he continues to build independent electronic infrastructures in autonomous systems.",
+        "mb_skills": "Expertise",
+        "mb_skill_1": "Embedded Systems (C/C++)",
+        "mb_skill_2": "PCB & Schematic Design",
+        "mb_skill_3": "Sensor Fusion",
+        "mb_skill_4": "Microcontrollers (ARM)",
+        "mb_skill_5": "Electronic Testing & R&D",
+        "mb_skill_6": "Power Management",
+        "mb_skill_7": "Communication Protocols",
+        "mb_achievements": "Achievements",
+        "mb_ach_desc": "TEKNOFEST Unmanned Aerial Vehicles Most Original Design Award, International UAV Competition First Place, Electronic Design Innovation Award, and Deneyap Electronics Trainer.",
+        "mb_close": "Go Back / Close",
+        
+        // Added Translations (EN)
+        "team_title": "Our Team",
+        "team_1_name": "Enes Bakkar",
+        "team_2_name": "Mahmud Bayerli",
+        "partner_deneyap_title": "Deneyap Technology Workshops",
+        "partner_tgb_title": "TGB (Entrepreneurship Summit)",
+        "profile_links": "Links",
+        "contact_label_org": "Organization Name",
+        "projects_title": "Product Portfolio",
+        "proj_2_title": "ÜSKA",
+        "proj_3_title": "MUHAFIZ",
+        "badge_defense": "Defense Industry",
+        "badge_air_defense": "Air Defense"
     },
     "ar": {
         "nav_home": "الرئيسية",
@@ -297,7 +469,93 @@ const translations = {
         "location_office_coords": "41.0343° N, 28.7909° E",
         "location_workshop_title": "ورشة الإنتاج",
         "location_workshop_coords": "41.0267° N, 29.0142° E",
-        "location_expand_hint": "انقر للتوسيع"
+        "location_expand_hint": "انقر للتوسيع",
+        
+        // About Page Missing Translations (AR)
+        "about_title": "مستوحون من السماء، مُمَكّنون بالبرمجيات.",
+        "about_bio": "يأتي اسمنا من عباس قاسم بن فرناس، رائد تاريخ الطيران. نحن مجتمع تكنولوجي مبتكر ينتج لصالح الإنسانية مع التركيز على السلام العالمي والتضامن.",
+        "about_goal": "بصفتنا شركة Firnas Technologies، هدفنا هو جلب الأمل للمناطق المظلومة، ودعم السلام العالمي، والمساهمة في التنمية في مجالات الأنظمة المستقلة، وتكامل الذكاء الاصطناعي، وتقنيات التعليم المبتكرة (FiCo). نحن نبني خوارزميات الغد الذكية برؤية هندسية عالية وفقًا لمعايير الطيران.",
+        "about_nav_team_title": "فريقنا",
+        "about_nav_team_desc": "فريق البحث والتطوير والبرمجيات الذي يحول رؤيتنا إلى واقع.",
+        "about_nav_ach_title": "إنجازاتنا",
+        "about_nav_ach_desc": "إنجازاتنا في المسابقات الوطنية والدولية.",
+        "about_nav_partners_title": "شركاؤنا",
+        "about_nav_partners_desc": "شركاء نظامنا البيئي الذين يقفون بجانبنا في رحلة تطويرنا.",
+        "team_click_hint": "انقر للمزيد من التفاصيل",
+        "about_achievements_title": "إنجازاتنا والمسابقات",
+        "about_achievements_subtitle": "المسابقات المرموقة التي شاركنا فيها وإنجازاتنا من أجل السلام العالمي والتكنولوجيا الإنسانية والتضامن.",
+        "ach_tgb_badge": "المركز الأول عالمياً",
+        "ach_tgb_title": "جائزة المركز الأول في مسابقة المشاريع الدولية!",
+        "ach_tgb_desc": "حصل فريقنا على المركز الأول في فئة المشاريع الدولية في إطار لقاء تركيا لريادة الأعمال الذي شاركنا فيه بمشروعنا FiCo. هذا النجاح الكبير، الذي يسجل رؤيتنا المبتكرة وبنيتنا التحتية التكنولوجية على المستوى الدولي، يشجعنا على اتخاذ خطوات تكنولوجية أكبر في المستقبل.",
+        "ach_1_title": "تكنوفست أضنة",
+        "ach_1_desc": "الخبرة الميدانية والقيادة التقنية المكتسبة في فئة الطائرات بدون طيار المقاتلة.",
+        "ach_2_title": "مسابقة تخيل الغد للابتكار",
+        "ach_2_desc": "رؤية ريادة الأعمال ونموذج العمل المعروضة مع النظام البيئي للطائرة بدون طيار التعليمية (FiCo).",
+        "ach_3_title": "مؤسسة T3 وورش عمل Deneyap للتكنولوجيا",
+        "ach_3_desc": "التدريب والتوجيه والمساهمة في النظام البيئي المقدمة في طريق تدريب مهندسي المستقبل، خاصة في إسنيورت.",
+        "about_partners_title": "شركاؤنا وداعمونا",
+        "about_partners_subtitle": "شركاؤنا الكرام الذين يؤمنون بنا ويشاركوننا رؤيتنا ويدعموننا في رحلتنا.",
+        "partner_ihh_title": "شباب هيئة الإغاثة الإنسانية بإسطنبول",
+        "partner_ihh_role": "شريك استراتيجي",
+        "partner_iic_title": "مركز الحاضنة الدولي",
+        "partner_iic_role": "حاضنة الأعمال",
+        "partner_iyiligin_mucitleri_title": "مخترعو الخير",
+        "partner_iyiligin_mucitleri_role": "شريك الابتكار الاجتماعي",
+        "partner_atolye_uskudar_title": "ورشة عمل أوسكودار",
+        "partner_atolye_uskudar_role": "مركز ريادة الأعمال",
+        "partner_avcim_title": "أفشيم",
+        "partner_avcim_role": "مركز الابتكار",
+        "partner_role_tech": "شريك التكنولوجيا",
+        "partner_role_edu": "شريك التعليم",
+        "partner_role_award": "شريك الجوائز والمشاريع",
+        
+        // Enes Bakkar Profile Missing Translations (AR)
+        "eb_name": "أنس بكار",
+        "eb_profile": "الملف الشخصي",
+        "eb_bio_p1": "أنس بكار هو المهندس الرئيسي المسؤول عن التصميم الميكانيكي وبنية الأجهزة وأنشطة البحث والتطوير (R&D) داخل شركة Firnas Technologies. وهو متخصص في التكامل الهيكلي الميكانيكي للطيران والمركبات الجوية غير المأهولة (UAV / Drone) والأنظمة المستقلة.",
+        "eb_bio_p2": "لقد لعب دورًا حاسمًا في التصميم الأصلي بالكامل لهيكل قفص ألياف الكربون الخفيف والهيكل الديناميكي الهوائي، واختبارات القوة، وتكامل مكونات الأجهزة لمشروعنا الرائد، طائرة التدريب بدون طيار القابلة للبرمجة <strong>FiCo</strong>. وتماشيًا مع أهداف التكنولوجيا الإنسانية العالمية وتنمية المجتمع، يواصل تصميم أجهزة أصلية وعالية الجودة لتدريب الأجيال الشابة التي ستنتج تكنولوجيا الغد.",
+        "eb_skills": "التخصصات",
+        "eb_skill_1": "تصميم CAD/CAM",
+        "eb_skill_2": "الديناميكا الهوائية والقوة",
+        "eb_skill_3": "بنية الطائرات بدون طيار (UAV)",
+        "eb_skill_4": "ألياف الكربون والإنتاج ثلاثي الأبعاد",
+        "eb_skill_5": "تكامل الروبوتات",
+        "eb_skill_6": "اختبار الأجهزة والبحث والتطوير",
+        "eb_skill_7": "الأنظمة المستقلة",
+        "eb_achievements": "الإنجازات",
+        "eb_ach_desc": "جائزة المركز الأول في مسابقة المشاريع الدولية، وقيادة هندسة الطائرات بدون طيار المقاتلة في تكنوفست، ودرجة ريادة الأعمال في مسابقة تخيل الغد، والتوجيه التكنولوجي في Deneyap.",
+        "eb_close": "العودة / الإغلاق",
+        
+        // Mahmud Bayerli Profile Missing Translations (AR)
+        "mb_name": "محمود بايرلي",
+        "mb_profile": "الملف الشخصي",
+        "mb_bio_p1": "محمود بايرلي هو مهندس الإلكترونيات الأقدم المسؤول عن الأنظمة الإلكترونية والبرمجيات المدمجة وعمليات تطوير الأجهزة داخل شركة Firnas Technologies. وهو متخصص في التصميم التخطيطي للوحات التحكم في الطيران ثنائية المعالج، وتخطيط لوحات الدوائر المطبوعة (PCB)، وتكامل دمج المستشعرات.",
+        "mb_bio_p2": "لقد لعب دورًا حاسمًا في تطوير خوارزميات الاستقرار، ودمج مستشعرات الموجات فوق الصوتية والأشعة تحت الحمراء والتدفق البصري، وبرامج الطيران المدمجة لطائرتنا التعليمية بدون طيار الرائدة والقابلة للبرمجة <strong>FiCo</strong>. وتماشيًا مع أهداف التكنولوجيا الإنسانية العالمية وتنمية المجتمع، يواصل بناء بنيات تحتية إلكترونية مستقلة في الأنظمة المستقلة.",
+        "mb_skills": "التخصصات",
+        "mb_skill_1": "الأنظمة المدمجة (C/C++)",
+        "mb_skill_2": "تصميم PCB والتخطيط",
+        "mb_skill_3": "دمج المستشعرات",
+        "mb_skill_4": "المتحكمات الدقيقة (ARM)",
+        "mb_skill_5": "الاختبار الإلكتروني والبحث والتطوير",
+        "mb_skill_6": "إدارة الطاقة",
+        "mb_skill_7": "بروتوكولات الاتصال",
+        "mb_achievements": "الإنجازات",
+        "mb_ach_desc": "جائزة التصميم الأكثر أصالة للمركبات الجوية غير المأهولة في تكنوفست، والمركز الأول في مسابقة الطائرات بدون طيار الدولية، وجائزة ابتكار التصميم الإلكتروني، ومدرب الإلكترونيات في Deneyاب.",
+        "mb_close": "العودة / الإغلاق",
+        
+        // Added Translations (AR)
+        "team_title": "فريقنا",
+        "team_1_name": "أنس بكار",
+        "team_2_name": "محمود بايرلي",
+        "partner_deneyap_title": "ورش عمل Deneyap للتكنولوجيا",
+        "partner_tgb_title": "ملتقى ريادة الأعمال (TGB)",
+        "profile_links": "الروابط",
+        "contact_label_org": "اسم المؤسسة",
+        "projects_title": "محفظة المنتجات",
+        "proj_2_title": "أوسكا (ÜSKA)",
+        "proj_3_title": "محافظ (MUHAFIZ)",
+        "badge_defense": "الصناعات الدفاعية",
+        "badge_air_defense": "الدفاع الجوي"
     }
 };
 
@@ -517,6 +775,119 @@ document.addEventListener('DOMContentLoaded', () => {
         setTimeout(type, 300);
     }
     
+    // Dynamic SEO Meta & Title Translations
+    const pageTitle = document.querySelector('title');
+    const metaDesc = document.querySelector('meta[name="description"]');
+    
+    const pageMetas = {
+        "home": {
+            "tr": {
+                "title": "Firnas Technologies",
+                "desc": "Firnas Technologies: Havacılık, uzay ve yazılımın kesiştiği noktada otonom sistemler ve eğitim teknolojileri (FiCo) geliştiren mühendislik merkezi."
+            },
+            "en": {
+                "title": "Firnas Technologies",
+                "desc": "Firnas Technologies: An engineering center developing autonomous systems and educational technologies (FiCo) at the intersection of aviation, space, and software."
+            },
+            "ar": {
+                "title": "Firnas Technologies",
+                "desc": "Firnas Technologies: مركز هندسي يقوم بتطوير الأنظمة المستقلة وتقنيات التعليم (FiCo) في ملتقى الطيران والفضاء والبرمجيات."
+            }
+        },
+        "about": {
+            "tr": {
+                "title": "Hakkımızda | Firnas Technologies",
+                "desc": "Abbas Kasım İbn Firnas'tan ilham alarak küresel barış ve insanlık yararına havacılık ve yazılım teknolojileri üreten teknoloji topluluğu."
+            },
+            "en": {
+                "title": "About Us | Firnas Technologies",
+                "desc": "A technology community inspired by Abbas Qasim Ibn Firnas, producing aviation and software technologies for humanity and global peace."
+            },
+            "ar": {
+                "title": "معلومات عنا | Firnas Technologies",
+                "desc": "مجتمع تكنولوجي مستوحى من عباس قاسم بن فرناس، ينتج تقنيات الطيران والبرمجيات لصالح البشرية والسلام العالمي."
+            }
+        },
+        "products": {
+            "tr": {
+                "title": "Ürünlerimiz | Firnas Technologies",
+                "desc": "Tamamen yerli donanım ve açık kaynak geliştirme altyapısı ile tasarlanan programlanabilir öğrenme ekosistemi FiCo ve profesyonel havacılık çözümlerimiz."
+            },
+            "en": {
+                "title": "Products | Firnas Technologies",
+                "desc": "Our programmable learning ecosystem FiCo designed with entirely local hardware and open-source development infrastructure, and our professional aviation solutions."
+            },
+            "ar": {
+                "title": "منتجاتنا | Firnas Technologies",
+                "desc": "نظامنا البيئي التعليمي القابل للبرمجة FiCo المصمم بأجهزة محلية بالكامل وبنية تحتية للتطوير مفتوحة المصدر، وحلول الطيران الاحترافية لدينا."
+            }
+        },
+        "contact": {
+            "tr": {
+                "title": "İletişim | Firnas Technologies",
+                "desc": "Firnas Technologies kurumsal hizmetleri, eğitim teknolojileri ve projeleri hakkında detaylı bilgi almak için bizimle iletişime geçin."
+            },
+            "en": {
+                "title": "Contact | Firnas Technologies",
+                "desc": "Contact us to get detailed information about Firnas Technologies corporate services, educational technologies, and projects."
+            },
+            "ar": {
+                "title": "اتصل بنا | Firnas Technologies",
+                "desc": "اتصل بنا للحصول على معلومات مفصلة حول خدمات الشركات في Firnas Technologies وتقنيات التعليم والمشاريع."
+            }
+        },
+        "enes-bakkar": {
+            "tr": {
+                "title": "Enes Bakkar | Firnas Technologies Kurucusu & R&D Lideri",
+                "desc": "Enes Bakkar - Firnas Technologies Kurucusu, Donanım Mimarisi & R&D Lideri. Otonom sistemler, drone aerodinamiği ve FiCo STEM eğitim ekosisteminin tasarımcısı."
+            },
+            "en": {
+                "title": "Enes Bakkar | Founder & R&D Lead | Firnas Technologies",
+                "desc": "Enes Bakkar - Founder & Hardware R&D Lead at Firnas Technologies. Designer of autonomous systems, drone aerodynamics, and FiCo STEM education ecosystem."
+            },
+            "ar": {
+                "title": "أنس بكار | مؤسس وقائد البحث والتطوير | Firnas Technologies",
+                "desc": "أنس بكار - مؤسس وقائد البحث والتطوير في الأجهزة في Firnas Technologies. مصمم الأنظمة المستقلة، الديناميكا الهوائية للطائرات بدون طيار، والنظام البيئي التعليمي FiCo STEM."
+            }
+        },
+        "mahmud-bayerli": {
+            "tr": {
+                "title": "Mahmud Bayerli | Firnas Technologies Elektronik & Gömülü Yazılım Sorumlusu",
+                "desc": "Mahmud Bayerli - Firnas Technologies Elektronik Birim Sorumlusu, Gömülü Sistemler ve PCB Tasarımcısı. Uçuş kontrol kartları ve sensör füzyon geliştiricisi."
+            },
+            "en": {
+                "title": "Mahmud Bayerli | Electronics & Embedded Software Lead | Firnas Technologies",
+                "desc": "Mahmud Bayerli - Electronics Unit Manager, Embedded Systems & PCB Designer at Firnas Technologies. Developer of flight control boards and sensor fusion."
+            },
+            "ar": {
+                "title": "محمود بايرلي | قائد الإلكترونيات والبرمجيات المدمجة | Firnas Technologies",
+                "desc": "محمود بايرلي - مدير وحدة الإلكترونيات، مصمم الأنظمة المدمجة ولوحات الدوائر المطبوعة (PCB) في Firnas Technologies. مطور لوحات التحكم في الطيران ودمج المستشعرات."
+            }
+        }
+    };
+
+    // Determine active page
+    let activePage = 'home';
+    const path = window.location.pathname;
+    if (path.includes('/about/')) {
+        activePage = 'about';
+    } else if (path.includes('/products/')) {
+        activePage = 'products';
+    } else if (path.includes('/contact/')) {
+        activePage = 'contact';
+    } else if (path.includes('/enes-bakkar/')) {
+        activePage = 'enes-bakkar';
+    } else if (path.includes('/mahmud-bayerli/')) {
+        activePage = 'mahmud-bayerli';
+    }
+
+    if (pageTitle && pageMetas[activePage] && pageMetas[activePage][currentLang]) {
+        pageTitle.textContent = pageMetas[activePage][currentLang].title;
+    }
+    if (metaDesc && pageMetas[activePage] && pageMetas[activePage][currentLang]) {
+        metaDesc.setAttribute('content', pageMetas[activePage][currentLang].desc);
+    }
+
     // Start terminal simulator
     typeTerminal();
 });
