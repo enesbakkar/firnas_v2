@@ -41,7 +41,8 @@
       "sameAs": [
         "https://www.linkedin.com/in/ens-bkkr/",
         "https://www.instagram.com/ens_bkkr/",
-        "https://x.com/ens_bkkr"
+        "https://x.com/ens_bkkr",
+        "https://nsosyal.com/ens_bkkr"
       ]
     }
     </script>
@@ -59,49 +60,57 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 2rem 12px;
+            padding: 4rem 2rem;
             box-sizing: border-box;
             background-image: radial-gradient(rgba(0, 184, 212, 0.05) 1.5px, transparent 1.5px);
             background-size: 24px 24px;
         }
         .profile-container {
-            max-width: 800px;
+            max-width: 1200px;
             width: 100%;
             background: rgba(5, 20, 33, 0.75);
             backdrop-filter: blur(24px) saturate(180%);
             -webkit-backdrop-filter: blur(24px) saturate(180%);
             border: 1px solid rgba(0, 184, 212, 0.18);
-            border-radius: 32px;
-            padding: 3.5rem;
+            border-radius: 36px;
+            padding: 4rem;
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), inset 0 0 25px rgba(0, 184, 212, 0.05);
             animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            gap: 4rem;
         }
         @keyframes fadeIn {
             0% { opacity: 0; transform: translateY(20px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-        .profile-header {
+        .profile-sidebar {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            gap: 2.5rem;
-            border-bottom: 1px solid rgba(0, 184, 212, 0.15);
-            padding-bottom: 2.5rem;
-            margin-bottom: 2.5rem;
+            text-align: center;
+            border-right: 1px solid rgba(0, 184, 212, 0.15);
+            padding-right: 4rem;
         }
         .profile-avatar-wrapper {
             position: relative;
-            flex-shrink: 0;
+            margin-bottom: 2rem;
         }
         .profile-avatar {
-            width: 180px;
-            height: 180px;
+            width: 200px;
+            height: 200px;
             border-radius: 50%;
             object-fit: cover;
             border: 4px solid var(--accent);
-            box-shadow: 0 0 25px var(--accent-glow);
+            box-shadow: 0 0 30px var(--accent-glow);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .profile-avatar:hover {
+            transform: scale(1.05) rotate(3deg);
+            box-shadow: 0 0 45px var(--accent);
         }
         .profile-title h1 {
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             font-weight: 900;
             font-family: var(--font-display);
             margin: 0 0 0.5rem 0;
@@ -111,7 +120,7 @@
             filter: drop-shadow(0 0 10px rgba(0, 184, 212, 0.1));
         }
         .profile-role {
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             color: var(--accent);
             font-weight: 600;
             margin: 0 0 1rem 0;
@@ -120,35 +129,137 @@
         }
         .profile-company {
             font-size: 1rem;
-            color: #94a3b8;
+            color: #cbd5e1;
             margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        /* Premium Social Panel */
+        .social-panel {
+            width: 100%;
+            margin-top: 3rem;
+            text-align: left;
+        }
+        .panel-title {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 184, 212, 0.15);
+            padding-bottom: 0.5rem;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-        .profile-grid {
-            display: grid;
-            grid-template-columns: 1.2fr 0.8fr;
-            gap: 3rem;
+        .panel-title i {
+            color: var(--accent);
         }
-        .profile-bio h2, .profile-skills-section h2 {
-            font-size: 1.4rem;
-            font-weight: 800;
+        .social-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
+        .btn-social {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0.85rem 1.25rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
             color: #ffffff;
-            margin-bottom: 1.25rem;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-sizing: border-box;
+        }
+        .btn-social i {
+            font-size: 1.15rem;
+        }
+        .btn-linkedin {
+            background: linear-gradient(135deg, #0a66c2 0%, #00b8d4 100%);
+            box-shadow: 0 4px 15px rgba(10, 102, 194, 0.25);
+        }
+        .btn-linkedin:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(10, 102, 194, 0.5);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .btn-instagram {
+            background: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 50%, #6228d7 100%);
+            box-shadow: 0 4px 15px rgba(238, 42, 123, 0.25);
+        }
+        .btn-instagram:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(238, 42, 123, 0.5);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .btn-x {
+            background: linear-gradient(135deg, #14171a 0%, #000000 60%, #00b8d4 100%);
+            box-shadow: 0 4px 15px rgba(0, 184, 212, 0.15);
+        }
+        .btn-x:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(0, 184, 212, 0.4);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+        .btn-nsosyal {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 60%, #00e5ff 100%);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.25);
+        }
+        .btn-nsosyal:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(79, 70, 229, 0.5);
+            border-color: rgba(255, 255, 255, 0.25);
+        }
+
+        /* Content Area styling */
+        .profile-content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            justify-content: center;
+        }
+        .content-section {
+            background: rgba(5, 20, 33, 0.4);
+            border: 1px solid rgba(0, 184, 212, 0.12);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        .content-section h2 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
             font-family: var(--font-display);
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
-        .profile-bio h2 i, .profile-skills-section h2 i {
+        .content-section h2 i {
             color: var(--accent);
         }
-        .profile-bio p {
+        .content-section p {
             color: #cbd5e1;
             font-size: 1.05rem;
-            line-height: 1.7;
-            margin-bottom: 1.5rem;
+            line-height: 1.75;
+            margin: 0 0 1.25rem 0;
+        }
+        .content-section p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .grid-sub-sections {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
         }
         .skill-tag {
             display: inline-block;
@@ -168,35 +279,10 @@
             transform: translateY(-2px);
             box-shadow: 0 5px 15px rgba(0, 184, 212, 0.2);
         }
-        .social-buttons {
-            display: flex;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-        .btn-social {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            padding: 0.75rem 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: #ffffff;
-            border-radius: 14px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        .btn-social:hover {
-            background: var(--accent);
-            border-color: var(--accent);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 184, 212, 0.2);
-        }
+
         .close-btn-container {
-            margin-top: 3rem;
-            text-align: center;
-            border-top: 1px solid rgba(255, 255, 255, 0.08);
-            padding-top: 2rem;
+            margin-top: 1.5rem;
+            text-align: right;
         }
         .btn-close {
             display: inline-flex;
@@ -218,24 +304,36 @@
             transform: translateY(-3px);
             box-shadow: 0 15px 35px rgba(0, 184, 212, 0.4);
         }
-        @media (max-width: 768px) {
-            .profile-header {
-                flex-direction: column;
-                text-align: center;
-            }
-            .profile-grid {
-                grid-template-columns: 1fr;
-                gap: 2.5rem;
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            body {
+                padding: 2rem 1rem;
             }
             .profile-container {
-                padding: 2rem;
+                grid-template-columns: 1fr;
+                padding: 2.5rem;
+                gap: 3rem;
+            }
+            .profile-sidebar {
+                border-right: none;
+                padding-right: 0;
+                border-bottom: 1px solid rgba(0, 184, 212, 0.15);
+                padding-bottom: 3rem;
+            }
+            .grid-sub-sections {
+                grid-template-columns: 1fr;
+            }
+            .close-btn-container {
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
     <div class="profile-container">
-        <div class="profile-header">
+        <!-- Sol Bölüm: Sidebar -->
+        <div class="profile-sidebar">
             <div class="profile-avatar-wrapper">
                 <img src="/asset/enes_bakkar.jpeg" alt="Enes Bakkar" class="profile-avatar">
             </div>
@@ -247,42 +345,54 @@
                     <strong>Firnas Technologies</strong>
                 </p>
             </div>
+            
+            <!-- Sosyal Medya Platformları Panel -->
+            <div class="social-panel">
+                <h3 class="panel-title"><i class="fas fa-network-wired"></i> Bağlantılar</h3>
+                <div class="social-grid">
+                    <a href="https://www.linkedin.com/in/ens-bkkr/" target="_blank" rel="noopener noreferrer" class="btn-social btn-linkedin"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+                    <a href="https://www.instagram.com/ens_bkkr/" target="_blank" rel="noopener noreferrer" class="btn-social btn-instagram"><i class="fab fa-instagram"></i> Instagram</a>
+                    <a href="https://x.com/ens_bkkr" target="_blank" rel="noopener noreferrer" class="btn-social btn-x"><i class="fab fa-x-twitter"></i> X (Twitter)</a>
+                    <a href="https://nsosyal.com/ens_bkkr" target="_blank" rel="noopener noreferrer" class="btn-social btn-nsosyal"><i class="fas fa-circle-nodes"></i> N Sosyal</a>
+                </div>
+            </div>
         </div>
 
-        <div class="profile-grid">
-            <div class="profile-bio">
+        <!-- Sağ Bölüm: İçerik Alanı -->
+        <div class="profile-content-area">
+            <div class="content-section">
                 <h2><i class="fas fa-user"></i> <span data-i18n="eb_profile">Profil</span></h2>
                 <p data-i18n="eb_bio_p1">Enes Bakkar, Firnas Technologies bünyesinde Mekanik Tasarım, Donanım Mimarisi ve Araştırma-Geliştirme (AR-GE) faaliyetlerinden sorumlu lider mühendistir. Havacılık, insansız hava araçları (İHA/Drone) ve otonom sistemlerin mekanik yapısal entegrasyonu üzerine uzmanlaşmıştır.</p>
                 <p data-i18n="eb_bio_p2">Flagship projemiz olan programlanabilir eğitim dronu <strong>FiCo</strong>'nun karbon-fiber hafif kafes gövdesinin ve aerodinamik yapısının tamamen özgün olarak tasarlanmasında, mukavemet testlerinin yapılmasında ve donanım bileşenlerinin entegrasyonunda kritik rol oynamıştır. Küresel insani teknoloji ve ümmet kalkınması hedefleri doğrultusunda, yarının teknolojisini üreten genç nesilleri yetiştirmek için özgün ve kaliteli donanımlar tasarlamaya devam etmektedir.</p>
-                
-                <div class="social-buttons" style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.5rem;">
-                    <a href="https://www.linkedin.com/in/ens-bkkr/" target="_blank" rel="noopener noreferrer" class="btn-social"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
-                    <a href="https://www.instagram.com/ens_bkkr/" target="_blank" rel="noopener noreferrer" class="btn-social"><i class="fab fa-instagram"></i> Instagram</a>
-                    <a href="https://x.com/ens_bkkr" target="_blank" rel="noopener noreferrer" class="btn-social"><i class="fab fa-x-twitter"></i> X (Twitter)</a>
+            </div>
+
+            <div class="grid-sub-sections">
+                <div class="content-section">
+                    <h2><i class="fas fa-bolt"></i> <span data-i18n="eb_skills">Uzmanlıklar</span></h2>
+                    <div class="skills-list">
+                        <span class="skill-tag" data-i18n="eb_skill_1">CAD/CAM Tasarım</span>
+                        <span class="skill-tag" data-i18n="eb_skill_2">Aerodinamik & Mukavemet</span>
+                        <span class="skill-tag" data-i18n="eb_skill_3">İHA / Drone Mimarisi</span>
+                        <span class="skill-tag" data-i18n="eb_skill_4">Karbon Fiber & 3D Üretim</span>
+                        <span class="skill-tag" data-i18n="eb_skill_5">Robotik Entegrasyon</span>
+                        <span class="skill-tag" data-i18n="eb_skill_6">Donanım Test & AR-GE</span>
+                        <span class="skill-tag" data-i18n="eb_skill_7">Otonom Sistemler</span>
+                    </div>
+                </div>
+
+                <div class="content-section" style="display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <h2><i class="fas fa-trophy"></i> <span data-i18n="eb_achievements">Başarılar</span></h2>
+                        <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.7; margin: 0;" data-i18n="eb_ach_desc">
+                            Uluslararası Proje Yarışması Birincilik Ödülü, TEKNOFEST Savaşan İHA Mühendislik Liderliği, Imagine Tomorrow Girişimcilik Derecesi ve Deneyap Teknoloji Mentorluğu.
+                        </p>
+                    </div>
                 </div>
             </div>
 
-            <div class="profile-skills-section">
-                <h2><i class="fas fa-bolt"></i> <span data-i18n="eb_skills">Uzmanlıklar</span></h2>
-                <div class="skills-list">
-                    <span class="skill-tag" data-i18n="eb_skill_1">CAD/CAM Tasarım</span>
-                    <span class="skill-tag" data-i18n="eb_skill_2">Aerodinamik & Mukavemet</span>
-                    <span class="skill-tag" data-i18n="eb_skill_3">İHA / Drone Mimarisi</span>
-                    <span class="skill-tag" data-i18n="eb_skill_4">Karbon Fiber & 3D Üretim</span>
-                    <span class="skill-tag" data-i18n="eb_skill_5">Robotik Entegrasyon</span>
-                    <span class="skill-tag" data-i18n="eb_skill_6">Donanım Test & AR-GE</span>
-                    <span class="skill-tag" data-i18n="eb_skill_7">Otonom Sistemler</span>
-                </div>
-                
-                <h2 style="margin-top: 2rem;"><i class="fas fa-trophy"></i> <span data-i18n="eb_achievements">Başarılar</span></h2>
-                <p style="color: #cbd5e1; font-size: 0.95rem; line-height: 1.6; margin: 0;" data-i18n="eb_ach_desc">
-                    Uluslararası Proje Yarışması Birincilik Ödülü, TEKNOFEST Savaşan İHA Mühendislik Liderliği, Imagine Tomorrow Girişimcilik Derecesi ve Deneyap Teknoloji Mentorluğu.
-                </p>
+            <div class="close-btn-container">
+                <a href="/hakkimizda/" class="btn-close"><i class="fas fa-arrow-left"></i> <span data-i18n="eb_close">Geri Dön / Kapat</span></a>
             </div>
-        </div>
-
-        <div class="close-btn-container">
-            <a href="/hakkimizda/" class="btn-close"><i class="fas fa-arrow-left"></i> <span data-i18n="eb_close">Geri Dön / Kapat</span></a>
         </div>
     </div>
     <script src="/script.js"></script>
