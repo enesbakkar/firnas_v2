@@ -1,0 +1,13 @@
+{
+  "name": "firnas-technologies",
+  "version": "1.0.0",
+  "description": "Firnas Technologies Static Website",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^5.2.11"
+  }
+}
