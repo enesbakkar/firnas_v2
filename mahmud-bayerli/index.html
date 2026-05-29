@@ -298,10 +298,77 @@
                 text-align: center;
             }
         }
+        
+        /* Sleek Floating Language Dropdown Styles */
+        .profile-lang-selector {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+        .profile-lang-selector .lang-dropdown-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 184, 212, 0.25);
+            color: #ffffff;
+            font-size: 0.9rem;
+            padding: 0.45rem 0.9rem;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 184, 212, 0.05);
+        }
+        .profile-lang-selector .lang-dropdown-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .profile-lang-selector .lang-dropdown-menu {
+            background: rgba(5, 20, 33, 0.9);
+            border: 1px solid rgba(0, 184, 212, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            min-width: 110px;
+        }
+        .profile-lang-selector .lang-dropdown-menu li {
+            color: #ffffff;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+        .profile-lang-selector .lang-dropdown-menu li:hover {
+            background: rgba(0, 184, 212, 0.1);
+            color: var(--accent);
+        }
+        @media (max-width: 992px) {
+            .profile-lang-selector {
+                top: 1.5rem;
+                right: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="profile-container">
+    <div class="profile-container" style="position: relative;">
+        <!-- Sleek Floating Language Selector -->
+        <div class="profile-lang-selector">
+            <div class="lang-dropdown">
+                <button class="lang-dropdown-btn" id="lang-btn">
+                    <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag" id="current-lang-flag">
+                    <span id="current-lang-text">TR</span>
+                    <i class="fas fa-chevron-down lang-arrow"></i>
+                </button>
+                <ul class="lang-dropdown-menu" id="lang-menu">
+                    <li onclick="changeLanguage('tr')">
+                        <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag">
+                        <span>TR</span>
+                    </li>
+                    <li onclick="changeLanguage('en')">
+                        <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="lang-flag">
+                        <span>EN</span>
+                    </li>
+                    <li onclick="changeLanguage('ar')">
+                        <img src="https://flagcdn.com/w20/sy.png" alt="AR" class="lang-flag">
+                        <span>AR</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
         <!-- Sol Bölüm: Sidebar -->
         <div class="profile-sidebar">
             <div class="profile-avatar-wrapper">
