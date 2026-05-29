@@ -2,7 +2,7 @@ const translations = {
     "tr": {
         "nav_home": "Ana Sayfa",
         "nav_about": "Hakkımızda",
-        "nav_projects": "Projelerimiz",
+        "nav_projects": "Ürünlerimiz",
         "nav_contact": "İletişim",
         "hero_badge": "Yazılım & Havacılık",
         "hero_title": "Geleceği Kodluyor,<br>Sınırları Aşıyoruz.",
@@ -102,7 +102,7 @@ const translations = {
     "en": {
         "nav_home": "Home",
         "nav_about": "About Us",
-        "nav_projects": "Projects",
+        "nav_projects": "Products",
         "nav_contact": "Contact",
         "hero_badge": "Software & Aviation",
         "hero_title": "Coding the Future,<br>Crossing Boundaries.",
@@ -202,7 +202,7 @@ const translations = {
     "ar": {
         "nav_home": "الرئيسية",
         "nav_about": "معلومات عنا",
-        "nav_projects": "مشاريعنا",
+        "nav_projects": "منتجاتنا",
         "nav_contact": "اتصل بنا",
         "hero_badge": "البرمجيات والطيران",
         "hero_title": "نبرمج المستقبل،<br>ونتجاوز الحدود.",
