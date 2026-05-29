@@ -77,6 +77,7 @@
             display: grid;
             grid-template-columns: 300px 1fr 460px;
             gap: 3rem;
+            --hover-translate: 6px;
         }
         @keyframes fadeIn {
             0% { opacity: 0; transform: translateY(20px); }
@@ -87,8 +88,8 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
-            border-right: 1px solid rgba(0, 184, 212, 0.15);
-            padding-right: 4rem;
+            border-inline-end: 1px solid rgba(0, 184, 212, 0.15);
+            padding-inline-end: 4rem;
         }
         .profile-avatar-wrapper {
             position: relative;
@@ -139,7 +140,7 @@
         .social-panel {
             width: 100%;
             margin-top: 3rem;
-            text-align: left;
+            text-align: start;
         }
         .panel-title {
             font-size: 0.95rem;
@@ -248,7 +249,8 @@
             border-radius: 100px;
             font-weight: 600;
             font-size: 0.9rem;
-            margin: 0 0.5rem 0.75rem 0;
+            margin-inline-end: 0.5rem;
+            margin-bottom: 0.75rem;
             transition: all 0.3s ease;
         }
         .skill-tag:hover {
@@ -277,7 +279,7 @@
         .affiliation-item:hover {
             background: rgba(0, 184, 212, 0.08) !important;
             border-color: rgba(0, 184, 212, 0.35) !important;
-            transform: translateX(6px);
+            transform: translateX(var(--hover-translate));
             box-shadow: 0 5px 15px rgba(0, 184, 212, 0.1);
         }
 
@@ -290,7 +292,7 @@
 
         .close-btn-container {
             margin-top: 1.5rem;
-            text-align: right;
+            text-align: end;
         }
         .btn-close {
             display: inline-flex;
@@ -333,8 +335,8 @@
                 gap: 3rem;
             }
             .profile-sidebar {
-                border-right: none;
-                padding-right: 0;
+                border-inline-end: none;
+                padding-inline-end: 0;
                 border-bottom: 1px solid rgba(0, 184, 212, 0.15);
                 padding-bottom: 3rem;
             }
@@ -389,6 +391,11 @@
                 top: 1.5rem;
                 right: 1.5rem;
             }
+        }
+        
+        /* Dynamic RTL Symmetrical Hovers & Layout Overrides */
+        html[dir="rtl"] .profile-container {
+            --hover-translate: -6px;
         }
     </style>
 </head>

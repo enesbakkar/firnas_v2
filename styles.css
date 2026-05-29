@@ -1042,6 +1042,19 @@ footer {
 [dir="rtl"] .project-showcase { direction: rtl; }
 [dir="rtl"] .feature-icon, [dir="rtl"] .service-card i { transform: scaleX(-1); }
 
+/* Logical margin updates for nested graphics and icons under RTL */
+[dir="rtl"] .logo-text img,
+[dir="rtl"] .footer-logo img {
+  margin-right: 0 !important;
+  margin-left: 12px !important;
+}
+[dir="rtl"] i[style*="margin-right"],
+[dir="rtl"] .btn i,
+[dir="rtl"] .btn-close i {
+  margin-right: 0 !important;
+  margin-left: 8px !important;
+}
+
 /* Mobile Menu Button */
 .nav-toggle {
   display: none;

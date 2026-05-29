@@ -799,35 +799,24 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Add direction for Arabic
+        // Add native document-level direction and language support
         if (currentLang === 'ar') {
+            document.documentElement.dir = 'rtl';
+            document.documentElement.lang = 'ar';
             document.body.style.direction = 'rtl';
             document.body.style.textAlign = 'right';
-            // Fix specific layout issues for RTL
-            const navLinks = document.querySelectorAll('.nav-links');
-            navLinks.forEach(nav => {
-                nav.style.flexDirection = 'row-reverse';
-            });
-            const contentGrids = document.querySelectorAll('.content-grid');
-            contentGrids.forEach(grid => {
-                grid.style.direction = 'rtl';
-            });
+            // Align input texts natively
             const inputs = document.querySelectorAll('input, textarea, select');
             inputs.forEach(input => {
                 input.style.textAlign = 'right';
                 input.style.direction = 'rtl';
             });
         } else {
+            document.documentElement.dir = 'ltr';
+            document.documentElement.lang = currentLang;
             document.body.style.direction = 'ltr';
             document.body.style.textAlign = 'left';
-            const navLinks = document.querySelectorAll('.nav-links');
-            navLinks.forEach(nav => {
-                nav.style.flexDirection = 'row';
-            });
-            const contentGrids = document.querySelectorAll('.content-grid');
-            contentGrids.forEach(grid => {
-                grid.style.direction = 'ltr';
-            });
+            // Reset input text alignments
             const inputs = document.querySelectorAll('input, textarea, select');
             inputs.forEach(input => {
                 input.style.textAlign = 'left';
