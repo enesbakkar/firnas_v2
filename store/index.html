@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="tr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Firnas Technologies kurumsal mağazası. STEM ve yapay zeka eğitim dronu FiCo için ön sipariş talebinizi buradan kolayca oluşturun.">
+    <title>Mağaza | Firnas Technologies</title>
+    <link rel="icon" type="image/png" href="/asset/firnas_logo.png">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .store-grid {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+
+        .store-visual-card {
+            background: rgba(5, 20, 33, 0.6);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(0, 184, 212, 0.18);
+            border-radius: 32px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2rem;
+        }
+
+        .store-badge-new {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #00e5ff 100%);
+            color: #051421;
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            font-weight: 800;
+            font-size: 0.8rem;
+            letter-spacing: 0.05em;
+            box-shadow: 0 0 20px var(--accent-glow);
+        }
+
+        .store-status-badge {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            background: rgba(0, 184, 212, 0.08);
+            border: 1px solid rgba(0, 184, 212, 0.3);
+            color: var(--accent);
+            padding: 0.5rem 1.25rem;
+            border-radius: 100px;
+            font-weight: 700;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .store-status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--accent);
+            border-radius: 50%;
+            display: inline-block;
+            box-shadow: 0 0 10px var(--accent);
+            animation: pulse-dot 1.5s infinite;
+        }
+
+        @keyframes pulse-dot {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.4; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .store-img-wrapper {
+            width: 80%;
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 2rem;
+        }
+
+        .store-product-img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 15px 35px rgba(0, 184, 212, 0.35));
+            animation: float-product 6s ease-in-out infinite;
+        }
+
+        @keyframes float-product {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-12px) rotate(2deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .store-price-container {
+            border-top: 1px solid rgba(0, 184, 212, 0.15);
+            width: 100%;
+            padding-top: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .store-price-label {
+            font-size: 1.1rem;
+            color: #94a3b8;
+            font-weight: 500;
+        }
+
+        .store-price-val {
+            font-family: var(--font-display);
+            font-size: 1.8rem;
+            font-weight: 900;
+            background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 184, 212, 0.2));
+        }
+
+        .store-form-card {
+            background: rgba(5, 20, 33, 0.4);
+            border: 1px solid rgba(0, 184, 212, 0.12);
+            border-radius: 32px;
+            padding: 3rem;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .store-form-card h2 {
+            font-family: var(--font-display);
+            font-size: 1.85rem;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 1rem;
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .store-form-card h2 i {
+            color: var(--accent);
+        }
+
+        .store-form-card p {
+            color: #94a3b8;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        /* Success Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 20, 33, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: rgba(5, 20, 33, 0.9);
+            border: 1px solid rgba(0, 184, 212, 0.3);
+            border-radius: 32px;
+            max-width: 500px;
+            width: 90%;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 184, 212, 0.15);
+            transform: scale(0.9);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 4.5rem;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 15px var(--accent-glow));
+            animation: pop-icon 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes pop-icon {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .modal-card h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .modal-card p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        @media (max-width: 992px) {
+            .store-grid {
+                grid-template-columns: 1fr;
+                gap: 3rem;
+            }
+            .store-visual-card {
+                padding: 2.5rem 1.5rem;
+            }
+            .store-form-card {
+                padding: 2.5rem 1.5rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-dark">
+        <div class="container nav-container">
+            <a href="/" class="logo-text">
+                <img src="/asset/firnas_logo.png" alt="Firnas Logo" style="height: 58px; margin-right: 12px;">
+                Firnas Technologies
+            </a>
+            <ul class="nav-links">
+                <li><a href="/" data-i18n="nav_home">Ana Sayfa</a></li>
+                <li><a href="/about/" data-i18n="nav_about">Hakkımızda</a></li>
+                <li><a href="/products/" data-i18n="nav_projects">Ürünlerimiz</a></li>
+                <li><a href="/store/" class="active" data-i18n="nav_store">Mağaza</a></li>
+                <li><a href="/contact/" data-i18n="nav_contact">İletişim</a></li>
+                <li>
+                    <div class="lang-dropdown">
+                        <button class="lang-dropdown-btn" id="lang-btn">
+                            <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag" id="current-lang-flag">
+                            <span id="current-lang-text">TR</span>
+                            <i class="fas fa-chevron-down lang-arrow"></i>
+                        </button>
+                        <ul class="lang-dropdown-menu" id="lang-menu">
+                            <li onclick="changeLanguage('tr')">
+                                <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag">
+                                <span>TR</span>
+                            </li>
+                            <li onclick="changeLanguage('en')">
+                                <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="lang-flag">
+                                <span>EN</span>
+                            </li>
+                            <li onclick="changeLanguage('ar')">
+                                <img src="https://flagcdn.com/w20/sy.png" alt="AR" class="lang-flag">
+                                <span>AR</span>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+
+    <header class="subpage-header" style="padding-top: 160px; padding-bottom: 40px;">
+        <div class="container" style="text-align: center;">
+            <h1 data-i18n="store_header_title" style="font-size: clamp(2.5rem, 8vw, 4.5rem); font-weight: 900; margin-bottom: 1rem;">Firnas <span class="text-accent">Mağaza</span></h1>
+            <p data-i18n="store_header_desc" class="text-muted" style="max-width: 600px; margin: 0 auto; font-size: 1.2rem;">Geleceğin teknolojilerine ve özgün havacılık ekosistemimize buradan ulaşın.</p>
+        </div>
+    </header>
+
+    <section class="section-padding" style="padding-top: 0; padding-bottom: 120px;">
+        <div class="container">
+            <div class="store-grid">
+                <!-- Sol: FiCo Dron Kartı -->
+                <div class="store-visual-card">
+                    <span class="store-badge-new" data-i18n="store_badge_new">ÖN SİPARİŞ</span>
+                    <div class="store-status-badge">
+                        <span class="store-status-dot"></span>
+                        <span data-i18n="store_status_active">Taleplere Açık</span>
+                    </div>
+
+                    <div class="store-img-wrapper">
+                        <img src="/asset/fic_v4.png" alt="FiCo STEM Drone Platformu" class="store-product-img">
+                    </div>
+
+                    <h2 data-i18n="focus_title" style="font-family: var(--font-display); font-size: 2rem; font-weight: 900; color: #ffffff; margin: 0;">FiCo: Eğitimde STEM Devrimi</h2>
+                    <p data-i18n="focus_desc" style="color: #94a3b8; font-size: 1.05rem; line-height: 1.6; margin: 0;">Sıradan bir drone değil; tamamen yerli donanım, açık kaynak geliştirme altyapısı ve yapay zeka entegrasyonu ile donatılmış programlanabilir bir öğrenme ekosistemi.</p>
+
+                    <div class="store-price-container">
+                        <span class="store-price-label" data-i18n="store_loading_details">Fiyat ve Ürün Detayları Yakında Yükleniyor...</span>
+                        <span class="store-price-val" data-i18n="store_price_placeholder">Yakında Belirlenecektir</span>
+                    </div>
+                </div>
+
+                <!-- Sağ: Ön Sipariş Formu -->
+                <div class="store-form-card">
+                    <h2><i class="fas fa-cart-shopping"></i> <span data-i18n="store_preorder_title">FiCo Ön Sipariş Talebi</span></h2>
+                    <p data-i18n="store_preorder_desc">STEM ve yapay zeka eğitim dronu FiCo için ön sipariş talebinizi iletin, ilk gönderimlerde öncelik hakkı kazanın.</p>
+
+                    <form id="preorder-form" onsubmit="handlePreOrderSubmit(event)">
+                        <div class="form-group">
+                            <label data-i18n="contact_label_name">Ad Soyad / Kurum Adı</label>
+                            <input type="text" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="contact_label_email">Kurumsal E-Posta</label>
+                            <input type="email" class="form-control" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="store_label_quantity">Ön Sipariş Adedi</label>
+                            <input type="number" class="form-control" min="1" max="100" value="1" required>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="store_label_notes">Özel Talepleriniz / Notlar</label>
+                            <textarea class="form-control" rows="4" style="resize: none;"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;" data-i18n="store_btn_preorder">Ön Sipariş Talebini Gönder</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal Overlay -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-card glass-card">
+            <div class="modal-icon"><i class="fas fa-circle-check"></i></div>
+            <h3 data-i18n="store_success_title">Tebrikler!</h3>
+            <p data-i18n="store_success_desc">Ön sipariş talebiniz başarıyla sisteme kaydedilmiştir. En kısa sürede sizinle iletişime geçeceğiz.</p>
+            <button class="btn btn-primary" onclick="closeSuccessModal()" data-i18n="store_modal_close">Kapat</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-logo">
+                        <img src="/asset/firnas_logo.png" alt="Firnas Logo"
+                            style="height: 58px; filter: brightness(0) invert(1); margin-right: 12px;">
+                        Firnas Technologies
+                    </a>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem; font-family: var(--font-sans);" data-i18n="footer_corp">Kurumsal</h4>
+                    <ul class="footer-links">
+                        <li><a href="/" data-i18n="nav_home">Ana Sayfa</a></li>
+                        <li><a href="/about/" data-i18n="nav_about">Hakkımızda</a></li>
+                        <li><a href="/products/" data-i18n="nav_projects">Ürünlerimiz</a></li>
+                        <li><a href="/store/" data-i18n="nav_store">Mağaza</a></li>
+                        <li><a href="/contact/" data-i18n="nav_contact">İletişim</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem; font-family: var(--font-sans);" data-i18n="nav_contact">İletişim</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:firnastechno@gmail.com"><i class="fas fa-envelope" style="margin-right: 8px;"></i> firnastechno@gmail.com</a></li>
+                    </ul>
+                    <div class="footer-socials" style="margin-top: 1.5rem; display: flex; gap: 1.25rem;">
+                        <a href="https://www.instagram.com/firnas_technologies/" target="_blank" class="social-icon-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/company/firnas-technologies/" target="_blank" class="social-icon-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://x.com/FirnasTech" target="_blank" class="social-icon-link" aria-label="X"><i class="fab fa-x-twitter"></i></a>
+                        <a href="https://www.youtube.com/@FirnasTechnologies" target="_blank" class="social-icon-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="footer_rights">&copy; 2026 Firnas Technologies. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/script.js"></script>
+    <script>
+        function handlePreOrderSubmit(event) {
+            event.preventDefault();
+            const modal = document.getElementById('success-modal');
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        function closeSuccessModal() {
+            const modal = document.getElementById('success-modal');
+            if (modal) {
+                modal.classList.remove('active');
+                document.getElementById('preorder-form').reset();
+            }
+        }
+    </script>
+</body>
+
+</html>

@@ -183,7 +183,26 @@ const translations = {
         "proj_2_title": "ÜSKA",
         "proj_3_title": "MUHAFIZ",
         "badge_defense": "Savunma Sanayii",
-        "badge_air_defense": "Hava Savunma"
+        "badge_air_defense": "Hava Savunma",
+        
+        // Store Page Translations
+        "nav_store": "Mağaza",
+        "store_header_title": "Firnas <span class='text-accent'>Mağaza</span>",
+        "store_header_desc": "Geleceğin teknolojilerine ve özgün havacılık ekosistemimize buradan ulaşın.",
+        "store_preorder_title": "FiCo Ön Sipariş Talebi",
+        "store_loading_details": "Fiyat ve Ürün Detayları Yakında Yükleniyor...",
+        "store_preorder_desc": "STEM ve yapay zeka eğitim dronu FiCo için ön sipariş talebinizi iletin, ilk gönderimlerde öncelik hakkı kazanın.",
+        "store_btn_preorder": "Ön Sipariş Talebini Gönder",
+        "store_price_placeholder": "Yakında Belirlenecektir",
+        "store_badge_new": "ÖN SİPARİŞ",
+        "store_status_active": "Taleplere Açık",
+        
+        // Store Modal & Form Extra Translations
+        "store_success_title": "Tebrikler!",
+        "store_success_desc": "Ön sipariş talebiniz başarıyla sisteme kaydedilmiştir. En kısa sürede sizinle iletişime geçeceğiz.",
+        "store_modal_close": "Kapat",
+        "store_label_quantity": "Ön Sipariş Adedi",
+        "store_label_notes": "Özel Talepleriniz / Notlar"
     },
     "en": {
         "nav_home": "Home",
@@ -369,7 +388,26 @@ const translations = {
         "proj_2_title": "ÜSKA",
         "proj_3_title": "MUHAFIZ",
         "badge_defense": "Defense Industry",
-        "badge_air_defense": "Air Defense"
+        "badge_air_defense": "Air Defense",
+        
+        // Store Page Translations (EN)
+        "nav_store": "Store",
+        "store_header_title": "Firnas <span class='text-accent'>Store</span>",
+        "store_header_desc": "Access the technologies of the future and our original aviation ecosystem here.",
+        "store_preorder_title": "FiCo Pre-Order Request",
+        "store_loading_details": "Price & Product Details Loading Soon...",
+        "store_preorder_desc": "Submit your pre-order request for the STEM & AI educational drone FiCo, and secure priority access for the initial shipments.",
+        "store_btn_preorder": "Submit Pre-Order Request",
+        "store_price_placeholder": "To Be Announced Soon",
+        "store_badge_new": "PRE-ORDER",
+        "store_status_active": "Open for Requests",
+        
+        // Store Modal & Form Extra Translations (EN)
+        "store_success_title": "Congratulations!",
+        "store_success_desc": "Your pre-order request has been successfully registered. We will contact you as soon as possible.",
+        "store_modal_close": "Close",
+        "store_label_quantity": "Pre-Order Quantity",
+        "store_label_notes": "Custom Requests / Notes"
     },
     "ar": {
         "nav_home": "الرئيسية",
@@ -555,7 +593,26 @@ const translations = {
         "proj_2_title": "أوسكا (ÜSKA)",
         "proj_3_title": "محافظ (MUHAFIZ)",
         "badge_defense": "الصناعات الدفاعية",
-        "badge_air_defense": "الدفاع الجوي"
+        "badge_air_defense": "الدفاع الجوي",
+        
+        // Store Page Translations (AR)
+        "nav_store": "المتجر",
+        "store_header_title": "متجر <span class='text-accent'>فرناس</span>",
+        "store_header_desc": "الوصول إلى تقنيات المستقبل ونظام الطيران الأصلي لدينا هنا.",
+        "store_preorder_title": "طلب الطلب المسبق لـ FiCo",
+        "store_loading_details": "تفاصيل السعر والمنتج يتم تحميلها قريباً...",
+        "store_preorder_desc": "أرسل طلب الطلب المسبق الخاص بك لطائرة FiCo التعليمية للذكاء الاصطناعي وعلوم STEM، واحصل على أولوية الوصول للشحنات الأولى.",
+        "store_btn_preorder": "إرسال طلب الطلب المسبق",
+        "store_price_placeholder": "سيتم الإعلان عنه قريباً",
+        "store_badge_new": "طلب مسبق",
+        "store_status_active": "مفتوح للطلبات",
+        
+        // Store Modal & Form Extra Translations (AR)
+        "store_success_title": "تهانينا!",
+        "store_success_desc": "تم تسجيل طلب الطلب المسبق الخاص بك بنجاح. سوف نتصل بك في أقرب وقت ممكن.",
+        "store_modal_close": "إغلاق",
+        "store_label_quantity": "كمية الطلب المسبق",
+        "store_label_notes": "طلبات خاصة / ملاحظات"
     }
 };
 
@@ -822,6 +879,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 "desc": "نظامنا البيئي التعليمي القابل للبرمجة FiCo المصمم بأجهزة محلية بالكامل وبنية تحتية للتطوير مفتوحة المصدر، وحلول الطيران الاحترافية لدينا."
             }
         },
+        "store": {
+            "tr": {
+                "title": "Mağaza | Firnas Technologies",
+                "desc": "FiCo programlanabilir eğitim dronu ön sipariş sayfası ve Firnas Technologies kurumsal mağazası."
+            },
+            "en": {
+                "title": "Store | Firnas Technologies",
+                "desc": "FiCo programmable educational drone pre-order page and Firnas Technologies corporate store."
+            },
+            "ar": {
+                "title": "المتجر | Firnas Technologies",
+                "desc": "صفحة الطلب المسبق لطائرة التدريب القابلة للبرمجة FiCo والمتجر الرسمي لشركة Firnas Technologies."
+            }
+        },
         "contact": {
             "tr": {
                 "title": "İletişim | Firnas Technologies",
@@ -873,6 +944,8 @@ document.addEventListener('DOMContentLoaded', () => {
         activePage = 'about';
     } else if (path.includes('/products/')) {
         activePage = 'products';
+    } else if (path.includes('/store/')) {
+        activePage = 'store';
     } else if (path.includes('/contact/')) {
         activePage = 'contact';
     } else if (path.includes('/enes-bakkar/')) {
