@@ -318,7 +318,19 @@ document.addEventListener('DOMContentLoaded', () => {
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
     } else {
-        currentLang = localStorage.getItem('site_lang') || 'tr';
+        currentLang = localStorage.getItem('site_lang');
+        if (!currentLang) {
+            // Auto-detect browser/system language on first-time visit
+            const browserLang = (navigator.language || navigator.userLanguage || 'tr').toLowerCase();
+            if (browserLang.startsWith('en')) {
+                currentLang = 'en';
+            } else if (browserLang.startsWith('ar')) {
+                currentLang = 'ar';
+            } else {
+                currentLang = 'tr';
+            }
+            localStorage.setItem('site_lang', currentLang);
+        }
     }
     
     // Set the select box to correct language
