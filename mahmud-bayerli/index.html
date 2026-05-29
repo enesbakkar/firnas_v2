@@ -63,7 +63,7 @@
             background-size: 24px 24px;
         }
         .profile-container {
-            max-width: 1200px;
+            max-width: 1550px;
             width: 100%;
             background: rgba(5, 20, 33, 0.75);
             backdrop-filter: blur(24px) saturate(180%);
@@ -74,8 +74,8 @@
             box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), inset 0 0 25px rgba(0, 184, 212, 0.05);
             animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             display: grid;
-            grid-template-columns: 350px 1fr;
-            gap: 4rem;
+            grid-template-columns: 300px 1fr 460px;
+            gap: 3rem;
         }
         @keyframes fadeIn {
             0% { opacity: 0; transform: translateY(20px); }
@@ -173,7 +173,7 @@
             font-size: 0.95rem;
             color: #ffffff;
             transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: none !important;
             box-sizing: border-box;
         }
         .btn-social i {
@@ -186,7 +186,6 @@
         .btn-linkedin:hover {
             transform: translateY(-4px) scale(1.02);
             box-shadow: 0 12px 25px rgba(10, 102, 194, 0.5);
-            border-color: rgba(255, 255, 255, 0.25);
         }
 
         /* Content Area styling */
@@ -194,7 +193,7 @@
             display: flex;
             flex-direction: column;
             gap: 2rem;
-            justify-content: center;
+            justify-content: flex-start;
         }
         .content-section {
             background: rgba(5, 20, 33, 0.4);
@@ -250,6 +249,13 @@
             box-shadow: 0 5px 15px rgba(0, 184, 212, 0.2);
         }
 
+        .affiliation-item:hover {
+            background: rgba(0, 184, 212, 0.08) !important;
+            border-color: rgba(0, 184, 212, 0.35) !important;
+            transform: translateX(6px);
+            box-shadow: 0 5px 15px rgba(0, 184, 212, 0.1);
+        }
+
         .close-btn-container {
             margin-top: 1.5rem;
             text-align: right;
@@ -276,6 +282,15 @@
         }
 
         /* Responsive */
+        @media (max-width: 1200px) {
+            .profile-container {
+                grid-template-columns: 300px 1fr;
+                gap: 2.5rem;
+            }
+            .profile-right-sidebar {
+                grid-column: span 2;
+            }
+        }
         @media (max-width: 992px) {
             body {
                 padding: 2rem 1rem;
@@ -290,6 +305,9 @@
                 padding-right: 0;
                 border-bottom: 1px solid rgba(0, 184, 212, 0.15);
                 padding-bottom: 3rem;
+            }
+            .profile-right-sidebar {
+                grid-column: span 1;
             }
             .grid-sub-sections {
                 grid-template-columns: 1fr;
@@ -394,38 +412,55 @@
 
         <!-- Sağ Bölüm: İçerik Alanı -->
         <div class="profile-content-area">
+            <!-- Profil -->
             <div class="content-section">
                 <h2><i class="fas fa-user"></i> <span data-i18n="mb_profile">Profil</span></h2>
                 <p data-i18n="mb_bio_p1">Mahmud Bayerli, Firnas Technologies bünyesinde Elektronik Sistemler, Gömülü Yazılım ve Donanım Geliştirme süreçlerinden sorumlu kıdemli elektronik mühendisidir. Çift işlemcili uçuş kontrol kartlarının şematik tasarımı, PCB çizimi ve sensör fizyon entegrasyonu üzerine uzmanlaşmıştır.</p>
                 <p data-i18n="mb_bio_p2">Amiral gemimiz olan programlanabilir eğitim dronu <strong>FiCo</strong>'nun stabilite algoritmalarının, ultrasonik, kızılötesi ve optik akış sensörlerinin entegrasyonunun ve gömülü uçuş yazılımlarının geliştirilmesinde kritik rol oynamıştır. Küresel insani teknoloji ve ümmet kalkınması hedefleri doğrultusunda, otonom sistemlerde bağımsız elektronik altyapılar inşa etmeye devam etmektedir.</p>
             </div>
 
-            <div class="grid-sub-sections">
-                <div class="content-section">
-                    <h2><i class="fas fa-bolt"></i> <span data-i18n="mb_skills">Uzmanlıklar</span></h2>
-                    <div class="skills-list">
-                        <span class="skill-tag" data-i18n="mb_skill_1">Gömülü Sistemler (C/C++)</span>
-                        <span class="skill-tag" data-i18n="mb_skill_2">PCB & Şematik Tasarım</span>
-                        <span class="skill-tag" data-i18n="mb_skill_3">Sensör Füzyonu</span>
-                        <span class="skill-tag" data-i18n="mb_skill_4">Mikrodenetleyiciler (ARM)</span>
-                        <span class="skill-tag" data-i18n="mb_skill_5">Elektronik Test & AR-GE</span>
-                        <span class="skill-tag" data-i18n="mb_skill_6">Güç Yönetimi</span>
-                        <span class="skill-tag" data-i18n="mb_skill_7">İletişim Protokolleri</span>
-                    </div>
-                </div>
-
-                <div class="content-section" style="display: flex; flex-direction: column; justify-content: space-between;">
-                    <div>
-                        <h2><i class="fas fa-trophy"></i> <span data-i18n="mb_achievements">Başarılar</span></h2>
-                        <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.7; margin: 0;" data-i18n="mb_ach_desc">
-                            TEKNOFEST İnsansız Hava Araçları En Özgün Tasarım Ödülü, Uluslararası İHA Yarışması Birinciliği, Elektronik Tasarım İnovasyon Ödülü ve Deneyap Elektronik Eğitmenliği.
-                        </p>
-                    </div>
-                </div>
+            <!-- Başarılar (Genişletilmiş Sütun Kartı) -->
+            <div class="content-section">
+                <h2><i class="fas fa-trophy"></i> <span data-i18n="mb_achievements">Başarılar</span></h2>
+                <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.75; margin: 0;" data-i18n="mb_ach_desc">
+                    TEKNOFEST İnsansız Hava Araçları En Özgün Tasarım Ödülü, Uluslararası İHA Yarışması Birinciliği, Elektronik Tasarım İnovasyon Ödülü ve Deneyap Elektronik Eğitmenliği.
+                </p>
             </div>
 
             <div class="close-btn-container">
                 <a href="/about/" class="btn-close"><i class="fas fa-arrow-left"></i> <span data-i18n="mb_close">Geri Dön / Kapat</span></a>
+            </div>
+        </div>
+
+        <!-- Sağ Bölüm: Diğer Görevler & Ünvanlar & Uzmanlıklar (Far Right Column) -->
+        <div class="profile-right-sidebar" style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- Diğer Görevler & Ünvanlar -->
+            <div class="content-section">
+                <h2><i class="fas fa-briefcase"></i> <span data-i18n="mb_positions_title">Diğer Görevler & Ünvanlar</span></h2>
+                <div class="affiliations-list" style="display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem;">
+                    <!-- Affiliation 1 -->
+                    <div style="display: flex; align-items: center; gap: 1.25rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 184, 212, 0.08); padding: 1rem 1.25rem; border-radius: 16px; transition: var(--transition);" class="affiliation-item">
+                        <img src="/asset/genc_ihh_logo.png" alt="Genç İHH" style="height: 48px; width: 48px; object-fit: contain; border-radius: 8px; background: rgba(255, 255, 255, 0.9); padding: 4px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 1.1rem; color: #ffffff;" data-i18n="mb_pos_1_title">İstanbul Genç İHH</h4>
+                            <p style="margin: 4px 0 0 0; font-size: 0.9rem; color: var(--accent); font-weight: 600;" data-i18n="mb_pos_1_role">ATOM | Şenlik Birimi Sorumlusu</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Uzmanlıklar -->
+            <div class="content-section">
+                <h2><i class="fas fa-bolt"></i> <span data-i18n="mb_skills">Uzmanlıklar</span></h2>
+                <div class="skills-list" style="margin-top: 1rem;">
+                    <span class="skill-tag" data-i18n="mb_skill_1">Gömülü Sistemler (C/C++)</span>
+                    <span class="skill-tag" data-i18n="mb_skill_2">PCB & Şematik Tasarım</span>
+                    <span class="skill-tag" data-i18n="mb_skill_3">Sensör Füzyonu</span>
+                    <span class="skill-tag" data-i18n="mb_skill_4">Mikrodenetleyiciler (ARM)</span>
+                    <span class="skill-tag" data-i18n="mb_skill_5">Elektronik Test & AR-GE</span>
+                    <span class="skill-tag" data-i18n="mb_skill_6">Güç Yönetimi</span>
+                    <span class="skill-tag" data-i18n="mb_skill_7">İletişim Protokolleri</span>
+                </div>
             </div>
         </div>
     </div>

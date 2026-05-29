@@ -12,6 +12,14 @@
         rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Fix the social media icons clipping/cropping bug on hover */
+        .clickable-member:hover .member-socials, 
+        .team-member:hover .member-socials {
+            max-height: 70px !important;
+            overflow: visible !important;
+        }
+    </style>
 </head>
 
 <body>
@@ -137,7 +145,23 @@
                     </div>
                     <span class="click-detail-hint" data-i18n="team_click_hint">Detaylar için tıklayınız</span>
                 </div>
-                <!-- Team 3 -->
+                <!-- Team 3 (Haydar Irmak) -->
+                <div class="team-member clickable-member" onclick="if(!event.target.closest('.social-icon-link')) { window.open('/haydar-irmak/', '_blank'); }" style="cursor: pointer;">
+                    <div class="member-avatar">
+                        <img src="/asset/hahydar_irmrak.jpeg" alt="Haydar Irmak">
+                        <div class="member-overlay">
+                            <span class="overlay-text"><i class="fas fa-id-card"></i> Detaylar</span>
+                        </div>
+                    </div>
+                    <h3 data-i18n="team_4_name">Haydar Irmak</h3>
+                    <p class="text-muted" data-i18n="team_4_role" style="font-weight: 500;">Mekanik Tasarım Sorumlusu</p>
+                    <div class="member-socials">
+                        <a href="https://www.linkedin.com/in/haydar-irmak/" target="_blank" class="social-icon-link" aria-label="LinkedIn" onclick="event.stopPropagation();"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://www.instagram.com/haydar_rmk/" target="_blank" class="social-icon-link" aria-label="Instagram" onclick="event.stopPropagation();"><i class="fab fa-instagram"></i></a>
+                    </div>
+                    <span class="click-detail-hint" data-i18n="team_click_hint">Detaylar için tıklayınız</span>
+                </div>
+                <!-- Team 4 (Software/Autonomy Team) -->
                 <div class="team-member">
                     <div class="member-avatar">
                         <div class="icon-ph"><i class="fas fa-code"></i></div>
