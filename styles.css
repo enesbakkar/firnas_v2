@@ -1704,13 +1704,13 @@ html, body {
   width: 120%;
   margin-left: -10%;
   margin-right: -10%;
+  animation: floatHub 6s ease-in-out infinite;
 }
 .fico-hub-image {
   width: 100%;
   height: auto;
   border-radius: 24px;
   filter: drop-shadow(0 15px 40px rgba(0, 184, 212, 0.25));
-  animation: floatHub 6s ease-in-out infinite;
 }
 @keyframes floatHub {
   0% { transform: translateY(0px); }
