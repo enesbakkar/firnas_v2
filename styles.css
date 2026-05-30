@@ -1119,7 +1119,8 @@ html, body {
 @media (max-width: 992px) {
   .hero-content h1 { font-size: 3.5rem; }
   .section-header h2 { font-size: 2.5rem; }
-  .project-showcase, .project-showcase.reversed { grid-template-columns: 1fr; }
+  .project-showcase { display: flex !important; flex-direction: column-reverse !important; }
+  .project-showcase.reversed { display: flex !important; flex-direction: column !important; }
   .project-visual { padding: 3rem 1rem; }
   [dir="rtl"] .project-showcase { direction: rtl; }
   
@@ -1185,6 +1186,15 @@ html, body {
     font-size: 1.25rem !important;
     font-weight: 700;
   }
+  .lang-dropdown-menu {
+    right: 50% !important;
+    left: auto !important;
+    transform: translate(50%, -10px) !important;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  }
+  .lang-dropdown.active .lang-dropdown-menu {
+    transform: translate(50%, 0) !important;
+  }
   .logo-text {
     font-size: 1.35rem !important;
   }
@@ -1214,14 +1224,14 @@ html, body {
     padding: 2.5rem 1.5rem !important;
   }
   .hotspot {
-    width: 28px !important;
-    height: 28px !important;
-    font-size: 0.75rem !important;
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.8rem !important;
     border-width: 1px !important;
   }
   .hotspot-pulse {
-    width: 28px !important;
-    height: 28px !important;
+    width: 32px !important;
+    height: 32px !important;
   }
   
   /* About Page Cards Spacing on Mobile */
@@ -1725,6 +1735,17 @@ html, body {
   box-shadow: 0 0 15px var(--accent-glow);
   border: 2px solid #ffffff;
 }
+.hotspot::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  right: -8px;
+  bottom: -8px;
+  border-radius: 50%;
+  z-index: 15;
+  background: transparent;
+}
 .hotspot-pulse {
   position: absolute;
   top: -2px;
@@ -1919,14 +1940,14 @@ html, body {
     padding: 2rem 1.5rem;
   }
   .hotspot {
-    width: 28px;
-    height: 28px;
-    font-size: 0.75rem;
+    width: 32px;
+    height: 32px;
+    font-size: 0.8rem;
     border-width: 1px;
   }
   .hotspot-pulse {
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
   }
 }
 
@@ -2385,7 +2406,8 @@ html, body {
 
 @media (max-width: 576px) {
   .location-map-card.expanded .location-map-inner {
-    width: 300px;
+    width: calc(100vw - 32px) !important;
+    max-width: 360px !important;
     height: 250px;
   }
 }
