@@ -234,7 +234,31 @@ const translations = {
         "store_success_desc": "Ön sipariş talebiniz başarıyla sisteme kaydedilmiştir. En kısa sürede sizinle iletişime geçeceğiz.",
         "store_modal_close": "Kapat",
         "store_label_quantity": "Ön Sipariş Adedi",
-        "store_label_notes": "Özel Talepleriniz / Notlar"
+        "store_label_notes": "Özel Talepleriniz / Notlar",
+        
+        // Emin Türkmen Profile Translations
+        "team_5_name": "Emin Türkmen",
+        "team_5_role": "Sosyal Medya Uzmanı",
+        "et_name": "Emin Türkmen",
+        "et_profile": "Profil",
+        "et_bio_p1": "Emin Türkmen, Firnas Technologies bünyesinde Sosyal Medya Uzmanı ve Dijital Stratejist olarak görev yapmaktadır. Sosyal medya yönetimi, dijital içerik üretimi, topluluk yönetimi ve marka algısı oluşturma alanlarında uzmanlaşmıştır.",
+        "et_bio_p2": "Aynı zamanda İHH İnsani Yardım Vakfı bünyesinde insani yardım ve sosyal sorumluluk projelerinde aktif rol almaktadır. Özellikle savaş bölgelerindeki çocuklara yönelik insani farkındalık çalışmaları ve sokak sanatı (grafiti) projeleriyle tanınmaktadır. Dijital medya araçlarını ve sanatı, küresel mazlumların sesi olmak ve toplumsal farkındalık oluşturmak amacıyla harmanlayarak Firnas Technologies'in küresel vizyonunu dijital dünyada başarıyla temsil etmektedir.",
+        "et_skills": "Uzmanlıklar",
+        "et_skill_1": "Sosyal Medya Yönetimi",
+        "et_skill_2": "Dijital Pazarlama",
+        "et_skill_3": "İçerik Stratejisi",
+        "et_skill_4": "Grafik Tasarım & Sanat",
+        "et_skill_5": "Sokak Sanatı (Grafiti)",
+        "et_skill_6": "Kreatif Direktörlük",
+        "et_skill_7": "Toplumsal Farkındalık",
+        "et_achievements": "Başarılar",
+        "et_ach_desc": "Suriye Fırat Kalkanı Bölgesi Çocuk Şenlikleri Sanat Koordinatörlüğü, Contemporary Gaza Bağımsız Sokak Sergisi Girişimi, Sosyal Sorumluluk ve Dijital Farkındalık Ödülleri.",
+        "et_positions_title": "Diğer Görevler & Ünvanlar",
+        "et_pos_1_title": "İHH İnsani Yardım Vakfı",
+        "et_pos_1_role": "Sosyal Medya Uzmanı & Proje Koordinatörü",
+        "et_pos_2_title": "Firnas Technologies",
+        "et_pos_2_role": "Sosyal Medya Uzmanı",
+        "et_close": "Geri Dön / Kapat"
     },
     "en": {
         "nav_home": "Home",
@@ -471,7 +495,31 @@ const translations = {
         "store_success_desc": "Your pre-order request has been successfully registered. We will contact you as soon as possible.",
         "store_modal_close": "Close",
         "store_label_quantity": "Pre-Order Quantity",
-        "store_label_notes": "Custom Requests / Notes"
+        "store_label_notes": "Custom Requests / Notes",
+        
+        // Emin Türkmen Profile Translations (EN)
+        "team_5_name": "Emin Türkmen",
+        "team_5_role": "Social Media Specialist",
+        "et_name": "Emin Türkmen",
+        "et_profile": "Profile",
+        "et_bio_p1": "Emin Türkmen serves as the Social Media Specialist and Digital Strategist at Firnas Technologies. He specializes in social media management, digital content production, community management, and building brand identity.",
+        "et_bio_p2": "In parallel, he actively takes roles in humanitarian aid and social responsibility projects under the IHH Humanitarian Relief Foundation. He is well-known for his street art (graffiti) projects and humanitarian awareness initiatives targeted at children in conflict zones. By blending digital media tools and art to amplify the voice of the oppressed worldwide, he successfully represents the global vision of Firnas Technologies in the digital sphere.",
+        "et_skills": "Expertise",
+        "et_skill_1": "Social Media Management",
+        "et_skill_2": "Digital Marketing",
+        "et_skill_3": "Content Strategy",
+        "et_skill_4": "Graphic Design & Art",
+        "et_skill_5": "Street Art (Graffiti)",
+        "et_skill_6": "Creative Direction",
+        "et_skill_7": "Social Awareness",
+        "et_achievements": "Achievements",
+        "et_ach_desc": "Art Coordination for Syria Euphrates Shield Region Children's Festivals, Contemporary Gaza Independent Street Exhibition Initiative, Social Responsibility & Digital Awareness Awards.",
+        "et_positions_title": "Other Titles & Affiliations",
+        "et_pos_1_title": "IHH Humanitarian Relief Foundation",
+        "et_pos_1_role": "Social Media Specialist & Project Coordinator",
+        "et_pos_2_title": "Firnas Technologies",
+        "et_pos_2_role": "Social Media Specialist",
+        "et_close": "Go Back / Close"
     },
     "ar": {
         "nav_home": "الرئيسية",
@@ -708,7 +756,31 @@ const translations = {
         "store_success_desc": "تم تسجيل طلب الطلب المسبق الخاص بك بنجاح. سوف نتصل بك في أقرب وقت ممكن.",
         "store_modal_close": "إغلاق",
         "store_label_quantity": "كمية الطلب المسبق",
-        "store_label_notes": "طلبات خاصة / ملاحظات"
+        "store_label_notes": "طلبات خاصة / ملاحظات",
+        
+        // Emin Türkmen Profile Translations (AR)
+        "team_5_name": "أمين تركمان",
+        "team_5_role": "أخصائي إعلام اجتماعي",
+        "et_name": "أمين تركمان",
+        "et_profile": "الملف الشخصي",
+        "et_bio_p1": "يعمل أمين تركمان كأخصائي إعلام اجتماعي ومستشار رقمي لدى Firnas Technologies. وهو متخصص في إدارة وسائل التواصل الاجتماعي، وإنتاج المحتوى الرقمي، وإدارة المجتمعات، وبناء الهوية التجارية.",
+        "et_bio_p2": "وبالتوازي مع ذلك، يلعب دوراً نشطاً في مشاريع الإغاثة الإنسانية والمسؤولية الاجتماعية تحت مظلة هيئة الإغاثة الإنسانية (İHH). وهو معروف على نطاق واسع بمشاريعه الفنية في الشارع (الغرافيتي) ومبادرات التوعية الإنسانية الموجهة للأطفال في مناطق النزاع. ومن خلال دمجه لأدوات الإعلام الرقمي والفن لنصرة المظلومين حول العالم، يمثل بنجاح الرؤية العالمية لشركة Firnas Technologies في الفضاء الرقمي.",
+        "et_skills": "التخصصات",
+        "et_skill_1": "إدارة وسائل التواصل",
+        "et_skill_2": "التسويق الرقمي",
+        "et_skill_3": "استراتيجية المحتوى",
+        "et_skill_4": "التصميم الجرافيكي والفن",
+        "et_skill_5": "فن الشارع (الغرافيتي)",
+        "et_skill_6": "الإدارة الإبداعية",
+        "et_skill_7": "التوعية الاجتماعية",
+        "et_achievements": "الإنجازات",
+        "et_ach_desc": "التنسيق الفني لمهرجانات الأطفال في منطقة درع الفرات بسوريا، مبادرة معرض غزة المعاصر المستقل في الشارع، وجوائز المسؤولية الاجتماعية والتوعية الرقمية.",
+        "et_positions_title": "المهام والوظائف الأخرى",
+        "et_pos_1_title": "هيئة الإغاثة الإنسانية (İHH)",
+        "et_pos_1_role": "أخصائي إعلام اجتماعي ومنسق مشاريع",
+        "et_pos_2_title": "Firnas Technologies",
+        "et_pos_2_role": "أخصائي إعلام اجتماعي",
+        "et_close": "الرجوع / إغلاق"
     }
 };
 
@@ -1019,6 +1091,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 "title": "محمود بايرلي | قائد الإلكترونيات والبرمجيات المدمجة | Firnas Technologies",
                 "desc": "محمود بايرلي - مدير وحدة الإلكترونيات، مصمم الأنظمة المدمجة ولوحات الدوائر المطبوعة (PCB) في Firnas Technologies. مطور لوحات التحكم في الطيران ودمج المستشعرات."
             }
+        },
+        "emin-turkmen": {
+            "tr": {
+                "title": "Emin Türkmen | Firnas Technologies Sosyal Medya Uzmanı & Dijital Stratejist",
+                "desc": "Emin Türkmen - Firnas Technologies Sosyal Medya Uzmanı, Dijital Stratejist ve Graffiti Sanatçısı. Toplumsal sorumluluk, insani farkındalık projeleri ve dijital topluluk yönetimi sorumlusu."
+            },
+            "en": {
+                "title": "Emin Türkmen | Social Media Specialist & Digital Strategist | Firnas Technologies",
+                "desc": "Emin Türkmen - Social Media Specialist, Digital Strategist, and Graffiti Artist at Firnas Technologies. Responsible for social responsibility, humanitarian awareness, and community building."
+            },
+            "ar": {
+                "title": "أمين تركمان | أخصائي إعلام اجتماعي ومستشار رقمي | Firnas Technologies",
+                "desc": "أمين تركمان - أخصائي إعلام اجتماعي ومستشار رقمي وفنان غرافيتي في Firnas Technologies. مسؤول عن المسؤولية الاجتماعية، التوعية الإنسانية، وبناء المجتمعات الرقمية."
+            }
         }
     };
 
@@ -1037,6 +1123,8 @@ document.addEventListener('DOMContentLoaded', () => {
         activePage = 'enes-bakkar';
     } else if (path.includes('/mahmud-bayerli/')) {
         activePage = 'mahmud-bayerli';
+    } else if (path.includes('/emin-turkmen/')) {
+        activePage = 'emin-turkmen';
     }
 
     if (pageTitle && pageMetas[activePage] && pageMetas[activePage][currentLang]) {
