@@ -38,10 +38,23 @@
             gap: 2rem;
         }
 
-        .store-badge-new {
+        .store-badges-wrapper {
             position: absolute;
             top: 2rem;
             left: 2rem;
+            right: 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: calc(100% - 4rem);
+            pointer-events: none;
+            z-index: 10;
+        }
+        .store-badges-wrapper * {
+            pointer-events: auto;
+        }
+
+        .store-badge-new {
             background: linear-gradient(135deg, var(--accent) 0%, #00e5ff 100%);
             color: #051421;
             padding: 0.5rem 1.25rem;
@@ -53,9 +66,6 @@
         }
 
         .store-status-badge {
-            position: absolute;
-            top: 2rem;
-            right: 2rem;
             background: rgba(0, 184, 212, 0.08);
             border: 1px solid rgba(0, 184, 212, 0.3);
             color: var(--accent);
@@ -247,6 +257,20 @@
                 padding: 2rem 1.25rem 2rem !important;
                 gap: 1.5rem !important;
             }
+            .store-badges-wrapper {
+                position: relative !important;
+                top: auto !important;
+                left: auto !important;
+                right: auto !important;
+                width: 100% !important;
+                display: flex !important;
+                flex-direction: row !important;
+                justify-content: center !important;
+                align-items: center !important;
+                gap: 1rem !important;
+                margin-bottom: 0.5rem !important;
+                pointer-events: auto !important;
+            }
             .store-badge-new,
             .store-status-badge {
                 position: relative !important;
@@ -256,7 +280,6 @@
                 transform: none !important;
                 margin: 0 !important;
                 display: inline-flex !important;
-                align-self: center !important;
             }
             .store-img-wrapper {
                 margin-top: 0 !important;
@@ -421,10 +444,12 @@
             <div class="store-grid">
                 <!-- Sol: FiCo Dron Kartı -->
                 <div class="store-visual-card">
-                    <span class="store-badge-new" data-i18n="store_badge_new">ÖN SİPARİŞ</span>
-                    <div class="store-status-badge">
-                        <span class="store-status-dot"></span>
-                        <span data-i18n="store_status_active">Taleplere Açık</span>
+                    <div class="store-badges-wrapper">
+                        <span class="store-badge-new" data-i18n="store_badge_new">ÖN SİPARİŞ</span>
+                        <div class="store-status-badge">
+                            <span class="store-status-dot"></span>
+                            <span data-i18n="store_status_active">Taleplere Açık</span>
+                        </div>
                     </div>
 
                     <div class="store-img-wrapper">
