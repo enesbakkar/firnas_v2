@@ -1242,3 +1242,13 @@ function typeTerminal() {
         }, 5000);
     }
 }
+
+// Handle Futuristic Splash Screen Fade Out
+window.addEventListener('load', () => {
+    setTimeout(() => {
+        const splash = document.getElementById('app-splash-screen');
+        if (splash) {
+            splash.classList.add('loaded');
+        }
+    }, 2000); // Elegant 2-second showcase delay
+});
