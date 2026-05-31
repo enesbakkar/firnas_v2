@@ -5,28 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Firnas Technologies: Havacılık, uzay ve yazılımın kesiştiği noktada otonom sistemler ve eğitim teknolojileri (FiCo) geliştiren mühendislik merkezi.">
     <title>Firnas Technologies</title>
-    <link rel="icon" type="image/png" href="asset/firnas_logo.png">
+    <link rel="icon" type="image/png" href="/asset/firnas_logo.png">
+    <link rel="shortcut icon" type="image/png" href="/asset/firnas_logo.png">
+    <link rel="apple-touch-icon" href="/asset/firnas_logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="styles.css?v=1.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
-    <!-- Futuristic Splash Screen Loader -->
-    <div id="app-splash-screen" class="splash-container">
-        <div class="splash-glow"></div>
-        <div class="splash-content">
-            <div class="logo-wrapper">
-                <img src="asset/firnas_logo.png" alt="Firnas Logo" class="splash-logo">
-                <div class="loading-ring"></div>
-            </div>
-            <h2 class="splash-title">FIRNAS</h2>
-            <p class="splash-subtitle">INITIALIZING ECOSYSTEM...</p>
-            <div class="splash-loading-bar">
-                <div class="splash-loading-fill"></div>
-            </div>
-            <div class="splash-scanning-text">SYSTEMS: ACTIVE | SECURE | STABLE</div>
-        </div>
-    </div>
 
     <!-- Futuristic Offline Overlay -->
     <div id="app-offline-screen" class="offline-container hidden">
@@ -340,23 +326,9 @@
             </div>
         </div>
     </footer>
-    <!-- Bulletproof Isolated Splash Screen & Connection Manager -->
+    <!-- Bulletproof Connection Manager -->
     <script>
         (function() {
-            // Unconditional splash screen dismissal
-            function dismissSplash() {
-                var splash = document.getElementById('app-splash-screen');
-                if (splash && !splash.classList.contains('loaded')) {
-                    splash.classList.add('loaded');
-                }
-            }
-            // Safely dismiss after 2.5 seconds no matter what
-            setTimeout(dismissSplash, 2500);
-
-            // Also try on DOM Ready and Window Load
-            document.addEventListener('DOMContentLoaded', dismissSplash);
-            window.addEventListener('load', dismissSplash);
-
             // Connection Checker and Redirection
             function checkConnectionAndRedirect() {
                 var isOnline = navigator.onLine;
