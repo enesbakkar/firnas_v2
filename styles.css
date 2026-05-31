@@ -2812,4 +2812,94 @@ html, body {
   50% { opacity: 1; }
 }
 
+/* Futuristic Offline Overlay */
+.offline-container {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: #051421;
+  z-index: 999999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  color: #ffffff;
+  transition: opacity 0.5s ease;
+}
+.offline-container.hidden {
+  opacity: 0;
+  pointer-events: none;
+  display: none !important;
+}
+.offline-glow {
+  position: absolute;
+  width: 80vw; height: 80vw;
+  max-width: 600px; max-height: 600px;
+  background: radial-gradient(circle, rgba(244, 67, 54, 0.15) 0%, transparent 70%);
+  filter: blur(50px);
+  z-index: 1;
+  pointer-events: none;
+}
+.offline-content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 2rem;
+}
+.offline-icon-wrapper {
+  width: 120px; height: 120px;
+  border-radius: 50%;
+  border: 2px dashed #f44336;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 2rem;
+  animation: pulseRedBorder 2s infinite;
+  box-shadow: 0 0 20px rgba(244, 67, 54, 0.1);
+}
+.offline-icon {
+  font-size: 3.5rem;
+  color: #f44336;
+  filter: drop-shadow(0 0 10px rgba(244, 67, 54, 0.5));
+  animation: vibrate 0.5s infinite alternate;
+}
+.offline-title {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  color: #ffffff;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(244, 67, 54, 0.2);
+}
+.offline-subtitle {
+  font-family: var(--font-sans);
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.7);
+  margin-bottom: 3rem;
+  max-width: 320px;
+}
+.btn-retry {
+  background-color: #f44336 !important;
+  box-shadow: 0 0 20px rgba(244, 67, 54, 0.4) !important;
+}
+.btn-retry:hover {
+  background-color: #d32f2f !important;
+  box-shadow: 0 0 30px rgba(244, 67, 54, 0.6) !important;
+  transform: translateY(-2px);
+}
+@keyframes pulseRedBorder {
+  0% { transform: scale(1); box-shadow: 0 0 20px rgba(244, 67, 54, 0.1); }
+  50% { transform: scale(1.05); box-shadow: 0 0 30px rgba(244, 67, 54, 0.3); }
+  100% { transform: scale(1); box-shadow: 0 0 20px rgba(244, 67, 54, 0.1); }
+}
+@keyframes vibrate {
+  0% { transform: rotate(-2deg); }
+  100% { transform: rotate(2deg); }
+}
+
 

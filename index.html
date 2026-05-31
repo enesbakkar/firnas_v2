@@ -28,6 +28,21 @@
         </div>
     </div>
 
+    <!-- Futuristic Offline Overlay -->
+    <div id="app-offline-screen" class="offline-container hidden">
+        <div class="offline-glow"></div>
+        <div class="offline-content">
+            <div class="offline-icon-wrapper">
+                <i class="fas fa-wifi-slash offline-icon"></i>
+            </div>
+            <h2 class="offline-title">BAĞLANTI KESİLDİ</h2>
+            <p class="offline-subtitle">İnternet bağlantınızı kontrol edip lütfen tekrar deneyin.</p>
+            <button onclick="checkConnectionRetry()" class="btn btn-primary btn-retry">
+                <i class="fas fa-redo" style="margin-right: 8px;"></i> Tekrar Dene
+            </button>
+        </div>
+    </div>
+
     <nav class="navbar navbar-dark">
         <div class="container nav-container">
             <a href="/" class="logo-text">

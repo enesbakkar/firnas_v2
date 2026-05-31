@@ -1252,3 +1252,64 @@ window.addEventListener('load', () => {
         }
     }, 2000); // Elegant 2-second showcase delay
 });
+
+// Check internet connection and handle redirection/offline display
+function checkInitialConnection() {
+    const offlineScreen = document.getElementById('app-offline-screen');
+    if (!navigator.onLine) {
+        if (offlineScreen) {
+            offlineScreen.classList.remove('hidden');
+            offlineScreen.style.display = 'flex';
+        }
+    } else {
+        if (offlineScreen) {
+            offlineScreen.classList.add('hidden');
+            offlineScreen.style.display = 'none';
+        }
+        // If inside local Capacitor environment, redirect to live website
+        if (window.Capacitor && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
+            window.location.href = "https://firnastechnologies.com" + window.location.pathname;
+        }
+    }
+}
+
+// Retry button click action with elegant spinner
+window.checkConnectionRetry = function() {
+    const btn = document.querySelector('.btn-retry');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Bağlanıyor...';
+    btn.disabled = true;
+    
+    setTimeout(() => {
+        btn.disabled = false;
+        if (navigator.onLine) {
+            checkInitialConnection();
+        } else {
+            btn.innerHTML = originalText;
+            // Short visual feedback
+            btn.style.animation = 'none';
+            void btn.offsetWidth; // Trigger reflow
+            btn.style.animation = 'pulseRedBorder 0.5s ease';
+        }
+    }, 1200);
+};
+
+// Global event listeners for in-app connection drops
+window.addEventListener('offline', () => {
+    const offlineScreen = document.getElementById('app-offline-screen');
+    if (offlineScreen) {
+        offlineScreen.classList.remove('hidden');
+        offlineScreen.style.display = 'flex';
+    }
+});
+
+window.addEventListener('online', () => {
+    const offlineScreen = document.getElementById('app-offline-screen');
+    if (offlineScreen) {
+        offlineScreen.classList.add('hidden');
+        offlineScreen.style.display = 'none';
+    }
+});
+
+// Run connection check immediately
+checkInitialConnection();
