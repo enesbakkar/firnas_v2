@@ -340,6 +340,97 @@
             </div>
         </div>
     </footer>
+    <!-- Bulletproof Isolated Splash Screen & Connection Manager -->
+    <script>
+        (function() {
+            // Unconditional splash screen dismissal
+            function dismissSplash() {
+                var splash = document.getElementById('app-splash-screen');
+                if (splash && !splash.classList.contains('loaded')) {
+                    splash.classList.add('loaded');
+                }
+            }
+            // Safely dismiss after 2.5 seconds no matter what
+            setTimeout(dismissSplash, 2500);
+
+            // Also try on DOM Ready and Window Load
+            document.addEventListener('DOMContentLoaded', dismissSplash);
+            window.addEventListener('load', dismissSplash);
+
+            // Connection Checker and Redirection
+            function checkConnectionAndRedirect() {
+                var isOnline = navigator.onLine;
+                var offlineScreen = document.getElementById('app-offline-screen');
+                
+                if (!isOnline) {
+                    if (offlineScreen) {
+                        offlineScreen.classList.remove('hidden');
+                        offlineScreen.style.display = 'flex';
+                    }
+                } else {
+                    if (offlineScreen) {
+                        offlineScreen.classList.add('hidden');
+                        offlineScreen.style.display = 'none';
+                    }
+                    
+                    // Redirect to live website if running locally in Capacitor WebView
+                    var isLocal = window.location.hostname === 'localhost' || 
+                                  window.location.hostname === '127.0.0.1' || 
+                                  window.location.protocol === 'file:';
+                                  
+                    // Check window.Capacitor asynchronously since it might load a bit later
+                    setTimeout(function() {
+                        if ((window.Capacitor || window.webkit || window.Android) && isLocal) {
+                            window.location.href = "https://firnastechnologies.com/";
+                        }
+                    }, 100);
+                }
+            }
+
+            // Run initial check
+            checkConnectionAndRedirect();
+
+            // Connect global retry handler
+            window.checkConnectionRetry = function() {
+                var btn = document.querySelector('.btn-retry');
+                if (btn) {
+                    var originalHTML = btn.innerHTML;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Bağlanıyor...';
+                    btn.disabled = true;
+                    
+                    setTimeout(function() {
+                        btn.disabled = false;
+                        if (navigator.onLine) {
+                            checkConnectionAndRedirect();
+                        } else {
+                            btn.innerHTML = originalHTML;
+                            btn.style.animation = 'none';
+                            void btn.offsetWidth; // Trigger reflow
+                            btn.style.animation = 'pulseRedBorder 0.5s ease';
+                        }
+                    }, 1200);
+                }
+            };
+
+            // Connection state change listeners
+            window.addEventListener('offline', function() {
+                var offlineScreen = document.getElementById('app-offline-screen');
+                if (offlineScreen) {
+                    offlineScreen.classList.remove('hidden');
+                    offlineScreen.style.display = 'flex';
+                }
+            });
+
+            window.addEventListener('online', function() {
+                var offlineScreen = document.getElementById('app-offline-screen');
+                if (offlineScreen) {
+                    offlineScreen.classList.add('hidden');
+                    offlineScreen.style.display = 'none';
+                }
+            });
+        })();
+    </script>
+
     <script src="script.js?v=1.1"></script>
 </body>
 </html>
