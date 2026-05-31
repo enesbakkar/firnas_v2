@@ -1268,7 +1268,7 @@ function checkInitialConnection() {
         }
         // If inside local Capacitor environment, redirect to live website
         if (window.Capacitor && (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1')) {
-            window.location.href = "https://firnastechnologies.com" + window.location.pathname;
+            window.location.href = "https://firnastechnologies.com/";
         }
     }
 }

@@ -1,5 +1,11 @@
 {
   "appId": "com.firnastechnologies.app",
   "appName": "Firnas Technologies",
-  "webDir": "dist"
+  "webDir": "dist",
+  "server": {
+    "allowNavigation": [
+      "firnastechnologies.com",
+      "*.firnastechnologies.com"
+    ]
+  }
 }
