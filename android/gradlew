@@ -248,4 +248,5 @@ eval "set -- $(
         tr '\n' ' '
     )" '"$@"'
 
+# Harmless comment to force Git line endings refresh
 exec "$JAVACMD" "$@"
