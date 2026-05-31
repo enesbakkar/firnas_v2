@@ -1243,14 +1243,20 @@ function typeTerminal() {
     }
 }
 
-// Handle Futuristic Splash Screen Fade Out
-window.addEventListener('load', () => {
-    setTimeout(() => {
-        const splash = document.getElementById('app-splash-screen');
-        if (splash) {
-            splash.classList.add('loaded');
-        }
-    }, 2000); // Elegant 2-second showcase delay
+// Handle Futuristic Splash Screen Fade Out (Bulletproof direct timer)
+function dismissSplashScreen() {
+    const splash = document.getElementById('app-splash-screen');
+    if (splash && !splash.classList.contains('loaded')) {
+        splash.classList.add('loaded');
+    }
+}
+
+// Safely and unconditionally dismiss splash screen after a guaranteed 2.5 seconds
+setTimeout(dismissSplashScreen, 2500);
+
+// Also trigger as soon as the DOM is ready for a faster, smooth experience
+document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(dismissSplashScreen, 1800);
 });
 
 // Check internet connection and handle redirection/offline display
