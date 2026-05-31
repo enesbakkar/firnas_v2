@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Firnas Technologies</string>
+    <string name="title_activity_main">Firnas Technologies</string>
+    <string name="package_name">com.firnastechnologies.app</string>
+    <string name="custom_url_scheme">com.firnastechnologies.app</string>
+</resources>

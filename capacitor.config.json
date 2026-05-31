@@ -1,0 +1,9 @@
+{
+  "appId": "com.firnastechnologies.app",
+  "appName": "Firnas Technologies",
+  "webDir": "dist",
+  "server": {
+    "url": "https://firnastechnologies.com",
+    "cleartext": true
+  }
+}

@@ -1,0 +1,22 @@
+# Dependency directories
+node_modules/
+jspm_packages/
+
+# Build outputs
+dist/
+tmp/
+out/
+
+# Android specific
+android/app/build/
+android/.gradle/
+android/local.properties
+android/captures/
+.gradle/
+build/
+
+# Operating System Files
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+.DS_Store
