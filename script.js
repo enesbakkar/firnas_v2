@@ -241,8 +241,9 @@ const translations = {
         "team_5_role": "Sosyal Medya Uzmanı",
         "et_name": "Emin Türkmen",
         "et_profile": "Profil",
-        "et_bio_p1": "Emin Türkmen, Firnas Technologies bünyesinde Sosyal Medya Uzmanı ve Dijital Stratejist olarak görev yapmaktadır. Sosyal medya yönetimi, dijital içerik üretimi, topluluk yönetimi ve marka algısı oluşturma alanlarında uzmanlaşmıştır.",
-        "et_bio_p2": "Aynı zamanda İHH İnsani Yardım Vakfı bünyesinde insani yardım ve sosyal sorumluluk projelerinde aktif rol almaktadır. Özellikle savaş bölgelerindeki çocuklara yönelik insani farkındalık çalışmaları ve sokak sanatı (grafiti) projeleriyle tanınmaktadır. Dijital medya araçlarını ve sanatı, küresel mazlumların sesi olmak ve toplumsal farkındalık oluşturmak amacıyla harmanlayarak Firnas Technologies'in küresel vizyonunu dijital dünyada başarıyla temsil etmektedir.",
+        "et_bio_p1": "Emin Türkmen, Firnas Technologies bünyesinde Sosyal Medya Uzmanı ve Dijital Stratejist olarak görev yapmaktadır. Sosyal medya yönetimi, dijital içerik üretimi, topluluk yönetimi, marka iletişimi, dijital kampanya planlaması ve canlı yayın organizasyonları alanlarında uzmanlaşmıştır. Dijital platformlarda markaların görünürlüğünü artırmaya, hedef kitleleriyle güçlü bağlar kurmalarına ve sürdürülebilir dijital stratejiler geliştirmelerine katkı sağlamaktadır.",
+        "et_bio_p2": "Bununla birlikte, İHH İnsani Yardım Vakfı bünyesinde Sosyal Medya Uzmanı olarak görev yapmakta ve insani yardım çalışmalarının dijital iletişim süreçlerinde aktif rol almaktadır. Savaş, afet ve kriz bölgelerinde sahada bulunarak yaşanan insani dramları, yardım faaliyetlerini ve umut hikâyelerini kamuoyuna aktarmaktadır.",
+        "et_bio_p3": "Ümmet coğrafyasında yaşanan insani krizlere dikkat çekmek, mazlumların sesini duyurmak ve toplumsal farkındalığı artırmak amacıyla dijital medya araçlarını etkin şekilde kullanmaktadır. Saha tecrübesini güçlü bir iletişim diliyle birleştirerek insani yardım çalışmalarının daha geniş kitlelere ulaşmasına katkı sunmaktadır.",
         "et_skills": "Uzmanlıklar",
         "et_skill_1": "Sosyal Medya Yönetimi",
         "et_skill_2": "Dijital Pazarlama",
@@ -502,8 +503,9 @@ const translations = {
         "team_5_role": "Social Media Specialist",
         "et_name": "Emin Türkmen",
         "et_profile": "Profile",
-        "et_bio_p1": "Emin Türkmen serves as the Social Media Specialist and Digital Strategist at Firnas Technologies. He specializes in social media management, digital content production, community management, and building brand identity.",
-        "et_bio_p2": "In parallel, he actively takes roles in humanitarian aid and social responsibility projects under the IHH Humanitarian Relief Foundation. He is well-known for his street art (graffiti) projects and humanitarian awareness initiatives targeted at children in conflict zones. By blending digital media tools and art to amplify the voice of the oppressed worldwide, he successfully represents the global vision of Firnas Technologies in the digital sphere.",
+        "et_bio_p1": "Emin Türkmen serves as the Social Media Specialist and Digital Strategist at Firnas Technologies. He specializes in social media management, digital content production, community management, brand communication, digital campaign planning, and live stream organizations. He contributes to increasing the visibility of brands on digital platforms, establishing strong bonds with their target audiences, and developing sustainable digital strategies.",
+        "et_bio_p2": "Furthermore, he serves as a Social Media Specialist under the IHH Humanitarian Relief Foundation and plays an active role in the digital communication processes of humanitarian aid efforts. Being present on the ground in war, disaster, and crisis areas, he conveys humanitarian tragedies, relief activities, and stories of hope to the public.",
+        "et_bio_p3": "He effectively uses digital media tools to draw attention to humanitarian crises in the Muslim world, raise the voice of the oppressed, and increase social awareness. By combining his field experience with a strong communication language, he contributes to humanitarian aid efforts reaching wider audiences.",
         "et_skills": "Expertise",
         "et_skill_1": "Social Media Management",
         "et_skill_2": "Digital Marketing",
@@ -763,8 +765,9 @@ const translations = {
         "team_5_role": "أخصائي إعلام اجتماعي",
         "et_name": "أمين تركمان",
         "et_profile": "الملف الشخصي",
-        "et_bio_p1": "يعمل أمين تركمان كأخصائي إعلام اجتماعي ومستشار رقمي لدى Firnas Technologies. وهو متخصص في إدارة وسائل التواصل الاجتماعي، وإنتاج المحتوى الرقمي، وإدارة المجتمعات، وبناء الهوية التجارية.",
-        "et_bio_p2": "وبالتوازي مع ذلك، يلعب دوراً نشطاً في مشاريع الإغاثة الإنسانية والمسؤولية الاجتماعية تحت مظلة هيئة الإغاثة الإنسانية (İHH). وهو معروف على نطاق واسع بمشاريعه الفنية في الشارع (الغرافيتي) ومبادرات التوعية الإنسانية الموجهة للأطفال في مناطق النزاع. ومن خلال دمجه لأدوات الإعلام الرقمي والفن لنصرة المظلومين حول العالم، يمثل بنجاح الرؤية العالمية لشركة Firnas Technologies في الفضاء الرقمي.",
+        "et_bio_p1": "يعمل أمين تركمان كأخصائي إعلام اجتماعي ومستشار رقمي لدى Firnas Technologies. وهو متخصص في إدارة وسائل التواصل الاجتماعي، وإنتاج المحتوى الرقمي، وإدارة المجتمعات، والاتصال بالعلامة التجارية، وتخطيط الحملات الرقمية، وتنظيم البث المباشر. كما يساهم في زيادة حضور العلامات التجارية على المنصات الرقمية، وبناء روابط قوية مع جماهيرها المستهدفة وتطوير استراتيجيات رقمية مستدامة.",
+        "et_bio_p2": "إلى جانب ذلك، يعمل كأخصائي إعلام اجتماعي لدى هيئة الإغاثة الإنسانية (İHH) ويلعب دوراً نشطاً في عمليات الاتصال الرقمي لجهود الإغاثة الإنسانية. ومن خلال تواجده ميدانياً في مناطق الحروب والكوارث والأزمات، ينقل المآسي الإنسانية وأنشطة الإغاثة وقصص الأمل إلى الرأي العام.",
+        "et_bio_p3": "يستخدم أدوات الإعلام الرقمي بفعالية للفت الانتباه إلى الأزمات الإنسانية في العالم الإسلامي، وإيصال صوت المظلومين وزيادة الوعي المجتمعي. ومن خلال دمجه لخبرته الميدانية مع لغة تواصل قوية، يساهم في إيصال أعمال الإغاثة الإنسانية إلى جماهير أوسع.",
         "et_skills": "التخصصات",
         "et_skill_1": "إدارة وسائل التواصل",
         "et_skill_2": "التسويق الرقمي",
@@ -1095,15 +1098,15 @@ document.addEventListener('DOMContentLoaded', () => {
         "emin-turkmen": {
             "tr": {
                 "title": "Emin Türkmen | Firnas Technologies Sosyal Medya Uzmanı & Dijital Stratejist",
-                "desc": "Emin Türkmen - Firnas Technologies Sosyal Medya Uzmanı, Dijital Stratejist ve Graffiti Sanatçısı. Toplumsal sorumluluk, insani farkındalık projeleri ve dijital topluluk yönetimi sorumlusu."
+                "desc": "Emin Türkmen - Firnas Technologies ve İHH İnsani Yardım Vakfı bünyesinde Sosyal Medya Uzmanı & Dijital Stratejist. Dijital medya araçlarıyla insani yardım ve marka iletişim süreçlerini yönetmektedir."
             },
             "en": {
                 "title": "Emin Türkmen | Social Media Specialist & Digital Strategist | Firnas Technologies",
-                "desc": "Emin Türkmen - Social Media Specialist, Digital Strategist, and Graffiti Artist at Firnas Technologies. Responsible for social responsibility, humanitarian awareness, and community building."
+                "desc": "Emin Türkmen - Social Media Specialist & Digital Strategist at Firnas Technologies and IHH Humanitarian Relief Foundation. Manages humanitarian aid and brand communication processes using digital media tools."
             },
             "ar": {
                 "title": "أمين تركمان | أخصائي إعلام اجتماعي ومستشار رقمي | Firnas Technologies",
-                "desc": "أمين تركمان - أخصائي إعلام اجتماعي ومستشار رقمي وفنان غرافيتي في Firnas Technologies. مسؤول عن المسؤولية الاجتماعية، التوعية الإنسانية، وبناء المجتمعات الرقمية."
+                "desc": "أمين تركمان - أخصائي إعلام اجتماعي ومستشار رقمي لدى Firnas Technologies وهيئة الإغاثة الإنسانية (İHH). يدير عمليات الإغاثة الإنسانية والاتصال بالعلامة التجارية باستخدام أدوات الإعلام الرقمي."
             }
         }
     };
