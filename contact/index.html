@@ -9,6 +9,72 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Success/Error Modal Overlay */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 20, 33, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: rgba(5, 20, 33, 0.9);
+            border: 1px solid rgba(0, 184, 212, 0.3);
+            border-radius: 32px;
+            max-width: 500px;
+            width: 90%;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 184, 212, 0.15);
+            transform: scale(0.9);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 15px rgba(0, 184, 212, 0.4));
+            animation: pop-icon 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes pop-icon {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .modal-card h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .modal-card p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+    </style>
 </head>
 <body>
     <nav class="navbar">
@@ -216,22 +282,22 @@
                 </div>
             </div>
             <div class="contact-form-wrapper">
-                <form>
+                <form id="contact-form">
                     <div class="form-group">
                         <label data-i18n="contact_label_name">Ad</label>
-                        <input type="text" class="form-control" required>
+                        <input type="text" name="name" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label data-i18n="contact_label_org">Kurum Adı</label>
-                        <input type="text" class="form-control" required>
+                        <input type="text" name="organization" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label data-i18n="contact_label_email">E-Posta</label>
-                        <input type="email" class="form-control" required>
+                        <input type="email" name="email" class="form-control" required>
                     </div>
                     <div class="form-group">
                         <label data-i18n="contact_label_subject">Konu</label>
-                        <select class="form-control" id="contact-subject" required>
+                        <select class="form-control" id="contact-subject" name="subject" required>
                             <option data-i18n="contact_opt_1">Ürün Bilgisi (FiCo)</option>
                             <option data-i18n="contact_opt_2">Kurumsal İşbirliği</option>
                             <option data-i18n="contact_opt_3">Teknik Destek</option>
@@ -240,13 +306,33 @@
                     </div>
                     <div class="form-group">
                         <label data-i18n="contact_label_msg">Mesaj</label>
-                        <textarea class="form-control" rows="4" required></textarea>
+                        <textarea name="message" class="form-control" rows="4" required></textarea>
                     </div>
                     <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" data-i18n="contact_btn_send">Gönder</button>
                 </form>
             </div>
         </div>
     </section>
+
+    <!-- Success Modal Overlay -->
+    <div id="success-modal" class="modal-overlay">
+        <div class="modal-card glass-card">
+            <div class="modal-icon" style="color: #00b8d4;"><i class="fas fa-circle-check"></i></div>
+            <h3 data-i18n="contact_success_title">Mesajınız Gönderildi!</h3>
+            <p data-i18n="contact_success_desc">Bizimle iletişime geçtiğiniz için teşekkür ederiz. En kısa sürede size geri dönüş yapacağız.</p>
+            <button class="btn btn-primary" onclick="closeModal('success-modal')" data-i18n="store_modal_close">Kapat</button>
+        </div>
+    </div>
+
+    <!-- Error Modal Overlay -->
+    <div id="error-modal" class="modal-overlay">
+        <div class="modal-card glass-card">
+            <div class="modal-icon" style="color: #ff5252;"><i class="fas fa-circle-xmark"></i></div>
+            <h3 data-i18n="contact_error_title">Hata!</h3>
+            <p data-i18n="contact_error_desc">Mesajınız gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.</p>
+            <button class="btn btn-primary" onclick="closeModal('error-modal')" data-i18n="store_modal_close">Kapat</button>
+        </div>
+    </div>
 
     <footer>
         <div class="container">
@@ -286,5 +372,83 @@
         </div>
     </footer>
     <script src="/script.js"></script>
+    <script>
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    const originalBtnText = submitBtn.innerHTML;
+                    
+                    // Get current language for dynamic loading text
+                    const currentLang = localStorage.getItem('site_lang') || 'tr';
+                    let loadingText = 'Gönderiliyor...';
+                    if (currentLang === 'en') {
+                        loadingText = 'Sending...';
+                    } else if (currentLang === 'ar') {
+                        loadingText = 'جاري الإرسال...';
+                    }
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> ${loadingText}`;
+
+                    const formData = {
+                        name: contactForm.querySelector('input[name="name"]').value,
+                        organization: contactForm.querySelector('input[name="organization"]').value,
+                        email: contactForm.querySelector('input[name="email"]').value,
+                        subject: document.getElementById('contact-subject').value,
+                        message: contactForm.querySelector('textarea[name="message"]').value
+                    };
+
+                    fetch("https://formsubmit.co/ajax/firnastechno@gmail.com", {
+                        method: "POST",
+                        headers: { 
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(formData)
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        
+                        if (data.success === "true" || data.success === true) {
+                            showModal('success-modal');
+                            contactForm.reset();
+                        } else {
+                            showModal('error-modal');
+                        }
+                    })
+                    .catch(error => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        showModal('error-modal');
+                    });
+                });
+            }
+        });
+    </script>
 </body>
 </html>
