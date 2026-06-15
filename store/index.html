@@ -485,19 +485,19 @@
                     <form id="preorder-form" onsubmit="handlePreOrderSubmit(event)">
                         <div class="form-group">
                             <label data-i18n="contact_label_name">Ad Soyad / Kurum Adı</label>
-                            <input type="text" class="form-control" required>
+                            <input type="text" name="name" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label data-i18n="contact_label_email">Kurumsal E-Posta</label>
-                            <input type="email" class="form-control" required>
+                            <input type="email" name="email" class="form-control" required>
                         </div>
                         <div class="form-group">
                             <label data-i18n="store_label_quantity">Ön Sipariş Adedi</label>
-                            <input type="number" class="form-control" min="1" max="100" value="1" required>
+                            <input type="number" name="quantity" class="form-control" min="1" max="100" value="1" required>
                         </div>
                         <div class="form-group">
                             <label data-i18n="store_label_notes">Özel Talepleriniz / Notlar</label>
-                            <textarea class="form-control" rows="4" style="resize: none;"></textarea>
+                            <textarea name="notes" class="form-control" rows="4" style="resize: none;"></textarea>
                         </div>
                         <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1.5rem;" data-i18n="store_btn_preorder">Ön Sipariş Talebini Gönder</button>
                     </form>
@@ -513,6 +513,16 @@
             <h3 data-i18n="store_success_title">Tebrikler!</h3>
             <p data-i18n="store_success_desc">Ön sipariş talebiniz başarıyla sisteme kaydedilmiştir. En kısa sürede sizinle iletişime geçeceğiz.</p>
             <button class="btn btn-primary" onclick="closeSuccessModal()" data-i18n="store_modal_close">Kapat</button>
+        </div>
+    </div>
+
+    <!-- Error Modal Overlay -->
+    <div id="error-modal" class="modal-overlay">
+        <div class="modal-card glass-card">
+            <div class="modal-icon" style="color: #ff5252;"><i class="fas fa-circle-xmark"></i></div>
+            <h3 data-i18n="contact_error_title">Hata!</h3>
+            <p data-i18n="contact_error_desc">Mesajınız gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.</p>
+            <button class="btn btn-primary" onclick="closeModal('error-modal')" data-i18n="store_modal_close">Kapat</button>
         </div>
     </div>
 
@@ -559,18 +569,80 @@
     <script>
         function handlePreOrderSubmit(event) {
             event.preventDefault();
-            const modal = document.getElementById('success-modal');
+            
+            const form = document.getElementById('preorder-form');
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.innerHTML;
+            
+            // Get current language for dynamic loading text
+            const currentLang = localStorage.getItem('site_lang') || 'tr';
+            let loadingText = 'Gönderiliyor...';
+            if (currentLang === 'en') {
+                loadingText = 'Sending...';
+            } else if (currentLang === 'ar') {
+                loadingText = 'جاري الإرسال...';
+            }
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> ${loadingText}`;
+
+            const formData = {
+                _subject: "FiCo Ön Sipariş Talebi / Pre-Order Request",
+                name: form.querySelector('input[name="name"]').value,
+                email: form.querySelector('input[name="email"]').value,
+                quantity: form.querySelector('input[name="quantity"]').value,
+                notes: form.querySelector('textarea[name="notes"]').value
+            };
+
+            fetch("https://formsubmit.co/ajax/firnastechno@gmail.com", {
+                method: "POST",
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                
+                if (data.success === "true" || data.success === true) {
+                    showModal('success-modal');
+                    form.reset();
+                } else {
+                    showModal('error-modal');
+                }
+            })
+            .catch(error => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalBtnText;
+                showModal('error-modal');
+            });
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
             if (modal) {
                 modal.classList.add('active');
             }
         }
 
-        function closeSuccessModal() {
-            const modal = document.getElementById('success-modal');
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
             if (modal) {
                 modal.classList.remove('active');
-                document.getElementById('preorder-form').reset();
             }
+        }
+
+        function closeSuccessModal() {
+            closeModal('success-modal');
+            document.getElementById('preorder-form').reset();
         }
     </script>
 </body>
