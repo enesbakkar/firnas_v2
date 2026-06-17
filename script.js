@@ -158,12 +158,10 @@ const translations = {
         "eb_achievements": "Başarılar",
         "eb_ach_desc": "Uluslararası Proje Yarışması Birincilik Ödülü, TEKNOFEST Savaşan İHA Mühendislik Liderliği, Imagine Tomorrow Girişimcilik Derecesi ve Deneyap Teknoloji Mentorluğu.",
         "eb_positions_title": "Diğer Görevler & Ünvanlar",
-        "eb_pos_1_title": "İstanbul Genç İHH",
-        "eb_pos_1_role": "Teknoloji Birimi İl Sorumlusu",
-        "eb_pos_2_title": "T3 Vakfı (Türkiye Teknoloji Takımı)",
-        "eb_pos_2_role": "Eğitmen Mentör",
-        "eb_pos_3_title": "İstanbul Aydın Üniversitesi",
-        "eb_pos_3_role": "Bilgisayar Mühendisliği Öğrencisi",
+        "eb_pos_1_title": "T3 Vakfı (Türkiye Teknoloji Takımı)",
+        "eb_pos_1_role": "Eğitmen Mentör",
+        "eb_pos_2_title": "İstanbul Aydın Üniversitesi",
+        "eb_pos_2_role": "Bilgisayar Mühendisliği Öğrencisi",
         "eb_close": "Geri Dön / Kapat",
         
         // Mahmud Bayerli Profile Missing Translations
@@ -181,9 +179,7 @@ const translations = {
         "mb_skill_7": "İletişim Protokolleri",
         "mb_achievements": "Başarılar",
         "mb_ach_desc": "TEKNOFEST İnsansız Hava Araçları En Özgün Tasarım Ödülü, Uluslararası İHA Yarışması Birinciliği, Elektronik Tasarım İnovasyon Ödülü ve Deneyap Elektronik Eğitmenliği.",
-        "mb_positions_title": "Diğer Görevler & Ünvanlar",
-        "mb_pos_1_title": "İstanbul Genç İHH",
-        "mb_pos_1_role": "ATOM | Şenlik Birimi Sorumlusu",
+
         "mb_close": "Geri Dön / Kapat",
         
         // Haydar Irmak Profile Translations
@@ -425,12 +421,10 @@ const translations = {
         "eb_achievements": "Achievements",
         "eb_ach_desc": "International Project Competition First Place Award, TEKNOFEST Fighting UAV Engineering Leadership, Imagine Tomorrow Entrepreneurship Degree, and Deneyap Technology Mentorship.",
         "eb_positions_title": "Other Titles & Affiliations",
-        "eb_pos_1_title": "Istanbul Youth IHH",
-        "eb_pos_1_role": "Provincial Technology Unit Lead",
-        "eb_pos_2_title": "T3 Foundation (Turkish Technology Team)",
-        "eb_pos_2_role": "Instructor Mentor",
-        "eb_pos_3_title": "Istanbul Aydin University",
-        "eb_pos_3_role": "Computer Engineering Student",
+        "eb_pos_1_title": "T3 Foundation (Turkish Technology Team)",
+        "eb_pos_1_role": "Instructor Mentor",
+        "eb_pos_2_title": "Istanbul Aydin University",
+        "eb_pos_2_role": "Computer Engineering Student",
         "eb_close": "Go Back / Close",
         
         // Mahmud Bayerli Profile Missing Translations (EN)
@@ -448,9 +442,7 @@ const translations = {
         "mb_skill_7": "Communication Protocols",
         "mb_achievements": "Achievements",
         "mb_ach_desc": "TEKNOFEST Unmanned Aerial Vehicles Most Original Design Award, International UAV Competition First Place, Electronic Design Innovation Award, and Deneyap Electronics Trainer.",
-        "mb_positions_title": "Other Titles & Affiliations",
-        "mb_pos_1_title": "Istanbul Youth IHH",
-        "mb_pos_1_role": "ATOM | Festival Department Lead",
+
         "mb_close": "Go Back / Close",
         
         // Haydar Irmak Profile Translations (EN)
@@ -692,12 +684,10 @@ const translations = {
         "eb_achievements": "الإنجازات",
         "eb_ach_desc": "جائزة المركز الأول في مسابقة المشاريع الدولية، وقيادة هندسة الطائرات بدون طيار المقاتلة في تكنوفست، ودرجة ريادة الأعمال في مسابقة تخيل الغد، والتوجيه التكنولوجي في Deneyap.",
         "eb_positions_title": "المهام والمسؤوليات الأخرى",
-        "eb_pos_1_title": "شباب هيئة الإغاثة الإنسانية (Genç İHH) إسطنبول",
-        "eb_pos_1_role": "مسؤول وحدة التكنولوجيا في المحافظة",
-        "eb_pos_2_title": "وقف T3 (فريق التكنولوجيا التركي)",
-        "eb_pos_2_role": "مدرب وموجه تقني",
-        "eb_pos_3_title": "جامعة إسطنبول أيدن",
-        "eb_pos_3_role": "طالب هندسة كمبيوتر",
+        "eb_pos_1_title": "وقف T3 (فريق التكنولوجيا التركي)",
+        "eb_pos_1_role": "مدرب وموجه تقني",
+        "eb_pos_2_title": "جامعة إسطنبول أيدن",
+        "eb_pos_2_role": "طالب هندسة كمبيوتر",
         "eb_close": "العودة / الإغلاق",
         
         // Mahmud Bayerli Profile Missing Translations (AR)
@@ -715,9 +705,7 @@ const translations = {
         "mb_skill_7": "بروتوكولات الاتصال",
         "mb_achievements": "الإنجازات",
         "mb_ach_desc": "جائزة التصميم الأكثر أصالة للمركبات الجوية غير المأهولة في تكنوفست، والمركز الأول في مسابقة الطائرات بدون طيار الدولية، وجائزة ابتكار التصميم الإلكتروني، ومدرب الإلكترونيات في Deneyاب.",
-        "mb_positions_title": "المهام والمسؤوليات الأخرى",
-        "mb_pos_1_title": "شباب هيئة الإغاثة الإنسانية (Genç İHH) إسطنبول",
-        "mb_pos_1_role": "ATOM | مسؤول قسم المهرجانات والأنشطة",
+
         "mb_close": "العودة / الإغلاق",
         
         // Haydar Irmak Profile Translations (AR)
