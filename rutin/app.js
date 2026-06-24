@@ -296,12 +296,12 @@ const StreakEngine = {
 
   // ================= SUPABASE CLOUD SYNC MANAGER =================
   const SupabaseManager = {
-    url: "",
-    key: "",
+    url: "https://yhyxvhbknyuurppahznm.supabase.co",
+    key: "sb_publishable_I1wY5Tc0FEVxSElsAipCJg_7xwJgb9P",
 
     init() {
-      this.url = localStorage.getItem('supabase_url') || "";
-      this.key = localStorage.getItem('supabase_key') || "";
+      this.url = localStorage.getItem('supabase_url') || "https://yhyxvhbknyuurppahznm.supabase.co";
+      this.key = localStorage.getItem('supabase_key') || "sb_publishable_I1wY5Tc0FEVxSElsAipCJg_7xwJgb9P";
     },
 
     isEnabled() {
