@@ -543,8 +543,7 @@ body {
 /* ================= MAIN SCROLLABLE APP VIEW AREA ================= */
 .dashboard-content {
   padding: 2rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  max-width: 100%;
   width: 100%;
   flex-grow: 1;
 }
