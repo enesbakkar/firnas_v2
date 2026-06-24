@@ -554,6 +554,18 @@ body {
 
 .tab-pane.active-pane {
   display: block;
+  animation: tab-slide-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes tab-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* ================= FOCUS VIEW CHECKLIST LAYOUT ================= */
@@ -588,13 +600,30 @@ body {
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   backdrop-filter: blur(10px);
-  transition: border-color var(--transition-fast), transform var(--transition-fast);
+  transition: border-color var(--transition-normal), transform var(--transition-normal), box-shadow var(--transition-normal);
 }
 
 .time-block-card:hover {
-  transform: translateY(-2px);
-  border-color: rgba(6, 182, 212, 0.25);
+  transform: translateY(-4px) scale(1.005);
   box-shadow: var(--shadow-md);
+}
+
+/* Category-specific card glow and border styles */
+.morning-border:hover {
+  border-color: rgba(6, 182, 212, 0.45);
+  box-shadow: 0 10px 30px rgba(6, 182, 212, 0.15);
+}
+.midday-border:hover {
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.15);
+}
+.dusk-border:hover {
+  border-color: rgba(251, 191, 36, 0.45);
+  box-shadow: 0 10px 30px rgba(251, 191, 36, 0.15);
+}
+.night-border:hover {
+  border-color: rgba(168, 85, 247, 0.45);
+  box-shadow: 0 10px 30px rgba(168, 85, 247, 0.15);
 }
 
 .block-header {
@@ -658,13 +687,18 @@ body {
   border: 1px solid rgba(255, 255, 255, 0.03);
   border-radius: var(--radius-md);
   padding: 0.9rem 1.15rem;
-  transition: var(--transition-fast);
+  transition: border-color var(--transition-fast), background-color var(--transition-fast), transform 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .habit-item-card:hover {
   background-color: rgba(30, 41, 59, 0.45);
-  border-color: rgba(6, 182, 212, 0.2);
-  transform: translateX(2px);
+  border-color: rgba(6, 182, 212, 0.25);
+  transform: translateX(4px) scale(1.01);
+}
+
+.habit-item-card:active {
+  transform: scale(0.975);
+  background-color: rgba(30, 41, 59, 0.6);
 }
 
 .custom-checkbox {
@@ -695,12 +729,26 @@ body {
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--text-main);
-  transition: var(--transition-fast);
+  position: relative;
+  display: inline-block;
+  transition: color var(--transition-normal), opacity var(--transition-normal);
+}
+
+.label-content h3::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 53%;
+  width: 0;
+  height: 2px;
+  background-color: var(--text-muted);
+  transition: width var(--transition-normal) cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 .label-content p {
   font-size: 0.75rem;
   color: var(--text-muted);
+  transition: opacity var(--transition-normal);
 }
 
 .custom-checkbox input {
@@ -722,41 +770,70 @@ body {
   border: 1.5px solid var(--border-color);
   border-radius: 6px;
   transition: var(--transition-fast);
+  overflow: hidden; /* Localize all animations inside the checkmark box */
 }
 
 .custom-checkbox:hover input ~ .checkmark {
   border-color: var(--primary);
-  box-shadow: 0 0 6px rgba(6, 182, 212, 0.2);
+  box-shadow: 0 0 8px rgba(6, 182, 212, 0.35);
+}
+
+/* Localized ripple expanding background fill */
+.checkmark::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 24px;
+  height: 24px;
+  background-color: var(--primary);
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 1;
 }
 
 .custom-checkbox input:checked ~ .checkmark {
-  background-color: var(--primary);
   border-color: var(--primary);
   box-shadow: 0 0 10px var(--primary-glow);
+  animation: checkmark-bounce 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
+.custom-checkbox input:checked ~ .checkmark::before {
+  transform: translate(-50%, -50%) scale(1.2);
+}
+
+/* Tick line springs into scale on top of the expanding fill */
 .checkmark::after {
   content: "";
   position: absolute;
-  display: none;
   left: 6px;
   top: 2px;
   width: 5px;
   height: 10px;
   border: solid #030712;
   border-width: 0 2.5px 2.5px 0;
-  transform: rotate(45deg);
+  transform: rotate(45deg) scale(0);
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) 0.08s;
+  z-index: 2;
 }
 
 .custom-checkbox input:checked ~ .checkmark::after {
   display: block;
 }
 
-/* Strikethrough text */
+/* Strikethrough line sliding animation */
 .custom-checkbox input:checked ~ .label-content h3 {
   color: var(--text-muted);
-  text-decoration: line-through;
-  opacity: 0.5;
+  opacity: 0.45;
+}
+
+.custom-checkbox input:checked ~ .label-content h3::after {
+  width: 100%;
+}
+
+.custom-checkbox input:checked ~ .label-content p {
+  opacity: 0.4;
 }
 
 /* ================= DAILY NAVIGATOR WIDGET ================= */
@@ -1818,4 +1895,142 @@ body {
 }
 .status-loading {
   color: var(--primary-light);
+}
+
+/* ================= GLOWING BACKGROUND ORBS ================= */
+.bg-orb {
+  position: fixed;
+  border-radius: 50%;
+  filter: blur(100px);
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.04;
+  mix-blend-mode: screen;
+}
+.orb-1 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, var(--primary) 0%, transparent 80%);
+  top: -10%;
+  left: 10%;
+  animation: orb-float-1 25s infinite ease-in-out;
+}
+.orb-2 {
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, var(--accent-purple) 0%, transparent 80%);
+  bottom: -15%;
+  right: 15%;
+  animation: orb-float-2 30s infinite ease-in-out;
+}
+.orb-3 {
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, var(--success) 0%, transparent 80%);
+  top: 40%;
+  right: -5%;
+  animation: orb-float-3 22s infinite ease-in-out;
+}
+
+@keyframes orb-float-1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, 20px) scale(1.1); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+@keyframes orb-float-2 {
+  0% { transform: translate(0, 0) scale(1.1); }
+  50% { transform: translate(-50px, -30px) scale(0.9); }
+  100% { transform: translate(0, 0) scale(1.1); }
+}
+@keyframes orb-float-3 {
+  0% { transform: translate(0, 0) scale(0.95); }
+  50% { transform: translate(-20px, 40px) scale(1.05); }
+  100% { transform: translate(0, 0) scale(0.95); }
+}
+
+/* ================= 100% PERFECT PROGRESS PULSE ================= */
+@keyframes perfect-day-ring-glow {
+  0% { box-shadow: 0 0 5px var(--primary-light); }
+  50% { box-shadow: 0 0 25px var(--primary-light), inset 0 0 15px var(--primary-glow); }
+  100% { box-shadow: 0 0 5px var(--primary-light); }
+}
+
+.perfect-pulse {
+  animation: perfect-day-ring-glow 1.5s ease-in-out 3;
+  border-color: var(--primary-light) !important;
+}
+
+/* ================= DISCIPLINE HEATMAP STYLING ================= */
+.heatmap-scroll-container {
+  scrollbar-width: thin;
+}
+.heatmap-grid {
+  display: grid;
+  grid-template-rows: repeat(7, 10px);
+  grid-auto-flow: column;
+  grid-auto-columns: 10px;
+  gap: 3px;
+  width: max-content;
+  padding: 0.25rem 0;
+}
+.heatmap-cell {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  cursor: pointer;
+  position: relative;
+  transition: transform var(--transition-fast), border-color var(--transition-fast);
+}
+.heatmap-cell:hover {
+  transform: scale(1.3);
+  z-index: 10;
+  outline: 1px solid var(--primary-light);
+}
+
+/* Heatmap cell color states based on score levels */
+.heatmap-cell.score-0 {
+  background-color: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.heatmap-cell.score-low {
+  background-color: rgba(6, 182, 212, 0.15);
+  border: 1px solid rgba(6, 182, 212, 0.2);
+}
+.heatmap-cell.score-med {
+  background-color: rgba(6, 182, 212, 0.45);
+  border: 1px solid rgba(6, 182, 212, 0.5);
+}
+.heatmap-cell.score-100 {
+  background-color: var(--primary);
+  border: 1px solid var(--primary);
+  box-shadow: 0 0 5px var(--primary-glow);
+}
+
+/* ================= PREMIUM KEYFRAME ANIMATIONS ================= */
+@keyframes checkmark-bounce {
+  0% { transform: translateY(-50%) scale(1); }
+  45% { transform: translateY(-50%) scale(1.3); }
+  75% { transform: translateY(-50%) scale(0.9); }
+  100% { transform: translateY(-50%) scale(1); }
+}
+
+@keyframes streak-pulse-burn {
+  0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.4)); }
+  50% { transform: scale(1.15); filter: drop-shadow(0 0 10px rgba(251, 191, 36, 0.8)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(251, 191, 36, 0.4)); }
+}
+
+.streak-emoji {
+  display: inline-block;
+  animation: streak-pulse-burn 2s infinite ease-in-out;
+}
+
+@keyframes peak-pulse-grow {
+  0% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.3)); }
+  50% { transform: scale(1.08); filter: drop-shadow(0 0 8px rgba(6, 182, 212, 0.6)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 2px rgba(6, 182, 212, 0.3)); }
+}
+
+.peak-streak .streak-emoji {
+  animation: peak-pulse-grow 2.5s infinite ease-in-out;
 }

@@ -419,6 +419,104 @@ const StreakEngine = {
     }
   };
 
+// ================= WEB AUDIO API SYNTHESIS =================
+const AudioFeedback = {
+  ctx: null,
+  
+  init() {
+    if (!this.ctx) {
+      this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+    if (this.ctx && this.ctx.state === 'suspended') {
+      this.ctx.resume().catch(e => console.warn("Failed to resume AudioContext:", e));
+    }
+  },
+
+  playClick(isCheck = true) {
+    try {
+      this.init();
+      if (!this.ctx) return;
+
+      const play = () => {
+        const now = this.ctx.currentTime;
+        const baseFreq = isCheck ? 1700 : 1300; // 1700Hz for checks, 1300Hz for unchecks
+        const stepFreq = isCheck ? 2100 : 1600;
+
+        // Spark Note 1
+        const osc1 = this.ctx.createOscillator();
+        const gain1 = this.ctx.createGain();
+        osc1.type = 'sine';
+        osc1.frequency.setValueAtTime(baseFreq, now);
+        gain1.gain.setValueAtTime(0.04, now);
+        gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.015);
+        osc1.connect(gain1);
+        gain1.connect(this.ctx.destination);
+        osc1.start(now);
+        osc1.stop(now + 0.02);
+
+        // Spark Note 2 (spaced by 15ms for a crisp physical double-switch tick)
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        osc2.type = 'sine';
+        osc2.frequency.setValueAtTime(stepFreq, now + 0.015);
+        gain2.gain.setValueAtTime(0.03, now + 0.015);
+        gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.03);
+        osc2.connect(gain2);
+        gain2.connect(this.ctx.destination);
+        osc2.start(now + 0.015);
+        osc2.stop(now + 0.035);
+      };
+
+      if (this.ctx.state === 'suspended') {
+        this.ctx.resume().then(play);
+      } else {
+        play();
+      }
+    } catch (e) {
+      console.warn("Audio synthesis failed:", e);
+    }
+  },
+
+  playSuccess() {
+    try {
+      this.init();
+      if (!this.ctx) return;
+
+      // Uplifting arpeggio glissando chime
+      const now = this.ctx.currentTime;
+      const chords = [523.25, 659.25, 783.99, 1046.50, 1318.51]; // C5, E5, G5, C6, E6
+      
+      chords.forEach((freq, idx) => {
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        const filter = this.ctx.createBiquadFilter();
+        
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(this.ctx.destination);
+        
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(freq, now + idx * 0.07);
+        
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2000, now + idx * 0.07);
+        
+        gain.gain.setValueAtTime(0, now + idx * 0.07);
+        // Louder chords: volume increased to 0.22
+        gain.gain.linearRampToValueAtTime(0.22, now + idx * 0.07 + 0.03);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.07 + 0.35);
+        
+        osc.start(now + idx * 0.07);
+        osc.stop(now + idx * 0.07 + 0.4);
+      });
+    } catch (e) {
+      console.warn("Audio synthesis failed:", e);
+    }
+  }
+};
+
+
+
 // ================= UI CONTROLLER =================
 const UIController = {
   dom: {
@@ -461,6 +559,19 @@ const UIController = {
     inlineSyncStatus: document.getElementById('inline-sync-status')
   },
 
+
+
+  triggerProgressCelebration() {
+    // Add pulsing glow to the navigator card widget
+    const progressWidget = document.querySelector('.daily-navigator-card');
+    if (progressWidget) {
+      progressWidget.classList.add('perfect-pulse');
+      setTimeout(() => {
+        progressWidget.classList.remove('perfect-pulse');
+      }, 4500);
+    }
+  },
+
   init() {
     SupabaseManager.init(); // Initialize credentials
     this.setupAuthentication();
@@ -469,6 +580,15 @@ const UIController = {
     this.setupChecklist();
     this.setupMonthSelector();
     this.setupSyncSettings(); // Setup Supabase modal & inline controls
+    
+    // Unlock Web Audio API on first user gesture (highly recommended for iOS & WebKit autoplay bypass)
+    const unlockAudio = () => {
+      AudioFeedback.init();
+      document.removeEventListener('click', unlockAudio);
+      document.removeEventListener('touchstart', unlockAudio);
+    };
+    document.addEventListener('click', unlockAudio);
+    document.addEventListener('touchstart', unlockAudio);
     
     // Auto-sync check on tab focus (for multi-device real-time updates)
     window.addEventListener('focus', () => {
@@ -479,6 +599,7 @@ const UIController = {
           this.loadDateData();
           this.renderNotionGrid();
           this.renderAnalytics();
+          this.renderHeatmap(); // Refresh heatmap grid
         });
       }
     });
@@ -551,6 +672,7 @@ const UIController = {
     this.loadDateData();
     this.renderNotionGrid();
     this.renderAnalytics();
+    this.renderHeatmap(); // Render yearly heatmap grid
 
     // Trigger background sync if Supabase is active
     if (SupabaseManager.isEnabled()) {
@@ -560,6 +682,7 @@ const UIController = {
         this.loadDateData();
         this.renderNotionGrid();
         this.renderAnalytics();
+        this.renderHeatmap(); // Re-render heatmap after sync
       });
     }
   },
@@ -643,6 +766,7 @@ const UIController = {
 
     this.updateProgressRing(dayData);
     this.highlightActiveGridRow(key);
+    this.highlightActiveHeatmapCell(key); // Highlight selected day square
   },
 
   updateProgressRing(dayData) {
@@ -690,7 +814,7 @@ const UIController = {
   // --- Checklist ---
   setupChecklist() {
     this.dom.taskCheckboxes.forEach(cb => {
-      cb.addEventListener('change', () => {
+      cb.addEventListener('change', (e) => {
         const key = formatDateKey(STATE.activeDate);
         const dayData = StorageManager.getDayState(key);
         const dbKey = cb.getAttribute('data-key');
@@ -700,10 +824,23 @@ const UIController = {
         
         this.updateStreakDisplay();
         this.updateProgressRing(dayData);
+
+        // Tactile audio feedback on checkbox check/uncheck
+        AudioFeedback.playClick(cb.checked);
+
+        // Check if day is fully completed to trigger success chime and pulse celebration
+        if (cb.checked) {
+          const percentage = StreakEngine.calculateDailyPercentage(dayData);
+          if (percentage === 100) {
+            AudioFeedback.playSuccess();
+            this.triggerProgressCelebration();
+          }
+        }
         
         // Live sync other panels
         this.renderNotionGrid();
         this.renderAnalytics();
+        this.renderHeatmap(); // Re-render yearly heatmap grid
       });
     });
   },
@@ -885,6 +1022,7 @@ const UIController = {
           this.loadDateData();
           this.renderNotionGrid();
           this.renderAnalytics();
+          this.renderHeatmap(); // Refresh heatmap grid
         } catch (err) {
           inlineStatus.className = "sync-status-msg status-error";
           inlineStatus.textContent = "Connection failed! Check credentials & table setup.";
@@ -912,6 +1050,95 @@ const UIController = {
     if (this.dom.inlineClearSyncBtn) {
       this.dom.inlineClearSyncBtn.addEventListener('click', handleDisconnect);
     }
+  },
+
+  // --- Annual Discipline Heatmap Grid (365-Day contribution calendar) ---
+  renderHeatmap() {
+    const container = document.getElementById('heatmap-grid');
+    if (!container) return;
+    container.innerHTML = "";
+
+    // Generate date array ending today
+    const endDate = new Date(STATE.todayDate);
+    const startDate = new Date(endDate);
+    startDate.setDate(startDate.getDate() - 364); // 365 days including today
+
+    // Align start date to start of week (Monday)
+    let startDayOfWeek = startDate.getDay();
+    const shift = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1; // shift to Monday
+    startDate.setDate(startDate.getDate() - shift);
+
+    const days = [];
+    let current = new Date(startDate);
+    while (current <= endDate) {
+      days.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+
+    days.forEach(day => {
+      const key = formatDateKey(day);
+      const dayData = STATE.db[key];
+      
+      let pct = 0;
+      if (dayData) {
+        pct = StreakEngine.calculateDailyPercentage(dayData);
+      }
+
+      let scoreClass = "score-0";
+      if (pct === 100) {
+        scoreClass = "score-100";
+      } else if (pct >= 50) {
+        scoreClass = "score-med";
+      } else if (pct > 0) {
+        scoreClass = "score-low";
+      }
+
+      const cell = document.createElement('div');
+      cell.className = `heatmap-cell ${scoreClass}`;
+      cell.setAttribute('data-date-key', key);
+      
+      const dayNum = String(day.getDate()).padStart(2, '0');
+      const monthStr = day.toLocaleDateString('en-US', { month: 'short' });
+      const yearVal = day.getFullYear();
+      
+      cell.title = `${monthStr} ${dayNum}, ${yearVal}: ${pct}% completed`;
+
+      // Highlight if active date
+      const activeKey = formatDateKey(STATE.activeDate);
+      if (key === activeKey) {
+        cell.style.outline = "1px solid var(--primary-light)";
+        cell.style.transform = "scale(1.2)";
+        cell.style.zIndex = "5";
+      }
+
+      cell.addEventListener('click', () => {
+        STATE.activeDate = new Date(day);
+        this.loadDateData();
+        
+        // Auto-switch to daily tab if on tablet/mobile
+        const focusBtn = document.querySelector('.tab-btn[data-tab="focus-tab"]');
+        if (focusBtn && window.innerWidth < 1024) {
+          focusBtn.click();
+        }
+      });
+
+      container.appendChild(cell);
+    });
+  },
+
+  highlightActiveHeatmapCell(activeKey) {
+    const cells = document.querySelectorAll('.heatmap-cell');
+    cells.forEach(cell => {
+      if (cell.getAttribute('data-date-key') === activeKey) {
+        cell.style.outline = "1px solid var(--primary-light)";
+        cell.style.transform = "scale(1.2)";
+        cell.style.zIndex = "5";
+      } else {
+        cell.style.outline = "";
+        cell.style.transform = "";
+        cell.style.zIndex = "";
+      }
+    });
   },
 
   // --- Notion-style Monthly Grid & Mobile Calendar Grid ---
