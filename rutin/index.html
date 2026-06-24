@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Horizon Routine Tracker</title>
+  <!-- Google Fonts: Outfit for UI -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=1.2">
+</head>
+<body>
+
+  <!-- ================= AUTHENTICATION PORTAL ================= -->
+  <div id="auth-portal" class="auth-container">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
+        <h1>Horizon Tracker</h1>
+        <p class="auth-sub">Private Single-User Dashboard</p>
+      </div>
+      <form id="auth-form" class="auth-form">
+        <div class="input-group">
+          <label for="passcode">Access Passcode</label>
+          <div class="password-wrapper">
+            <input type="password" id="passcode" required placeholder="••••••••" autocomplete="current-password">
+            <button type="button" id="toggle-password" class="icon-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary btn-block">Unlock Dashboard</button>
+        <p id="auth-error" class="error-msg"></p>
+      </form>
+      <div class="auth-footer">
+        <p>© 2026 Firnas Technologies</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MAIN APP DASHBOARD ================= -->
+  <div id="app-container" class="dashboard-container hidden">
+    
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sidebar-logo">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+        <div>
+          <h2>Horizon</h2>
+          <p class="user-badge">Anas Bakkar</p>
+        </div>
+      </div>
+
+      <!-- Streaks Card Widget -->
+      <div class="sidebar-streaks">
+        <div class="sidebar-streak-item active-streak" title="Current consecutive perfect days streak">
+          <span class="streak-emoji">🔥</span>
+          <div class="streak-details">
+            <span class="value" id="sidebar-current-streak">0</span>
+            <span class="label">Current Streak</span>
+          </div>
+        </div>
+        <div class="sidebar-streak-item peak-streak" title="Historical personal best streak">
+          <span class="streak-emoji">🏆</span>
+          <div class="streak-details">
+            <span class="value" id="sidebar-best-streak">0</span>
+            <span class="label">Personal Best</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sidebar Menu Links -->
+      <nav class="sidebar-nav">
+        <button class="tab-btn active" data-tab="focus-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 11 12 14 22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+          <span>Daily Checklist</span>
+        </button>
+        <button class="tab-btn" data-tab="grid-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+            <line x1="9" y1="21" x2="9" y2="9"/>
+          </svg>
+          <span>Monthly Grid</span>
+        </button>
+        <button class="tab-btn" data-tab="analytics-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          <span>Performance Analytics</span>
+        </button>
+        
+        <!-- Cloud Sync settings button -->
+        <button id="sidebar-sync-settings-btn" class="tab-btn sync-settings-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-3-3.1-5.2-6.1-5.4-3-.2-5.6 1.5-6.7 4.1C6.2 9.5 3 12 3 15c0 3.3 2.7 6 6 6h10c2.2 0 4-1.8 4-4 0-1-.3-1.9-.8-2.6z"/>
+          </svg>
+          <span>Cloud Sync</span>
+        </button>
+      </nav>
+
+      <!-- Logout Button (Sidebar Bottom) -->
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="logout-btn flex-logout btn-block">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span>Lock Dashboard</span>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MOBILE BOTTOM TABS NAVIGATION -->
+    <nav class="mobile-tabs">
+      <button class="tab-btn active" data-tab="focus-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 11 12 14 22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        <span>Daily</span>
+      </button>
+      <button class="tab-btn" data-tab="grid-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+          <line x1="3" y1="9" x2="21" y2="9"/>
+          <line x1="9" y1="21" x2="9" y2="9"/>
+        </svg>
+        <span>Grid</span>
+      </button>
+      <button class="tab-btn" data-tab="analytics-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="20" x2="18" y2="10"/>
+          <line x1="12" y1="20" x2="12" y2="4"/>
+          <line x1="6" y1="20" x2="6" y2="14"/>
+        </svg>
+        <span>Stats</span>
+      </button>
+    </nav>
+
+    <!-- MAIN MAIN CONTENT CONTAINER -->
+    <div class="main-layout-wrapper">
+      
+      <!-- MOBILE ONLY HEADER -->
+      <header class="mobile-header">
+        <div class="brand">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-logo">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <div>
+            <h1>Horizon</h1>
+            <p class="user-badge">Anas Bakkar</p>
+          </div>
+        </div>
+        
+        <div class="mobile-header-right">
+          <!-- Streaks for Mobile -->
+          <div class="mobile-streaks">
+            <span title="Current Streak">🔥 <strong id="current-streak">0</strong></span>
+            <span title="Best Streak">🏆 <strong id="best-streak">0</strong></span>
+          </div>
+          <!-- Cloud Sync settings button for mobile -->
+          <button id="mobile-sync-settings-btn" class="logout-btn sync-settings-btn" title="Cloud Sync">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-3-3.1-5.2-6.1-5.4-3-.2-5.6 1.5-6.7 4.1C6.2 9.5 3 12 3 15c0 3.3 2.7 6 6 6h10c2.2 0 4-1.8 4-4 0-1-.3-1.9-.8-2.6z"/>
+            </svg>
+          </button>
+          <button id="mobile-logout-btn" class="logout-btn logout-mobile-trigger" title="Lock Dashboard">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+            </svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- VIEW PANELS -->
+      <main class="dashboard-content">
+        
+        <!-- ================= FOCUS VIEW (CHECKLIST) ================= -->
+        <section id="focus-tab" class="tab-pane active-pane">
+          
+          <div class="focus-layout-grid">
+            
+            <!-- Checklist Column -->
+            <div class="checklist-column">
+              <div class="blocks-grid">
+                
+                <!-- Block 1: Morning Core -->
+                <div class="time-block-card morning-border">
+                  <div class="block-header block-morning">
+                    <span class="block-num">01</span>
+                    <div>
+                      <h2>Morning Core</h2>
+                      <span class="block-span">Dawn to Forenoon</span>
+                    </div>
+                  </div>
+                  
+                  <div class="block-items">
+                    <!-- Fajr Sunnah -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="fajr-sunnah" class="task-checkbox" data-key="fajr_sunnah">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Fajr 2 Rakah Sunnah</h3>
+                            <p>Dawn Optional Devotion</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Fajr Fard -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="fajr-fard" class="task-checkbox" data-key="fajr_fard">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Fajr 2 Rakah Fard</h3>
+                            <p>Dawn Obligation</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Morning Dhikr -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="morning-dhikr" class="task-checkbox" data-key="morning_dhikr">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">📿</span>
+                          <div>
+                            <h3>Morning Dhikr</h3>
+                            <p>Morning Remembrance</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Quran Devotion -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="quran-devotion" class="task-checkbox" data-key="quran_devotion">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">📖</span>
+                          <div>
+                            <h3>Quran Devotion</h3>
+                            <p>Daily Wird / Tilavet</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Intellectual Growth -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="intellectual-growth" class="task-checkbox" data-key="intellectual_growth">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">📚</span>
+                          <div>
+                            <h3>Intellectual Growth</h3>
+                            <p>Book Reading</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Physical Training -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="physical-training" class="task-checkbox" data-key="physical_training">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🏋️</span>
+                          <div>
+                            <h3>Physical Training</h3>
+                            <p>Workout / Sport</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Nutritional Fuel -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="nutritional-fuel" class="task-checkbox" data-key="nutritional_fuel">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🍳</span>
+                          <div>
+                            <h3>Nutritional Fuel</h3>
+                            <p>Healthy Breakfast</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Horizon Sync -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="horizon-sync" class="task-checkbox" data-key="horizon_sync">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🎯</span>
+                          <div>
+                            <h3>Horizon Sync</h3>
+                            <p>Daily Planning & Vision Alignment</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Duha Prayer -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="duha-prayer" class="task-checkbox" data-key="duha_prayer">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">☀️</span>
+                          <div>
+                            <h3>Duha Prayer</h3>
+                            <p>Kuşluk Namazı</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Block 2: Midday & Afternoon -->
+                <div class="time-block-card midday-border">
+                  <div class="block-header block-midday">
+                    <span class="block-num">02</span>
+                    <div>
+                      <h2>Midday & Afternoon</h2>
+                      <span class="block-span">Noon to Sunset</span>
+                    </div>
+                  </div>
+                  
+                  <div class="block-items">
+                    <!-- Dhuhr 4 Sunnah -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="dhuhr-sunnah1" class="task-checkbox" data-key="dhuhr_sunnah1">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Dhuhr 4 Rakah Sunnah</h3>
+                            <p>Pre-Obligation Devotion</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Dhuhr Fard -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="dhuhr-fard" class="task-checkbox" data-key="dhuhr_fard">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Dhuhr 4 Rakah Fard</h3>
+                            <p>Noon Obligation</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Dhuhr 2 Sunnah -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="dhuhr-sunnah2" class="task-checkbox" data-key="dhuhr_sunnah2">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Dhuhr 2 Rakah Sunnah</h3>
+                            <p>Post-Obligation Devotion</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Asr 4 Sunnah -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="asr-sunnah" class="task-checkbox" data-key="asr_sunnah">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Asr 4 Rakah Sunnah</h3>
+                            <p>Hanefi Sunnah</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Asr Fard -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="asr-fard" class="task-checkbox" data-key="asr_fard">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Asr 4 Rakah Fard</h3>
+                            <p>Afternoon Obligation</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Block 3: Dusk & Evening -->
+                <div class="time-block-card dusk-border">
+                  <div class="block-header block-dusk">
+                    <span class="block-num">03</span>
+                    <div>
+                      <h2>Dusk & Evening</h2>
+                      <span class="block-span">Sunset to Night</span>
+                    </div>
+                  </div>
+                  
+                  <div class="block-items">
+                    <!-- Evening Dhikr -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="evening-dhikr" class="task-checkbox" data-key="evening_dhikr">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">📿</span>
+                          <div>
+                            <h3>Evening Dhikr</h3>
+                            <p>Evening Remembrance</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Maghrib 3 Fard -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="maghrib-fard" class="task-checkbox" data-key="maghrib_fard">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Maghrib 3 Rakah Fard</h3>
+                            <p>Sunset Obligation</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Maghrib 2 Sunnah -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="maghrib-sunnah" class="task-checkbox" data-key="maghrib_sunnah">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Maghrib 2 Rakah Sunnah</h3>
+                            <p>Post-Sunset Devotion</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Isha 4 Sunnah -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="isha-sunnah1" class="task-checkbox" data-key="isha_sunnah1">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Isha 4 Rakah Sunnah</h3>
+                            <p>Pre-Obligation Devotion</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Isha Fard -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="isha-fard" class="task-checkbox" data-key="isha_fard">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Isha 4 Rakah Fard</h3>
+                            <p>Night Obligation</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Isha 2 Sunnah -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="isha-sunnah2" class="task-checkbox" data-key="isha_sunnah2">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Isha 2 Rakah Sunnah</h3>
+                            <p>Post-Obligation Devotion</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- Witr Prayer -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="witr-prayer" class="task-checkbox" data-key="witr_prayer">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">🕌</span>
+                          <div>
+                            <h3>Witr 3 Rakah Prayer</h3>
+                            <p>Hanefi Wajib</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Block 4: Night Closeout -->
+                <div class="time-block-card night-border">
+                  <div class="block-header block-night">
+                    <span class="block-num">04</span>
+                    <div>
+                      <h2>Night Closeout</h2>
+                      <span class="block-span">Before Sleep</span>
+                    </div>
+                  </div>
+                  
+                  <div class="block-items">
+                    <!-- Mind Log Checklist -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="mind-log" class="task-checkbox" data-key="mind_log">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">📝</span>
+                          <div>
+                            <h3>Mind Log</h3>
+                            <p>Daily Journaling Complete</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+
+                    <!-- FinFlow Checklist -->
+                    <div class="habit-item-card">
+                      <label class="custom-checkbox full-width-label">
+                        <input type="checkbox" id="fin-flow" class="task-checkbox" data-key="fin_flow">
+                        <span class="checkmark"></span>
+                        <div class="label-content">
+                          <span class="item-icon">💰</span>
+                          <div>
+                            <h3>FinFlow</h3>
+                            <p>Daily Expenses Logged</p>
+                          </div>
+                        </div>
+                      </label>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Focus Status Sidebar Column (Unified Date Controller & Ring) -->
+            <div class="status-sidebar-column">
+              <div class="daily-navigator-card glass-card">
+                <div class="navigator-card-header">
+                  <h3>Day Navigator</h3>
+                  <button id="today-btn" class="btn btn-secondary btn-sm">Today</button>
+                </div>
+                
+                <div class="date-carousel">
+                  <button id="prev-day-btn" class="nav-arrow-btn" title="Previous Day">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                  </button>
+                  
+                  <div class="date-info">
+                    <div class="gregorian-date" id="gregorian-date-display">Tuesday, June 23, 2026</div>
+                    <div class="hijri-date" id="hijri-date-display">1447 Hijri</div>
+                  </div>
+                  
+                  <button id="next-day-btn" class="nav-arrow-btn" title="Next Day">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="progress-showcase">
+                  <div class="progress-ring-outer">
+                    <svg class="progress-ring-svg" width="160" height="160" viewBox="0 0 160 160">
+                      <!-- Base circle -->
+                      <circle class="progress-ring-bg" stroke="rgba(255, 255, 255, 0.05)" stroke-width="8" fill="transparent" r="64" cx="80" cy="80"/>
+                      <!-- Active stroke circle -->
+                      <circle class="progress-ring-stroke" id="progress-circle" stroke="var(--primary)" stroke-width="8" fill="transparent" r="64" cx="80" cy="80" stroke-linecap="round"/>
+                    </svg>
+                    <div class="progress-text-box">
+                      <span class="percent-val" id="progress-percent-text">0%</span>
+                      <span class="percent-label">Completed</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="daily-status-inspirational" id="daily-status-inspirational">
+                  Complete all 23 routines for a perfect score!
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= MONTHLY GRID (NOTION VIEW) ================= -->
+        <section id="grid-tab" class="tab-pane">
+          <div class="notion-grid-card glass-card animate-fade-in">
+            <div class="grid-controls-row">
+              <div class="controls-left">
+                <h2>Monthly Log Grid</h2>
+                <p class="grid-sub">Click a day to load its routine checklist details.</p>
+              </div>
+              <div class="controls-right">
+                <label for="month-selector" class="sr-only">Select Month</label>
+                <select id="month-selector" class="grid-select month-sync-select">
+                  <!-- Dynamically generated list of months -->
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive-wrapper">
+              <table class="notion-table" id="notion-master-table">
+                <thead>
+                  <tr>
+                    <th class="col-date">Date</th>
+                    <th class="col-habit text-center" title="Fajr (Sunnah + Fard)">Fajr</th>
+                    <th class="col-habit text-center" title="Dhuhr (Sunnah + Fard)">Dhuhr</th>
+                    <th class="col-habit text-center" title="Asr (Sunnah + Fard)">Asr</th>
+                    <th class="col-habit text-center" title="Maghrib (Fard + Sunnah)">Maghrib</th>
+                    <th class="col-habit text-center" title="Isha (Sunnah + Fard)">Isha</th>
+                    <th class="col-habit text-center" title="Witr">Witr</th>
+                    <th class="col-habit text-center" title="Dhikr (Morning + Evening)">Dhikr</th>
+                    <th class="col-habit text-center" title="Quran">Quran</th>
+                    <th class="col-habit text-center" title="Duha">Duha</th>
+                    <th class="col-habit text-center" title="Read (Intellectual)">Read</th>
+                    <th class="col-habit text-center" title="Work (Workout)">Work</th>
+                    <th class="col-habit text-center" title="Fuel (Nutrition)">Fuel</th>
+                    <th class="col-habit text-center" title="Horizon Sync">Sync</th>
+                    <th class="col-habit text-center" title="Mind Log">Journal</th>
+                    <th class="col-habit text-center" title="FinFlow">Expense</th>
+                    <th class="col-percent text-center" title="Daily Score">Score</th>
+                  </tr>
+                </thead>
+                <tbody id="notion-table-body">
+                  <!-- Rows dynamically loaded by app.js -->
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Mobile Calendar View (shown only on mobile via CSS) -->
+            <div class="mobile-calendar-container">
+              <div class="mobile-calendar-weekdays">
+                <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+              </div>
+              <div class="mobile-calendar-days" id="mobile-calendar-days-grid">
+                <!-- Dynamically populated by app.js -->
+              </div>
+              
+              <div class="mobile-calendar-legend">
+                <span class="legend-item"><span class="legend-dot score-0"></span> 0%</span>
+                <span class="legend-item"><span class="legend-dot score-low"></span> 1-49%</span>
+                <span class="legend-item"><span class="legend-dot score-med"></span> 50-99%</span>
+                <span class="legend-item"><span class="legend-dot score-100"></span> 100%</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= MONTHLY PERFORMANCE ANALYTICS ================= -->
+        <section id="analytics-tab" class="tab-pane">
+          <div class="analytics-layout-container animate-fade-in">
+            
+            <!-- Controls row with active month summary -->
+            <div class="analytics-header-row glass-card">
+              <div class="header-left">
+                <h2>Performance Analytics</h2>
+                <p class="section-sub">Historical progress data, trend chart, and habit consistency.</p>
+              </div>
+              <div class="header-right">
+                <label for="analytics-month-selector" class="sr-only">Select Month</label>
+                <select id="analytics-month-selector" class="grid-select month-sync-select">
+                  <!-- Dynamically synced selector -->
+                </select>
+              </div>
+            </div>
+
+            <!-- KPI Summary Cards Row -->
+            <div class="kpi-cards-grid">
+              
+              <!-- Card 1: Monthly Score -->
+              <div class="kpi-card glass-card">
+                <div class="kpi-icon-wrap bg-cyan-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="kpi-avg-score">0%</span>
+                  <span class="kpi-label">Avg Daily Score</span>
+                </div>
+              </div>
+
+              <!-- Card 2: Perfect Days -->
+              <div class="kpi-card glass-card">
+                <div class="kpi-icon-wrap bg-gold-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="8" r="7"/>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="kpi-perfect-days">0/0</span>
+                  <span class="kpi-label">Perfect Days (100%)</span>
+                </div>
+              </div>
+
+              <!-- Card 3: Top Habit -->
+              <div class="kpi-card glass-card">
+                <div class="kpi-icon-wrap bg-green-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value truncate-text" id="kpi-top-habit">-</span>
+                  <span class="kpi-label">Most Consistent</span>
+                </div>
+              </div>
+
+              <!-- Card 4: Needs Focus -->
+              <div class="kpi-card glass-card">
+                <div class="kpi-icon-wrap bg-red-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value truncate-text" id="kpi-focus-habit">-</span>
+                  <span class="kpi-label">Needs Consistency</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Visualization Grid: Graph + Habit Rankings -->
+            <div class="visuals-grid">
+              
+              <!-- Left: SVG Daily Trend Graph -->
+              <div class="visual-card glass-card trend-graph-card">
+                <div class="visual-card-header">
+                  <h3>Daily Score Trend</h3>
+                  <span class="chart-legend">Score % over active month days</span>
+                </div>
+                <div class="chart-container" id="trend-chart-container">
+                  <!-- Custom SVG line graph is drawn here by app.js -->
+                </div>
+              </div>
+
+              <!-- Right: Detailed Habit Success list -->
+              <div class="visual-card glass-card habit-rankings-card">
+                <div class="visual-card-header">
+                  <h3>Habit-by-Habit Consistency</h3>
+                  <span class="chart-legend">Frequency of completion this month</span>
+                </div>
+                <div class="habit-rankings-list" id="analytics-habit-list">
+                  <!-- Habit rows with percentages and progress bars loaded by app.js -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Inline Cloud Sync Settings (Accessible on mobile) -->
+            <div class="visual-card glass-card sync-settings-card" style="margin-top: 1.5rem;">
+              <div class="visual-card-header">
+                <h3>Cloud Sync & Database Backup</h3>
+                <span class="chart-legend">Connect a Supabase project to automatically sync and backup your routines</span>
+              </div>
+              <div class="sync-card-body" style="margin-top: 1.25rem;">
+                <form id="inline-sync-settings-form" class="auth-form" style="gap: 1rem;">
+                  <div class="input-group">
+                    <label for="inline-supabase-url">Supabase Project URL</label>
+                    <input type="url" id="inline-supabase-url" placeholder="https://your-project.supabase.co" autocomplete="off" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
+                  </div>
+                  <div class="input-group">
+                    <label for="inline-supabase-key">Supabase Anon Key</label>
+                    <input type="password" id="inline-supabase-key" placeholder="eyJhbGciOi..." autocomplete="off" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
+                  </div>
+                  <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem;">Connect & Sync</button>
+                    <button type="button" id="inline-clear-sync-btn" class="btn btn-secondary" style="flex: 1; min-width: 120px; color: var(--danger); border-color: rgba(239, 68, 68, 0.2); padding: 0.8rem 1.25rem;">Disconnect Cloud Sync</button>
+                  </div>
+                  <p id="inline-sync-status" class="sync-status-msg"></p>
+                </form>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+      </main>
+    </div>
+
+  </div>
+
+  <!-- ================= CLOUD SYNC SETTINGS MODAL ================= -->
+  <div id="sync-modal" class="modal-overlay hidden">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h2>Supabase Cloud Sync</h2>
+        <button id="close-sync-modal" class="icon-btn close-modal-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-info-text">
+          Sync your routine tracker across all devices by connecting a free Supabase project database.
+        </p>
+        <form id="sync-settings-form">
+          <div class="input-group">
+            <label for="supabase-url">Supabase Project URL</label>
+            <input type="url" id="supabase-url" placeholder="https://your-project.supabase.co" autocomplete="off" required>
+          </div>
+          <div class="input-group" style="margin-top: 1rem;">
+            <label for="supabase-key">Supabase Anon Key</label>
+            <input type="password" id="supabase-key" placeholder="eyJhbGciOi..." autocomplete="off" required>
+          </div>
+          
+          <div class="sql-instructions">
+            <h4>Database Setup Guide:</h4>
+            <p>Run this query in your Supabase SQL Editor to create the table:</p>
+            <pre><code>create table routines (
+  date text primary key,
+  data jsonb not null,
+  updated_at timestamp with time zone default now()
+);</code></pre>
+          </div>
+
+          <div class="modal-actions" style="margin-top: 1.5rem;">
+            <button type="submit" class="btn btn-primary btn-block">Save & Sync Now</button>
+            <button type="button" id="clear-sync-btn" class="btn btn-secondary btn-block" style="margin-top: 0.5rem; color: var(--danger);">Disconnect Cloud Sync</button>
+          </div>
+          <p id="sync-status" class="sync-status-msg"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <script src="app.js?v=1.2"></script>
+</body>
+</html>
