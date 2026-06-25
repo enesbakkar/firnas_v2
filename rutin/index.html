@@ -211,401 +211,411 @@
             <div class="checklist-column">
               <div class="blocks-grid">
                 
-                <!-- Block 1: Morning Core -->
-                <div class="time-block-card morning-border">
-                  <div class="block-header block-morning">
-                    <span class="block-num">01</span>
-                    <div>
-                      <h2>Morning Core</h2>
-                      <span class="block-span">Dawn to Forenoon</span>
+                <!-- Left Column: Morning (01) & Dusk (03) -->
+                <div class="blocks-column">
+                  
+                  <!-- Block 1: Morning Core -->
+                  <div class="time-block-card morning-border">
+                    <div class="block-header block-morning">
+                      <span class="block-num">01</span>
+                      <div>
+                        <h2>Morning Core</h2>
+                        <span class="block-span">Dawn to Forenoon</span>
+                      </div>
+                    </div>
+                    
+                    <div class="block-items">
+                      <!-- Fajr Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="fajr-sunnah" class="task-checkbox" data-key="fajr_sunnah">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Fajr 2 Rakah Sunnah</h3>
+                              <p>Dawn Optional Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Fajr Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="fajr-fard" class="task-checkbox" data-key="fajr_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Fajr 2 Rakah Fard</h3>
+                              <p>Dawn Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Morning Dhikr -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="morning-dhikr" class="task-checkbox" data-key="morning_dhikr">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📿</span>
+                            <div>
+                              <h3>Morning Dhikr</h3>
+                              <p>Morning Remembrance</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Quran Devotion -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="quran-devotion" class="task-checkbox" data-key="quran_devotion">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📖</span>
+                            <div>
+                              <h3>Quran Devotion</h3>
+                              <p>Daily Wird / Tilavet</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Intellectual Growth -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="intellectual-growth" class="task-checkbox" data-key="intellectual_growth">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📚</span>
+                            <div>
+                              <h3>Intellectual Growth</h3>
+                              <p>Book Reading</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Physical Training -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="physical-training" class="task-checkbox" data-key="physical_training">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🏋️</span>
+                            <div>
+                              <h3>Physical Training</h3>
+                              <p>Workout / Sport</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Nutritional Fuel -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="nutritional-fuel" class="task-checkbox" data-key="nutritional_fuel">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🍳</span>
+                            <div>
+                              <h3>Nutritional Fuel</h3>
+                              <p>Healthy Breakfast</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Horizon Sync -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="horizon-sync" class="task-checkbox" data-key="horizon_sync">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🎯</span>
+                            <div>
+                              <h3>Horizon Sync</h3>
+                              <p>Daily Planning & Vision Alignment</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Duha Prayer -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="duha-prayer" class="task-checkbox" data-key="duha_prayer">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">☀️</span>
+                            <div>
+                              <h3>Duha Prayer</h3>
+                              <p>Kuşluk Namazı</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Block 3: Dusk & Evening -->
+                  <div class="time-block-card dusk-border">
+                    <div class="block-header block-dusk">
+                      <span class="block-num">03</span>
+                      <div>
+                        <h2>Dusk & Evening</h2>
+                        <span class="block-span">Sunset to Night</span>
+                      </div>
+                    </div>
+                    
+                    <div class="block-items">
+                      <!-- Evening Dhikr -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="evening-dhikr" class="task-checkbox" data-key="evening_dhikr">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📿</span>
+                            <div>
+                              <h3>Evening Dhikr</h3>
+                              <p>Evening Remembrance</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Maghrib 3 Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="maghrib-fard" class="task-checkbox" data-key="maghrib_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Maghrib 3 Rakah Fard</h3>
+                              <p>Sunset Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Maghrib 2 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="maghrib-sunnah" class="task-checkbox" data-key="maghrib_sunnah">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Maghrib 2 Rakah Sunnah</h3>
+                              <p>Post-Sunset Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Isha 4 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="isha-sunnah1" class="task-checkbox" data-key="isha_sunnah1">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Isha 4 Rakah Sunnah</h3>
+                              <p>Pre-Obligation Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Isha Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="isha-fard" class="task-checkbox" data-key="isha_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Isha 4 Rakah Fard</h3>
+                              <p>Night Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Isha 2 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="isha-sunnah2" class="task-checkbox" data-key="isha_sunnah2">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Isha 2 Rakah Sunnah</h3>
+                              <p>Post-Obligation Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Witr Prayer -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="witr-prayer" class="task-checkbox" data-key="witr_prayer">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Witr 3 Rakah Prayer</h3>
+                              <p>Hanefi Wajib</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
                     </div>
                   </div>
                   
-                  <div class="block-items">
-                    <!-- Fajr Sunnah -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="fajr-sunnah" class="task-checkbox" data-key="fajr_sunnah">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Fajr 2 Rakah Sunnah</h3>
-                            <p>Dawn Optional Devotion</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Fajr Fard -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="fajr-fard" class="task-checkbox" data-key="fajr_fard">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Fajr 2 Rakah Fard</h3>
-                            <p>Dawn Obligation</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Morning Dhikr -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="morning-dhikr" class="task-checkbox" data-key="morning_dhikr">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">📿</span>
-                          <div>
-                            <h3>Morning Dhikr</h3>
-                            <p>Morning Remembrance</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Quran Devotion -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="quran-devotion" class="task-checkbox" data-key="quran_devotion">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">📖</span>
-                          <div>
-                            <h3>Quran Devotion</h3>
-                            <p>Daily Wird / Tilavet</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Intellectual Growth -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="intellectual-growth" class="task-checkbox" data-key="intellectual_growth">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">📚</span>
-                          <div>
-                            <h3>Intellectual Growth</h3>
-                            <p>Book Reading</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Physical Training -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="physical-training" class="task-checkbox" data-key="physical_training">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🏋️</span>
-                          <div>
-                            <h3>Physical Training</h3>
-                            <p>Workout / Sport</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Nutritional Fuel -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="nutritional-fuel" class="task-checkbox" data-key="nutritional_fuel">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🍳</span>
-                          <div>
-                            <h3>Nutritional Fuel</h3>
-                            <p>Healthy Breakfast</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Horizon Sync -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="horizon-sync" class="task-checkbox" data-key="horizon_sync">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🎯</span>
-                          <div>
-                            <h3>Horizon Sync</h3>
-                            <p>Daily Planning & Vision Alignment</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Duha Prayer -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="duha-prayer" class="task-checkbox" data-key="duha_prayer">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">☀️</span>
-                          <div>
-                            <h3>Duha Prayer</h3>
-                            <p>Kuşluk Namazı</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
                 </div>
 
-                <!-- Block 2: Midday & Afternoon -->
-                <div class="time-block-card midday-border">
-                  <div class="block-header block-midday">
-                    <span class="block-num">02</span>
-                    <div>
-                      <h2>Midday & Afternoon</h2>
-                      <span class="block-span">Noon to Sunset</span>
+                <!-- Right Column: Midday (02) & Night (04) -->
+                <div class="blocks-column">
+                  
+                  <!-- Block 2: Midday & Afternoon -->
+                  <div class="time-block-card midday-border">
+                    <div class="block-header block-midday">
+                      <span class="block-num">02</span>
+                      <div>
+                        <h2>Midday & Afternoon</h2>
+                        <span class="block-span">Noon to Sunset</span>
+                      </div>
+                    </div>
+                    
+                    <div class="block-items">
+                      <!-- Dhuhr 4 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="dhuhr-sunnah1" class="task-checkbox" data-key="dhuhr_sunnah1">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Dhuhr 4 Rakah Sunnah</h3>
+                              <p>Pre-Obligation Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Dhuhr Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="dhuhr-fard" class="task-checkbox" data-key="dhuhr_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Dhuhr 4 Rakah Fard</h3>
+                              <p>Noon Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Dhuhr 2 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="dhuhr-sunnah2" class="task-checkbox" data-key="dhuhr_sunnah2">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Dhuhr 2 Rakah Sunnah</h3>
+                              <p>Post-Obligation Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Asr 4 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="asr-sunnah" class="task-checkbox" data-key="asr_sunnah">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Asr 4 Rakah Sunnah</h3>
+                              <p>Hanefi Sunnah</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Asr Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="asr-fard" class="task-checkbox" data-key="asr_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3>Asr 4 Rakah Fard</h3>
+                              <p>Afternoon Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Block 4: Night Closeout -->
+                  <div class="time-block-card night-border">
+                    <div class="block-header block-night">
+                      <span class="block-num">04</span>
+                      <div>
+                        <h2>Night Closeout</h2>
+                        <span class="block-span">Before Sleep</span>
+                      </div>
+                    </div>
+                    
+                    <div class="block-items">
+                      <!-- Mind Log Checklist -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="mind-log" class="task-checkbox" data-key="mind_log">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📝</span>
+                            <div>
+                              <h3>Mind Log</h3>
+                              <p>Daily Journaling Complete</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- FinFlow Checklist -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="fin-flow" class="task-checkbox" data-key="fin_flow">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">💰</span>
+                            <div>
+                              <h3>FinFlow</h3>
+                              <p>Daily Expenses Logged</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
                     </div>
                   </div>
                   
-                  <div class="block-items">
-                    <!-- Dhuhr 4 Sunnah -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="dhuhr-sunnah1" class="task-checkbox" data-key="dhuhr_sunnah1">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Dhuhr 4 Rakah Sunnah</h3>
-                            <p>Pre-Obligation Devotion</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Dhuhr Fard -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="dhuhr-fard" class="task-checkbox" data-key="dhuhr_fard">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Dhuhr 4 Rakah Fard</h3>
-                            <p>Noon Obligation</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Dhuhr 2 Sunnah -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="dhuhr-sunnah2" class="task-checkbox" data-key="dhuhr_sunnah2">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Dhuhr 2 Rakah Sunnah</h3>
-                            <p>Post-Obligation Devotion</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Asr 4 Sunnah -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="asr-sunnah" class="task-checkbox" data-key="asr_sunnah">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Asr 4 Rakah Sunnah</h3>
-                            <p>Hanefi Sunnah</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Asr Fard -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="asr-fard" class="task-checkbox" data-key="asr_fard">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Asr 4 Rakah Fard</h3>
-                            <p>Afternoon Obligation</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Block 3: Dusk & Evening -->
-                <div class="time-block-card dusk-border">
-                  <div class="block-header block-dusk">
-                    <span class="block-num">03</span>
-                    <div>
-                      <h2>Dusk & Evening</h2>
-                      <span class="block-span">Sunset to Night</span>
-                    </div>
-                  </div>
-                  
-                  <div class="block-items">
-                    <!-- Evening Dhikr -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="evening-dhikr" class="task-checkbox" data-key="evening_dhikr">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">📿</span>
-                          <div>
-                            <h3>Evening Dhikr</h3>
-                            <p>Evening Remembrance</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Maghrib 3 Fard -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="maghrib-fard" class="task-checkbox" data-key="maghrib_fard">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Maghrib 3 Rakah Fard</h3>
-                            <p>Sunset Obligation</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Maghrib 2 Sunnah -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="maghrib-sunnah" class="task-checkbox" data-key="maghrib_sunnah">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Maghrib 2 Rakah Sunnah</h3>
-                            <p>Post-Sunset Devotion</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Isha 4 Sunnah -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="isha-sunnah1" class="task-checkbox" data-key="isha_sunnah1">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Isha 4 Rakah Sunnah</h3>
-                            <p>Pre-Obligation Devotion</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Isha Fard -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="isha-fard" class="task-checkbox" data-key="isha_fard">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Isha 4 Rakah Fard</h3>
-                            <p>Night Obligation</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Isha 2 Sunnah -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="isha-sunnah2" class="task-checkbox" data-key="isha_sunnah2">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Isha 2 Rakah Sunnah</h3>
-                            <p>Post-Obligation Devotion</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- Witr Prayer -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="witr-prayer" class="task-checkbox" data-key="witr_prayer">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">🕌</span>
-                          <div>
-                            <h3>Witr 3 Rakah Prayer</h3>
-                            <p>Hanefi Wajib</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Block 4: Night Closeout -->
-                <div class="time-block-card night-border">
-                  <div class="block-header block-night">
-                    <span class="block-num">04</span>
-                    <div>
-                      <h2>Night Closeout</h2>
-                      <span class="block-span">Before Sleep</span>
-                    </div>
-                  </div>
-                  
-                  <div class="block-items">
-                    <!-- Mind Log Checklist -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="mind-log" class="task-checkbox" data-key="mind_log">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">📝</span>
-                          <div>
-                            <h3>Mind Log</h3>
-                            <p>Daily Journaling Complete</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-
-                    <!-- FinFlow Checklist -->
-                    <div class="habit-item-card">
-                      <label class="custom-checkbox full-width-label">
-                        <input type="checkbox" id="fin-flow" class="task-checkbox" data-key="fin_flow">
-                        <span class="checkmark"></span>
-                        <div class="label-content">
-                          <span class="item-icon">💰</span>
-                          <div>
-                            <h3>FinFlow</h3>
-                            <p>Daily Expenses Logged</p>
-                          </div>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
                 </div>
 
               </div>

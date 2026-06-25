@@ -592,6 +592,13 @@ body {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 1.5rem;
+  align-items: start;
+}
+
+.blocks-column {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
 }
 
 .time-block-card {
@@ -1412,6 +1419,20 @@ body {
   .sidebar {
     display: none !important; /* Hide desktop sidebar completely */
   }
+
+  .blocks-grid {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .blocks-column {
+    display: contents !important;
+  }
+
+  .morning-border { order: 1 !important; }
+  .midday-border { order: 2 !important; }
+  .dusk-border { order: 3 !important; }
+  .night-border { order: 4 !important; }
 
   .mobile-tabs {
     display: flex; /* Show bottom navigation */
