@@ -2134,9 +2134,18 @@ const UIController = {
   },
 
   setupCalendarTab() {
+    const clientIdInput = document.getElementById('google-client-id');
+    if (clientIdInput) {
+      clientIdInput.value = localStorage.getItem('google_client_id') || '';
+      clientIdInput.addEventListener('input', () => {
+        localStorage.setItem('google_client_id', clientIdInput.value);
+      });
+    }
+
     if (this.dom.calendarEventForm) {
       this.dom.calendarEventForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        const activeDateKey = formatDateKey(STATE.activeDate);
         const title = this.dom.eventTitle.value;
         const startTime = this.dom.eventStartTime.value;
         const endTime = this.dom.eventEndTime.value;
@@ -2147,7 +2156,9 @@ const UIController = {
           title: title,
           startTime: startTime,
           endTime: endTime,
-          desc: desc
+          desc: desc,
+          date: activeDateKey,
+          isLocal: true
         };
 
         STATE.calendar.push(newEvent);
@@ -2164,13 +2175,138 @@ const UIController = {
     }
 
     const authBtn = document.getElementById('google-auth-btn');
+    const updateAuthBtnStyle = (isConnected) => {
+      if (authBtn) {
+        if (isConnected) {
+          authBtn.innerHTML = "Google Takvim Bağlandı ✓";
+          authBtn.style.backgroundColor = "var(--success)";
+          authBtn.style.borderColor = "var(--success)";
+        } else {
+          authBtn.innerHTML = "Google Hesabını Bağla";
+          authBtn.style.backgroundColor = "#4285f4";
+          authBtn.style.borderColor = "#4285f4";
+        }
+      }
+    };
+
     if (authBtn) {
+      const cachedToken = localStorage.getItem('google_access_token');
+      if (cachedToken) {
+        updateAuthBtnStyle(true);
+        this.syncGoogleCalendar(cachedToken);
+      }
+
       authBtn.addEventListener('click', () => {
-        alert("Enes Bakkar Google Calendar Senkronizasyonu: OAuth2 istemcisi yerel yetkilendirme modunda çalıştırılıyor.");
-        authBtn.textContent = "Google Takvim Bağlandı ✓";
-        authBtn.style.backgroundColor = "var(--success)";
-        authBtn.style.borderColor = "var(--success)";
+        const client_id = clientIdInput ? clientIdInput.value.trim() : '';
+        if (!client_id) {
+          alert("Google Takvim'e bağlanmak için lütfen öncelikle sağ alttaki panelden geçerli bir Google Client ID girin.");
+          return;
+        }
+
+        if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
+          alert("Google API kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.");
+          return;
+        }
+
+        try {
+          const tokenClient = google.accounts.oauth2.initTokenClient({
+            client_id: client_id,
+            scope: 'https://www.googleapis.com/auth/calendar.readonly',
+            callback: async (resp) => {
+              if (resp.error) {
+                console.error("GIS Error: ", resp.error);
+                alert("Google yetkilendirme hatası: " + resp.error);
+                return;
+              }
+              if (resp.access_token) {
+                localStorage.setItem('google_access_token', resp.access_token);
+                updateAuthBtnStyle(true);
+                AudioFeedback.playSuccess();
+                alert("Google Takvim başarıyla bağlandı! Verileriniz senkronize ediliyor.");
+                this.syncGoogleCalendar(resp.access_token);
+              }
+            },
+          });
+          tokenClient.requestAccessToken({ prompt: 'consent' });
+        } catch (err) {
+          console.error("Google Auth error:", err);
+          alert("Bağlantı başlatılamadı: " + err.message);
+        }
       });
+    }
+  },
+
+  async syncGoogleCalendar(accessToken) {
+    try {
+      const activeDateKey = formatDateKey(STATE.activeDate);
+      const timeMin = new Date(STATE.activeDate);
+      timeMin.setHours(0,0,0,0);
+      const timeMax = new Date(STATE.activeDate);
+      timeMax.setHours(23,59,59,999);
+
+      const url = `https://www.googleapis.com/calendar/v3/calendars/primary/events?timeMin=${timeMin.toISOString()}&timeMax=${timeMax.toISOString()}&singleEvents=true&orderBy=startTime&maxResults=50`;
+      
+      const response = await fetch(url, {
+        headers: {
+          'Authorization': `Bearer ${accessToken}`
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401) {
+          localStorage.removeItem('google_access_token');
+          const authBtn = document.getElementById('google-auth-btn');
+          if (authBtn) {
+            authBtn.innerHTML = "Google Hesabını Bağla";
+            authBtn.style.backgroundColor = "#4285f4";
+            authBtn.style.borderColor = "#4285f4";
+          }
+          console.log("Google token expired, auth reset.");
+          return;
+        }
+        throw new Error("HTTP error " + response.status);
+      }
+
+      const data = await response.json();
+      
+      // Keep local events, replace Google events for this date
+      STATE.calendar = STATE.calendar.filter(evt => evt.isLocal || evt.date !== activeDateKey);
+      
+      const googleEvents = (data.items || []).map(item => {
+        let startTime = "09:00";
+        let endTime = "10:00";
+        if (item.start) {
+          const startStr = item.start.dateTime || item.start.date;
+          if (item.start.dateTime) {
+            const dateObj = new Date(startStr);
+            startTime = String(dateObj.getHours()).padStart(2, '0') + ':' + String(dateObj.getMinutes()).padStart(2, '0');
+          }
+        }
+        if (item.end) {
+          const endStr = item.end.dateTime || item.end.date;
+          if (item.end.dateTime) {
+            const dateObj = new Date(endStr);
+            endTime = String(dateObj.getHours()).padStart(2, '0') + ':' + String(dateObj.getMinutes()).padStart(2, '0');
+          }
+        }
+
+        return {
+          id: item.id,
+          title: item.summary || 'Başlıksız Etkinlik',
+          startTime: startTime,
+          endTime: endTime,
+          desc: item.description || item.location || 'Google Takvim Etkinliği',
+          date: activeDateKey,
+          isLocal: false
+        };
+      });
+
+      STATE.calendar = [...STATE.calendar, ...googleEvents];
+      StorageManager.saveCalendar();
+      this.renderCalendar();
+      this.renderBrief();
+    } catch (err) {
+      console.error("Google Calendar Sync Error:", err);
     }
   },
 
@@ -2182,11 +2318,22 @@ const UIController = {
       dayLabel.textContent = CalendarEngine.getGregorianString(STATE.activeDate);
     }
 
+    // Auto trigger sync if token exists
+    const cachedToken = localStorage.getItem('google_access_token');
+    if (cachedToken && !this._isSyncingCalendar) {
+      this._isSyncingCalendar = true;
+      this.syncGoogleCalendar(cachedToken).finally(() => {
+        this._isSyncingCalendar = false;
+      });
+    }
+
     if (this.dom.calendarTimelineEvents) {
       this.dom.calendarTimelineEvents.innerHTML = '';
       
-      // Sort events by start time
-      const sortedEvents = [...STATE.calendar].sort((a, b) => a.startTime.localeCompare(b.startTime));
+      // Sort and filter events by active date
+      const sortedEvents = [...STATE.calendar]
+        .filter(e => !e.date || e.date === activeDateKey)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
       // Hours to render in the scrollable timeline: 08:00 to 22:00
       for (let h = 8; h <= 22; h++) {
@@ -2212,18 +2359,20 @@ const UIController = {
               </div>
               <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <span class="event-time">${e.startTime} - ${e.endTime}</span>
-                <button class="delete-event-btn" data-id="${e.id}">×</button>
+                ${e.isLocal ? `<button class="delete-event-btn" data-id="${e.id}">×</button>` : ''}
               </div>
             `;
 
-            card.querySelector('.delete-event-btn').addEventListener('click', (ev) => {
-              ev.stopPropagation();
-              STATE.calendar = STATE.calendar.filter(x => x.id !== e.id);
-              StorageManager.saveCalendar();
-              AudioFeedback.playSuccess();
-              this.renderCalendar();
-              this.renderBrief();
-            });
+            if (e.isLocal) {
+              card.querySelector('.delete-event-btn').addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                STATE.calendar = STATE.calendar.filter(x => x.id !== e.id);
+                StorageManager.saveCalendar();
+                AudioFeedback.playSuccess();
+                this.renderCalendar();
+                this.renderBrief();
+              });
+            }
 
             placeholder.appendChild(card);
           });
