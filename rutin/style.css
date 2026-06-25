@@ -57,12 +57,41 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  /* Premium radial background glow */
+  /* Deep base ambient glow layers */
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.04) 0%, transparent 40%);
+    radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, rgba(3, 7, 18, 0.5) 0%, var(--bg-dark) 100%);
+  background-size: 100% 100%, 100% 100%, 100% 100%;
   background-attachment: fixed;
-  isolation: isolate; /* Create a stacking context so z-index: -1 children render above the body background */
+  isolation: isolate; /* Create a stacking context so z-index children render correctly */
+}
+
+/* Advanced cybernetic mesh grid with glowing intersection dots */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: 
+    radial-gradient(rgba(6, 182, 212, 0.12) 1.5px, transparent 1.5px),
+    linear-gradient(rgba(6, 182, 212, 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.035) 1px, transparent 1px);
+  background-size: 55px 55px, 55px 55px, 55px 55px;
+  background-position: center;
+  pointer-events: none;
+  z-index: -2; /* Sits above background and orbs, but below content */
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, rgba(0, 0, 0, 0.1) 85%, transparent 100%);
+  mask-image: radial-gradient(circle at 50% 50%, black 20%, rgba(0, 0, 0, 0.1) 85%, transparent 100%);
+}
+
+/* Soft dark vignette shadow framing the dashboard screen */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(3, 7, 18, 0.7) 100%);
+  pointer-events: none;
+  z-index: -1; /* Sits in front of the grid and orbs to frame the workspace */
 }
 
 /* Custom Scrollbar */
@@ -1923,50 +1952,64 @@ body {
 .bg-orb {
   position: fixed;
   border-radius: 50%;
-  filter: blur(120px);
+  filter: blur(140px);
   pointer-events: none;
-  z-index: -1;
-  opacity: 0.08; /* Perfect sweet spot for subtle glowing mist */
+  z-index: -3; /* Placed behind the cyber grid overlay */
+  opacity: 0.15; /* Increased opacity for richer depth */
+  will-change: transform;
 }
 .orb-1 {
-  width: 400px;
-  height: 400px;
-  background: var(--primary);
+  width: 450px;
+  height: 450px;
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, rgba(168, 85, 247, 0.08) 50%, transparent 100%);
   top: -10%;
   left: -5%;
-  animation: orb-float-1 25s infinite ease-in-out;
+  animation: orb-float-1 28s infinite ease-in-out;
 }
 .orb-2 {
-  width: 500px;
-  height: 500px;
-  background: var(--accent-purple);
+  width: 550px;
+  height: 550px;
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.22) 0%, rgba(6, 182, 212, 0.08) 60%, transparent 100%);
   bottom: -15%;
   right: -5%;
-  animation: orb-float-2 30s infinite ease-in-out;
+  animation: orb-float-2 34s infinite ease-in-out;
 }
 .orb-3 {
-  width: 300px;
-  height: 300px;
-  background: var(--success);
-  top: 30%;
-  left: 30%;
-  animation: orb-float-3 22s infinite ease-in-out;
+  width: 350px;
+  height: 350px;
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(6, 182, 212, 0.06) 50%, transparent 100%);
+  top: 40%;
+  left: 15%;
+  animation: orb-float-3 24s infinite ease-in-out;
+}
+.orb-4 {
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.16) 0%, rgba(168, 85, 247, 0.06) 60%, transparent 100%);
+  top: 15%;
+  right: 20%;
+  animation: orb-float-4 30s infinite ease-in-out;
 }
 
 @keyframes orb-float-1 {
-  0% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(40px, 20px) scale(1.1); }
-  100% { transform: translate(0, 0) scale(1); }
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.8; }
+  50% { transform: translate(60px, 30px) scale(1.1) rotate(180deg); opacity: 1; }
+  100% { transform: translate(0, 0) scale(1) rotate(360deg); opacity: 0.8; }
 }
 @keyframes orb-float-2 {
-  0% { transform: translate(0, 0) scale(1.1); }
-  50% { transform: translate(-50px, -30px) scale(0.9); }
-  100% { transform: translate(0, 0) scale(1.1); }
+  0% { transform: translate(0, 0) scale(1.1) rotate(0deg); opacity: 0.9; }
+  50% { transform: translate(-70px, -40px) scale(0.95) rotate(-180deg); opacity: 0.7; }
+  100% { transform: translate(0, 0) scale(1.1) rotate(-360deg); opacity: 0.9; }
 }
 @keyframes orb-float-3 {
-  0% { transform: translate(0, 0) scale(0.95); }
-  50% { transform: translate(-20px, 40px) scale(1.05); }
-  100% { transform: translate(0, 0) scale(0.95); }
+  0% { transform: translate(0, 0) scale(0.9) rotate(0deg); opacity: 0.7; }
+  50% { transform: translate(40px, -60px) scale(1.15) rotate(180deg); opacity: 1; }
+  100% { transform: translate(0, 0) scale(0.9) rotate(360deg); opacity: 0.7; }
+}
+@keyframes orb-float-4 {
+  0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.85; }
+  50% { transform: translate(-50px, 50px) scale(1.1) rotate(-180deg); opacity: 1; }
+  100% { transform: translate(0, 0) scale(1) rotate(-360deg); opacity: 0.85; }
 }
 
 /* ================= 100% PERFECT PROGRESS PULSE ================= */
