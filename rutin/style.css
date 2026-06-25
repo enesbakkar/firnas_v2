@@ -59,8 +59,8 @@ body {
   overflow-x: hidden;
   /* Deep base ambient glow layers */
   background-image: 
-    radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.04) 0%, transparent 50%),
+    radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.07) 0%, transparent 50%),
     radial-gradient(circle at 50% 50%, rgba(3, 7, 18, 0.5) 0%, var(--bg-dark) 100%);
   background-size: 100% 100%, 100% 100%, 100% 100%;
   background-attachment: fixed;
@@ -73,15 +73,15 @@ body::before {
   position: fixed;
   inset: 0;
   background-image: 
-    radial-gradient(rgba(6, 182, 212, 0.12) 1.5px, transparent 1.5px),
-    linear-gradient(rgba(6, 182, 212, 0.035) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(6, 182, 212, 0.035) 1px, transparent 1px);
+    radial-gradient(rgba(6, 182, 212, 0.28) 1.5px, transparent 1.5px),
+    linear-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
   background-size: 55px 55px, 55px 55px, 55px 55px;
   background-position: center;
   pointer-events: none;
   z-index: -2; /* Sits above background and orbs, but below content */
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, rgba(0, 0, 0, 0.1) 85%, transparent 100%);
-  mask-image: radial-gradient(circle at 50% 50%, black 20%, rgba(0, 0, 0, 0.1) 85%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, rgba(0, 0, 0, 0.15) 85%, transparent 100%);
+  mask-image: radial-gradient(circle at 50% 50%, black 20%, rgba(0, 0, 0, 0.15) 85%, transparent 100%);
 }
 
 /* Soft dark vignette shadow framing the dashboard screen */
@@ -89,7 +89,7 @@ body::after {
   content: "";
   position: fixed;
   inset: 0;
-  background: radial-gradient(circle at 50% 50%, transparent 30%, rgba(3, 7, 18, 0.7) 100%);
+  background: radial-gradient(circle at 50% 50%, transparent 45%, rgba(3, 7, 18, 0.6) 100%);
   pointer-events: none;
   z-index: -1; /* Sits in front of the grid and orbs to frame the workspace */
 }
@@ -1952,16 +1952,16 @@ body::after {
 .bg-orb {
   position: fixed;
   border-radius: 50%;
-  filter: blur(140px);
+  filter: blur(100px); /* Reduced blur to make them more colorful and concentrated */
   pointer-events: none;
   z-index: -3; /* Placed behind the cyber grid overlay */
-  opacity: 0.15; /* Increased opacity for richer depth */
+  opacity: 0.28; /* Increased opacity for richer depth */
   will-change: transform;
 }
 .orb-1 {
   width: 450px;
   height: 450px;
-  background: radial-gradient(circle, rgba(6, 182, 212, 0.25) 0%, rgba(168, 85, 247, 0.08) 50%, transparent 100%);
+  background: radial-gradient(circle, rgba(6, 182, 212, 0.45) 0%, rgba(168, 85, 247, 0.15) 50%, transparent 100%);
   top: -10%;
   left: -5%;
   animation: orb-float-1 28s infinite ease-in-out;
@@ -1969,7 +1969,7 @@ body::after {
 .orb-2 {
   width: 550px;
   height: 550px;
-  background: radial-gradient(circle, rgba(168, 85, 247, 0.22) 0%, rgba(6, 182, 212, 0.08) 60%, transparent 100%);
+  background: radial-gradient(circle, rgba(168, 85, 247, 0.42) 0%, rgba(6, 182, 212, 0.15) 60%, transparent 100%);
   bottom: -15%;
   right: -5%;
   animation: orb-float-2 34s infinite ease-in-out;
@@ -1977,7 +1977,7 @@ body::after {
 .orb-3 {
   width: 350px;
   height: 350px;
-  background: radial-gradient(circle, rgba(16, 185, 129, 0.18) 0%, rgba(6, 182, 212, 0.06) 50%, transparent 100%);
+  background: radial-gradient(circle, rgba(16, 185, 129, 0.35) 0%, rgba(6, 182, 212, 0.12) 50%, transparent 100%);
   top: 40%;
   left: 15%;
   animation: orb-float-3 24s infinite ease-in-out;
@@ -1985,7 +1985,7 @@ body::after {
 .orb-4 {
   width: 400px;
   height: 400px;
-  background: radial-gradient(circle, rgba(251, 191, 36, 0.16) 0%, rgba(168, 85, 247, 0.06) 60%, transparent 100%);
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.32) 0%, rgba(168, 85, 247, 0.12) 60%, transparent 100%);
   top: 15%;
   right: 20%;
   animation: orb-float-4 30s infinite ease-in-out;
@@ -2010,6 +2010,115 @@ body::after {
   0% { transform: translate(0, 0) scale(1) rotate(0deg); opacity: 0.85; }
   50% { transform: translate(-50px, 50px) scale(1.1) rotate(-180deg); opacity: 1; }
   100% { transform: translate(0, 0) scale(1) rotate(-360deg); opacity: 0.85; }
+}
+
+/* ================= FLOATING HOLOGRAPHIC SHAPES ================= */
+.bg-shapes {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: -2; /* Above orbs, behind content */
+  overflow: hidden;
+}
+.shape {
+  position: absolute;
+  opacity: 0.12; /* Subtle, cool cyber outline */
+  will-change: transform;
+  transition: opacity var(--transition-normal);
+}
+/* Desktop shapes */
+.shape-ring-1 {
+  width: 280px;
+  height: 280px;
+  border: 1.5px solid var(--primary);
+  border-radius: 50%;
+  top: 15%;
+  left: 8%;
+  box-shadow: 0 0 20px var(--primary-glow);
+  animation: shape-float-1 38s infinite linear;
+}
+.shape-ring-2 {
+  width: 190px;
+  height: 190px;
+  border: 1.5px dashed var(--accent-purple);
+  border-radius: 50%;
+  bottom: 12%;
+  right: 10%;
+  box-shadow: 0 0 15px var(--accent-purple-glow);
+  animation: shape-float-2 46s infinite linear;
+}
+.shape-diamond-1 {
+  width: 130px;
+  height: 130px;
+  border: 1px solid var(--accent-gold);
+  top: 45%;
+  right: 15%;
+  box-shadow: 0 0 15px var(--accent-gold-glow);
+  transform: rotate(45deg);
+  animation: shape-float-3 52s infinite ease-in-out;
+}
+.shape-diamond-2 {
+  width: 80px;
+  height: 80px;
+  border: 1px solid var(--primary-light);
+  bottom: 30%;
+  left: 20%;
+  box-shadow: 0 0 10px var(--primary-glow);
+  transform: rotate(15deg);
+  animation: shape-float-4 42s infinite ease-in-out;
+}
+
+@keyframes shape-float-1 {
+  0% { transform: translate(0, 0) rotate(0deg) scale(1); }
+  50% { transform: translate(40px, -30px) rotate(180deg) scale(1.05); }
+  100% { transform: translate(0, 0) rotate(360deg) scale(1); }
+}
+@keyframes shape-float-2 {
+  0% { transform: translate(0, 0) rotate(360deg) scale(1.05); }
+  50% { transform: translate(-30px, 40px) rotate(180deg) scale(0.95); }
+  100% { transform: translate(0, 0) rotate(0deg) scale(1.05); }
+}
+@keyframes shape-float-3 {
+  0% { transform: translate(0, 0) rotate(45deg) scale(1); }
+  50% { transform: translate(-20px, -45px) rotate(225deg) scale(1.1); }
+  100% { transform: translate(0, 0) rotate(405deg) scale(1); }
+}
+@keyframes shape-float-4 {
+  0% { transform: translate(0, 0) rotate(15deg) scale(0.95); }
+  50% { transform: translate(30px, 30px) rotate(-165deg) scale(1.05); }
+  100% { transform: translate(0, 0) rotate(-345deg) scale(0.95); }
+}
+
+/* Mobile adjustments for background shapes */
+@media (max-width: 768px) {
+  .shape-ring-1 {
+    width: 180px;
+    height: 180px;
+    top: 10%;
+    left: -5%;
+    opacity: 0.08;
+  }
+  .shape-ring-2 {
+    width: 140px;
+    height: 140px;
+    bottom: 5%;
+    right: -5%;
+    opacity: 0.08;
+  }
+  .shape-diamond-1 {
+    width: 80px;
+    height: 80px;
+    top: 60%;
+    right: -3%;
+    opacity: 0.08;
+  }
+  .shape-diamond-2 {
+    width: 50px;
+    height: 50px;
+    bottom: 40%;
+    left: -2%;
+    opacity: 0.08;
+  }
 }
 
 /* ================= 100% PERFECT PROGRESS PULSE ================= */
