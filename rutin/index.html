@@ -39,12 +39,12 @@
           <circle cx="12" cy="12" r="10"/>
           <polyline points="12 6 12 12 16 14"/>
         </svg>
-        <h1>Horizon Tracker</h1>
-        <p class="auth-sub">Private Single-User Dashboard</p>
+        <h1 data-i18n="auth_title">Horizon Tracker</h1>
+        <p class="auth-sub" data-i18n="auth_sub">Private Single-User Dashboard</p>
       </div>
       <form id="auth-form" class="auth-form">
         <div class="input-group">
-          <label for="passcode">Access Passcode</label>
+          <label for="passcode" data-i18n="auth_label">Access Passcode</label>
           <div class="password-wrapper">
             <input type="password" id="passcode" required placeholder="••••••••" autocomplete="current-password">
             <button type="button" id="toggle-password" class="icon-btn">
@@ -55,11 +55,11 @@
             </button>
           </div>
         </div>
-        <button type="submit" class="btn btn-primary btn-block">Unlock Dashboard</button>
+        <button type="submit" class="btn btn-primary btn-block" data-i18n="auth_unlock">Unlock Dashboard</button>
         <p id="auth-error" class="error-msg"></p>
       </form>
       <div class="auth-footer">
-        <p>© 2026 Firnas Technologies</p>
+        <p data-i18n="auth_footer">© 2026 Firnas Technologies</p>
       </div>
     </div>
   </div>
@@ -85,14 +85,14 @@
           <span class="streak-emoji">🔥</span>
           <div class="streak-details">
             <span class="value" id="sidebar-current-streak">0</span>
-            <span class="label">Current Streak</span>
+            <span class="label" data-i18n="focus_current_streak">Current Streak</span>
           </div>
         </div>
         <div class="sidebar-streak-item peak-streak" title="Historical personal best streak">
           <span class="streak-emoji">🏆</span>
           <div class="streak-details">
             <span class="value" id="sidebar-best-streak">0</span>
-            <span class="label">Personal Best</span>
+            <span class="label" data-i18n="focus_personal_best">Personal Best</span>
           </div>
         </div>
       </div>
@@ -104,14 +104,14 @@
             <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
             <polyline points="9 22 9 12 15 12 15 22"/>
           </svg>
-          <span>Ana Panel</span>
+          <span data-i18n="nav_brief">Dashboard</span>
         </button>
         <button class="tab-btn" data-tab="focus-tab">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 11 12 14 22 4"/>
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
           </svg>
-          <span>Rutinler</span>
+          <span data-i18n="nav_routines">Routines</span>
         </button>
         <button class="tab-btn" data-tab="grid-tab">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -119,21 +119,21 @@
             <line x1="3" y1="9" x2="21" y2="9"/>
             <line x1="9" y1="21" x2="9" y2="9"/>
           </svg>
-          <span>Aylık Takip</span>
+          <span data-i18n="nav_monthly">Monthly Grid</span>
         </button>
         <button class="tab-btn" data-tab="journal-tab">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M12 20h9"/>
             <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
           </svg>
-          <span>Günlük Yaz</span>
+          <span data-i18n="nav_journal">Mind Log</span>
         </button>
         <button class="tab-btn" data-tab="finance-tab">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="12" y1="1" x2="12" y2="23"/>
             <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
           </svg>
-          <span>FinFlow+</span>
+          <span data-i18n="nav_finance">FinFlow+</span>
         </button>
         <button class="tab-btn" data-tab="calendar-tab">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -142,7 +142,7 @@
             <line x1="8" y1="2" x2="8" y2="6"/>
             <line x1="3" y1="10" x2="21" y2="10"/>
           </svg>
-          <span>Takvim</span>
+          <span data-i18n="nav_calendar">Scheduler</span>
         </button>
         <button class="tab-btn" data-tab="analytics-tab">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -150,15 +150,16 @@
             <line x1="12" y1="20" x2="12" y2="4"/>
             <line x1="6" y1="20" x2="6" y2="14"/>
           </svg>
-          <span>Analiz</span>
+          <span data-i18n="nav_analytics">Analytics</span>
         </button>
         
-        <!-- Cloud Sync settings button -->
+        <!-- General Settings button -->
         <button id="sidebar-sync-settings-btn" class="tab-btn sync-settings-btn">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-3-3.1-5.2-6.1-5.4-3-.2-5.6 1.5-6.7 4.1C6.2 9.5 3 12 3 15c0 3.3 2.7 6 6 6h10c2.2 0 4-1.8 4-4 0-1-.3-1.9-.8-2.6z"/>
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
           </svg>
-          <span>Bulut Eşitleme</span>
+          <span data-i18n="nav_settings">Settings</span>
         </button>
       </nav>
 
@@ -169,7 +170,7 @@
             <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
             <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
-          <span>Lock Dashboard</span>
+          <span data-i18n="nav_lock">Lock Dashboard</span>
         </button>
       </div>
     </aside>
@@ -180,28 +181,28 @@
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
         </svg>
-        <span>Panel</span>
+        <span data-i18n="nav_brief">Dashboard</span>
       </button>
       <button class="tab-btn" data-tab="focus-tab">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 11 12 14 22 4"/>
           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
         </svg>
-        <span>Rutin</span>
+        <span data-i18n="nav_routines">Routines</span>
       </button>
       <button class="tab-btn" data-tab="journal-tab">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <path d="M12 20h9"/>
           <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
         </svg>
-        <span>Günlük</span>
+        <span data-i18n="nav_journal">Mind Log</span>
       </button>
       <button class="tab-btn" data-tab="finance-tab">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="12" y1="1" x2="12" y2="23"/>
           <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
         </svg>
-        <span>Finans</span>
+        <span data-i18n="nav_finance">FinFlow+</span>
       </button>
       <button class="tab-btn" data-tab="calendar-tab">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -209,7 +210,7 @@
           <line x1="16" y1="2" x2="16" y2="6"/>
           <line x1="8" y1="2" x2="8" y2="6"/>
         </svg>
-        <span>Takvim</span>
+        <span data-i18n="nav_calendar">Scheduler</span>
       </button>
     </nav>
 
@@ -261,8 +262,8 @@
               <div class="welcome-left">
                 <span class="brief-greeting-icon">🌤️</span>
                 <div>
-                  <h1 id="brief-greeting-text">Hayırlı Sabahlar, Enes!</h1>
-                  <p id="brief-subgreeting-text">Bugün yeni hedeflere ulaşmak ve gelişmek için harika bir gün.</p>
+                  <h1 id="brief-greeting-text">Good Morning, Enes!</h1>
+                  <p id="brief-subgreeting-text">Today is a great day to achieve new goals and grow.</p>
                 </div>
               </div>
               <div class="welcome-right">
@@ -271,7 +272,7 @@
                     <span id="weather-temp-val">28°C</span>
                     <span id="weather-icon">☀️</span>
                   </div>
-                  <span id="weather-desc">İstanbul - Açık & Güneşli</span>
+                  <span id="weather-desc" data-i18n="brief_weather_desc">Istanbul - Clear & Sunny</span>
                 </div>
               </div>
             </div>
@@ -280,12 +281,12 @@
             <div class="ayah-card glass-card">
               <div class="ayah-title">
                 <span class="icon">📖</span>
-                <h3>Günün Ayet-i Kerimesi</h3>
+                <h3 data-i18n="brief_ayah_title">Daily Verse of Focus</h3>
               </div>
               <blockquote class="ayah-blockquote">
                 <p class="arabic" id="ayah-arabic">فَإِنَّ مَعَ الْعُسْرِ يُسْرًا</p>
-                <p class="translation" id="ayah-translation">"Şüphesiz güçlükle beraber bir kolaylık vardır."</p>
-                <cite class="source" id="ayah-source">İnşirâh Suresi, 5. Ayet</cite>
+                <p class="translation" id="ayah-translation">"For indeed, with hardship [will be] ease."</p>
+                <cite class="source" id="ayah-source">Surah Al-Inshirah, Verse 5</cite>
               </blockquote>
             </div>
 
@@ -301,7 +302,7 @@
                 </div>
                 <div class="kpi-details">
                   <span class="kpi-value" id="brief-yesterday-score">-%</span>
-                  <span class="kpi-label">Dünün Rutin Skoru</span>
+                  <span class="kpi-label" data-i18n="brief_yesterday_score">Yesterday's Routine</span>
                 </div>
               </div>
 
@@ -315,7 +316,7 @@
                 </div>
                 <div class="kpi-details">
                   <span class="kpi-value" id="brief-yesterday-spending">0 TL</span>
-                  <span class="kpi-label">Dünkü Toplam Harcama</span>
+                  <span class="kpi-label" data-i18n="brief_yesterday_spend">Yesterday's Spending</span>
                 </div>
               </div>
 
@@ -329,8 +330,8 @@
                   </svg>
                 </div>
                 <div class="kpi-details">
-                  <span class="kpi-value" id="brief-today-events">0 Etkinlik</span>
-                  <span class="kpi-label">Bugünkü Program</span>
+                  <span class="kpi-value" id="brief-today-events">0 Events</span>
+                  <span class="kpi-label" data-i18n="brief_today_events">Today's Events</span>
                 </div>
               </div>
 
@@ -339,16 +340,16 @@
             <!-- YouTube recommendation section (Gemini brief layout style) -->
             <div class="brief-recommendation-card glass-card">
               <div class="card-header">
-                <h3>Önerilen Zihinsel Odak Videosu</h3>
-                <span class="legend">Güne başlarken motivasyonel destek</span>
+                <h3 data-i18n="brief_video_title">Recommended Focus Video</h3>
+                <span class="legend" data-i18n="brief_video_subtitle">Motivational support to start the day</span>
               </div>
               <div class="youtube-brief-container">
                 <div class="youtube-iframe-wrapper">
                   <iframe src="https://www.youtube.com/embed/k8vWOkQWskk" title="Focus Motivation Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
                 </div>
                 <div class="youtube-brief-info">
-                  <h4>Kararlılık ve İrade Gücü - Kendini Yeniden İnşa Et</h4>
-                  <p>Manevi ve zihinsel disiplini gün boyunca sürdürmek üzerine tavsiyeler içerir.</p>
+                  <h4 id="brief-video-item-title" data-i18n="brief_video_item_title">Resolve and Willpower - Rebuilding Yourself</h4>
+                  <p id="brief-video-item-desc" data-i18n="brief_video_item_desc">Contains advice on maintaining spiritual and mental discipline throughout the day.</p>
                 </div>
               </div>
             </div>
@@ -373,8 +374,8 @@
                     <div class="block-header block-morning">
                       <span class="block-num">01</span>
                       <div>
-                        <h2>Morning Core</h2>
-                        <span class="block-span">Dawn to Forenoon</span>
+                        <h2 data-i18n="block_morning_title">Morning Core</h2>
+                        <span class="block-span" data-i18n="block_morning_desc">Dawn to Forenoon</span>
                       </div>
                     </div>
                     
@@ -387,8 +388,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Fajr 2 Rakah Sunnah</h3>
-                              <p>Dawn Optional Devotion</p>
+                              <h3 data-i18n="habit_fajr_sunnah_title">Fajr 2 Rakah Sunnah</h3>
+                              <p data-i18n="habit_fajr_sunnah_desc">Dawn Optional Devotion</p>
                             </div>
                           </div>
                         </label>
@@ -402,8 +403,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Fajr 2 Rakah Fard</h3>
-                              <p>Dawn Obligation</p>
+                              <h3 data-i18n="habit_fajr_fard_title">Fajr 2 Rakah Fard</h3>
+                              <p data-i18n="habit_fajr_fard_desc">Dawn Obligation</p>
                             </div>
                           </div>
                         </label>
@@ -417,8 +418,8 @@
                           <div class="label-content">
                             <span class="item-icon">📿</span>
                             <div>
-                              <h3>Morning Dhikr</h3>
-                              <p>Morning Remembrance</p>
+                              <h3 data-i18n="habit_morning_dhikr_title">Morning Dhikr</h3>
+                              <p data-i18n="habit_morning_dhikr_desc">Morning Remembrance</p>
                             </div>
                           </div>
                         </label>
@@ -432,8 +433,8 @@
                           <div class="label-content">
                             <span class="item-icon">📖</span>
                             <div>
-                              <h3>Quran Devotion</h3>
-                              <p>Daily Wird / Tilavet</p>
+                              <h3 data-i18n="habit_quran_devotion_title">Quran Devotion</h3>
+                              <p data-i18n="habit_quran_devotion_desc">Daily Wird / Tilavet</p>
                             </div>
                           </div>
                         </label>
@@ -447,8 +448,8 @@
                           <div class="label-content">
                             <span class="item-icon">📚</span>
                             <div>
-                              <h3>Intellectual Growth</h3>
-                              <p>Book Reading</p>
+                              <h3 data-i18n="habit_intellectual_growth_title">Intellectual Growth</h3>
+                              <p data-i18n="habit_intellectual_growth_desc">Book Reading</p>
                             </div>
                           </div>
                         </label>
@@ -462,8 +463,8 @@
                           <div class="label-content">
                             <span class="item-icon">🏋️</span>
                             <div>
-                              <h3>Physical Training</h3>
-                              <p>Workout / Sport</p>
+                              <h3 data-i18n="habit_physical_training_title">Physical Training</h3>
+                              <p data-i18n="habit_physical_training_desc">Workout / Sport</p>
                             </div>
                           </div>
                         </label>
@@ -477,8 +478,8 @@
                           <div class="label-content">
                             <span class="item-icon">🍳</span>
                             <div>
-                              <h3>Nutritional Fuel</h3>
-                              <p>Healthy Breakfast</p>
+                              <h3 data-i18n="habit_nutritional_fuel_title">Nutritional Fuel</h3>
+                              <p data-i18n="habit_nutritional_fuel_desc">Healthy Breakfast</p>
                             </div>
                           </div>
                         </label>
@@ -492,8 +493,8 @@
                           <div class="label-content">
                             <span class="item-icon">🎯</span>
                             <div>
-                              <h3>Horizon Sync</h3>
-                              <p>Daily Planning & Vision Alignment</p>
+                              <h3 data-i18n="habit_horizon_sync_title">Horizon Sync</h3>
+                              <p data-i18n="habit_horizon_sync_desc">Daily Planning & Vision Alignment</p>
                             </div>
                           </div>
                         </label>
@@ -507,8 +508,8 @@
                           <div class="label-content">
                             <span class="item-icon">☀️</span>
                             <div>
-                              <h3>Duha Prayer</h3>
-                              <p>Kuşluk Namazı</p>
+                              <h3 data-i18n="habit_duha_prayer_title">Duha Prayer</h3>
+                              <p data-i18n="habit_duha_prayer_desc">Forenoon Prayer</p>
                             </div>
                           </div>
                         </label>
@@ -521,8 +522,8 @@
                     <div class="block-header block-dusk">
                       <span class="block-num">03</span>
                       <div>
-                        <h2>Dusk & Evening</h2>
-                        <span class="block-span">Sunset to Night</span>
+                        <h2 data-i18n="block_dusk_title">Dusk & Evening</h2>
+                        <span class="block-span" data-i18n="block_dusk_desc">Sunset to Night</span>
                       </div>
                     </div>
                     
@@ -535,8 +536,8 @@
                           <div class="label-content">
                             <span class="item-icon">📿</span>
                             <div>
-                              <h3>Evening Dhikr</h3>
-                              <p>Evening Remembrance</p>
+                              <h3 data-i18n="habit_evening_dhikr_title">Evening Dhikr</h3>
+                              <p data-i18n="habit_evening_dhikr_desc">Evening Remembrance</p>
                             </div>
                           </div>
                         </label>
@@ -550,8 +551,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Maghrib 3 Rakah Fard</h3>
-                              <p>Sunset Obligation</p>
+                              <h3 data-i18n="habit_maghrib_fard_title">Maghrib 3 Rakah Fard</h3>
+                              <p data-i18n="habit_maghrib_fard_desc">Sunset Obligation</p>
                             </div>
                           </div>
                         </label>
@@ -565,8 +566,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Maghrib 2 Rakah Sunnah</h3>
-                              <p>Post-Sunset Devotion</p>
+                              <h3 data-i18n="habit_maghrib_sunnah_title">Maghrib 2 Rakah Sunnah</h3>
+                              <p data-i18n="habit_maghrib_sunnah_desc">Post-Sunset Devotion</p>
                             </div>
                           </div>
                         </label>
@@ -580,8 +581,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Isha 4 Rakah Sunnah</h3>
-                              <p>Pre-Obligation Devotion</p>
+                              <h3 data-i18n="habit_isha_sunnah1_title">Isha 4 Rakah Sunnah</h3>
+                              <p data-i18n="habit_isha_sunnah1_desc">Pre-Obligation Devotion</p>
                             </div>
                           </div>
                         </label>
@@ -595,8 +596,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Isha 4 Rakah Fard</h3>
-                              <p>Night Obligation</p>
+                              <h3 data-i18n="habit_isha_fard_title">Isha 4 Rakah Fard</h3>
+                              <p data-i18n="habit_isha_fard_desc">Night Obligation</p>
                             </div>
                           </div>
                         </label>
@@ -610,8 +611,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Isha 2 Rakah Sunnah</h3>
-                              <p>Post-Obligation Devotion</p>
+                              <h3 data-i18n="habit_isha_sunnah2_title">Isha 2 Rakah Sunnah</h3>
+                              <p data-i18n="habit_isha_sunnah2_desc">Post-Obligation Devotion</p>
                             </div>
                           </div>
                         </label>
@@ -625,8 +626,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Witr 3 Rakah Prayer</h3>
-                              <p>Hanefi Wajib</p>
+                              <h3 data-i18n="habit_witr_prayer_title">Witr 3 Rakah Prayer</h3>
+                              <p data-i18n="habit_witr_prayer_desc">Hanefi Wajib</p>
                             </div>
                           </div>
                         </label>
@@ -644,8 +645,8 @@
                     <div class="block-header block-midday">
                       <span class="block-num">02</span>
                       <div>
-                        <h2>Midday & Afternoon</h2>
-                        <span class="block-span">Noon to Sunset</span>
+                        <h2 data-i18n="block_midday_title">Midday & Afternoon</h2>
+                        <span class="block-span" data-i18n="block_midday_desc">Noon to Sunset</span>
                       </div>
                     </div>
                     
@@ -658,8 +659,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Dhuhr 4 Rakah Sunnah</h3>
-                              <p>Pre-Obligation Devotion</p>
+                              <h3 data-i18n="habit_dhuhr_sunnah1_title">Dhuhr 4 Rakah Sunnah</h3>
+                              <p data-i18n="habit_dhuhr_sunnah1_desc">Pre-Obligation Devotion</p>
                             </div>
                           </div>
                         </label>
@@ -673,8 +674,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Dhuhr 4 Rakah Fard</h3>
-                              <p>Noon Obligation</p>
+                              <h3 data-i18n="habit_dhuhr_fard_title">Dhuhr 4 Rakah Fard</h3>
+                              <p data-i18n="habit_dhuhr_fard_desc">Noon Obligation</p>
                             </div>
                           </div>
                         </label>
@@ -688,8 +689,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Dhuhr 2 Rakah Sunnah</h3>
-                              <p>Post-Obligation Devotion</p>
+                              <h3 data-i18n="habit_dhuhr_sunnah2_title">Dhuhr 2 Rakah Sunnah</h3>
+                              <p data-i18n="habit_dhuhr_sunnah2_desc">Post-Obligation Devotion</p>
                             </div>
                           </div>
                         </label>
@@ -703,8 +704,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Asr 4 Rakah Sunnah</h3>
-                              <p>Hanefi Sunnah</p>
+                              <h3 data-i18n="habit_asr_sunnah_title">Asr 4 Rakah Sunnah</h3>
+                              <p data-i18n="habit_asr_sunnah_desc">Hanefi Sunnah</p>
                             </div>
                           </div>
                         </label>
@@ -718,8 +719,8 @@
                           <div class="label-content">
                             <span class="item-icon">🕌</span>
                             <div>
-                              <h3>Asr 4 Rakah Fard</h3>
-                              <p>Afternoon Obligation</p>
+                              <h3 data-i18n="habit_asr_fard_title">Asr 4 Rakah Fard</h3>
+                              <p data-i18n="habit_asr_fard_desc">Afternoon Obligation</p>
                             </div>
                           </div>
                         </label>
@@ -732,8 +733,8 @@
                     <div class="block-header block-night">
                       <span class="block-num">04</span>
                       <div>
-                        <h2>Night Closeout</h2>
-                        <span class="block-span">Before Sleep</span>
+                        <h2 data-i18n="block_night_title">Night Closeout</h2>
+                        <span class="block-span" data-i18n="block_night_desc">Before Sleep</span>
                       </div>
                     </div>
                     
@@ -746,8 +747,8 @@
                           <div class="label-content">
                             <span class="item-icon">📝</span>
                             <div>
-                              <h3>Mind Log</h3>
-                              <p>Daily Journaling Complete</p>
+                              <h3 data-i18n="habit_mind_log_title">Mind Log</h3>
+                              <p data-i18n="habit_mind_log_desc">Daily Journaling Complete</p>
                             </div>
                           </div>
                         </label>
@@ -761,8 +762,8 @@
                           <div class="label-content">
                             <span class="item-icon">💰</span>
                             <div>
-                              <h3>FinFlow</h3>
-                              <p>Daily Expenses Logged</p>
+                              <h3 data-i18n="habit_fin_flow_title">FinFlow</h3>
+                              <p data-i18n="habit_fin_flow_desc">Daily Expenses Logged</p>
                             </div>
                           </div>
                         </label>
@@ -779,8 +780,8 @@
             <div class="status-sidebar-column">
               <div class="daily-navigator-card glass-card">
                 <div class="navigator-card-header">
-                  <h3>Day Navigator</h3>
-                  <button id="today-btn" class="btn btn-secondary btn-sm">Today</button>
+                  <h3 data-i18n="focus_day_navigator">Day Navigator</h3>
+                  <button id="today-btn" class="btn btn-secondary btn-sm" data-i18n="focus_today">Today</button>
                 </div>
                 
                 <div class="date-carousel">
@@ -812,7 +813,7 @@
                     </svg>
                     <div class="progress-text-box">
                       <span class="percent-val" id="progress-percent-text">0%</span>
-                      <span class="percent-label">Completed</span>
+                      <span class="percent-label" data-i18n="focus_completed">Completed</span>
                     </div>
                   </div>
                 </div>
@@ -831,8 +832,8 @@
           <div class="notion-grid-card glass-card animate-fade-in">
             <div class="grid-controls-row">
               <div class="controls-left">
-                <h2>Monthly Log Grid</h2>
-                <p class="grid-sub">Click a day to load its routine checklist details.</p>
+                <h2 data-i18n="grid_title">Monthly Log Grid</h2>
+                <p class="grid-sub" data-i18n="grid_subtitle">Click a day to load its routine checklist details.</p>
               </div>
               <div class="controls-right">
                 <label for="month-selector" class="sr-only">Select Month</label>
@@ -846,7 +847,7 @@
               <table class="notion-table" id="notion-master-table">
                 <thead>
                   <tr>
-                    <th class="col-date">Date</th>
+                    <th class="col-date" data-i18n="grid_col_date">Date</th>
                     <th class="col-habit text-center" title="Fajr (Sunnah + Fard)">Fajr</th>
                     <th class="col-habit text-center" title="Dhuhr (Sunnah + Fard)">Dhuhr</th>
                     <th class="col-habit text-center" title="Asr (Sunnah + Fard)">Asr</th>
@@ -862,7 +863,7 @@
                     <th class="col-habit text-center" title="Horizon Sync">Sync</th>
                     <th class="col-habit text-center" title="Mind Log">Journal</th>
                     <th class="col-habit text-center" title="FinFlow">Expense</th>
-                    <th class="col-percent text-center" title="Daily Score">Score</th>
+                    <th class="col-percent text-center" title="Daily Score" data-i18n="grid_col_score">Score</th>
                   </tr>
                 </thead>
                 <tbody id="notion-table-body">
@@ -874,7 +875,13 @@
             <!-- Mobile Calendar View (shown only on mobile via CSS) -->
             <div class="mobile-calendar-container">
               <div class="mobile-calendar-weekdays">
-                <div>Mon</div><div>Tue</div><div>Wed</div><div>Thu</div><div>Fri</div><div>Sat</div><div>Sun</div>
+                <div data-i18n="weekday_mon">Mon</div>
+                <div data-i18n="weekday_tue">Tue</div>
+                <div data-i18n="weekday_wed">Wed</div>
+                <div data-i18n="weekday_thu">Thu</div>
+                <div data-i18n="weekday_fri">Fri</div>
+                <div data-i18n="weekday_sat">Sat</div>
+                <div data-i18n="weekday_sun">Sun</div>
               </div>
               <div class="mobile-calendar-days" id="mobile-calendar-days-grid">
                 <!-- Dynamically populated by app.js -->
@@ -897,8 +904,8 @@
             <!-- Controls row with active month summary -->
             <div class="analytics-header-row glass-card">
               <div class="header-left">
-                <h2>Performance Analytics</h2>
-                <p class="section-sub">Historical progress data, trend chart, and habit consistency.</p>
+                <h2 data-i18n="analytics_title">Performance Analytics</h2>
+                <p class="section-sub" data-i18n="analytics_subtitle">Historical progress data, trend chart, and habit consistency.</p>
               </div>
               <div class="header-right">
                 <label for="analytics-month-selector" class="sr-only">Select Month</label>
@@ -920,7 +927,7 @@
                 </div>
                 <div class="kpi-details">
                   <span class="kpi-value" id="kpi-avg-score">0%</span>
-                  <span class="kpi-label">Avg Daily Score</span>
+                  <span class="kpi-label" data-i18n="analytics_kpi_avg">Avg Daily Score</span>
                 </div>
               </div>
 
@@ -934,7 +941,7 @@
                 </div>
                 <div class="kpi-details">
                   <span class="kpi-value" id="kpi-perfect-days">0/0</span>
-                  <span class="kpi-label">Perfect Days (100%)</span>
+                  <span class="kpi-label" data-i18n="analytics_kpi_perfect">Perfect Days (100%)</span>
                 </div>
               </div>
 
@@ -947,7 +954,7 @@
                 </div>
                 <div class="kpi-details">
                   <span class="kpi-value truncate-text" id="kpi-top-habit">-</span>
-                  <span class="kpi-label">Most Consistent</span>
+                  <span class="kpi-label" data-i18n="analytics_kpi_top">Most Consistent</span>
                 </div>
               </div>
 
@@ -962,7 +969,7 @@
                 </div>
                 <div class="kpi-details">
                   <span class="kpi-value truncate-text" id="kpi-focus-habit">-</span>
-                  <span class="kpi-label">Needs Consistency</span>
+                  <span class="kpi-label" data-i18n="analytics_kpi_focus">Needs Consistency</span>
                 </div>
               </div>
 
@@ -974,8 +981,8 @@
               <!-- Left: SVG Daily Trend Graph -->
               <div class="visual-card glass-card trend-graph-card">
                 <div class="visual-card-header">
-                  <h3>Daily Score Trend</h3>
-                  <span class="chart-legend">Score % over active month days</span>
+                  <h3 data-i18n="analytics_chart_title">Daily Score Trend</h3>
+                  <span class="chart-legend" data-i18n="analytics_chart_legend">Score % over active month days</span>
                 </div>
                 <div class="chart-container" id="trend-chart-container">
                   <!-- Custom SVG line graph is drawn here by app.js -->
@@ -985,8 +992,8 @@
               <!-- Right: Detailed Habit Success list -->
               <div class="visual-card glass-card habit-rankings-card">
                 <div class="visual-card-header">
-                  <h3>Habit-by-Habit Consistency</h3>
-                  <span class="chart-legend">Frequency of completion this month</span>
+                  <h3 data-i18n="analytics_ranks_title">Habit-by-Habit Consistency</h3>
+                  <span class="chart-legend" data-i18n="analytics_ranks_legend">Frequency of completion this month</span>
                 </div>
                 <div class="habit-rankings-list" id="analytics-habit-list">
                   <!-- Habit rows with percentages and progress bars loaded by app.js -->
@@ -998,8 +1005,8 @@
             <!-- Interactive 365-Day Discipline Heatmap -->
             <div class="visual-card glass-card heatmap-card" style="margin-top: 1.5rem;">
               <div class="visual-card-header">
-                <h3>Annual Discipline Calendar</h3>
-                <span class="chart-legend">Consistency heatmap over the past 365 days. Click any day to jump to its checklist.</span>
+                <h3 data-i18n="analytics_heatmap_title">Annual Discipline Calendar</h3>
+                <span class="chart-legend" data-i18n="analytics_heatmap_legend">Consistency heatmap over the past 365 days. Click any day to jump to its checklist.</span>
               </div>
               <div class="heatmap-scroll-container" style="overflow-x: auto; margin-top: 1.25rem; padding-bottom: 0.5rem;">
                 <div class="heatmap-grid" id="heatmap-grid">
@@ -1007,34 +1014,34 @@
                 </div>
               </div>
               <div class="heatmap-legend-row" style="display: flex; gap: 0.5rem; font-size: 0.7rem; color: var(--text-muted); margin-top: 1rem; align-items: center; justify-content: flex-end;">
-                <span>Less</span>
+                <span data-i18n="analytics_heatmap_less">Less</span>
                 <span class="legend-cell cell-0" style="width: 10px; height: 10px; background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 2px;"></span>
                 <span class="legend-cell cell-low" style="width: 10px; height: 10px; background-color: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 2px;"></span>
                 <span class="legend-cell cell-med" style="width: 10px; height: 10px; background-color: rgba(6, 182, 212, 0.45); border: 1px solid rgba(6, 182, 212, 0.5); border-radius: 2px;"></span>
                 <span class="legend-cell cell-100" style="width: 10px; height: 10px; background-color: var(--primary); border: 1px solid var(--primary); border-radius: 2px; box-shadow: 0 0 5px var(--primary-glow);"></span>
-                <span>More</span>
+                <span data-i18n="analytics_heatmap_more">More</span>
               </div>
             </div>
 
             <!-- Inline Cloud Sync Settings (Accessible on mobile) -->
             <div class="visual-card glass-card sync-settings-card" style="margin-top: 1.5rem;">
               <div class="visual-card-header">
-                <h3>Cloud Sync & Database Backup</h3>
-                <span class="chart-legend">Connect a Supabase project to automatically sync and backup your routines</span>
+                <h3 data-i18n="analytics_sync_title">Cloud Sync & Database Backup</h3>
+                <span class="chart-legend" data-i18n="analytics_sync_subtitle">Connect a Supabase project to automatically sync and backup your routines</span>
               </div>
               <div class="sync-card-body" style="margin-top: 1.25rem;">
                 <form id="inline-sync-settings-form" class="auth-form" style="gap: 1rem;">
                   <div class="input-group">
-                    <label for="inline-supabase-url">Supabase Project URL</label>
+                    <label for="inline-supabase-url" data-i18n="supabase_url">Supabase Project URL</label>
                     <input type="url" id="inline-supabase-url" placeholder="https://your-project.supabase.co" autocomplete="off" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
                   </div>
                   <div class="input-group">
-                    <label for="inline-supabase-key">Supabase Anon Key</label>
+                    <label for="inline-supabase-key" data-i18n="supabase_key">Supabase Anon Key</label>
                     <input type="password" id="inline-supabase-key" placeholder="eyJhbGciOi..." autocomplete="off" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
                   </div>
                   <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                    <button type="submit" class="btn btn-primary" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem;">Connect & Sync</button>
-                    <button type="button" id="inline-clear-sync-btn" class="btn btn-secondary" style="flex: 1; min-width: 120px; color: var(--danger); border-color: rgba(239, 68, 68, 0.2); padding: 0.8rem 1.25rem;">Disconnect Cloud Sync</button>
+                    <button type="submit" class="btn btn-primary" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem;" data-i18n="supabase_connect_btn">Connect & Sync</button>
+                    <button type="button" id="inline-clear-sync-btn" class="btn btn-secondary" style="flex: 1; min-width: 120px; color: var(--danger); border-color: rgba(239, 68, 68, 0.2); padding: 0.8rem 1.25rem;" data-i18n="supabase_disconnect">Disconnect Cloud Sync</button>
                   </div>
                   <p id="inline-sync-status" class="sync-status-msg"></p>
                 </form>
@@ -1052,8 +1059,8 @@
               <!-- Journal sidebar: history -->
               <div class="journal-history-panel glass-card">
                 <div class="panel-header">
-                  <h3>Geçmiş Günlükler</h3>
-                  <button id="journal-new-btn" class="btn btn-primary btn-sm">+ Yeni</button>
+                  <h3 data-i18n="journal_history">Mind Log History</h3>
+                  <button id="journal-new-btn" class="btn btn-primary btn-sm" data-i18n="journal_new">+ New</button>
                 </div>
                 <div class="journal-list" id="journal-history-list">
                   <!-- Dynamically loaded journal entries -->
@@ -1064,7 +1071,7 @@
               <!-- Journal main: editor -->
               <div class="journal-editor-panel glass-card">
                 <div class="panel-header">
-                  <h2>Zihinsel Günlük & Gözlem</h2>
+                  <h2 data-i18n="journal_title">Mind Log & Observations</h2>
                   <span class="date-badge" id="journal-active-date-display">25 Haziran 2026</span>
                 </div>
                 
@@ -1072,13 +1079,13 @@
                   <div class="form-row">
                     <!-- Date Selector -->
                     <div class="input-group flex-1">
-                      <label for="journal-date-input">Tarih</label>
+                      <label for="journal-date-input" data-i18n="journal_date">Date</label>
                       <input type="date" id="journal-date-input" required>
                     </div>
                     
                     <!-- Mood Selector -->
                     <div class="input-group flex-1">
-                      <label>Bugünkü Ruh Halin</label>
+                      <label data-i18n="journal_mood">Your Mood Today</label>
                       <div class="mood-selector-container">
                         <button type="button" class="mood-btn" data-mood="🤩" title="Mükemmel">🤩</button>
                         <button type="button" class="mood-btn" data-mood="🙂" title="İyi">🙂</button>
@@ -1090,18 +1097,18 @@
                   </div>
 
                   <div class="input-group" style="flex: 1; display: flex; flex-direction: column;">
-                    <label for="journal-content-input">Günün Özeti & Zihinsel Durumun</label>
-                    <textarea id="journal-content-input" placeholder="Bugün neler başardın? Karşılaştığın zorluklar nelerdi? Zihnini meşgul eden düşünceler var mı?..." required></textarea>
+                    <label for="journal-content-input" data-i18n="journal_summary">Daily Summary & Mental State</label>
+                    <textarea id="journal-content-input" data-i18n-placeholder="journal_placeholder" placeholder="What did you achieve today? What challenges did you face? Any thoughts occupying your mind?..." required></textarea>
                   </div>
 
                   <div class="input-group">
-                    <label for="journal-tags-input">Etiketler (Virgülle ayırın)</label>
-                    <input type="text" id="journal-tags-input" placeholder="örn: iş, spor, ibadet, aile">
+                    <label for="journal-tags-input" data-i18n="journal_tags">Tags (comma separated)</label>
+                    <input type="text" id="journal-tags-input" data-i18n-placeholder="journal_tags_placeholder" placeholder="e.g. work, gym, devotion, family">
                   </div>
 
                   <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">Kaydet & Senkronize Et</button>
-                    <button type="button" id="journal-delete-btn" class="btn btn-secondary" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2); display: none;">Sil</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="journal_save">Save & Synchronize</button>
+                    <button type="button" id="journal-delete-btn" class="btn btn-secondary" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2); display: none;" data-i18n="journal_delete">Delete</button>
                   </div>
                 </form>
               </div>
@@ -1119,23 +1126,23 @@
               
               <!-- Total Balance Card -->
               <div class="finance-summary-card glass-card bg-cyan-glow">
-                <span class="label">Toplam Net Değer</span>
+                <span class="label" data-i18n="finance_total_balance">Total Net Balance</span>
                 <span class="value" id="fin-total-balance">0.00 TL</span>
-                <div class="trend positive">Finansal Sağlık Durumu: Stabil</div>
+                <div class="trend positive" data-i18n="finance_health_status">Financial Health: Stable</div>
               </div>
 
               <!-- Monthly Income Card -->
               <div class="finance-summary-card glass-card bg-green-glow">
-                <span class="label">Bu Ayki Toplam Gelir</span>
+                <span class="label" data-i18n="finance_monthly_income">Monthly Inflow</span>
                 <span class="value" id="fin-monthly-income">0.00 TL</span>
-                <div class="trend positive">▲ Aktif Kazançlar</div>
+                <div class="trend positive" data-i18n="finance_inflow_desc">▲ Active Inflows</div>
               </div>
 
               <!-- Monthly Expense Card -->
               <div class="finance-summary-card glass-card bg-red-glow">
-                <span class="label">Bu Ayki Toplam Gider</span>
+                <span class="label" data-i18n="finance_monthly_expense">Monthly Outflow</span>
                 <span class="value" id="fin-monthly-expense">0.00 TL</span>
-                <div class="trend negative">▼ Harcamalar</div>
+                <div class="trend negative" data-i18n="finance_outflow_desc">▼ Spending</div>
               </div>
 
             </div>
@@ -1149,7 +1156,7 @@
                 <!-- Accounts Widget -->
                 <div class="finance-accounts-card glass-card">
                   <div class="card-header">
-                    <h3>Cüzdanlar & Hesaplar</h3>
+                    <h3 data-i18n="finance_accounts_title">Account Summary</h3>
                   </div>
                   <div class="accounts-list-container" id="fin-accounts-list">
                     <!-- Populated dynamically -->
@@ -1159,50 +1166,50 @@
                 <!-- Add Transaction form -->
                 <div class="finance-form-card glass-card">
                   <div class="card-header">
-                    <h3>Yeni Finansal Kayıt Ekle</h3>
+                    <h3 data-i18n="finance_new_tx">Log Transaction</h3>
                   </div>
                   <form id="finance-transaction-form" class="finance-form">
                     
                     <div class="form-row">
                       <div class="input-group flex-1">
-                        <label>İşlem Türü</label>
+                        <label data-i18n="finance_tx_type">Type</label>
                         <div class="finance-type-toggle">
-                          <button type="button" class="type-btn active" data-type="expense">Gider</button>
-                          <button type="button" class="type-btn" data-type="income">Gelir</button>
-                          <button type="button" class="type-btn" data-type="transfer">Transfer</button>
+                          <button type="button" class="type-btn active" data-type="expense" data-i18n="finance_tx_expense">Expense</button>
+                          <button type="button" class="type-btn" data-type="income" data-i18n="finance_tx_income">Income</button>
+                          <button type="button" class="type-btn" data-type="transfer" data-i18n="finance_tx_transfer">Transfer</button>
                         </div>
                       </div>
                       
                       <div class="input-group flex-1">
-                        <label for="fin-amount-input">Tutar (TL)</label>
+                        <label for="fin-amount-input" data-i18n="finance_amount">Amount (TL)</label>
                         <input type="number" step="0.01" id="fin-amount-input" required placeholder="0.00">
                       </div>
                     </div>
 
                     <div class="form-row">
                       <div class="input-group flex-1">
-                        <label for="fin-category-select">Kategori</label>
+                        <label for="fin-category-select" data-i18n="finance_category">Category</label>
                         <select id="fin-category-select" required>
-                          <option value="Gıda">🍔 Gıda & Market</option>
-                          <option value="Ulaşım">🚗 Ulaşım & Yakıt</option>
-                          <option value="Teknoloji">💻 Yazılım & Cihazlar</option>
-                          <option value="Faturalar">⚡ Faturalar & Abonelikler</option>
-                          <option value="Yatırım">📈 Yatırımlar</option>
-                          <option value="Eğitim">📚 Kitap & Eğitim</option>
-                          <option value="Gelir">💰 İş/Proje Geliri</option>
-                          <option value="Diğer">📦 Diğer</option>
+                          <option value="Gıda" data-i18n="cat_food">🍔 Food & Groceries</option>
+                          <option value="Ulaşım" data-i18n="cat_transport">🚗 Transport & Fuel</option>
+                          <option value="Teknoloji" data-i18n="cat_tech">💻 Software & Devices</option>
+                          <option value="Faturalar" data-i18n="cat_bills">⚡ Bills & Subscriptions</option>
+                          <option value="Yatırım" data-i18n="cat_invest">📈 Investments</option>
+                          <option value="Eğitim" data-i18n="cat_edu">📚 Books & Education</option>
+                          <option value="Gelir" data-i18n="cat_income">💰 Work/Project Income</option>
+                          <option value="Diğer" data-i18n="cat_other">📦 Other</option>
                         </select>
                       </div>
 
                       <div class="input-group flex-1" id="fin-account-group">
-                        <label for="fin-account-select">Kaynak Hesap</label>
+                        <label for="fin-account-select" data-i18n="finance_account">Source Account</label>
                         <select id="fin-account-select" required>
                           <!-- Dynamic accounts selection -->
                         </select>
                       </div>
 
                       <div class="input-group flex-1 hidden" id="fin-target-account-group">
-                        <label for="fin-target-account-select">Hedef Hesap</label>
+                        <label for="fin-target-account-select" data-i18n="finance_target_account">Target Account</label>
                         <select id="fin-target-account-select">
                           <!-- Dynamic target accounts selection -->
                         </select>
@@ -1211,16 +1218,16 @@
 
                     <div class="form-row">
                       <div class="input-group flex-1">
-                        <label for="fin-date-input">Tarih</label>
+                        <label for="fin-date-input" data-i18n="finance_table_date">Date</label>
                         <input type="date" id="fin-date-input" required>
                       </div>
                       <div class="input-group flex-2">
-                        <label for="fin-desc-input">Açıklama</label>
-                        <input type="text" id="fin-desc-input" placeholder="İşlem açıklaması yazın...">
+                        <label for="fin-desc-input" data-i18n="finance_table_desc">Description</label>
+                        <input type="text" id="fin-desc-input" data-i18n-placeholder="finance_desc_placeholder" placeholder="Enter transaction details...">
                       </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary btn-block">Kaydı Kaydet</button>
+                    <button type="submit" class="btn btn-primary btn-block" data-i18n="finance_save">Log Transaction</button>
                   </form>
                 </div>
 
@@ -1232,7 +1239,7 @@
                 <!-- Category spending progress chart -->
                 <div class="finance-chart-card glass-card">
                   <div class="card-header">
-                    <h3>Gider Dağılımı (Bu Ay)</h3>
+                    <h3 data-i18n="finance_category_title">Monthly Expense Breakdown</h3>
                   </div>
                   <div class="category-bars-list" id="fin-category-breakdown">
                     <!-- Progress bars loaded dynamically -->
@@ -1242,17 +1249,17 @@
                 <!-- Recent Transactions list -->
                 <div class="finance-history-card glass-card">
                   <div class="card-header">
-                    <h3>Son Finansal Hareketler</h3>
+                    <h3 data-i18n="finance_history_title">Recent Transactions</h3>
                   </div>
                   <div class="finance-table-wrapper">
                     <table class="finance-table">
                       <thead>
                         <tr>
-                          <th>Tarih</th>
-                          <th>Açıklama</th>
-                          <th>Kategori</th>
-                          <th>Hesap</th>
-                          <th>Tutar</th>
+                          <th data-i18n="finance_table_date">Date</th>
+                          <th data-i18n="finance_table_desc">Description</th>
+                          <th data-i18n="finance_category">Category</th>
+                          <th data-i18n="finance_account">Account</th>
+                          <th data-i18n="finance_table_amt">Amount</th>
                           <th></th>
                         </tr>
                       </thead>
@@ -1275,12 +1282,12 @@
           <div class="calendar-layout-container animate-fade-in">
             <div class="calendar-header-row glass-card">
               <div class="header-left">
-                <h2>Google Calendar & Ajanda</h2>
-                <p class="section-sub">Günlük programını gör ve yeni etkinlikler ekle.</p>
+                <h2 data-i18n="calendar_title">Google Calendar & Agenda</h2>
+                <p class="section-sub" data-i18n="calendar_subtitle">View daily program and add new events.</p>
               </div>
               <div class="header-right">
-                <button id="google-auth-btn" class="btn btn-primary" style="background-color: #4285f4; border-color: #4285f4;">
-                  Google Hesabını Bağla
+                <button id="google-auth-btn" class="btn btn-primary" style="background-color: #4285f4; border-color: #4285f4;" data-i18n="calendar_connect">
+                  Connect Google Calendar
                 </button>
               </div>
             </div>
@@ -1290,8 +1297,8 @@
               <!-- Left side: Today's agenda timeline -->
               <div class="calendar-timeline-panel glass-card">
                 <div class="timeline-header">
-                  <h3>Günlük Program Akışı</h3>
-                  <span id="calendar-active-day">Bugün</span>
+                  <h3 data-i18n="calendar_timeline_title">Daily Agenda Flow</h3>
+                  <span id="calendar-active-day" data-i18n="calendar_active_day">Today</span>
                 </div>
                 
                 <div class="timeline-container" id="calendar-timeline-events">
@@ -1302,31 +1309,31 @@
               <!-- Right side: Add new Event form -->
               <div class="calendar-add-event-panel glass-card">
                 <div class="card-header">
-                  <h3>Yeni Etkinlik Planla</h3>
+                  <h3 data-i18n="calendar_add_title">Plan New Event</h3>
                 </div>
                 <form id="calendar-event-form" class="calendar-form-layout">
                   <div class="input-group">
-                    <label for="event-title">Etkinlik Başlığı</label>
-                    <input type="text" id="event-title" required placeholder="Toplantı, ders, buluşma...">
+                    <label for="event-title" data-i18n="calendar_event_title">Event Title</label>
+                    <input type="text" id="event-title" required data-i18n-placeholder="calendar_event_placeholder" placeholder="Meeting, class, workout...">
                   </div>
 
                   <div class="form-row">
                     <div class="input-group flex-1">
-                      <label for="event-start-time">Başlangıç Saati</label>
+                      <label for="event-start-time" data-i18n="calendar_start_time">Start Time</label>
                       <input type="time" id="event-start-time" required value="09:00">
                     </div>
                     <div class="input-group flex-1">
-                      <label for="event-end-time">Bitiş Saati</label>
+                      <label for="event-end-time" data-i18n="calendar_end_time">End Time</label>
                       <input type="time" id="event-end-time" required value="10:00">
                     </div>
                   </div>
 
                   <div class="input-group">
-                    <label for="event-desc">Notlar / Konum</label>
-                    <input type="text" id="event-desc" placeholder="Açıklama veya yer girin...">
+                    <label for="event-desc" data-i18n="calendar_notes">Notes / Location</label>
+                    <input type="text" id="event-desc" data-i18n-placeholder="calendar_notes_placeholder" placeholder="Enter description or location...">
                   </div>
 
-                  <button type="submit" class="btn btn-primary btn-block">Takvime Ekle</button>
+                  <button type="submit" class="btn btn-primary btn-block" data-i18n="calendar_add_btn">Add to Timeline</button>
                 </form>
               </div>
 
@@ -1339,11 +1346,11 @@
 
   </div>
 
-  <!-- ================= CLOUD SYNC SETTINGS MODAL ================= -->
+  <!-- ================= SETTINGS & CLOUD SYNC MODAL ================= -->
   <div id="sync-modal" class="modal-overlay hidden">
     <div class="modal-card glass-card">
       <div class="modal-header">
-        <h2>Supabase Cloud Sync</h2>
+        <h2 data-i18n="settings_title">Application Settings</h2>
         <button id="close-sync-modal" class="icon-btn close-modal-btn">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18"/>
@@ -1352,22 +1359,33 @@
         </button>
       </div>
       <div class="modal-body">
-        <p class="modal-info-text">
+        <!-- Language Selection Section -->
+        <div class="input-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+          <label for="language-select" data-i18n="language_label" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Application Language</label>
+          <select id="language-select" style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
+            <option value="en">English (Default)</option>
+            <option value="tr">Türkçe</option>
+            <option value="ar">العربية (Arabic)</option>
+          </select>
+        </div>
+
+        <h3 data-i18n="supabase_title" style="font-size: 1rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-main);">Supabase Cloud Sync</h3>
+        <p class="modal-info-text" data-i18n="supabase_subtitle" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
           Sync your routine tracker across all devices by connecting a free Supabase project database.
         </p>
         <form id="sync-settings-form">
           <div class="input-group">
-            <label for="supabase-url">Supabase Project URL</label>
+            <label for="supabase-url" data-i18n="supabase_url">Supabase Project URL</label>
             <input type="url" id="supabase-url" placeholder="https://your-project.supabase.co" autocomplete="off" required>
           </div>
           <div class="input-group" style="margin-top: 1rem;">
-            <label for="supabase-key">Supabase Anon Key</label>
+            <label for="supabase-key" data-i18n="supabase_key">Supabase Anon Key</label>
             <input type="password" id="supabase-key" placeholder="eyJhbGciOi..." autocomplete="off" required>
           </div>
           
           <div class="sql-instructions">
-            <h4>Database Setup Guide:</h4>
-            <p>Run this query in your Supabase SQL Editor to create the table:</p>
+            <h4 data-i18n="supabase_db_guide">Database Setup Guide:</h4>
+            <p data-i18n="supabase_db_query">Run this query in your Supabase SQL Editor to create the table:</p>
             <pre><code>create table routines (
   date text primary key,
   data jsonb not null,
@@ -1376,8 +1394,8 @@
           </div>
 
           <div class="modal-actions" style="margin-top: 1.5rem;">
-            <button type="submit" class="btn btn-primary btn-block">Save & Sync Now</button>
-            <button type="button" id="clear-sync-btn" class="btn btn-secondary btn-block" style="margin-top: 0.5rem; color: var(--danger);">Disconnect Cloud Sync</button>
+            <button type="submit" class="btn btn-primary btn-block" data-i18n="supabase_save">Save & Sync Now</button>
+            <button type="button" id="clear-sync-btn" class="btn btn-secondary btn-block" style="margin-top: 0.5rem; color: var(--danger);" data-i18n="supabase_disconnect">Disconnect Cloud Sync</button>
           </div>
           <p id="sync-status" class="sync-status-msg"></p>
         </form>

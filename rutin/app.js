@@ -16,21 +16,102 @@ const STATE = {
     },
     transactions: []
   },
-  calendar: [] // Loaded calendar events [{id, title, startTime, endTime, desc}]
+  calendar: [], // Loaded calendar events [{id, title, startTime, endTime, desc}]
+  language: 'en' // Default starting language
 };
 
 // ================= SPIRITUAL BRIEFINGS =================
 const AYAHS = [
-  { arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", translation: '"Şüphesiz güçlükle beraber bir kolaylık vardır."', source: "İnşirâh Suresi, 5. Ayet" },
-  { arabic: "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا", translation: '"Allah, hiç kimseye gücünün üstünde bir yük yüklemez."', source: "Bakara Suresi, 286. Ayet" },
-  { arabic: "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ", translation: '"Rabbin seni terk etmedi ve sana darılmadı."', source: "Duhâ Suresi, 3. Ayet" },
-  { arabic: "وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَىٰ", translation: '"İnsan için ancak çalıştığının karşılığı vardır."', source: "Necm Suresi, 39. Ayet" },
-  { arabic: "وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ عَلَيْهِ تَوَكَّلْتُ", translation: '"Benim başarım ancak Allah\'ın yardımıyladır. Yalnız O\'na tevekkül ettim."', source: "Hûd Suresi, 88. Ayet" },
-  { arabic: "وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ", translation: '"Sabret! Çünkü Allah iyilik yapanların mükafatını zayi etmez."', source: "Hûd Suresi, 115. Ayet" },
-  { arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ", translation: '"Bilesiniz ki, kalpler ancak Allah\'ı anmakla huzur bulur."', source: "Ra\'d Suresi, 28. Ayet" },
-  { arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", translation: '"Eğer şükrederseniz, elbette size (nimetimi) artırırım."', source: "İbrâhîm Suresi, 7. Ayet" },
-  { arabic: "ادْعُونِي أَسْتَجِبْ لَكُمْ", translation: '"Bana dua edin, size icabet edeyim."', source: "Mü\'min Suresi, 60. Ayet" },
-  { arabic: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", translation: '"Şüphesiz Allah sabredenlerle beraberdir."', source: "Bakara Suresi, 153. Ayet" }
+  { 
+    arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", 
+    tr: '"Şüphesiz güçlükle beraber bir kolaylık vardır."', 
+    en: '"For indeed, with hardship [will be] ease."', 
+    ar: '"فإن مع العسر يسراً"',
+    source_tr: "İnşirâh Suresi, 5. Ayet",
+    source_en: "Surah Al-Inshirah, Verse 5",
+    source_ar: "سورة الشرح، الآية ٥"
+  },
+  { 
+    arabic: "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا", 
+    tr: '"Allah, hiç kimseye gücünün üstünde bir yük yüklemez."', 
+    en: '"Allah does not charge a soul except [with that within] its capacity."', 
+    ar: '"لا يكلف الله نفساً إلا وسعها"',
+    source_tr: "Bakara Suresi, 286. Ayet",
+    source_en: "Surah Al-Baqarah, Verse 286",
+    source_ar: "سورة البقرة، الآية ٢٨٦"
+  },
+  { 
+    arabic: "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ", 
+    tr: '"Rabbin seni terk etmedi ve sana darılmadı."', 
+    en: '"Your Lord has not taken leave of you, [O Muhammad], nor has He detested [you]."', 
+    ar: '"ما ودعك ربك وما قلى"',
+    source_tr: "Duhâ Suresi, 3. Ayet",
+    source_en: "Surah Ad-Duha, Verse 3",
+    source_ar: "سورة الضحى، الآية ٣"
+  },
+  { 
+    arabic: "وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَىٰ", 
+    tr: '"İnsan için ancak çalıştığının karşılığı vardır."', 
+    en: '"And that there is not for man except that for which he strives."', 
+    ar: '"وأن ليس للإنسان إلا ما سعى"',
+    source_tr: "Necm Suresi, 39. Ayet",
+    source_en: "Surah An-Najm, Verse 39",
+    source_ar: "سورة النجم، الآية ٣٩"
+  },
+  { 
+    arabic: "وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ عَلَيْهِ تَوَكَّلْتُ", 
+    tr: '"Benim başarım ancak Allah\'ın yardımıyladır. Yalnız O\'na tevekkül ettim."', 
+    en: '"And my success is not but through Allah. Upon him I have relied."', 
+    ar: '"وما توفيقي إلا بالله عليه توكلت"',
+    source_tr: "Hûd Suresi, 88. Ayet",
+    source_en: "Surah Hud, Verse 88",
+    source_ar: "سورة هود، الآية ٨٨"
+  },
+  { 
+    arabic: "وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ", 
+    tr: '"Sabret! Çünkü Allah iyilik yapanların mükafatını zayi etmez."', 
+    en: '"And be patient, for indeed, Allah does not allow to be lost the reward of those who do good."', 
+    ar: '"واصبر فإن الله لا يضيع أجر المحسنين"',
+    source_tr: "Hûd Suresi, 115. Ayet",
+    source_en: "Surah Hud, Verse 115",
+    source_ar: "سورة هود، الآية ١١٥"
+  },
+  { 
+    arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ", 
+    tr: '"Bilesiniz ki, kalpler ancak Allah\'ı anmakla huzur bulur."', 
+    en: '"Unquestionably, by the remembrance of Allah hearts are assured."', 
+    ar: '"ألا بذكر الله تطمئن القلوب"',
+    source_tr: "Ra\'d Suresi, 28. Ayet",
+    source_en: "Surah Ar-Ra'd, Verse 28",
+    source_ar: "سورة الرعد، الآية ٢٨"
+  },
+  { 
+    arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", 
+    tr: '"Eğer şükrederseniz, elbette size (nimetimi) artırırım."', 
+    en: '"If you are grateful, I will surely increase you [in favor]."', 
+    ar: '"لئن شكرتم لأزيدنكم"',
+    source_tr: "İbrâhîm Suresi, 7. Ayet",
+    source_en: "Surah Ibrahim, Verse 7",
+    source_ar: "سورة إبراهيم، الآية ٧"
+  },
+  { 
+    arabic: "ادْعُونِي أَسْتَجِبْ لَكُمْ", 
+    tr: '"Bana dua edin, size icabet edeyim."', 
+    en: '"Call upon Me; I will respond to you."', 
+    ar: '"ادعوني أستجب لكم"',
+    source_tr: "Mü\'min Suresi, 60. Ayet",
+    source_en: "Surah Ghafir, Verse 60",
+    source_ar: "سورة غافر، الآية ٦٠"
+  },
+  { 
+    arabic: "إِنَّ اللَّهَ Mİ‘A-S-SĀBİRĪN", 
+    tr: '"Şüphesiz Allah sabredenlerle beraberdir."', 
+    en: '"Indeed, Allah is with the patient."', 
+    ar: '"إن الله مع الصابرين"',
+    source_tr: "Bakara Suresi, 153. Ayet",
+    source_en: "Surah Al-Baqarah, Verse 153",
+    source_ar: "سورة البقرة، الآية ١٥٣"
+  }
 ];
 
 function getAyahOfTheDay(dateKey) {
@@ -42,7 +123,6 @@ function getAyahOfTheDay(dateKey) {
   return AYAHS[idx];
 }
 
-// All 23 daily routine checkboxes tracked for 100% completion score
 const ROUTINE_KEYS = [
   'fajr_sunnah', 'fajr_fard',
   'morning_dhikr',
@@ -62,7 +142,6 @@ const ROUTINE_KEYS = [
   'fin_flow'
 ];
 
-// Human-readable labels and category mappings for Analytics
 const HABIT_DISPLAY_NAMES = {
   fajr_sunnah: "Fajr Sunnah",
   fajr_fard: "Fajr Fard",
@@ -96,6 +175,657 @@ const HABIT_ICONS = {
   asr_sunnah: "🕌", asr_fard: "🕌", evening_dhikr: "📿", maghrib_fard: "🕌",
   maghrib_sunnah: "🕌", isha_sunnah1: "🕌", isha_fard: "🕌", isha_sunnah2: "🕌",
   witr_prayer: "🕌", mind_log: "📝", fin_flow: "💰"
+};
+
+const TRANSLATIONS = {
+  en: {
+    nav_brief: "Dashboard",
+    nav_routines: "Routines",
+    nav_monthly: "Monthly Grid",
+    nav_journal: "Mind Log",
+    nav_finance: "FinFlow+",
+    nav_calendar: "Scheduler",
+    nav_analytics: "Analytics",
+    nav_settings: "Settings",
+    nav_lock: "Lock Dashboard",
+    auth_title: "Horizon Tracker",
+    auth_sub: "Private Single-User Dashboard",
+    auth_label: "Access Passcode",
+    auth_unlock: "Unlock Dashboard",
+    auth_footer: "© 2026 Firnas Technologies",
+    brief_greeting_morning: "Good Morning, Enes!",
+    brief_greeting_afternoon: "Good Afternoon, Enes!",
+    brief_greeting_evening: "Good Evening, Enes!",
+    brief_greeting_night: "Good Night, Enes!",
+    brief_sub_morning: "Today is a great day to achieve new goals and grow.",
+    brief_sub_afternoon: "Keep pushing hard towards your goals this afternoon.",
+    brief_sub_evening: "Remember to refresh your mind while unwinding.",
+    brief_sub_night: "A good sleep is the best preparation for tomorrow's success.",
+    brief_ayah_title: "Daily Verse of Focus",
+    brief_ayah_subtitle: "Spiritual guidance to start your morning",
+    brief_yesterday_score: "Yesterday's Routine",
+    brief_yesterday_spend: "Yesterday's Spending",
+    brief_today_events: "Today's Events",
+    brief_weather: "Weather",
+    brief_video_title: "Recommended Focus Video",
+    brief_video_subtitle: "Motivational support to start the day",
+    journal_title: "Mind Log & Observations",
+    journal_history: "Mind Log History",
+    journal_new: "+ New",
+    journal_date: "Date",
+    journal_mood: "Your Mood Today",
+    journal_summary: "Daily Summary & Mental State",
+    journal_placeholder: "What did you achieve today? What challenges did you face? Any thoughts occupying your mind?...",
+    journal_tags: "Tags (comma separated)",
+    journal_save: "Save & Synchronize",
+    journal_delete: "Delete",
+    journal_empty: "No entries yet. Write your first log!",
+    finance_title: "FinFlow+ Hub",
+    finance_subtitle: "Track personal and business transactions",
+    finance_total_balance: "Total Net Balance",
+    finance_monthly_income: "Monthly Inflow",
+    finance_monthly_expense: "Monthly Outflow",
+    finance_new_tx: "Log Transaction",
+    finance_tx_type: "Type",
+    finance_tx_income: "Income",
+    finance_tx_expense: "Expense",
+    finance_tx_transfer: "Transfer",
+    finance_account: "Account",
+    finance_target_account: "Target Account",
+    finance_category: "Category",
+    finance_amount: "Amount (TL)",
+    finance_desc: "Description",
+    finance_save: "Log Transaction",
+    finance_accounts_title: "Account Summary",
+    finance_category_title: "Monthly Expense Breakdown",
+    finance_history_title: "Recent Transactions",
+    finance_table_date: "Date",
+    finance_table_desc: "Description",
+    finance_table_cat: "Category",
+    finance_table_acc: "Account",
+    finance_table_amt: "Amount",
+    finance_empty: "No financial transactions recorded yet.",
+    calendar_title: "Google Calendar & Agenda",
+    calendar_subtitle: "View daily program and add new events.",
+    calendar_connect: "Connect Google Calendar",
+    calendar_connected: "Google Calendar Connected ✓",
+    calendar_active_day: "Today",
+    calendar_add_title: "Plan New Event",
+    calendar_event_title: "Event Title",
+    calendar_start_time: "Start Time",
+    calendar_end_time: "End Time",
+    calendar_notes: "Notes / Location",
+    calendar_add_btn: "Add to Timeline",
+    settings_title: "Application Settings",
+    settings_subtitle: "Configure language and database credentials",
+    language_label: "Application Language",
+    supabase_title: "Supabase Cloud Sync",
+    supabase_subtitle: "Connect a Supabase project to automatically sync and backup your routines",
+    supabase_url: "Supabase Project URL",
+    supabase_key: "Supabase Anon Key",
+    supabase_db_guide: "Database Setup Guide",
+    supabase_db_query: "Run this query in your Supabase SQL Editor to create the table:",
+    supabase_save: "Save & Sync Now",
+    supabase_disconnect: "Disconnect Cloud Sync",
+    
+    // Extended keys
+    focus_current_streak: "Current Streak",
+    focus_personal_best: "Personal Best",
+    focus_day_navigator: "Day Navigator",
+    focus_today: "Today",
+    focus_completed: "Completed",
+    grid_title: "Monthly Log Grid",
+    grid_subtitle: "Click a day to load its routine checklist details.",
+    grid_col_date: "Date",
+    grid_col_score: "Score",
+    weekday_mon: "Mon",
+    weekday_tue: "Tue",
+    weekday_wed: "Wed",
+    weekday_thu: "Thu",
+    weekday_fri: "Fri",
+    weekday_sat: "Sat",
+    weekday_sun: "Sun",
+    analytics_title: "Performance Analytics",
+    analytics_subtitle: "Historical progress data, trend chart, and habit consistency.",
+    analytics_kpi_avg: "Avg Daily Score",
+    analytics_kpi_perfect: "Perfect Days (100%)",
+    analytics_kpi_top: "Most Consistent",
+    analytics_kpi_focus: "Needs Consistency",
+    analytics_chart_title: "Daily Score Trend",
+    analytics_chart_legend: "Score % over active month days",
+    analytics_ranks_title: "Habit-by-Habit Consistency",
+    analytics_ranks_legend: "Frequency of completion this month",
+    analytics_heatmap_title: "Annual Discipline Calendar",
+    analytics_heatmap_legend: "Consistency heatmap over the past 365 days. Click any day to jump to its checklist.",
+    analytics_heatmap_less: "Less",
+    analytics_heatmap_more: "More",
+    analytics_sync_title: "Cloud Sync & Database Backup",
+    analytics_sync_subtitle: "Connect a Supabase project to automatically sync and backup your routines",
+    supabase_connect_btn: "Connect & Sync",
+    journal_tags_placeholder: "e.g. work, gym, devotion, family",
+    journal_no_tags: "No tags",
+    finance_health_status: "Financial Health: Stable",
+    finance_inflow_desc: "▲ Active Inflows",
+    finance_outflow_desc: "▼ Spending",
+    finance_desc_placeholder: "Enter transaction details...",
+    calendar_timeline_title: "Daily Agenda Flow",
+    calendar_event_placeholder: "Meeting, class, workout...",
+    calendar_notes_placeholder: "Enter description or location...",
+    habit_fajr_sunnah_title: "Fajr 2 Rakah Sunnah",
+    habit_fajr_sunnah_desc: "Dawn Optional Devotion",
+    habit_fajr_fard_title: "Fajr 2 Rakah Fard",
+    habit_fajr_fard_desc: "Dawn Obligation",
+    habit_morning_dhikr_title: "Morning Dhikr",
+    habit_morning_dhikr_desc: "Morning Remembrance",
+    habit_quran_devotion_title: "Quran Devotion",
+    habit_quran_devotion_desc: "Daily Wird / Tilavet",
+    habit_intellectual_growth_title: "Intellectual Growth",
+    habit_intellectual_growth_desc: "Book Reading",
+    habit_physical_training_title: "Physical Training",
+    habit_physical_training_desc: "Workout / Sport",
+    habit_nutritional_fuel_title: "Nutritional Fuel",
+    habit_nutritional_fuel_desc: "Healthy Breakfast",
+    habit_horizon_sync_title: "Horizon Sync",
+    habit_horizon_sync_desc: "Daily Planning & Vision Alignment",
+    habit_duha_prayer_title: "Duha Prayer",
+    habit_duha_prayer_desc: "Forenoon Prayer",
+    habit_evening_dhikr_title: "Evening Dhikr",
+    habit_evening_dhikr_desc: "Evening Remembrance",
+    habit_maghrib_fard_title: "Maghrib 3 Rakah Fard",
+    habit_maghrib_fard_desc: "Sunset Obligation",
+    habit_maghrib_sunnah_title: "Maghrib 2 Rakah Sunnah",
+    habit_maghrib_sunnah_desc: "Post-Sunset Devotion",
+    habit_isha_sunnah1_title: "Isha 4 Rakah Sunnah",
+    habit_isha_sunnah1_desc: "Pre-Obligation Devotion",
+    habit_isha_fard_title: "Isha 4 Rakah Fard",
+    habit_isha_fard_desc: "Night Obligation",
+    habit_isha_sunnah2_title: "Isha 2 Rakah Sunnah",
+    habit_isha_sunnah2_desc: "Post-Obligation Devotion",
+    habit_witr_prayer_title: "Witr 3 Rakah Prayer",
+    habit_witr_prayer_desc: "Hanefi Wajib",
+    habit_dhuhr_sunnah1_title: "Dhuhr 4 Rakah Sunnah",
+    habit_dhuhr_sunnah1_desc: "Pre-Obligation Devotion",
+    habit_dhuhr_fard_title: "Dhuhr 4 Rakah Fard",
+    habit_dhuhr_fard_desc: "Noon Obligation",
+    habit_dhuhr_sunnah2_title: "Dhuhr 2 Rakah Sunnah",
+    habit_dhuhr_sunnah2_desc: "Post-Obligation Devotion",
+    habit_asr_sunnah_title: "Asr 4 Rakah Sunnah",
+    habit_asr_sunnah_desc: "Hanefi Sunnah",
+    habit_asr_fard_title: "Asr 4 Rakah Fard",
+    habit_asr_fard_desc: "Afternoon Obligation",
+    habit_mind_log_title: "Mind Log",
+    habit_mind_log_desc: "Daily Journaling Complete",
+    habit_fin_flow_title: "FinFlow",
+    habit_fin_flow_desc: "Daily Expenses Logged",
+    block_morning_title: "Morning Core",
+    block_morning_desc: "Dawn to Forenoon",
+    block_midday_title: "Midday & Afternoon",
+    block_midday_desc: "Noon to Sunset",
+    block_dusk_title: "Dusk & Evening",
+    block_dusk_desc: "Sunset to Night",
+    block_night_title: "Night Closeout",
+    block_night_desc: "Before Sleep",
+    alert_same_accounts: "Source and target accounts cannot be the same!",
+    alert_google_load_fail: "Google API library could not be loaded. Please check your internet connection and refresh the page.",
+    alert_google_auth_error: "Google auth error: ",
+    alert_google_sync_success: "Google Calendar connected successfully! Synchronizing your data.",
+    confirm_disconnect: "Disconnect Supabase Sync? Your data will remain stored locally.",
+    cat_food: "🍔 Food & Groceries",
+    cat_transport: "🚗 Transport & Fuel",
+    cat_tech: "💻 Software & Devices",
+    cat_bills: "⚡ Bills & Subscriptions",
+    cat_invest: "📈 Investments",
+    cat_edu: "📚 Books & Education",
+    cat_income: "💰 Work/Project Income",
+    cat_other: "📦 Other",
+    acc_cash: "Cash Wallet",
+    acc_bank: "Bank Account",
+    acc_credit: "Credit Card",
+    acc_business: "Business Card",
+    inspire_perfect: "🏆 Perfect Day! Outstanding job keeping the horizon clear!",
+    inspire_almost: "🔥 Almost there! Just a few more routines to hit 100%!",
+    inspire_solid: "⚡ Solid progress. Keep pushing through the day!",
+    inspire_small: "🚀 Small steps build momentum. Complete another routine!",
+    inspire_welcome: "✨ Welcome! Start your day by checking off your first routine.",
+    brief_video_item_title: "Resolve and Willpower - Rebuilding Yourself",
+    brief_video_item_desc: "Contains advice on maintaining spiritual and mental discipline throughout the day.",
+    brief_weather_desc: "Istanbul - Clear & Sunny",
+    kpi_top_none: "None yet",
+    kpi_focus_none: "None yet",
+    brief_today_events_label: "Events"
+  },
+  tr: {
+    nav_brief: "Ana Panel",
+    nav_routines: "Rutinler",
+    nav_monthly: "Aylık Takip",
+    nav_journal: "Günlük Yaz",
+    nav_finance: "FinFlow+",
+    nav_calendar: "Takvim",
+    nav_analytics: "Analiz",
+    nav_settings: "Ayarlar",
+    nav_lock: "Paneli Kilitle",
+    auth_title: "Horizon Tracker",
+    auth_sub: "Özel Tek Kullanıcılı Panel",
+    auth_label: "Erişim Şifresi",
+    auth_unlock: "Giriş Yap",
+    auth_footer: "© 2026 Firnas Technologies",
+    brief_greeting_morning: "Hayırlı Sabahlar, Enes!",
+    brief_greeting_afternoon: "Günün Enerjisi, Enes!",
+    brief_greeting_evening: "Hayırlı Akşamlar, Enes!",
+    brief_greeting_night: "Huzurlu Geceler, Enes!",
+    brief_sub_morning: "Bugün yeni hedeflere ulaşmak ve gelişmek için harika bir gün.",
+    brief_sub_afternoon: "Öğleden sonra hedeflerine tam gaz odaklanmaya devam et.",
+    brief_sub_evening: "Günün yorgunluğunu atarken zihnini tazelemeyi unutma.",
+    brief_sub_night: "Güzel bir uyku, yarının başarısı için en büyük hazırlıktır.",
+    brief_ayah_title: "Günün Zihinsel Odak Ayeti",
+    brief_ayah_subtitle: "Sabaha başlarken manevi rehberlik",
+    brief_yesterday_score: "Dünkü Rutin",
+    brief_yesterday_spend: "Dünkü Harcama",
+    brief_today_events: "Bugünkü Program",
+    brief_weather: "Hava Durumu",
+    brief_video_title: "Önerilen Zihinsel Odak Videosu",
+    brief_video_subtitle: "Güne başlarken motivasyonel destek",
+    journal_title: "Zihinsel Günlük & Gözlem",
+    journal_history: "Geçmiş Günlükler",
+    journal_new: "+ Yeni",
+    journal_date: "Tarih",
+    journal_mood: "Bugünkü Ruh Halin",
+    journal_summary: "Günün Özeti & Zihinsel Durumun",
+    journal_placeholder: "Bugün neler başardın? Karşılaştığın zorluklar nelerdi? Zihnini meşgul eden düşünceler var mı?...",
+    journal_tags: "Etiketler (Virgülle ayırın)",
+    journal_save: "Kaydet & Senkronize Et",
+    journal_delete: "Sil",
+    journal_empty: "Henüz kayıt yok. İlk günlükünü yaz!",
+    finance_title: "FinFlow+ Paneli",
+    finance_subtitle: "Kişisel ve şirket harcamalarını takip et",
+    finance_total_balance: "Toplam Net Bakiye",
+    finance_monthly_income: "Aylık Gelir",
+    finance_monthly_expense: "Aylık Gider",
+    finance_new_tx: "İşlem Kaydet",
+    finance_tx_type: "Tür",
+    finance_tx_income: "Gelir",
+    finance_tx_expense: "Gider",
+    finance_tx_transfer: "Havale/Transfer",
+    finance_account: "Hesap",
+    finance_target_account: "Hedef Hesap",
+    finance_category: "Kategori",
+    finance_amount: "Tutar (TL)",
+    finance_desc: "Açıklama",
+    finance_save: "İşlemi Kaydet",
+    finance_accounts_title: "Hesap Özetleri",
+    finance_category_title: "Aylık Gider Dağılımı",
+    finance_history_title: "Son İşlemler",
+    finance_table_date: "Tarih",
+    finance_table_desc: "Açıklama",
+    finance_table_cat: "Kategori",
+    finance_table_acc: "Hesap",
+    finance_table_amt: "Tutar",
+    finance_empty: "Henüz finansal kayıt bulunmuyor.",
+    calendar_title: "Google Calendar & Ajanda",
+    calendar_subtitle: "Günlük programını gör ve yeni etkinlikler ekle.",
+    calendar_connect: "Google Hesabını Bağla",
+    calendar_connected: "Google Takvim Bağlandı ✓",
+    calendar_active_day: "Bugün",
+    calendar_add_title: "Yeni Etkinlik Planla",
+    calendar_event_title: "Etkinlik Başlığı",
+    calendar_start_time: "Başlangıç Saati",
+    calendar_end_time: "Bitiş Saati",
+    calendar_notes: "Notlar / Konum",
+    calendar_add_btn: "Takvime Ekle",
+    settings_title: "Uygulama Ayarları",
+    settings_subtitle: "Dil ve veri tabanı yedekleme ayarları",
+    language_label: "Uygulama Dili",
+    supabase_title: "Supabase Bulut Eşitleme",
+    supabase_subtitle: "Rutinleri yedeklemek için bir Supabase projesi bağlayın",
+    supabase_url: "Supabase Proje URL",
+    supabase_key: "Supabase Anon Key",
+    supabase_db_guide: "Veritabanı Kurulum Kılavuzu",
+    supabase_db_query: "Tabloyu oluşturmak için Supabase SQL Editöründe bu sorguyu çalıştırın:",
+    supabase_save: "Kaydet ve Eşitle",
+    supabase_disconnect: "Bulut Bağlantısını Kes",
+    
+    // Extended keys
+    focus_current_streak: "Mevcut Seri",
+    focus_personal_best: "En İyi Seri",
+    focus_day_navigator: "Gün Gezgini",
+    focus_today: "Bugün",
+    focus_completed: "Tamamlandı",
+    grid_title: "Aylık Takip Tablosu",
+    grid_subtitle: "Detayları yüklemek için bir güne tıklayın.",
+    grid_col_date: "Tarih",
+    grid_col_score: "Skor",
+    weekday_mon: "Pzt",
+    weekday_tue: "Sal",
+    weekday_wed: "Çar",
+    weekday_thu: "Per",
+    weekday_fri: "Cum",
+    weekday_sat: "Cmt",
+    weekday_sun: "Paz",
+    analytics_title: "Performans Analizi",
+    analytics_subtitle: "Geçmiş ilerleme verileri, eğilim grafiği ve alışkanlık kararlılığı.",
+    analytics_kpi_avg: "Ort. Günlük Skor",
+    analytics_kpi_perfect: "Kusursuz Günler (%100)",
+    analytics_kpi_top: "En Kararlı",
+    analytics_kpi_focus: "Odaklanılması Gereken",
+    analytics_chart_title: "Günlük Skor Eğilimi",
+    analytics_chart_legend: "Aktif ay günleri bazında skor %",
+    analytics_ranks_title: "Alışkanlık Bazında Kararlılık",
+    analytics_ranks_legend: "Bu ayki tamamlanma sıklığı",
+    analytics_heatmap_title: "Yıllık Disiplin Takvimi",
+    analytics_heatmap_legend: "Son 365 gündeki kararlılık ısı haritası. Detaylar için bir güne tıklayın.",
+    analytics_heatmap_less: "Az",
+    analytics_heatmap_more: "Çok",
+    analytics_sync_title: "Bulut Eşitleme & Veritabanı Yedekleme",
+    analytics_sync_subtitle: "Rutinleri yedeklemek için bir Supabase projesi bağlayın",
+    supabase_connect_btn: "Bağlan ve Eşitle",
+    journal_tags_placeholder: "örn: iş, spor, ibadet, aile",
+    journal_no_tags: "Etiket yok",
+    finance_health_status: "Finansal Sağlık Durumu: Stabil",
+    finance_inflow_desc: "▲ Aktif Kazançlar",
+    finance_outflow_desc: "▼ Giderler",
+    finance_desc_placeholder: "İşlem açıklaması yazın...",
+    calendar_timeline_title: "Günlük Program Akışı",
+    calendar_event_placeholder: "Toplantı, ders, buluşma...",
+    calendar_notes_placeholder: "Açıklama veya yer girin...",
+    habit_fajr_sunnah_title: "Sabah 2 Rekat Sünnet",
+    habit_fajr_sunnah_desc: "Farz Öncesi İsteğe Bağlı İbadet",
+    habit_fajr_fard_title: "Sabah 2 Rekat Farz",
+    habit_fajr_fard_desc: "Sabah Namazı Farzı",
+    habit_morning_dhikr_title: "Sabah Evradı / Zikir",
+    habit_morning_dhikr_desc: "Güne Başlarken Hatırlama",
+    habit_quran_devotion_title: "Kur'an Okuma",
+    habit_quran_devotion_desc: "Günlük Vird / Tilavet",
+    habit_intellectual_growth_title: "Entelektüel Okuma",
+    habit_intellectual_growth_desc: "Kitap Okuma",
+    habit_physical_training_title: "Spor ve Egzersiz",
+    habit_physical_training_desc: "Antrenman / Yürüyüş",
+    habit_nutritional_fuel_title: "Besleyici Kahvaltı",
+    habit_nutritional_fuel_desc: "Sağlıklı Öğün",
+    habit_horizon_sync_title: "Ufuk Eşitlemesi",
+    habit_horizon_sync_desc: "Günlük Planlama & Hedef Hizalama",
+    habit_duha_prayer_title: "Duha / Kuşluk Namazı",
+    habit_duha_prayer_desc: "Kuşluk Vakti İbadeti",
+    habit_evening_dhikr_title: "Akşam Evradı / Zikir",
+    habit_evening_dhikr_desc: "Günü Kapatırken Hatırlama",
+    habit_maghrib_fard_title: "Akşam 3 Rekat Farz",
+    habit_maghrib_fard_desc: "Gün Batımı Farzı",
+    habit_maghrib_sunnah_title: "Akşam 2 Rekat Sünnet",
+    habit_maghrib_sunnah_desc: "Farz Sonrası Sünnet",
+    habit_isha_sunnah1_title: "Yatsı İlk Sünnet",
+    habit_isha_sunnah1_desc: "Farz Öncesi İbadet",
+    habit_isha_fard_title: "Yatsı 4 Rekat Farz",
+    habit_isha_fard_desc: "Yatsı Namazı Farzı",
+    habit_isha_sunnah2_title: "Yatsı Son Sünnet",
+    habit_isha_sunnah2_desc: "Farz Sonrası İbadet",
+    habit_witr_prayer_title: "Vitir Namazı",
+    habit_witr_prayer_desc: "Hanefi Vacib İbadet",
+    habit_dhuhr_sunnah1_title: "Öğle İlk Sünnet",
+    habit_dhuhr_sunnah1_desc: "Farz Öncesi İbadet",
+    habit_dhuhr_fard_title: "Öğle 4 Rekat Farz",
+    habit_dhuhr_fard_desc: "Öğle Namazı Farzı",
+    habit_dhuhr_sunnah2_title: "Öğle Son Sünnet",
+    habit_dhuhr_sunnah2_desc: "Farz Sonrası İbadet",
+    habit_asr_sunnah_title: "İkindi Sünneti",
+    habit_asr_sunnah_desc: "Gayri Müekked Sünnet",
+    habit_asr_fard_title: "İkindi 4 Rekat Farz",
+    habit_asr_fard_desc: "İkindi Namazı Farzı",
+    habit_mind_log_title: "Günlük Yazımı",
+    habit_mind_log_desc: "Zihinsel Günlük Tamamlandı",
+    habit_fin_flow_title: "FinFlow Eşitlemesi",
+    habit_fin_flow_desc: "Günlük Harcamalar Kaydedildi",
+    block_morning_title: "Sabah Rutinleri",
+    block_morning_desc: "Şafaktan Kuşluk Vaktine",
+    block_midday_title: "Öğle ve Öğleden Sonra",
+    block_midday_desc: "Öğleden Akşama",
+    block_dusk_title: "Akşam ve Yatsı",
+    block_dusk_desc: "Gün Batımından Geceye",
+    block_night_title: "Günü Kapatış",
+    block_night_desc: "Uykudan Önce",
+    alert_same_accounts: "Kaynak ve hedef hesaplar aynı olamaz!",
+    alert_google_load_fail: "Google API kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.",
+    alert_google_auth_error: "Google yetkilendirme hatası: ",
+    alert_google_sync_success: "Google Takvim başarıyla bağlandı! Verileriniz senkronize ediliyor.",
+    confirm_disconnect: "Bulut bağlantısını kesmek istiyor musunuz? Verileriniz yerel olarak saklanmaya devam edecektir.",
+    cat_food: "🍔 Gıda & Market",
+    cat_transport: "🚗 Ulaşım & Yakıt",
+    cat_tech: "💻 Yazılım & Cihazlar",
+    cat_bills: "⚡ Faturalar & Abonelikler",
+    cat_invest: "📈 Yatırımlar",
+    cat_edu: "📚 Kitap & Eğitim",
+    cat_income: "💰 İş/Proje Geliri",
+    cat_other: "📦 Diğer",
+    acc_cash: "Nakit Cüzdan",
+    acc_bank: "Banka Hesabı",
+    acc_credit: "Kredi Kartı",
+    acc_business: "Şirket Kartı",
+    inspire_perfect: "🏆 Kusursuz Gün! Ufku temiz tutma konusunda harika bir iş çıkardın!",
+    inspire_almost: "🔥 Neredeyse bitti! %100'e ulaşmak için sadece birkaç rutin kaldı!",
+    inspire_solid: "⚡ Sağlam ilerleme. Gün boyu devam et!",
+    inspire_small: "🚀 Küçük adımlar ivme kazandırır. Bir rutin daha tamamla!",
+    inspire_welcome: "✨ Hoş geldin! İlk rutinini işaretleyerek güne başla.",
+    brief_video_item_title: "Kararlılık ve İrade Gücü - Kendini Yeniden İnşa Et",
+    brief_video_item_desc: "Manevi ve zihinsel disiplini gün boyunca sürdürmek üzerine tavsiyeler içerir.",
+    brief_weather_desc: "İstanbul - Açık & Güneşli",
+    kpi_top_none: "Henüz Yok",
+    kpi_focus_none: "Henüz Yok",
+    brief_today_events_label: "Etkinlik"
+  },
+  ar: {
+    nav_brief: "اللوحة الرئيسية",
+    nav_routines: "العادات اليومية",
+    nav_monthly: "المتابعة الشهرية",
+    nav_journal: "كتابة اليوميات",
+    nav_finance: "الميزانية +FinFlow",
+    nav_calendar: "التقويم",
+    nav_analytics: "التحليلات",
+    nav_settings: "الإعدادات",
+    nav_lock: "قفل لوحة التحكم",
+    auth_title: "تعقب هورايزون",
+    auth_sub: "لوحة تحكم خاصة بمستخدم واحد",
+    auth_label: "رمز الدخول",
+    auth_unlock: "فتح اللوحة",
+    auth_footer: "© ٢٠٢٦ شركة فيرناس للتقنيات",
+    brief_greeting_morning: "صباح الخير، أنس!",
+    brief_greeting_afternoon: "يوم سعيد، أنس!",
+    brief_greeting_evening: "مساء الخير، أنس!",
+    brief_greeting_night: "تصبح على خير، أنس!",
+    brief_sub_morning: "اليوم يوم رائع لتحقيق أهداف جديدة والنمو الشخصي.",
+    brief_sub_afternoon: "استمر في التركيز بقوة على أهدافك بعد الظهر.",
+    brief_sub_evening: "تذكر تصفية ذهنك والاسترخاء في المساء.",
+    brief_sub_night: "النوم الجيد هو أفضل استعداد لنجاح الغد.",
+    brief_ayah_title: "آية التركيز اليومية",
+    brief_ayah_subtitle: "الهداية الروحية لبداية الصباح",
+    brief_yesterday_score: "التزام الأمس",
+    brief_yesterday_spend: "مصاريف الأمس",
+    brief_today_events: "جدول اليوم",
+    brief_weather: "الطقس",
+    brief_video_title: "فيديو التركيز المقترح",
+    brief_video_subtitle: "الدعم التحفيزي لبداية اليوم",
+    journal_title: "اليوميات وتأملات العقل",
+    journal_history: "سجل اليوميات السابق",
+    journal_new: "+ جديد",
+    journal_date: "التاريخ",
+    journal_mood: "مزاجك اليوم",
+    journal_summary: "ملخص اليوم والحالة الذهنية",
+    journal_placeholder: "ماذا حققت اليوم؟ ما هي التحديات التي واجهتها؟ هل هناك أفكار تشغل بالك؟...",
+    journal_tags: "الوسوم (مفصولة بفاصلة)",
+    journal_save: "حفظ ومزامنة",
+    journal_delete: "حذف",
+    journal_empty: "لا توجد مذكرات بعد. اكتب مذكرتك الأولى!",
+    finance_title: "لوحة الميزانية +FinFlow",
+    finance_subtitle: "تتبع المعاملات الشخصية والتجارية",
+    finance_total_balance: "صافي الرصيد الإجمالي",
+    finance_monthly_income: "الدخل الشهري",
+    finance_monthly_expense: "المصاريف الشهرية",
+    finance_new_tx: "تسجيل معاملة مالية",
+    finance_tx_type: "النوع",
+    finance_tx_income: "دخل",
+    finance_tx_expense: "مصروف",
+    finance_tx_transfer: "تحويل مالي",
+    finance_account: "الحساب",
+    finance_target_account: "الحساب المستهدف",
+    finance_category: "الفئة",
+    finance_amount: "المبلغ (ليرة)",
+    finance_desc: "الوصف",
+    finance_save: "حفظ المعاملة",
+    finance_accounts_title: "ملخص الحسابات",
+    finance_category_title: "توزيع المصاريف الشهرية",
+    finance_history_title: "المعاملات الأخيرة",
+    finance_table_date: "التاريخ",
+    finance_table_desc: "الوصف",
+    finance_table_cat: "الفئة",
+    finance_table_acc: "الحساب",
+    finance_table_amt: "المبلغ",
+    finance_empty: "لا توجد سجلات مالية بعد.",
+    calendar_title: "تقويم جوجل والمذكرة",
+    calendar_subtitle: "عرض جدول اليوم وإضافة مواعيد جديدة.",
+    calendar_connect: "ربط حساب جوجل",
+    calendar_connected: "تم ربط تقويم جوجل بنجاح ✓",
+    calendar_active_day: "اليوم",
+    calendar_add_title: "جدولة موعد جديد",
+    calendar_event_title: "عنوان الموعد",
+    calendar_start_time: "وقت البدء",
+    calendar_end_time: "وقت الانتهاء",
+    calendar_notes: "ملاحظات / الموقع",
+    calendar_add_btn: "إضافة إلى الجدول",
+    settings_title: "إعدادات التطبيق",
+    settings_subtitle: "إعدادات اللغة والنسخ الاحتياطي لقاعدة البيانات",
+    language_label: "لغة التطبيق",
+    supabase_title: "مزامنة سوبابيس السحابية",
+    supabase_subtitle: "اربط مشروع سوبابيس لمزامنة وحفظ عاداتك تلقائياً",
+    supabase_url: "رابط مشروع سوبابيس (URL)",
+    supabase_key: "مفتاح سوبابيس (Anon Key)",
+    supabase_db_guide: "دليل إعداد قاعدة البيانات",
+    supabase_db_query: "قم بتشغيل هذا الاستعلام في محرر SQL في سوبابيس لإنشاء الجدول:",
+    supabase_save: "حفظ ومزامنة الآن",
+    supabase_disconnect: "فصل الاتصال السحابي",
+    
+    // Extended keys
+    focus_current_streak: "السلسلة الحالية",
+    focus_personal_best: "أفضل سلسلة تاريخية",
+    focus_day_navigator: "مستكشف الأيام",
+    focus_today: "اليوم",
+    focus_completed: "مكتمل",
+    grid_title: "لوحة المتابعة الشهرية",
+    grid_subtitle: "انقر فوق اليوم لعرض تفاصيل العادات اليومية.",
+    grid_col_date: "التاريخ",
+    grid_col_score: "الالتزام",
+    weekday_mon: "الإثنين",
+    weekday_tue: "الثلاثاء",
+    weekday_wed: "الأربعاء",
+    weekday_thu: "الخميس",
+    weekday_fri: "الجمعة",
+    weekday_sat: "السبت",
+    weekday_sun: "الأحد",
+    analytics_title: "تحليلات الأداء",
+    analytics_subtitle: "بيانات التقدم التاريخية، مخطط الاتجاه، وثبات العادات اليومية.",
+    analytics_kpi_avg: "متوسط ​​الالتزام اليومي",
+    analytics_kpi_perfect: "الأيام المثالية (١٠٠٪)",
+    analytics_kpi_top: "الأكثر التزاماً",
+    analytics_kpi_focus: "بحاجة إلى تركيز",
+    analytics_chart_title: "اتجاه الالتزام اليومي",
+    analytics_chart_legend: "نسبة الالتزام على مدار أيام الشهر",
+    analytics_ranks_title: "ثبات العادات بالتفصيل",
+    analytics_ranks_legend: "تكرار إنجاز العادات هذا الشهر",
+    analytics_heatmap_title: "تقويم الانضباط السنوي",
+    analytics_heatmap_legend: "خريطة الانضباط الحرارية لآخر ٣٦٥ يومًا. انقر على أي يوم للانتقال إلى قائمته.",
+    analytics_heatmap_less: "أقل",
+    analytics_heatmap_more: "أكثر",
+    analytics_sync_title: "المزامنة السحابية والنسخ الاحتياطي",
+    analytics_sync_subtitle: "اربط مشروع سوبابيس لمزامنة وحفظ عاداتك تلقائياً وبأمان",
+    supabase_connect_btn: "اتصال ومزامنة",
+    journal_tags_placeholder: "مثال: العمل، النادي، العبادة، العائلة",
+    journal_no_tags: "لا توجد وسوم",
+    finance_health_status: "الحالة المالية: مستقرة",
+    finance_inflow_desc: "▲ التدفقات النشطة",
+    finance_outflow_desc: "▼ المصروفات",
+    finance_desc_placeholder: "أدخل تفاصيل المعاملة المذكورة...",
+    calendar_timeline_title: "جدول المواعيد اليومي",
+    calendar_event_placeholder: "اجتماع، درس، تمرين رياضي...",
+    calendar_notes_placeholder: "أدخل تفاصيل أو موقع الموعد...",
+    habit_fajr_sunnah_title: "سنة الفجر ركعتين",
+    habit_fajr_sunnah_desc: "صلاة نافلة قبل الفريضة",
+    habit_fajr_fard_title: "فرض الفجر ركعتين",
+    habit_fajr_fard_desc: "فريضة الصبح",
+    habit_morning_dhikr_title: "أذكار الصباح",
+    habit_morning_dhikr_desc: "أوراد الصباح والذكر",
+    habit_quran_devotion_title: "ورد القرآن الكريم",
+    habit_quran_devotion_desc: "تلاوة وتدبر يومي",
+    habit_intellectual_growth_title: "القراءة والتعلم",
+    habit_intellectual_growth_desc: "قراءة كتاب / نمو معرفي",
+    habit_physical_training_title: "الرياضة والنشاط البدني",
+    habit_physical_training_desc: "تمارين رياضية / لياقة",
+    habit_nutritional_fuel_title: "وجبة فطور صحية",
+    habit_nutritional_fuel_desc: "تغذية متوازنة لبدء اليوم",
+    habit_horizon_sync_title: "تزامن الأهداف والتخطيط",
+    habit_horizon_sync_desc: "تخطيط يومي ومواءمة الرؤية",
+    habit_duha_prayer_title: "صلاة الضحى",
+    habit_duha_prayer_desc: "ركعتي الضحى المباركة",
+    habit_evening_dhikr_title: "أذكار المساء",
+    habit_evening_dhikr_desc: "أوراد المساء والذكر",
+    habit_maghrib_fard_title: "فرض المغرب ٣ ركعات",
+    habit_maghrib_fard_desc: "صلاة المغرب عند الغروب",
+    habit_maghrib_sunnah_title: "سنة المغرب ركعتين",
+    habit_maghrib_sunnah_desc: "صلاة سنة بعد فريضة المغرب",
+    habit_isha_sunnah1_title: "سنة العشاء القبلية",
+    habit_isha_sunnah1_desc: "أربع ركعات سنة قبل الفرض",
+    habit_isha_fard_title: "فرض العشاء ٤ ركعات",
+    habit_isha_fard_desc: "فريضة صلاة العشاء",
+    habit_isha_sunnah2_title: "سنة العشاء البعدية",
+    habit_isha_sunnah2_desc: "ركعتين سنة بعد فريضة العشاء",
+    habit_witr_prayer_title: "صلاة الوتر",
+    habit_witr_prayer_desc: "ثلاث ركعات وتر واجبة",
+    habit_dhuhr_sunnah1_title: "سنة الظهر القبلية",
+    habit_dhuhr_sunnah1_desc: "أربع ركعات سنة قبل الفرض",
+    habit_dhuhr_fard_title: "فرض الظهر ٤ ركعات",
+    habit_dhuhr_fard_desc: "فريضة صلاة الظهر",
+    habit_dhuhr_sunnah2_title: "سنة الظهر البعدية",
+    habit_dhuhr_sunnah2_desc: "ركعتين سنة بعد فريضة الظهر",
+    habit_asr_sunnah_title: "سنة العصر",
+    habit_asr_sunnah_desc: "أربع ركعات سنة غير مؤكدة",
+    habit_asr_fard_title: "فرض العصر ٤ ركعات",
+    habit_asr_fard_desc: "فريضة صلاة العصر",
+    habit_mind_log_title: "كتابة اليوميات",
+    habit_mind_log_desc: "إكمال التدوين اليومي",
+    habit_fin_flow_title: "تعقب الميزانية",
+    habit_fin_flow_desc: "تسجيل النفقات اليومية كاملة",
+    block_morning_title: "الروتين الصباحي",
+    block_morning_desc: "من الفجر حتى الضحى",
+    block_midday_title: "فترة الظهر والمساء",
+    block_midday_desc: "من صلاة الظهر حتى الغروب",
+    block_dusk_title: "الروتين المسائي",
+    block_dusk_desc: "من الغروب حتى الليل",
+    block_night_title: "ختام اليوم",
+    block_night_desc: "قبل الذهاب للنوم",
+    alert_same_accounts: "لا يمكن أن يكون حساب المصدر وحساب الهدف متطابقين!",
+    alert_google_load_fail: "تعذر تحميل مكتبة Google API. يرجى التحقق من اتصالك بالإنترنت وتحديث الصفحة.",
+    alert_google_auth_error: "خطأ في مصادقة جوجل: ",
+    alert_google_sync_success: "تم ربط تقويم جوجل بنجاح! يتم الآن مزامنة بياناتك.",
+    confirm_disconnect: "هل أنت متأكد من رغبتك في فصل المزامنة السحابية؟ ستبقى بياناتك محفوظة محلياً.",
+    cat_food: "🍔 الغذاء والبقالة",
+    cat_transport: "🚗 النقل والوقود",
+    cat_tech: "💻 البرمجيات والأجهزة",
+    cat_bills: "⚡ الفواتير والاشتراكات",
+    cat_invest: "📈 الاستثمارات",
+    cat_edu: "📚 الكتب والتعليم",
+    cat_income: "💰 دخل العمل/المشروع",
+    cat_other: "📦 أخرى",
+    acc_cash: "المحفظة النقدية",
+    acc_bank: "الحساب البنكي",
+    acc_credit: "بطاقة الائتمان",
+    acc_business: "بطاقة الشركة",
+    inspire_perfect: "🏆 يوم مثالي! عمل رائع في الحفاظ على أهدافك واضحة!",
+    inspire_almost: "🔥 شارفنا على الانتهاء! فقط القليل من العادات للوصول إلى 100٪!",
+    inspire_solid: "⚡ تقدم ملموس. استمر في السعي طوال اليوم!",
+    inspire_small: "🚀 الخطوات الصغيرة تبني الزخم. أكمل عادة أخرى!",
+    inspire_welcome: "✨ مرحبًا بك! ابدأ يومك بتحديد أول عادة لك.",
+    brief_video_item_title: "العزيمة وقوة الإرادة - إعادة بناء الذات",
+    brief_video_item_desc: "يحتوي على نصائح للحفاظ على الانضباط الروحي والذهني طوال اليوم.",
+    brief_weather_desc: "اسطنبول - مشمس وصافٍ",
+    kpi_top_none: "لا يوجد بعد",
+    kpi_focus_none: "لا يوجد بعد",
+    brief_today_events_label: "فعاليات"
+  }
 };
 
 // Helper to format Date objects to YYYY-MM-DD
@@ -221,7 +951,13 @@ const StorageManager = {
 // ================= DUAL CALENDAR ENGINE =================
 const CalendarEngine = {
   getGregorianString(date) {
-    return date.toLocaleDateString('en-US', {
+    const localeMap = {
+      en: 'en-US',
+      tr: 'tr-TR',
+      ar: 'ar-EG'
+    };
+    const locale = localeMap[STATE.language] || 'en-US';
+    return date.toLocaleDateString(locale, {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -231,9 +967,22 @@ const CalendarEngine = {
 
   getHijriString(date) {
     try {
+      const localeMap = {
+        en: 'en-u-ca-islamic-umalqura',
+        tr: 'tr-u-ca-islamic-umalqura',
+        ar: 'ar-u-ca-islamic-umalqura'
+      };
+      const locale = localeMap[STATE.language] || 'en-u-ca-islamic-umalqura';
       const options = { day: 'numeric', month: 'long', year: 'numeric' };
-      const formatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', options);
-      return formatter.format(date) + ' AH';
+      const formatter = new Intl.DateTimeFormat(locale, options);
+      
+      const suffixMap = {
+        en: ' AH',
+        tr: ' H',
+        ar: ' هـ'
+      };
+      const suffix = suffixMap[STATE.language] || ' AH';
+      return formatter.format(date) + suffix;
     } catch (e) {
       return 'Hijri Calendar Error';
     }
@@ -241,18 +990,17 @@ const CalendarEngine = {
 
   getHijriStringShort(date) {
     try {
-      const dayOpt = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { day: 'numeric' });
-      const monthOpt = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', { month: 'numeric' });
+      const localeMap = {
+        en: 'en-u-ca-islamic-umalqura',
+        tr: 'tr-u-ca-islamic-umalqura',
+        ar: 'ar-u-ca-islamic-umalqura'
+      };
+      const locale = localeMap[STATE.language] || 'en-u-ca-islamic-umalqura';
+      const dayOpt = new Intl.DateTimeFormat(locale, { day: 'numeric' });
+      const monthOpt = new Intl.DateTimeFormat(locale, { month: 'long' });
+      
       const day = dayOpt.format(date);
-      const monthNum = parseInt(monthOpt.format(date), 10);
-      
-      const hijriMonths = [
-        "Muharram", "Safar", "Rabi' I", "Rabi' II", 
-        "Jumada I", "Jumada II", "Rajab", "Sha'ban", 
-        "Ramadan", "Shawwal", "Dhu al-Q.", "Dhu al-H."
-      ];
-      
-      const monthName = hijriMonths[(monthNum - 1) % 12] || "Hijri";
+      const monthName = monthOpt.format(date);
       return `${day} ${monthName}`;
     } catch (e) {
       return '';
@@ -680,7 +1428,56 @@ const UIController = {
     }
   },
 
+  setupLanguage() {
+    const cachedLang = localStorage.getItem('hrt_lang') || 'en';
+    STATE.language = cachedLang;
+    const langSelect = document.getElementById('language-select');
+    if (langSelect) {
+      langSelect.value = cachedLang;
+      langSelect.addEventListener('change', () => {
+        this.setLanguage(langSelect.value);
+      });
+    }
+    this.setLanguage(cachedLang);
+  },
+
+  setLanguage(lang) {
+    STATE.language = lang;
+    localStorage.setItem('hrt_lang', lang);
+    document.documentElement.lang = lang;
+    document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+    const dict = TRANSLATIONS[lang] || TRANSLATIONS.en;
+    
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key]) {
+        el.textContent = dict[key];
+      }
+    });
+    
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (dict[key]) {
+        el.setAttribute('placeholder', dict[key]);
+      }
+    });
+
+    if (STATE.authenticated) {
+      this.updateStreakDisplay();
+      this.loadDateData();
+      this.renderNotionGrid();
+      this.renderAnalytics();
+      this.renderHeatmap();
+      this.renderBrief();
+      this.renderJournal();
+      this.renderFinance();
+      this.renderCalendar();
+      this.setupMonthSelector();
+    }
+  },
+
   init() {
+    this.setupLanguage();
     SupabaseManager.init(); // Initialize credentials
     this.setupAuthentication();
     this.setupNavigation();
@@ -921,20 +1718,21 @@ const UIController = {
     // Dynamic Inspirational Message
     const inspirationalEl = document.getElementById('daily-status-inspirational');
     if (inspirationalEl) {
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
       if (percentage === 100) {
-        inspirationalEl.textContent = "🏆 Perfect Day! Outstanding job keeping the horizon clear!";
+        inspirationalEl.textContent = dict.inspire_perfect;
         inspirationalEl.style.borderLeftColor = "var(--primary-light)";
       } else if (percentage >= 70) {
-        inspirationalEl.textContent = "🔥 Almost there! Just a few more routines to hit 100%!";
+        inspirationalEl.textContent = dict.inspire_almost;
         inspirationalEl.style.borderLeftColor = "var(--success)";
       } else if (percentage >= 40) {
-        inspirationalEl.textContent = "⚡ Solid progress. Keep pushing through the day!";
+        inspirationalEl.textContent = dict.inspire_solid;
         inspirationalEl.style.borderLeftColor = "var(--accent-gold)";
       } else if (percentage > 0) {
-        inspirationalEl.textContent = "🚀 Small steps build momentum. Complete another routine!";
+        inspirationalEl.textContent = dict.inspire_small;
         inspirationalEl.style.borderLeftColor = "var(--danger)";
       } else {
-        inspirationalEl.textContent = "✨ Welcome! Start your day by checking off your first routine.";
+        inspirationalEl.textContent = dict.inspire_welcome;
         inspirationalEl.style.borderLeftColor = "var(--text-muted)";
       }
     }
@@ -979,6 +1777,7 @@ const UIController = {
     const selectors = document.querySelectorAll('.month-sync-select');
     
     selectors.forEach(select => {
+      const prevVal = select.value || STATE.selectedMonth;
       select.innerHTML = "";
       
       const startYear = 2026;
@@ -988,6 +1787,13 @@ const UIController = {
       
       const temp = new Date(startYear, startMonth, 1);
       
+      const localeMap = {
+        en: 'en-US',
+        tr: 'tr-TR',
+        ar: 'ar-EG'
+      };
+      const locale = localeMap[STATE.language] || 'en-US';
+      
       while (temp <= currentLimit) {
         const year = temp.getFullYear();
         const monthNum = temp.getMonth();
@@ -995,31 +1801,33 @@ const UIController = {
         
         const option = document.createElement('option');
         option.value = `${year}-${monthStr}`;
-        option.textContent = temp.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        option.textContent = temp.toLocaleDateString(locale, { month: 'long', year: 'numeric' });
         
         select.appendChild(option);
         temp.setMonth(temp.getMonth() + 1);
       }
+      
+      if (prevVal) {
+        select.value = prevVal;
+      }
     });
     
-    const activeY = STATE.activeDate.getFullYear();
-    const activeM = String(STATE.activeDate.getMonth() + 1).padStart(2, '0');
-    STATE.selectedMonth = `${activeY}-${activeM}`;
-    
-    selectors.forEach(select => {
-      select.value = STATE.selectedMonth;
-      select.addEventListener('change', (e) => {
-        STATE.selectedMonth = e.target.value;
-        
-        // Sync values across all selectors
-        selectors.forEach(other => {
-          other.value = STATE.selectedMonth;
+    if (!this._monthSelectorListenerBound) {
+      this._monthSelectorListenerBound = true;
+      selectors.forEach(select => {
+        select.addEventListener('change', (e) => {
+          STATE.selectedMonth = e.target.value;
+          
+          // Sync values across all selectors
+          selectors.forEach(other => {
+            other.value = STATE.selectedMonth;
+          });
+          
+          this.renderNotionGrid();
+          this.renderAnalytics();
         });
-        
-        this.renderNotionGrid();
-        this.renderAnalytics();
       });
-    });
+    }
   },
 
   // --- Supabase Cloud Sync Settings Controller ---
@@ -1161,16 +1969,17 @@ const UIController = {
 
     // Unified disconnect trigger
     const handleDisconnect = () => {
-      if (confirm("Disconnect Supabase Sync? Your data will remain stored locally.")) {
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+      if (confirm(dict.confirm_disconnect || "Disconnect Supabase Sync? Your data will remain stored locally.")) {
         SupabaseManager.clearCredentials();
         refreshSyncUI();
         
         statusMsg.className = "sync-status-msg status-error";
-        statusMsg.textContent = "Cloud Sync disconnected.";
+        statusMsg.textContent = dict.supabase_disconnect || "Cloud Sync disconnected.";
         
         if (this.dom.inlineSyncStatus) {
           this.dom.inlineSyncStatus.className = "sync-status-msg status-error";
-          this.dom.inlineSyncStatus.textContent = "Cloud Sync disconnected.";
+          this.dom.inlineSyncStatus.textContent = dict.supabase_disconnect || "Cloud Sync disconnected.";
         }
       }
     };
@@ -1505,16 +2314,19 @@ const UIController = {
     this.dom.kpiAvgScore.textContent = `${averageScore}%`;
     this.dom.kpiPerfectDays.textContent = `${perfectDaysCount} / ${N}`;
     
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
     if (topHabitKey && maxPct > 0) {
-      this.dom.kpiTopHabit.textContent = `${HABIT_ICONS[topHabitKey]} ${HABIT_DISPLAY_NAMES[topHabitKey]} (${maxPct}%)`;
+      const localizedName = dict[`habit_${topHabitKey}_title`] || HABIT_DISPLAY_NAMES[topHabitKey];
+      this.dom.kpiTopHabit.textContent = `${HABIT_ICONS[topHabitKey]} ${localizedName} (${maxPct}%)`;
     } else {
-      this.dom.kpiTopHabit.textContent = "None yet";
+      this.dom.kpiTopHabit.textContent = dict.kpi_top_none || "None yet";
     }
 
     if (focusHabitKey) {
-      this.dom.kpiFocusHabit.textContent = `${HABIT_ICONS[focusHabitKey]} ${HABIT_DISPLAY_NAMES[focusHabitKey]} (${minPct}%)`;
+      const localizedName = dict[`habit_${focusHabitKey}_title`] || HABIT_DISPLAY_NAMES[focusHabitKey];
+      this.dom.kpiFocusHabit.textContent = `${HABIT_ICONS[focusHabitKey]} ${localizedName} (${minPct}%)`;
     } else {
-      this.dom.kpiFocusHabit.textContent = "None yet";
+      this.dom.kpiFocusHabit.textContent = dict.kpi_focus_none || "None yet";
     }
 
     // Draw SVG Score Line Chart
@@ -1638,15 +2450,18 @@ const UIController = {
 
   renderHabitsRanking(habitSuccessCounts, totalDays) {
     const listContainer = this.dom.analyticsHabitList;
+    if (!listContainer) return;
     listContainer.innerHTML = "";
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
 
     // Convert to sorted array of objects
     const items = ROUTINE_KEYS.map(key => {
       const completed = habitSuccessCounts[key] || 0;
       const pct = Math.round((completed / totalDays) * 100);
+      const localizedName = dict[`habit_${key}_title`] || HABIT_DISPLAY_NAMES[key];
       return {
         key,
-        name: HABIT_DISPLAY_NAMES[key],
+        name: localizedName,
         icon: HABIT_ICONS[key],
         pct
       };
@@ -1700,22 +2515,23 @@ const UIController = {
 
   renderBrief() {
     const hr = new Date().getHours();
-    let greeting = "Hayırlı Sabahlar, Enes!";
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    let greeting = dict.brief_greeting_morning || "Good Morning, Enes!";
     let greetingIcon = "🌤️";
-    let subgreeting = "Bugün yeni hedeflere ulaşmak ve gelişmek için harika bir gün.";
+    let subgreeting = dict.brief_sub_morning || "Today is a great day to achieve new goals and grow.";
     
     if (hr >= 12 && hr < 18) {
-      greeting = "Günün Enerjisi, Enes!";
+      greeting = dict.brief_greeting_afternoon || "Good Afternoon, Enes!";
       greetingIcon = "☀️";
-      subgreeting = "Öğleden sonra hedeflerine tam gaz odaklanmaya devam et.";
+      subgreeting = dict.brief_sub_afternoon || "Keep pushing hard towards your goals this afternoon.";
     } else if (hr >= 18 && hr < 23) {
-      greeting = "Hayırlı Akşamlar, Enes!";
+      greeting = dict.brief_greeting_evening || "Good Evening, Enes!";
       greetingIcon = "🌙";
-      subgreeting = "Günün yorgunluğunu atarken zihnini tazelemeyi unutma.";
+      subgreeting = dict.brief_sub_evening || "Remember to refresh your mind while unwinding.";
     } else if (hr >= 23 || hr < 5) {
-      greeting = "Huzurlu Geceler, Enes!";
+      greeting = dict.brief_greeting_night || "Good Night, Enes!";
       greetingIcon = "🌌";
-      subgreeting = "Güzel bir uyku, yarının başarısı için en büyük hazırlıktır.";
+      subgreeting = dict.brief_sub_night || "A good sleep is the best preparation for tomorrow's success.";
     }
     
     const greetingTextEl = document.getElementById('brief-greeting-text');
@@ -1734,31 +2550,37 @@ const UIController = {
     const srcDisplay = document.getElementById('ayah-source');
     
     if (arDisplay) arDisplay.textContent = ayah.arabic;
-    if (trDisplay) trDisplay.textContent = ayah.translation;
-    if (srcDisplay) srcDisplay.textContent = ayah.source;
+        // Load History list
+    if (this.dom.journalHistoryList) {
+      this.dom.journalHistoryList.innerHTML = '';
+      const sortedKeys = Object.keys(STATE.journal).sort().reverse();
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+      
+      if (sortedKeys.length === 0) {
+        this.dom.journalHistoryList.innerHTML = `<div class="empty-state">${dict.journal_empty || 'No entries yet. Write your first log!'}</div>`;
+        return;
+      }
 
-    // Compute metrics
-    const yesterday = new Date(STATE.todayDate);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayKey = formatDateKey(yesterday);
-    const yesterdayData = STATE.db[yesterdayKey];
-    const yScore = yesterdayData ? StreakEngine.calculateDailyPercentage(yesterdayData) : 0;
-    
-    const yScoreEl = document.getElementById('brief-yesterday-score');
-    if (yScoreEl) yScoreEl.textContent = `${yScore}%`;
-
-    // Yesterday spending
-    const ySpending = STATE.finance.transactions
-      .filter(tx => tx.date === yesterdayKey && tx.type === 'expense')
-      .reduce((sum, tx) => sum + tx.amount, 0);
-    
-    const ySpendEl = document.getElementById('brief-yesterday-spending');
-    if (ySpendEl) ySpendEl.textContent = `${ySpending.toFixed(2)} TL`;
-
-    // Today's events
-    const todayEventsCount = STATE.calendar.length;
-    const tEventsEl = document.getElementById('brief-today-events');
-    if (tEventsEl) tEventsEl.textContent = `${todayEventsCount} Etkinlik`;
+      sortedKeys.forEach(k => {
+        const item = STATE.journal[k];
+        const row = document.createElement('div');
+        row.className = `journal-list-item ${k === activeDateKey ? 'active' : ''}`;
+        row.innerHTML = `
+          <div class="item-header">
+            <span>${k}</span>
+            <span class="item-mood">${item.mood}</span>
+          </div>
+          <h4>${item.content.substring(0, 30)}${item.content.length > 30 ? '...' : ''}</h4>
+          <p>${item.tags ? item.tags : (dict.journal_no_tags || 'No tags')}</p>
+        `;
+        row.addEventListener('click', () => {
+          STATE.activeDate = new Date(k);
+          this.renderJournal();
+        });
+        this.dom.journalHistoryList.appendChild(row);
+      });
+    }
+    if (tEventsEl) tEventsEl.textContent = `${todayEventsCount} ${dict.brief_today_events_label || 'Events'}`;
 
     // Mock temperature details
     const baseTemp = 30 + Math.round(Math.sin(new Date().getHours() / 3) * 2);
@@ -1912,12 +2734,13 @@ const UIController = {
         btn.classList.add('active');
         selectedType = btn.getAttribute('data-type');
         
+        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
         if (selectedType === 'transfer') {
           if (targetGroup) targetGroup.classList.remove('hidden');
-          if (sourceLabel) sourceLabel.textContent = "Kaynak Hesap";
+          if (sourceLabel) sourceLabel.textContent = dict.finance_account || "Source Account";
         } else {
           if (targetGroup) targetGroup.classList.add('hidden');
-          if (sourceLabel) sourceLabel.textContent = selectedType === 'income' ? 'Hedef Hesap' : 'Kaynak Hesap';
+          if (sourceLabel) sourceLabel.textContent = selectedType === 'income' ? (dict.finance_target_account || 'Target Account') : (dict.finance_account || 'Source Account');
         }
       });
     });
@@ -1942,7 +2765,8 @@ const UIController = {
           STATE.finance.accounts[account].balance += amount;
         } else if (selectedType === 'transfer') {
           if (account === targetAccount) {
-            alert("Kaynak ve hedef hesaplar aynı olamaz!");
+            const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+            alert(dict.alert_same_accounts || "Source and target accounts cannot be the same!");
             return;
           }
           STATE.finance.accounts[account].balance -= amount;
@@ -1992,9 +2816,11 @@ const UIController = {
 
     // Populate accounts select fields
     if (this.dom.finAccountSelect && this.dom.finTargetAccountSelect) {
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
       const accountsMarkup = Object.keys(STATE.finance.accounts).map(k => {
         const acc = STATE.finance.accounts[k];
-        return `<option value="${k}">${acc.name} (${acc.balance.toFixed(0)} TL)</option>`;
+        const localizedAccName = dict[`acc_${k}`] || acc.name;
+        return `<option value="${k}">${localizedAccName} (${acc.balance.toFixed(0)} TL)</option>`;
       }).join('');
       
       this.dom.finAccountSelect.innerHTML = accountsMarkup;
@@ -2004,11 +2830,13 @@ const UIController = {
     // Render accounts card list
     const accList = document.getElementById('fin-accounts-list');
     if (accList) {
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
       accList.innerHTML = Object.keys(STATE.finance.accounts).map(k => {
         const acc = STATE.finance.accounts[k];
+        const localizedAccName = dict[`acc_${k}`] || acc.name;
         return `
           <div class="account-item">
-            <span class="acc-name">${acc.name}</span>
+            <span class="acc-name">${localizedAccName}</span>
             <span class="acc-balance">${acc.balance.toFixed(2)} TL</span>
           </div>
         `;
@@ -2023,17 +2851,19 @@ const UIController = {
     const monthlyIncome = monthlyTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
     const monthlyExpense = monthlyTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
 
-    if (this.dom.finTotalBalance) this.dom.finTotalBalance.textContent = `${totalBalance.toLocaleString('tr-TR')} TL`;
-    if (this.dom.finMonthlyIncome) this.dom.finMonthlyIncome.textContent = `${monthlyIncome.toLocaleString('tr-TR')} TL`;
-    if (this.dom.finMonthlyExpense) this.dom.finMonthlyExpense.textContent = `${monthlyExpense.toLocaleString('tr-TR')} TL`;
+    const localeCode = STATE.language === 'tr' ? 'tr-TR' : 'en-US';
+    if (this.dom.finTotalBalance) this.dom.finTotalBalance.textContent = `${totalBalance.toLocaleString(localeCode)} TL`;
+    if (this.dom.finMonthlyIncome) this.dom.finMonthlyIncome.textContent = `${monthlyIncome.toLocaleString(localeCode)} TL`;
+    if (this.dom.finMonthlyExpense) this.dom.finMonthlyExpense.textContent = `${monthlyExpense.toLocaleString(localeCode)} TL`;
 
     // Render transaction history list
     if (this.dom.finTransactionsList) {
       this.dom.finTransactionsList.innerHTML = '';
       const sortedTxs = [...STATE.finance.transactions].sort((a, b) => b.date.localeCompare(a.date));
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
       
       if (sortedTxs.length === 0) {
-        this.dom.finTransactionsList.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">Henüz bir finansal kayıt bulunmuyor.</td></tr>';
+        this.dom.finTransactionsList.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">${dict.finance_empty || 'No financial transactions recorded yet.'}</td></tr>`;
       } else {
         sortedTxs.slice(0, 20).forEach(tx => {
           const row = document.createElement('tr');
@@ -2047,13 +2877,27 @@ const UIController = {
             amtPrefix = '⇄';
           }
 
-          const accName = STATE.finance.accounts[tx.account] ? STATE.finance.accounts[tx.account].name : tx.account;
+          const localizedAccName = dict[`acc_${tx.account}`] || (STATE.finance.accounts[tx.account] ? STATE.finance.accounts[tx.account].name : tx.account);
+          const localizedTargetName = tx.targetAccount ? (dict[`acc_${tx.targetAccount}`] || (STATE.finance.accounts[tx.targetAccount] ? STATE.finance.accounts[tx.targetAccount].name : tx.targetAccount)) : '';
           
+          const catMap = {
+            "Gıda": "cat_food",
+            "Ulaşım": "cat_transport",
+            "Teknoloji": "cat_tech",
+            "Faturalar": "cat_bills",
+            "Yatırım": "cat_invest",
+            "Eğitim": "cat_edu",
+            "Gelir": "cat_income",
+            "Diğer": "cat_other"
+          };
+          const catKey = catMap[tx.category] || 'cat_other';
+          const localizedCat = dict[catKey] || tx.category;
+
           row.innerHTML = `
             <td>${tx.date}</td>
             <td>${tx.description}</td>
-            <td><span class="date-badge" style="background:rgba(255,255,255,0.05); color:var(--text-muted); padding:0.25rem 0.5rem; font-size:0.7rem;">${tx.category}</span></td>
-            <td>${accName}${tx.targetAccount ? ' → ' + (STATE.finance.accounts[tx.targetAccount] ? STATE.finance.accounts[tx.targetAccount].name : tx.targetAccount) : ''}</td>
+            <td><span class="date-badge" style="background:rgba(255,255,255,0.05); color:var(--text-muted); padding:0.25rem 0.5rem; font-size:0.7rem;">${localizedCat}</span></td>
+            <td>${localizedAccName}${tx.targetAccount ? ' → ' + localizedTargetName : ''}</td>
             <td class="${amtClass}">${amtPrefix}${tx.amount.toFixed(2)} TL</td>
             <td><button class="delete-tx-btn" data-id="${tx.id}">×</button></td>
           `;
@@ -2084,6 +2928,7 @@ const UIController = {
     // Render category spending breakdown bars
     if (this.dom.finCategoryBreakdown) {
       this.dom.finCategoryBreakdown.innerHTML = '';
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
       
       const categoryTotals = {};
       monthlyTxs.filter(tx => tx.type === 'expense').forEach(tx => {
@@ -2092,14 +2937,14 @@ const UIController = {
 
       const categories = ['Gıda', 'Ulaşım', 'Teknoloji', 'Faturalar', 'Yatırım', 'Eğitim', 'Diğer'];
       
-      const categoryIcons = {
-        Gıda: "🍔 Gıda & Market",
-        Ulaşım: "🚗 Ulaşım & Yakıt",
-        Teknoloji: "💻 Yazılım & Cihazlar",
-        Faturalar: "⚡ Faturalar & Abonelikler",
-        Yatırım: "📈 Yatırımlar",
-        Eğitim: "📚 Kitap & Eğitim",
-        Diğer: "📦 Diğer"
+      const categoryKeys = {
+        Gıda: "cat_food",
+        Ulaşım: "cat_transport",
+        Teknoloji: "cat_tech",
+        Faturalar: "cat_bills",
+        Yatırım: "cat_invest",
+        Eğitim: "cat_edu",
+        Diğer: "cat_other"
       };
 
       let maxSpend = 0;
@@ -2111,12 +2956,13 @@ const UIController = {
       categories.forEach(c => {
         const amt = categoryTotals[c] || 0;
         const pct = maxSpend > 0 ? (amt / maxSpend) * 100 : 0;
+        const catLabel = dict[categoryKeys[c]] || c;
         
         const item = document.createElement('div');
         item.className = 'category-bar-item';
         item.innerHTML = `
           <div class="category-bar-info">
-            <span>${categoryIcons[c]}</span>
+            <span>${catLabel}</span>
             <span class="val">${amt.toFixed(2)} TL</span>
           </div>
           <div class="category-bar-track">
@@ -2171,12 +3017,13 @@ const UIController = {
     const authBtn = document.getElementById('google-auth-btn');
     const updateAuthBtnStyle = (isConnected) => {
       if (authBtn) {
+        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
         if (isConnected) {
-          authBtn.innerHTML = "Google Takvim Bağlandı ✓";
+          authBtn.innerHTML = dict.calendar_connected || "Google Calendar Connected ✓";
           authBtn.style.backgroundColor = "var(--success)";
           authBtn.style.borderColor = "var(--success)";
         } else {
-          authBtn.innerHTML = "Google Hesabını Bağla";
+          authBtn.innerHTML = dict.calendar_connect || "Connect Google Calendar";
           authBtn.style.backgroundColor = "#4285f4";
           authBtn.style.borderColor = "#4285f4";
         }
@@ -2191,8 +3038,9 @@ const UIController = {
       }
 
       authBtn.addEventListener('click', () => {
+        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
         if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-          alert("Google API kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.");
+          alert(dict.alert_google_load_fail || "Google API library could not be loaded. Please check your internet connection and refresh the page.");
           return;
         }
 
@@ -2201,16 +3049,17 @@ const UIController = {
             client_id: client_id,
             scope: 'https://www.googleapis.com/auth/calendar.readonly',
             callback: async (resp) => {
+              const innerDict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
               if (resp.error) {
                 console.error("GIS Error: ", resp.error);
-                alert("Google yetkilendirme hatası: " + resp.error);
+                alert((innerDict.alert_google_auth_error || "Google auth error: ") + resp.error);
                 return;
               }
               if (resp.access_token) {
                 localStorage.setItem('google_access_token', resp.access_token);
                 updateAuthBtnStyle(true);
                 AudioFeedback.playSuccess();
-                alert("Google Takvim başarıyla bağlandı! Verileriniz senkronize ediliyor.");
+                alert(innerDict.alert_google_sync_success || "Google Calendar connected successfully! Synchronizing your data.");
                 this.syncGoogleCalendar(resp.access_token);
               }
             },
@@ -2317,6 +3166,7 @@ const UIController = {
 
     if (this.dom.calendarTimelineEvents) {
       this.dom.calendarTimelineEvents.innerHTML = '';
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
       
       // Sort and filter events by active date
       const sortedEvents = [...STATE.calendar]
@@ -2343,7 +3193,7 @@ const UIController = {
             card.innerHTML = `
               <div class="event-info">
                 <h4>${e.title}</h4>
-                <p>${e.desc || 'Not girilmemiş.'}</p>
+                <p>${e.desc || (dict.calendar_notes_placeholder || 'Notes / Location')}</p>
               </div>
               <div style="display: flex; align-items: center; gap: 0.5rem;">
                 <span class="event-time">${e.startTime} - ${e.endTime}</span>
@@ -2374,14 +3224,16 @@ const UIController = {
     const listContainer = this.dom.analyticsHabitList;
     if (!listContainer) return;
     listContainer.innerHTML = "";
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
 
     // Convert to sorted array of objects
     const items = ROUTINE_KEYS.map(key => {
       const completed = habitSuccessCounts[key] || 0;
       const pct = Math.round((completed / totalDays) * 100);
+      const localizedName = dict[`habit_${key}_title`] || HABIT_DISPLAY_NAMES[key];
       return {
         key,
-        name: HABIT_DISPLAY_NAMES[key],
+        name: localizedName,
         icon: HABIT_ICONS[key],
         pct
       };
