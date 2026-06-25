@@ -2134,13 +2134,7 @@ const UIController = {
   },
 
   setupCalendarTab() {
-    const clientIdInput = document.getElementById('google-client-id');
-    if (clientIdInput) {
-      clientIdInput.value = localStorage.getItem('google_client_id') || '';
-      clientIdInput.addEventListener('input', () => {
-        localStorage.setItem('google_client_id', clientIdInput.value);
-      });
-    }
+    const client_id = '335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.googleusercontent.com';
 
     if (this.dom.calendarEventForm) {
       this.dom.calendarEventForm.addEventListener('submit', (e) => {
@@ -2197,12 +2191,6 @@ const UIController = {
       }
 
       authBtn.addEventListener('click', () => {
-        const client_id = clientIdInput ? clientIdInput.value.trim() : '';
-        if (!client_id) {
-          alert("Google Takvim'e bağlanmak için lütfen öncelikle sağ alttaki panelden geçerli bir Google Client ID girin.");
-          return;
-        }
-
         if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
           alert("Google API kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.");
           return;
