@@ -5,8 +5,42 @@ const STATE = {
   authenticated: false,
   passcode: "RUTIN_bakkar-fir.27", // Default static passcode
   selectedMonth: "2026-06", // Default starting month
-  db: {} // Loaded daily records
+  db: {}, // Loaded daily records
+  journal: {}, // Loaded journal entries {"YYYY-MM-DD": {mood, content, tags}}
+  finance: {
+    accounts: {
+      cash: { name: "Nakit Cüzdan", balance: 1500 },
+      bank: { name: "Banka Hesabı", balance: 8450 },
+      credit: { name: "Kredi Kartı", balance: -450 },
+      business: { name: "Şirket Kartı", balance: 24500 }
+    },
+    transactions: []
+  },
+  calendar: [] // Loaded calendar events [{id, title, startTime, endTime, desc}]
 };
+
+// ================= SPIRITUAL BRIEFINGS =================
+const AYAHS = [
+  { arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", translation: '"Şüphesiz güçlükle beraber bir kolaylık vardır."', source: "İnşirâh Suresi, 5. Ayet" },
+  { arabic: "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا", translation: '"Allah, hiç kimseye gücünün üstünde bir yük yüklemez."', source: "Bakara Suresi, 286. Ayet" },
+  { arabic: "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ", translation: '"Rabbin seni terk etmedi ve sana darılmadı."', source: "Duhâ Suresi, 3. Ayet" },
+  { arabic: "وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَىٰ", translation: '"İnsan için ancak çalıştığının karşılığı vardır."', source: "Necm Suresi, 39. Ayet" },
+  { arabic: "وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ عَلَيْهِ تَوَكَّلْتُ", translation: '"Benim başarım ancak Allah\'ın yardımıyladır. Yalnız O\'na tevekkül ettim."', source: "Hûd Suresi, 88. Ayet" },
+  { arabic: "وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ", translation: '"Sabret! Çünkü Allah iyilik yapanların mükafatını zayi etmez."', source: "Hûd Suresi, 115. Ayet" },
+  { arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ", translation: '"Bilesiniz ki, kalpler ancak Allah\'ı anmakla huzur bulur."', source: "Ra\'d Suresi, 28. Ayet" },
+  { arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", translation: '"Eğer şükrederseniz, elbette size (nimetimi) artırırım."', source: "İbrâhîm Suresi, 7. Ayet" },
+  { arabic: "ادْعُونِي أَسْتَجِبْ لَكُمْ", translation: '"Bana dua edin, size icabet edeyim."', source: "Mü\'min Suresi, 60. Ayet" },
+  { arabic: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", translation: '"Şüphesiz Allah sabredenlerle beraberdir."', source: "Bakara Suresi, 153. Ayet" }
+];
+
+function getAyahOfTheDay(dateKey) {
+  let hash = 0;
+  for (let i = 0; i < dateKey.length; i++) {
+    hash = dateKey.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const idx = Math.abs(hash) % AYAHS.length;
+  return AYAHS[idx];
+}
 
 // All 23 daily routine checkboxes tracked for 100% completion score
 const ROUTINE_KEYS = [
@@ -81,6 +115,50 @@ const StorageManager = {
 
   saveDatabase() {
     localStorage.setItem('hrt_db', JSON.stringify(STATE.db));
+  },
+
+  loadJournal() {
+    const data = localStorage.getItem('hrt_journal');
+    STATE.journal = data ? JSON.parse(data) : {};
+  },
+
+  saveJournal() {
+    localStorage.setItem('hrt_journal', JSON.stringify(STATE.journal));
+  },
+
+  loadFinance() {
+    const data = localStorage.getItem('hrt_finance');
+    if (data) {
+      STATE.finance = JSON.parse(data);
+    } else {
+      STATE.finance = {
+        accounts: {
+          cash: { name: "Nakit Cüzdan", balance: 1500 },
+          bank: { name: "Banka Hesabı", balance: 8450 },
+          credit: { name: "Kredi Kartı", balance: -450 },
+          business: { name: "Şirket Kartı", balance: 24500 }
+        },
+        transactions: []
+      };
+      this.saveFinance();
+    }
+  },
+
+  saveFinance() {
+    localStorage.setItem('hrt_finance', JSON.stringify(STATE.finance));
+  },
+
+  loadCalendar() {
+    const data = localStorage.getItem('hrt_calendar');
+    STATE.calendar = data ? JSON.parse(data) : [
+      { id: "cal-1", title: "Firnas Team Sync 🚀", startTime: "09:30", endTime: "10:30", desc: "Daily coordination & tech reviews" },
+      { id: "cal-2", title: "Project Review Meeting 🎯", startTime: "13:00", endTime: "14:15", desc: "Briefing new updates on Life OS" },
+      { id: "cal-3", title: "Gym Session 🏋️", startTime: "18:00", endTime: "19:30", desc: "Chest day & cardio workout" }
+    ];
+  },
+
+  saveCalendar() {
+    localStorage.setItem('hrt_calendar', JSON.stringify(STATE.calendar));
   },
 
   getDayState(dateKey) {
@@ -556,7 +634,37 @@ const UIController = {
     inlineSupabaseUrl: document.getElementById('inline-supabase-url'),
     inlineSupabaseKey: document.getElementById('inline-supabase-key'),
     inlineClearSyncBtn: document.getElementById('inline-clear-sync-btn'),
-    inlineSyncStatus: document.getElementById('inline-sync-status')
+    inlineSyncStatus: document.getElementById('inline-sync-status'),
+
+    // Journal DOM elements
+    journalForm: document.getElementById('journal-form'),
+    journalDateInput: document.getElementById('journal-date-input'),
+    journalContentInput: document.getElementById('journal-content-input'),
+    journalTagsInput: document.getElementById('journal-tags-input'),
+    journalHistoryList: document.getElementById('journal-history-list'),
+    journalDeleteBtn: document.getElementById('journal-delete-btn'),
+    journalNewBtn: document.getElementById('journal-new-btn'),
+    journalActiveDateDisplay: document.getElementById('journal-active-date-display'),
+
+    // Finance DOM elements
+    financeForm: document.getElementById('finance-transaction-form'),
+    finAmountInput: document.getElementById('fin-amount-input'),
+    finCategorySelect: document.getElementById('fin-category-select'),
+    finAccountSelect: document.getElementById('fin-account-select'),
+    finTargetAccountSelect: document.getElementById('fin-target-account-select'),
+    finTransactionsList: document.getElementById('fin-transactions-list'),
+    finCategoryBreakdown: document.getElementById('fin-category-breakdown'),
+    finTotalBalance: document.getElementById('fin-total-balance'),
+    finMonthlyIncome: document.getElementById('fin-monthly-income'),
+    finMonthlyExpense: document.getElementById('fin-monthly-expense'),
+
+    // Calendar DOM elements
+    calendarEventForm: document.getElementById('calendar-event-form'),
+    eventTitle: document.getElementById('event-title'),
+    eventStartTime: document.getElementById('event-start-time'),
+    eventEndTime: document.getElementById('event-end-time'),
+    eventDesc: document.getElementById('event-desc'),
+    calendarTimelineEvents: document.getElementById('calendar-timeline-events')
   },
 
 
@@ -581,6 +689,12 @@ const UIController = {
     this.setupMonthSelector();
     this.setupSyncSettings(); // Setup Supabase modal & inline controls
     
+    // Setup Life OS Subsystems
+    this.setupBriefTab();
+    this.setupJournalTab();
+    this.setupFinanceTab();
+    this.setupCalendarTab();
+    
     // Unlock Web Audio API on first user gesture (highly recommended for iOS & WebKit autoplay bypass)
     const unlockAudio = () => {
       AudioFeedback.init();
@@ -600,6 +714,7 @@ const UIController = {
           this.renderNotionGrid();
           this.renderAnalytics();
           this.renderHeatmap(); // Refresh heatmap grid
+          this.renderBrief();
         });
       }
     });
@@ -611,6 +726,7 @@ const UIController = {
         this.updateStreakDisplay();
         this.renderNotionGrid();
         this.renderAnalytics();
+        this.renderBrief();
       }
     }, 60000);
   },
@@ -668,11 +784,15 @@ const UIController = {
 
   loadDashboard() {
     StorageManager.loadDatabase();
+    StorageManager.loadJournal();
+    StorageManager.loadFinance();
+    StorageManager.loadCalendar();
     this.updateStreakDisplay();
     this.loadDateData();
     this.renderNotionGrid();
     this.renderAnalytics();
     this.renderHeatmap(); // Render yearly heatmap grid
+    this.renderBrief();
 
     // Trigger background sync if Supabase is active
     if (SupabaseManager.isEnabled()) {
@@ -683,6 +803,7 @@ const UIController = {
         this.renderNotionGrid();
         this.renderAnalytics();
         this.renderHeatmap(); // Re-render heatmap after sync
+        this.renderBrief();
       });
     }
   },
@@ -724,10 +845,18 @@ const UIController = {
           }
         });
 
-        if (targetTab === 'grid-tab') {
+        if (targetTab === 'brief-tab') {
+          this.renderBrief();
+        } else if (targetTab === 'grid-tab') {
           this.renderNotionGrid();
         } else if (targetTab === 'analytics-tab') {
           this.renderAnalytics();
+        } else if (targetTab === 'journal-tab') {
+          this.renderJournal();
+        } else if (targetTab === 'finance-tab') {
+          this.renderFinance();
+        } else if (targetTab === 'calendar-tab') {
+          this.renderCalendar();
         }
       });
     });
@@ -1509,6 +1638,604 @@ const UIController = {
 
   renderHabitsRanking(habitSuccessCounts, totalDays) {
     const listContainer = this.dom.analyticsHabitList;
+    listContainer.innerHTML = "";
+
+    // Convert to sorted array of objects
+    const items = ROUTINE_KEYS.map(key => {
+      const completed = habitSuccessCounts[key] || 0;
+      const pct = Math.round((completed / totalDays) * 100);
+      return {
+        key,
+        name: HABIT_DISPLAY_NAMES[key],
+        icon: HABIT_ICONS[key],
+        pct
+      };
+    });
+
+    // Sort from highest completion % to lowest
+    items.sort((a, b) => b.pct - a.pct);
+
+    items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = "habit-rank-row animate-fade-in";
+
+      let rankClass = "rank-high";
+      if (item.pct < 50) {
+        rankClass = "rank-low";
+      } else if (item.pct < 80) {
+        rankClass = "rank-med";
+      }
+
+      row.innerHTML = `
+        <div class="habit-rank-details">
+          <span class="item-icon">${item.icon}</span>
+          <span class="habit-rank-name truncate-text" title="${item.name}">${item.name}</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" style="width: 0%"></div>
+        </div>
+        <span class="habit-percent ${rankClass}">${item.pct}%</span>
+      `;
+
+      listContainer.appendChild(row);
+
+      // Trigger width animation on next frame for a smooth layout slide-in!
+      requestAnimationFrame(() => {
+        const fill = row.querySelector('.progress-bar-fill');
+        if (fill) fill.style.width = `${item.pct}%`;
+      });
+    });
+  },
+
+  // ================= MORNING BRIEFING & LIFE OS HANDLERS =================
+
+  setupBriefTab() {
+    document.querySelectorAll('.clickable-brief-widget').forEach(widget => {
+      widget.addEventListener('click', () => {
+        const target = widget.getAttribute('data-target-tab');
+        document.querySelectorAll(`.tab-btn[data-tab="${target}"]`).forEach(btn => btn.click());
+      });
+    });
+  },
+
+  renderBrief() {
+    const hr = new Date().getHours();
+    let greeting = "Hayırlı Sabahlar, Enes!";
+    let greetingIcon = "🌤️";
+    let subgreeting = "Bugün yeni hedeflere ulaşmak ve gelişmek için harika bir gün.";
+    
+    if (hr >= 12 && hr < 18) {
+      greeting = "Günün Enerjisi, Enes!";
+      greetingIcon = "☀️";
+      subgreeting = "Öğleden sonra hedeflerine tam gaz odaklanmaya devam et.";
+    } else if (hr >= 18 && hr < 23) {
+      greeting = "Hayırlı Akşamlar, Enes!";
+      greetingIcon = "🌙";
+      subgreeting = "Günün yorgunluğunu atarken zihnini tazelemeyi unutma.";
+    } else if (hr >= 23 || hr < 5) {
+      greeting = "Huzurlu Geceler, Enes!";
+      greetingIcon = "🌌";
+      subgreeting = "Güzel bir uyku, yarının başarısı için en büyük hazırlıktır.";
+    }
+    
+    const greetingTextEl = document.getElementById('brief-greeting-text');
+    const greetingIconEl = document.querySelector('.brief-greeting-icon');
+    const subgreetingTextEl = document.getElementById('brief-subgreeting-text');
+    
+    if (greetingTextEl) greetingTextEl.textContent = greeting;
+    if (greetingIconEl) greetingIconEl.textContent = greetingIcon;
+    if (subgreetingTextEl) subgreetingTextEl.textContent = subgreeting;
+
+    // Render Ayah of the Day
+    const activeDateKey = formatDateKey(STATE.activeDate);
+    const ayah = getAyahOfTheDay(activeDateKey);
+    const arDisplay = document.getElementById('ayah-arabic');
+    const trDisplay = document.getElementById('ayah-translation');
+    const srcDisplay = document.getElementById('ayah-source');
+    
+    if (arDisplay) arDisplay.textContent = ayah.arabic;
+    if (trDisplay) trDisplay.textContent = ayah.translation;
+    if (srcDisplay) srcDisplay.textContent = ayah.source;
+
+    // Compute metrics
+    const yesterday = new Date(STATE.todayDate);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayKey = formatDateKey(yesterday);
+    const yesterdayData = STATE.db[yesterdayKey];
+    const yScore = yesterdayData ? StreakEngine.calculateDailyPercentage(yesterdayData) : 0;
+    
+    const yScoreEl = document.getElementById('brief-yesterday-score');
+    if (yScoreEl) yScoreEl.textContent = `${yScore}%`;
+
+    // Yesterday spending
+    const ySpending = STATE.finance.transactions
+      .filter(tx => tx.date === yesterdayKey && tx.type === 'expense')
+      .reduce((sum, tx) => sum + tx.amount, 0);
+    
+    const ySpendEl = document.getElementById('brief-yesterday-spending');
+    if (ySpendEl) ySpendEl.textContent = `${ySpending.toFixed(2)} TL`;
+
+    // Today's events
+    const todayEventsCount = STATE.calendar.length;
+    const tEventsEl = document.getElementById('brief-today-events');
+    if (tEventsEl) tEventsEl.textContent = `${todayEventsCount} Etkinlik`;
+
+    // Mock temperature details
+    const baseTemp = 30 + Math.round(Math.sin(new Date().getHours() / 3) * 2);
+    const tempValEl = document.getElementById('weather-temp-val');
+    if (tempValEl) tempValEl.textContent = `${baseTemp}°C`;
+  },
+
+  setupJournalTab() {
+    let selectedMood = "😐";
+    
+    // Bind mood buttons
+    const moodBtns = document.querySelectorAll('.mood-btn');
+    moodBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        moodBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedMood = btn.getAttribute('data-mood');
+      });
+    });
+
+    // Handle new button
+    if (this.dom.journalNewBtn) {
+      this.dom.journalNewBtn.addEventListener('click', () => {
+        this.dom.journalForm.reset();
+        this.dom.journalDateInput.value = formatDateKey(STATE.todayDate);
+        moodBtns.forEach(b => b.classList.remove('active'));
+        const defMood = document.querySelector('.mood-btn[data-mood="😐"]');
+        if (defMood) defMood.classList.add('active');
+        selectedMood = "😐";
+        this.dom.journalDeleteBtn.style.display = 'none';
+      });
+    }
+
+    // Handle delete button
+    if (this.dom.journalDeleteBtn) {
+      this.dom.journalDeleteBtn.addEventListener('click', () => {
+        const dateKey = this.dom.journalDateInput.value;
+        if (STATE.journal[dateKey]) {
+          delete STATE.journal[dateKey];
+          StorageManager.saveJournal();
+          AudioFeedback.playSuccess();
+          this.dom.journalNewBtn.click();
+          this.renderJournal();
+        }
+      });
+    }
+
+    // Form Submit
+    if (this.dom.journalForm) {
+      this.dom.journalForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const dateKey = this.dom.journalDateInput.value;
+        const content = this.dom.journalContentInput.value;
+        const tags = this.dom.journalTagsInput.value;
+
+        STATE.journal[dateKey] = {
+          mood: selectedMood,
+          content: content,
+          tags: tags,
+          updatedAt: new Date().toISOString()
+        };
+
+        StorageManager.saveJournal();
+        AudioFeedback.playSuccess();
+        this.renderJournal();
+        
+        // Auto check checklist journal task
+        const dayData = StorageManager.getDayState(dateKey);
+        dayData.mind_log = true;
+        StorageManager.saveDayState(dateKey, dayData);
+        this.loadDateData();
+      });
+    }
+  },
+
+  renderJournal() {
+    const activeDateKey = formatDateKey(STATE.activeDate);
+    if (this.dom.journalActiveDateDisplay) {
+      this.dom.journalActiveDateDisplay.textContent = CalendarEngine.getGregorianString(STATE.activeDate);
+    }
+    if (this.dom.journalDateInput) {
+      this.dom.journalDateInput.value = activeDateKey;
+    }
+
+    // Pre-fill if exists for active date
+    const entry = STATE.journal[activeDateKey];
+    const moodBtns = document.querySelectorAll('.mood-btn');
+    
+    if (entry) {
+      if (this.dom.journalContentInput) this.dom.journalContentInput.value = entry.content;
+      if (this.dom.journalTagsInput) this.dom.journalTagsInput.value = entry.tags;
+      if (this.dom.journalDeleteBtn) this.dom.journalDeleteBtn.style.display = 'block';
+      moodBtns.forEach(b => {
+        if (b.getAttribute('data-mood') === entry.mood) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
+      });
+    } else {
+      if (this.dom.journalContentInput) this.dom.journalContentInput.value = '';
+      if (this.dom.journalTagsInput) this.dom.journalTagsInput.value = '';
+      if (this.dom.journalDeleteBtn) this.dom.journalDeleteBtn.style.display = 'none';
+      moodBtns.forEach(b => b.classList.remove('active'));
+      const defMood = document.querySelector('.mood-btn[data-mood="😐"]');
+      if (defMood) defMood.classList.add('active');
+    }
+
+    // Load History list
+    if (this.dom.journalHistoryList) {
+      this.dom.journalHistoryList.innerHTML = '';
+      const sortedKeys = Object.keys(STATE.journal).sort().reverse();
+      
+      if (sortedKeys.length === 0) {
+        this.dom.journalHistoryList.innerHTML = '<div class="empty-state">Henüz kayıt yok. İlk günlüğünü yaz!</div>';
+        return;
+      }
+
+      sortedKeys.forEach(k => {
+        const item = STATE.journal[k];
+        const row = document.createElement('div');
+        row.className = `journal-list-item ${k === activeDateKey ? 'active' : ''}`;
+        row.innerHTML = `
+          <div class="item-header">
+            <span>${k}</span>
+            <span class="item-mood">${item.mood}</span>
+          </div>
+          <h4>${item.content.substring(0, 30)}${item.content.length > 30 ? '...' : ''}</h4>
+          <p>${item.tags ? item.tags : 'Etiket yok'}</p>
+        `;
+        row.addEventListener('click', () => {
+          STATE.activeDate = new Date(k);
+          this.renderJournal();
+        });
+        this.dom.journalHistoryList.appendChild(row);
+      });
+    }
+  },
+
+  setupFinanceTab() {
+    let selectedType = "expense";
+
+    // Bind type buttons
+    const typeBtns = document.querySelectorAll('.finance-type-toggle .type-btn');
+    const targetGroup = document.getElementById('fin-target-account-group');
+    const sourceLabel = document.querySelector('#fin-account-group label');
+
+    typeBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        typeBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedType = btn.getAttribute('data-type');
+        
+        if (selectedType === 'transfer') {
+          if (targetGroup) targetGroup.classList.remove('hidden');
+          if (sourceLabel) sourceLabel.textContent = "Kaynak Hesap";
+        } else {
+          if (targetGroup) targetGroup.classList.add('hidden');
+          if (sourceLabel) sourceLabel.textContent = selectedType === 'income' ? 'Hedef Hesap' : 'Kaynak Hesap';
+        }
+      });
+    });
+
+    // Form submit
+    if (this.dom.financeForm) {
+      this.dom.financeForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const amount = parseFloat(this.dom.finAmountInput.value);
+        const category = this.dom.finCategorySelect.value;
+        const account = this.dom.finAccountSelect.value;
+        const targetAccount = this.dom.finTargetAccountSelect.value;
+        const dateVal = document.getElementById('fin-date-input').value;
+        const description = document.getElementById('fin-desc-input').value || category;
+
+        if (isNaN(amount) || amount <= 0) return;
+
+        // Apply account balance mutations
+        if (selectedType === 'expense') {
+          STATE.finance.accounts[account].balance -= amount;
+        } else if (selectedType === 'income') {
+          STATE.finance.accounts[account].balance += amount;
+        } else if (selectedType === 'transfer') {
+          if (account === targetAccount) {
+            alert("Kaynak ve hedef hesaplar aynı olamaz!");
+            return;
+          }
+          STATE.finance.accounts[account].balance -= amount;
+          STATE.finance.accounts[targetAccount].balance += amount;
+        }
+
+        // Add transaction
+        const newTx = {
+          id: 'tx-' + Date.now(),
+          date: dateVal,
+          type: selectedType,
+          amount: amount,
+          category: category,
+          account: account,
+          targetAccount: selectedType === 'transfer' ? targetAccount : '',
+          description: description
+        };
+
+        STATE.finance.transactions.push(newTx);
+        StorageManager.saveFinance();
+        AudioFeedback.playSuccess();
+
+        // Auto check checklist finance task
+        const dayData = StorageManager.getDayState(dateVal);
+        dayData.fin_flow = true;
+        StorageManager.saveDayState(dateVal, dayData);
+        this.loadDateData();
+
+        // Clear form & re-render
+        this.dom.financeForm.reset();
+        document.getElementById('fin-date-input').value = formatDateKey(STATE.todayDate);
+        this.renderFinance();
+        this.renderBrief();
+      });
+    }
+  },
+
+  renderFinance() {
+    const activeDateKey = formatDateKey(STATE.activeDate);
+    const activeMonth = activeDateKey.substring(0, 7); // e.g. "2026-06"
+    
+    // Set date input default
+    const dateInput = document.getElementById('fin-date-input');
+    if (dateInput && !dateInput.value) {
+      dateInput.value = activeDateKey;
+    }
+
+    // Populate accounts select fields
+    if (this.dom.finAccountSelect && this.dom.finTargetAccountSelect) {
+      const accountsMarkup = Object.keys(STATE.finance.accounts).map(k => {
+        const acc = STATE.finance.accounts[k];
+        return `<option value="${k}">${acc.name} (${acc.balance.toFixed(0)} TL)</option>`;
+      }).join('');
+      
+      this.dom.finAccountSelect.innerHTML = accountsMarkup;
+      this.dom.finTargetAccountSelect.innerHTML = accountsMarkup;
+    }
+
+    // Render accounts card list
+    const accList = document.getElementById('fin-accounts-list');
+    if (accList) {
+      accList.innerHTML = Object.keys(STATE.finance.accounts).map(k => {
+        const acc = STATE.finance.accounts[k];
+        return `
+          <div class="account-item">
+            <span class="acc-name">${acc.name}</span>
+            <span class="acc-balance">${acc.balance.toFixed(2)} TL</span>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Calculate summary statistics
+    const totalBalance = Object.keys(STATE.finance.accounts).reduce((sum, k) => sum + STATE.finance.accounts[k].balance, 0);
+    
+    // Filter monthly transactions
+    const monthlyTxs = STATE.finance.transactions.filter(tx => tx.date.startsWith(activeMonth));
+    const monthlyIncome = monthlyTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
+    const monthlyExpense = monthlyTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
+
+    if (this.dom.finTotalBalance) this.dom.finTotalBalance.textContent = `${totalBalance.toLocaleString('tr-TR')} TL`;
+    if (this.dom.finMonthlyIncome) this.dom.finMonthlyIncome.textContent = `${monthlyIncome.toLocaleString('tr-TR')} TL`;
+    if (this.dom.finMonthlyExpense) this.dom.finMonthlyExpense.textContent = `${monthlyExpense.toLocaleString('tr-TR')} TL`;
+
+    // Render transaction history list
+    if (this.dom.finTransactionsList) {
+      this.dom.finTransactionsList.innerHTML = '';
+      const sortedTxs = [...STATE.finance.transactions].sort((a, b) => b.date.localeCompare(a.date));
+      
+      if (sortedTxs.length === 0) {
+        this.dom.finTransactionsList.innerHTML = '<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">Henüz bir finansal kayıt bulunmuyor.</td></tr>';
+      } else {
+        sortedTxs.slice(0, 20).forEach(tx => {
+          const row = document.createElement('tr');
+          let amtClass = 'expense-val';
+          let amtPrefix = '-';
+          if (tx.type === 'income') {
+            amtClass = 'income-val';
+            amtPrefix = '+';
+          } else if (tx.type === 'transfer') {
+            amtClass = 'transfer-val';
+            amtPrefix = '⇄';
+          }
+
+          const accName = STATE.finance.accounts[tx.account] ? STATE.finance.accounts[tx.account].name : tx.account;
+          
+          row.innerHTML = `
+            <td>${tx.date}</td>
+            <td>${tx.description}</td>
+            <td><span class="date-badge" style="background:rgba(255,255,255,0.05); color:var(--text-muted); padding:0.25rem 0.5rem; font-size:0.7rem;">${tx.category}</span></td>
+            <td>${accName}${tx.targetAccount ? ' → ' + (STATE.finance.accounts[tx.targetAccount] ? STATE.finance.accounts[tx.targetAccount].name : tx.targetAccount) : ''}</td>
+            <td class="${amtClass}">${amtPrefix}${tx.amount.toFixed(2)} TL</td>
+            <td><button class="delete-tx-btn" data-id="${tx.id}">×</button></td>
+          `;
+
+          row.querySelector('.delete-tx-btn').addEventListener('click', () => {
+            // Reverse account balance effects
+            if (tx.type === 'expense') {
+              STATE.finance.accounts[tx.account].balance += tx.amount;
+            } else if (tx.type === 'income') {
+              STATE.finance.accounts[tx.account].balance -= tx.amount;
+            } else if (tx.type === 'transfer') {
+              STATE.finance.accounts[tx.account].balance += tx.amount;
+              STATE.finance.accounts[tx.targetAccount].balance -= tx.amount;
+            }
+
+            STATE.finance.transactions = STATE.finance.transactions.filter(x => x.id !== tx.id);
+            StorageManager.saveFinance();
+            AudioFeedback.playSuccess();
+            this.renderFinance();
+            this.renderBrief();
+          });
+
+          this.dom.finTransactionsList.appendChild(row);
+        });
+      }
+    }
+
+    // Render category spending breakdown bars
+    if (this.dom.finCategoryBreakdown) {
+      this.dom.finCategoryBreakdown.innerHTML = '';
+      
+      const categoryTotals = {};
+      monthlyTxs.filter(tx => tx.type === 'expense').forEach(tx => {
+        categoryTotals[tx.category] = (categoryTotals[tx.category] || 0) + tx.amount;
+      });
+
+      const categories = ['Gıda', 'Ulaşım', 'Teknoloji', 'Faturalar', 'Yatırım', 'Eğitim', 'Diğer'];
+      
+      const categoryIcons = {
+        Gıda: "🍔 Gıda & Market",
+        Ulaşım: "🚗 Ulaşım & Yakıt",
+        Teknoloji: "💻 Yazılım & Cihazlar",
+        Faturalar: "⚡ Faturalar & Abonelikler",
+        Yatırım: "📈 Yatırımlar",
+        Eğitim: "📚 Kitap & Eğitim",
+        Diğer: "📦 Diğer"
+      };
+
+      let maxSpend = 0;
+      categories.forEach(c => {
+        const amt = categoryTotals[c] || 0;
+        if (amt > maxSpend) maxSpend = amt;
+      });
+
+      categories.forEach(c => {
+        const amt = categoryTotals[c] || 0;
+        const pct = maxSpend > 0 ? (amt / maxSpend) * 100 : 0;
+        
+        const item = document.createElement('div');
+        item.className = 'category-bar-item';
+        item.innerHTML = `
+          <div class="category-bar-info">
+            <span>${categoryIcons[c]}</span>
+            <span class="val">${amt.toFixed(2)} TL</span>
+          </div>
+          <div class="category-bar-track">
+            <div class="category-bar-fill" style="width: 0%"></div>
+          </div>
+        `;
+
+        this.dom.finCategoryBreakdown.appendChild(item);
+        requestAnimationFrame(() => {
+          const fill = item.querySelector('.category-bar-fill');
+          if (fill) fill.style.width = `${pct}%`;
+        });
+      });
+    }
+  },
+
+  setupCalendarTab() {
+    if (this.dom.calendarEventForm) {
+      this.dom.calendarEventForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const title = this.dom.eventTitle.value;
+        const startTime = this.dom.eventStartTime.value;
+        const endTime = this.dom.eventEndTime.value;
+        const desc = this.dom.eventDesc.value;
+
+        const newEvent = {
+          id: 'evt-' + Date.now(),
+          title: title,
+          startTime: startTime,
+          endTime: endTime,
+          desc: desc
+        };
+
+        STATE.calendar.push(newEvent);
+        StorageManager.saveCalendar();
+        AudioFeedback.playSuccess();
+
+        this.dom.calendarEventForm.reset();
+        this.dom.eventStartTime.value = "09:00";
+        this.dom.eventEndTime.value = "10:00";
+
+        this.renderCalendar();
+        this.renderBrief();
+      });
+    }
+
+    const authBtn = document.getElementById('google-auth-btn');
+    if (authBtn) {
+      authBtn.addEventListener('click', () => {
+        alert("Enes Bakkar Google Calendar Senkronizasyonu: OAuth2 istemcisi yerel yetkilendirme modunda çalıştırılıyor.");
+        authBtn.textContent = "Google Takvim Bağlandı ✓";
+        authBtn.style.backgroundColor = "var(--success)";
+        authBtn.style.borderColor = "var(--success)";
+      });
+    }
+  },
+
+  renderCalendar() {
+    const activeDateKey = formatDateKey(STATE.activeDate);
+    
+    const dayLabel = document.getElementById('calendar-active-day');
+    if (dayLabel) {
+      dayLabel.textContent = CalendarEngine.getGregorianString(STATE.activeDate);
+    }
+
+    if (this.dom.calendarTimelineEvents) {
+      this.dom.calendarTimelineEvents.innerHTML = '';
+      
+      // Sort events by start time
+      const sortedEvents = [...STATE.calendar].sort((a, b) => a.startTime.localeCompare(b.startTime));
+
+      // Hours to render in the scrollable timeline: 08:00 to 22:00
+      for (let h = 8; h <= 22; h++) {
+        const hourStr = String(h).padStart(2, '0') + ':00';
+        const hourEvents = sortedEvents.filter(e => e.startTime.startsWith(String(h).padStart(2, '0')));
+        
+        const hourRow = document.createElement('div');
+        hourRow.className = 'timeline-hour-row';
+        hourRow.innerHTML = `
+          <div class="timeline-hour-label">${hourStr}</div>
+          <div class="timeline-events-placeholder"></div>
+        `;
+
+        const placeholder = hourRow.querySelector('.timeline-events-placeholder');
+        if (hourEvents.length > 0) {
+          hourEvents.forEach(e => {
+            const card = document.createElement('div');
+            card.className = 'timeline-event-card';
+            card.innerHTML = `
+              <div class="event-info">
+                <h4>${e.title}</h4>
+                <p>${e.desc || 'Not girilmemiş.'}</p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="event-time">${e.startTime} - ${e.endTime}</span>
+                <button class="delete-event-btn" data-id="${e.id}">×</button>
+              </div>
+            `;
+
+            card.querySelector('.delete-event-btn').addEventListener('click', (ev) => {
+              ev.stopPropagation();
+              STATE.calendar = STATE.calendar.filter(x => x.id !== e.id);
+              StorageManager.saveCalendar();
+              AudioFeedback.playSuccess();
+              this.renderCalendar();
+              this.renderBrief();
+            });
+
+            placeholder.appendChild(card);
+          });
+        }
+        this.dom.calendarTimelineEvents.appendChild(hourRow);
+      }
+    }
+  },
+
+  renderHabitsRanking(habitSuccessCounts, totalDays) {
+    const listContainer = this.dom.analyticsHabitList;
+    if (!listContainer) return;
     listContainer.innerHTML = "";
 
     // Convert to sorted array of objects

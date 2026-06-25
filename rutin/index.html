@@ -8,11 +8,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2.0">
+  <link rel="stylesheet" href="style.css?v=2.1">
   <!-- Tab Icon (Favicon) -->
-  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2.0">
-  <link rel="shortcut icon" type="image/png" href="icon-192.png?v=2.0">
-  <link rel="apple-touch-icon" href="icon-192.png?v=2.0">
+  <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2.1">
+  <link rel="shortcut icon" type="image/png" href="icon-192.png?v=2.1">
+  <link rel="apple-touch-icon" href="icon-192.png?v=2.1">
 </head>
 <body>
 
@@ -64,9 +64,7 @@
   </div>
 
   <!-- ================= MAIN APP DASHBOARD ================= -->
-  <div id="app-container" class="dashboard-container hidden">
-    
-    <!-- DESKTOP SIDEBAR -->
+  <div id="app-container" class="dashboard-contain    <!-- DESKTOP SIDEBAR -->
     <aside class="sidebar">
       <div class="sidebar-brand">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sidebar-logo">
@@ -75,7 +73,7 @@
         </svg>
         <div>
           <h2>Horizon</h2>
-          <p class="user-badge">Anas Bakkar</p>
+          <p class="user-badge">Enes Bakkar</p>
         </div>
       </div>
 
@@ -99,12 +97,19 @@
 
       <!-- Sidebar Menu Links -->
       <nav class="sidebar-nav">
-        <button class="tab-btn active" data-tab="focus-tab">
+        <button class="tab-btn active" data-tab="brief-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span>Ana Panel</span>
+        </button>
+        <button class="tab-btn" data-tab="focus-tab">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <polyline points="9 11 12 14 22 4"/>
             <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
           </svg>
-          <span>Daily Checklist</span>
+          <span>Rutinler</span>
         </button>
         <button class="tab-btn" data-tab="grid-tab">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -112,7 +117,30 @@
             <line x1="3" y1="9" x2="21" y2="9"/>
             <line x1="9" y1="21" x2="9" y2="9"/>
           </svg>
-          <span>Monthly Grid</span>
+          <span>Aylık Takip</span>
+        </button>
+        <button class="tab-btn" data-tab="journal-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+          <span>Günlük Yaz</span>
+        </button>
+        <button class="tab-btn" data-tab="finance-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          <span>FinFlow+</span>
+        </button>
+        <button class="tab-btn" data-tab="calendar-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span>Takvim</span>
         </button>
         <button class="tab-btn" data-tab="analytics-tab">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -120,7 +148,7 @@
             <line x1="12" y1="20" x2="12" y2="4"/>
             <line x1="6" y1="20" x2="6" y2="14"/>
           </svg>
-          <span>Performance Analytics</span>
+          <span>Analiz</span>
         </button>
         
         <!-- Cloud Sync settings button -->
@@ -128,7 +156,7 @@
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-3-3.1-5.2-6.1-5.4-3-.2-5.6 1.5-6.7 4.1C6.2 9.5 3 12 3 15c0 3.3 2.7 6 6 6h10c2.2 0 4-1.8 4-4 0-1-.3-1.9-.8-2.6z"/>
           </svg>
-          <span>Cloud Sync</span>
+          <span>Bulut Eşitleme</span>
         </button>
       </nav>
 
@@ -146,28 +174,40 @@
 
     <!-- MOBILE BOTTOM TABS NAVIGATION -->
     <nav class="mobile-tabs">
-      <button class="tab-btn active" data-tab="focus-tab">
+      <button class="tab-btn active" data-tab="brief-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        </svg>
+        <span>Panel</span>
+      </button>
+      <button class="tab-btn" data-tab="focus-tab">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <polyline points="9 11 12 14 22 4"/>
           <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
         </svg>
-        <span>Daily</span>
+        <span>Rutin</span>
       </button>
-      <button class="tab-btn" data-tab="grid-tab">
+      <button class="tab-btn" data-tab="journal-tab">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-          <line x1="3" y1="9" x2="21" y2="9"/>
-          <line x1="9" y1="21" x2="9" y2="9"/>
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
         </svg>
-        <span>Grid</span>
+        <span>Günlük</span>
       </button>
-      <button class="tab-btn" data-tab="analytics-tab">
+      <button class="tab-btn" data-tab="finance-tab">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="20" x2="18" y2="10"/>
-          <line x1="12" y1="20" x2="12" y2="4"/>
-          <line x1="6" y1="20" x2="6" y2="14"/>
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
         </svg>
-        <span>Stats</span>
+        <span>Finans</span>
+      </button>
+      <button class="tab-btn" data-tab="calendar-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+        </svg>
+        <span>Takvim</span>
       </button>
     </nav>
 
@@ -183,7 +223,7 @@
           </svg>
           <div>
             <h1>Horizon</h1>
-            <p class="user-badge">Anas Bakkar</p>
+            <p class="user-badge">Enes Bakkar</p>
           </div>
         </div>
         
@@ -211,8 +251,114 @@
       <!-- VIEW PANELS -->
       <main class="dashboard-content">
         
+        <!-- ================= BRIEF VIEW (MORNING BRIEFING) ================= -->
+        <section id="brief-tab" class="tab-pane active-pane">
+          <div class="brief-layout-container animate-fade-in">
+            <!-- Dynamic welcome banner -->
+            <div class="welcome-banner glass-card">
+              <div class="welcome-left">
+                <span class="brief-greeting-icon">🌤️</span>
+                <div>
+                  <h1 id="brief-greeting-text">Hayırlı Sabahlar, Enes!</h1>
+                  <p id="brief-subgreeting-text">Bugün yeni hedeflere ulaşmak ve gelişmek için harika bir gün.</p>
+                </div>
+              </div>
+              <div class="welcome-right">
+                <div class="brief-weather-card">
+                  <div class="weather-main">
+                    <span id="weather-temp-val">28°C</span>
+                    <span id="weather-icon">☀️</span>
+                  </div>
+                  <span id="weather-desc">İstanbul - Açık & Güneşli</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ayah of the day -->
+            <div class="ayah-card glass-card">
+              <div class="ayah-title">
+                <span class="icon">📖</span>
+                <h3>Günün Ayet-i Kerimesi</h3>
+              </div>
+              <blockquote class="ayah-blockquote">
+                <p class="arabic" id="ayah-arabic">فَإِنَّ مَعَ الْعُسْرِ يُسْرًا</p>
+                <p class="translation" id="ayah-translation">"Şüphesiz güçlükle beraber bir kolaylık vardır."</p>
+                <cite class="source" id="ayah-source">İnşirâh Suresi, 5. Ayet</cite>
+              </blockquote>
+            </div>
+
+            <!-- Overview widgets -->
+            <div class="brief-widgets-grid">
+              
+              <!-- Widget 1: Yesterday's routines status -->
+              <div class="kpi-card glass-card clickable-brief-widget" data-target-tab="focus-tab">
+                <div class="kpi-icon-wrap bg-cyan-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="brief-yesterday-score">-%</span>
+                  <span class="kpi-label">Dünün Rutin Skoru</span>
+                </div>
+              </div>
+
+              <!-- Widget 2: FinFlow expenses summary -->
+              <div class="kpi-card glass-card clickable-brief-widget" data-target-tab="finance-tab">
+                <div class="kpi-icon-wrap bg-gold-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="brief-yesterday-spending">0 TL</span>
+                  <span class="kpi-label">Dünkü Toplam Harcama</span>
+                </div>
+              </div>
+
+              <!-- Widget 3: Today's agenda snippet -->
+              <div class="kpi-card glass-card clickable-brief-widget" data-target-tab="calendar-tab">
+                <div class="kpi-icon-wrap bg-green-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="brief-today-events">0 Etkinlik</span>
+                  <span class="kpi-label">Bugünkü Program</span>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- YouTube recommendation section (Gemini brief layout style) -->
+            <div class="brief-recommendation-card glass-card">
+              <div class="card-header">
+                <h3>Önerilen Zihinsel Odak Videosu</h3>
+                <span class="legend">Güne başlarken motivasyonel destek</span>
+              </div>
+              <div class="youtube-brief-container">
+                <div class="youtube-thumbnail-wrapper">
+                  <a href="https://www.youtube.com/watch?v=k8vWOkQWskk" target="_blank">
+                    <div class="play-overlay">▶</div>
+                    <img src="https://img.youtube.com/vi/k8vWOkQWskk/mqdefault.jpg" alt="Focus Motivation Video" class="yt-thumb">
+                  </a>
+                </div>
+                <div class="youtube-brief-info">
+                  <h4>Kararlılık ve İrade Gücü - Kendini Yeniden İnşa Et</h4>
+                  <p>Manevi ve zihinsel disiplini gün boyunca sürdürmek üzerine tavsiyeler içerir.</p>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
         <!-- ================= FOCUS VIEW (CHECKLIST) ================= -->
-        <section id="focus-tab" class="tab-pane active-pane">
+        <section id="focus-tab" class="tab-pane">
           
           <div class="focus-layout-grid">
             
@@ -899,6 +1045,296 @@
           </div>
         </section>
 
+        <!-- ================= JOURNAL VIEW (GÜNLÜK) ================= -->
+        <section id="journal-tab" class="tab-pane">
+          <div class="journal-layout-container animate-fade-in">
+            <div class="journal-grid">
+              
+              <!-- Journal sidebar: history -->
+              <div class="journal-history-panel glass-card">
+                <div class="panel-header">
+                  <h3>Geçmiş Günlükler</h3>
+                  <button id="journal-new-btn" class="btn btn-primary btn-sm">+ Yeni</button>
+                </div>
+                <div class="journal-list" id="journal-history-list">
+                  <!-- Dynamically loaded journal entries -->
+                  <div class="empty-state">Henüz kayıt yok. İlk günlüğünü yaz!</div>
+                </div>
+              </div>
+
+              <!-- Journal main: editor -->
+              <div class="journal-editor-panel glass-card">
+                <div class="panel-header">
+                  <h2>Zihinsel Günlük & Gözlem</h2>
+                  <span class="date-badge" id="journal-active-date-display">25 Haziran 2026</span>
+                </div>
+                
+                <form id="journal-form" class="journal-form-layout">
+                  <div class="form-row">
+                    <!-- Date Selector -->
+                    <div class="input-group flex-1">
+                      <label for="journal-date-input">Tarih</label>
+                      <input type="date" id="journal-date-input" required>
+                    </div>
+                    
+                    <!-- Mood Selector -->
+                    <div class="input-group flex-1">
+                      <label>Bugünkü Ruh Halin</label>
+                      <div class="mood-selector-container">
+                        <button type="button" class="mood-btn" data-mood="🤩" title="Mükemmel">🤩</button>
+                        <button type="button" class="mood-btn" data-mood="🙂" title="İyi">🙂</button>
+                        <button type="button" class="mood-btn" data-mood="😐" title="Normal">😐</button>
+                        <button type="button" class="mood-btn" data-mood="😴" title="Yorgun">😴</button>
+                        <button type="button" class="mood-btn" data-mood="😔" title="Kötü">😔</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="input-group" style="flex: 1; display: flex; flex-direction: column;">
+                    <label for="journal-content-input">Günün Özeti & Zihinsel Durumun</label>
+                    <textarea id="journal-content-input" placeholder="Bugün neler başardın? Karşılaştığın zorluklar nelerdi? Zihnini meşgul eden düşünceler var mı?..." required></textarea>
+                  </div>
+
+                  <div class="input-group">
+                    <label for="journal-tags-input">Etiketler (Virgülle ayırın)</label>
+                    <input type="text" id="journal-tags-input" placeholder="örn: iş, spor, ibadet, aile">
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">Kaydet & Senkronize Et</button>
+                    <button type="button" id="journal-delete-btn" class="btn btn-secondary" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2); display: none;">Sil</button>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= FINANCE VIEW (FINFLOW+) ================= -->
+        <section id="finance-tab" class="tab-pane">
+          <div class="finance-layout-container animate-fade-in">
+            
+            <!-- Summary stats row -->
+            <div class="finance-summary-grid">
+              
+              <!-- Total Balance Card -->
+              <div class="finance-summary-card glass-card bg-cyan-glow">
+                <span class="label">Toplam Net Değer</span>
+                <span class="value" id="fin-total-balance">0.00 TL</span>
+                <div class="trend positive">Finansal Sağlık Durumu: Stabil</div>
+              </div>
+
+              <!-- Monthly Income Card -->
+              <div class="finance-summary-card glass-card bg-green-glow">
+                <span class="label">Bu Ayki Toplam Gelir</span>
+                <span class="value" id="fin-monthly-income">0.00 TL</span>
+                <div class="trend positive">▲ Aktif Kazançlar</div>
+              </div>
+
+              <!-- Monthly Expense Card -->
+              <div class="finance-summary-card glass-card bg-red-glow">
+                <span class="label">Bu Ayki Toplam Gider</span>
+                <span class="value" id="fin-monthly-expense">0.00 TL</span>
+                <div class="trend negative">▼ Harcamalar</div>
+              </div>
+
+            </div>
+
+            <!-- Mid Section: Accounts + Chart + Form -->
+            <div class="finance-mid-grid">
+              
+              <!-- Accounts list & Add Transaction form -->
+              <div class="finance-left-column">
+                
+                <!-- Accounts Widget -->
+                <div class="finance-accounts-card glass-card">
+                  <div class="card-header">
+                    <h3>Cüzdanlar & Hesaplar</h3>
+                  </div>
+                  <div class="accounts-list-container" id="fin-accounts-list">
+                    <!-- Populated dynamically -->
+                  </div>
+                </div>
+
+                <!-- Add Transaction form -->
+                <div class="finance-form-card glass-card">
+                  <div class="card-header">
+                    <h3>Yeni Finansal Kayıt Ekle</h3>
+                  </div>
+                  <form id="finance-transaction-form" class="finance-form">
+                    
+                    <div class="form-row">
+                      <div class="input-group flex-1">
+                        <label>İşlem Türü</label>
+                        <div class="finance-type-toggle">
+                          <button type="button" class="type-btn active" data-type="expense">Gider</button>
+                          <button type="button" class="type-btn" data-type="income">Gelir</button>
+                          <button type="button" class="type-btn" data-type="transfer">Transfer</button>
+                        </div>
+                      </div>
+                      
+                      <div class="input-group flex-1">
+                        <label for="fin-amount-input">Tutar (TL)</label>
+                        <input type="number" step="0.01" id="fin-amount-input" required placeholder="0.00">
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="input-group flex-1">
+                        <label for="fin-category-select">Kategori</label>
+                        <select id="fin-category-select" required>
+                          <option value="Gıda">🍔 Gıda & Market</option>
+                          <option value="Ulaşım">🚗 Ulaşım & Yakıt</option>
+                          <option value="Teknoloji">💻 Yazılım & Cihazlar</option>
+                          <option value="Faturalar">⚡ Faturalar & Abonelikler</option>
+                          <option value="Yatırım">📈 Yatırımlar</option>
+                          <option value="Eğitim">📚 Kitap & Eğitim</option>
+                          <option value="Gelir">💰 İş/Proje Geliri</option>
+                          <option value="Diğer">📦 Diğer</option>
+                        </select>
+                      </div>
+
+                      <div class="input-group flex-1" id="fin-account-group">
+                        <label for="fin-account-select">Kaynak Hesap</label>
+                        <select id="fin-account-select" required>
+                          <!-- Dynamic accounts selection -->
+                        </select>
+                      </div>
+
+                      <div class="input-group flex-1 hidden" id="fin-target-account-group">
+                        <label for="fin-target-account-select">Hedef Hesap</label>
+                        <select id="fin-target-account-select">
+                          <!-- Dynamic target accounts selection -->
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="form-row">
+                      <div class="input-group flex-1">
+                        <label for="fin-date-input">Tarih</label>
+                        <input type="date" id="fin-date-input" required>
+                      </div>
+                      <div class="input-group flex-2">
+                        <label for="fin-desc-input">Açıklama</label>
+                        <input type="text" id="fin-desc-input" placeholder="İşlem açıklaması yazın...">
+                      </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">Kaydı Kaydet</button>
+                  </form>
+                </div>
+
+              </div>
+
+              <!-- History and breakdown charts -->
+              <div class="finance-right-column">
+                
+                <!-- Category spending progress chart -->
+                <div class="finance-chart-card glass-card">
+                  <div class="card-header">
+                    <h3>Gider Dağılımı (Bu Ay)</h3>
+                  </div>
+                  <div class="category-bars-list" id="fin-category-breakdown">
+                    <!-- Progress bars loaded dynamically -->
+                  </div>
+                </div>
+
+                <!-- Recent Transactions list -->
+                <div class="finance-history-card glass-card">
+                  <div class="card-header">
+                    <h3>Son Finansal Hareketler</h3>
+                  </div>
+                  <div class="finance-table-wrapper">
+                    <table class="finance-table">
+                      <thead>
+                        <tr>
+                          <th>Tarih</th>
+                          <th>Açıklama</th>
+                          <th>Kategori</th>
+                          <th>Hesap</th>
+                          <th>Tutar</th>
+                          <th></th>
+                        </tr>
+                      </thead>
+                      <tbody id="fin-transactions-list">
+                        <!-- Loaded dynamically -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= CALENDAR VIEW (TAKVİM) ================= -->
+        <section id="calendar-tab" class="tab-pane">
+          <div class="calendar-layout-container animate-fade-in">
+            <div class="calendar-header-row glass-card">
+              <div class="header-left">
+                <h2>Google Calendar & Ajanda</h2>
+                <p class="section-sub">Günlük programını gör ve yeni etkinlikler ekle.</p>
+              </div>
+              <div class="header-right">
+                <button id="google-auth-btn" class="btn btn-primary" style="background-color: #4285f4; border-color: #4285f4;">
+                  Google Hesabını Bağla
+                </button>
+              </div>
+            </div>
+
+            <div class="calendar-grid">
+              
+              <!-- Left side: Today's agenda timeline -->
+              <div class="calendar-timeline-panel glass-card">
+                <div class="timeline-header">
+                  <h3>Günlük Program Akışı</h3>
+                  <span id="calendar-active-day">Bugün</span>
+                </div>
+                
+                <div class="timeline-container" id="calendar-timeline-events">
+                  <!-- Filled dynamically with hourly agenda grid -->
+                </div>
+              </div>
+
+              <!-- Right side: Add new Event form -->
+              <div class="calendar-add-event-panel glass-card">
+                <div class="card-header">
+                  <h3>Yeni Etkinlik Planla</h3>
+                </div>
+                <form id="calendar-event-form" class="calendar-form-layout">
+                  <div class="input-group">
+                    <label for="event-title">Etkinlik Başlığı</label>
+                    <input type="text" id="event-title" required placeholder="Toplantı, ders, buluşma...">
+                  </div>
+
+                  <div class="form-row">
+                    <div class="input-group flex-1">
+                      <label for="event-start-time">Başlangıç Saati</label>
+                      <input type="time" id="event-start-time" required value="09:00">
+                    </div>
+                    <div class="input-group flex-1">
+                      <label for="event-end-time">Bitiş Saati</label>
+                      <input type="time" id="event-end-time" required value="10:00">
+                    </div>
+                  </div>
+
+                  <div class="input-group">
+                    <label for="event-desc">Notlar / Konum</label>
+                    <input type="text" id="event-desc" placeholder="Açıklama veya yer girin...">
+                  </div>
+
+                  <button type="submit" class="btn btn-primary btn-block">Takvime Ekle</button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
       </main>
     </div>
 
@@ -950,6 +1386,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=2.0"></script>
+  <script src="app.js?v=2.1"></script>
 </body>
 </html>
