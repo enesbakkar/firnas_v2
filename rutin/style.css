@@ -3272,12 +3272,9 @@ body::after {
 
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 0.75rem;
-  max-height: 180px;
-  overflow-y: auto;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.6rem;
   padding: 0.25rem;
-  scrollbar-width: thin;
 }
 .category-grid-item {
   display: flex;
@@ -3309,10 +3306,14 @@ body::after {
   font-weight: 600;
   color: var(--text-muted);
   text-align: center;
-  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  white-space: nowrap;
+  line-height: 1.2;
+  height: 2.4em;
   width: 100%;
+  word-break: break-word;
 }
 .category-grid-item.selected {
   border-color: var(--primary);
