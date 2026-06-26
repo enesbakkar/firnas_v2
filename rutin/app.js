@@ -880,11 +880,33 @@ const StorageManager = {
 
   loadCalendar() {
     const data = localStorage.getItem('hrt_calendar');
-    STATE.calendar = data ? JSON.parse(data) : [
-      { id: "cal-1", title: "Firnas Team Sync 🚀", startTime: "09:30", endTime: "10:30", desc: "Daily coordination & tech reviews" },
-      { id: "cal-2", title: "Project Review Meeting 🎯", startTime: "13:00", endTime: "14:15", desc: "Briefing new updates on Life OS" },
-      { id: "cal-3", title: "Gym Session 🏋️", startTime: "18:00", endTime: "19:30", desc: "Chest day & cardio workout" }
-    ];
+    if (data) {
+      try {
+        let events = JSON.parse(data);
+        if (Array.isArray(events)) {
+          // Filter out any legacy events that lack a 'date' property
+          const filtered = events.filter(evt => evt && evt.date);
+          if (filtered.length !== events.length) {
+            STATE.calendar = filtered;
+            this.saveCalendar();
+          } else {
+            STATE.calendar = events;
+          }
+        } else {
+          STATE.calendar = [];
+        }
+      } catch (e) {
+        STATE.calendar = [];
+      }
+    } else {
+      const todayKey = formatDateKey(new Date());
+      STATE.calendar = [
+        { id: "cal-1", title: "Firnas Team Sync 🚀", startTime: "09:30", endTime: "10:30", desc: "Daily coordination & tech reviews", date: todayKey, isLocal: true },
+        { id: "cal-2", title: "Project Review Meeting 🎯", startTime: "13:00", endTime: "14:15", desc: "Briefing new updates on Life OS", date: todayKey, isLocal: true },
+        { id: "cal-3", title: "Gym Session 🏋️", startTime: "18:00", endTime: "19:30", desc: "Chest day & cardio workout", date: todayKey, isLocal: true }
+      ];
+      this.saveCalendar();
+    }
   },
 
   saveCalendar() {
@@ -965,46 +987,68 @@ const CalendarEngine = {
     });
   },
 
-  getHijriString(date) {
+  hijriMonths: {
+    en: [
+      "Muharram", "Safar", "Rabi' al-Awwal", "Rabi' al-Thani",
+      "Jumada al-Awwal", "Jumada al-Thani", "Rajab", "Sha'ban",
+      "Ramadan", "Shawwal", "Dhu al-Qadah", "Dhu al-Hijjah"
+    ],
+    tr: [
+      "Muharrem", "Safer", "Rebiülevvel", "Rebiülahir",
+      "Cemaziyelevvel", "Cemaziyelahir", "Recep", "Şaban",
+      "Ramazan", "Şevval", "Zilkade", "Zilhicce"
+    ],
+    ar: [
+      "محرم", "صفر", "ربيع الأول", "ربيع الآخر",
+      "جمادى الأولى", "جمادى الآخرة", "رجب", "شعبان",
+      "رمضان", "شوال", "ذو القعدة", "ذو الحجة"
+    ]
+  },
+
+  getHijriParts(date) {
     try {
-      const localeMap = {
-        en: 'en-u-ca-islamic-umalqura',
-        tr: 'tr-u-ca-islamic-umalqura',
-        ar: 'ar-u-ca-islamic-umalqura'
-      };
-      const locale = localeMap[STATE.language] || 'en-u-ca-islamic-umalqura';
-      const options = { day: 'numeric', month: 'long', year: 'numeric' };
-      const formatter = new Intl.DateTimeFormat(locale, options);
-      
-      const suffixMap = {
-        en: ' AH',
-        tr: ' H',
-        ar: ' هـ'
-      };
-      const suffix = suffixMap[STATE.language] || ' AH';
-      return formatter.format(date) + suffix;
+      const formatter = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
+        day: 'numeric',
+        month: 'numeric',
+        year: 'numeric'
+      });
+      const parts = formatter.formatToParts(date);
+      const day = parseInt(parts.find(p => p.type === 'day').value, 10);
+      const month = parseInt(parts.find(p => p.type === 'month').value, 10);
+      const year = parseInt(parts.find(p => p.type === 'year').value, 10);
+      return { day, month, year };
     } catch (e) {
-      return 'Hijri Calendar Error';
+      return null;
     }
   },
 
-  getHijriStringShort(date) {
-    try {
-      const localeMap = {
-        en: 'en-u-ca-islamic-umalqura',
-        tr: 'tr-u-ca-islamic-umalqura',
-        ar: 'ar-u-ca-islamic-umalqura'
-      };
-      const locale = localeMap[STATE.language] || 'en-u-ca-islamic-umalqura';
-      const dayOpt = new Intl.DateTimeFormat(locale, { day: 'numeric' });
-      const monthOpt = new Intl.DateTimeFormat(locale, { month: 'long' });
-      
-      const day = dayOpt.format(date);
-      const monthName = monthOpt.format(date);
-      return `${day} ${monthName}`;
-    } catch (e) {
-      return '';
+  getHijriString(date) {
+    const parts = this.getHijriParts(date);
+    if (!parts) return 'Hijri Calendar Error';
+    
+    const lang = STATE.language || 'en';
+    const monthList = this.hijriMonths[lang] || this.hijriMonths.en;
+    const monthName = monthList[parts.month - 1] || monthList[0];
+    
+    if (lang === 'en') {
+      return `${monthName} ${parts.day}, ${parts.year} AH`;
+    } else if (lang === 'tr') {
+      return `${parts.day} ${monthName} ${parts.year} H`;
+    } else if (lang === 'ar') {
+      return `${parts.day} ${monthName} ${parts.year} هـ`;
     }
+    return `${monthName} ${parts.day}, ${parts.year} AH`;
+  },
+
+  getHijriStringShort(date) {
+    const parts = this.getHijriParts(date);
+    if (!parts) return '';
+    
+    const lang = STATE.language || 'en';
+    const monthList = this.hijriMonths[lang] || this.hijriMonths.en;
+    const monthName = monthList[parts.month - 1] || monthList[0];
+    
+    return `${parts.day} ${monthName}`;
   },
 
   getDaysInMonth(year, month) {
@@ -3074,6 +3118,36 @@ const UIController = {
   },
 
   async syncGoogleCalendar(accessToken) {
+    const lang = STATE.language || 'en';
+    const statusEl = document.getElementById('calendar-sync-status');
+    
+    const showStatus = (msg, type) => {
+      if (!statusEl) return;
+      statusEl.textContent = msg;
+      statusEl.style.display = 'block';
+      if (type === 'error') {
+        statusEl.style.color = '#ff6b6b';
+        statusEl.style.borderColor = 'rgba(255, 107, 107, 0.3)';
+        statusEl.style.background = 'rgba(255, 107, 107, 0.05)';
+      } else if (type === 'success') {
+        statusEl.style.color = '#51cf66';
+        statusEl.style.borderColor = 'rgba(81, 207, 102, 0.3)';
+        statusEl.style.background = 'rgba(81, 207, 102, 0.05)';
+      } else {
+        statusEl.style.color = '#e9ecef';
+        statusEl.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        statusEl.style.background = 'rgba(255, 255, 255, 0.03)';
+      }
+    };
+
+    const tSyncing = {
+      en: "Syncing Google Calendar...",
+      tr: "Google Takvim senkronize ediliyor...",
+      ar: "جاري مزامنة تقويم جوجل..."
+    }[lang] || "Syncing Google Calendar...";
+
+    showStatus(tSyncing, 'info');
+
     try {
       const activeDateKey = formatDateKey(STATE.activeDate);
       const timeMin = new Date(STATE.activeDate);
@@ -3094,13 +3168,30 @@ const UIController = {
           localStorage.removeItem('google_access_token');
           const authBtn = document.getElementById('google-auth-btn');
           if (authBtn) {
-            authBtn.innerHTML = "Google Hesabını Bağla";
+            authBtn.innerHTML = (TRANSLATIONS[lang] || TRANSLATIONS.en).calendar_connect || "Google Hesabını Bağla";
             authBtn.style.backgroundColor = "#4285f4";
             authBtn.style.borderColor = "#4285f4";
           }
           console.log("Google token expired, auth reset.");
+          const tExpired = {
+            en: "Google Calendar session expired. Please reconnect.",
+            tr: "Google Takvim oturumu sona erdi. Lütfen tekrar bağlanın.",
+            ar: "انتهت صلاحية جلسة تقويم جوجل. يرجى إعادة الاتصال."
+          }[lang] || "Google Calendar session expired. Please reconnect.";
+          showStatus(tExpired, 'error');
           return;
         }
+        
+        if (response.status === 403) {
+          const t403 = {
+            en: "Sync Error: Google Calendar API is not enabled in your Google Cloud Project. Please enable the Calendar API.",
+            tr: "Senkronizasyon Hatası: Google Cloud Projenizde Google Calendar API etkinleştirilmemiş. Lütfen Calendar API'yi etkinleştirin.",
+            ar: "خطأ مزامنة: لم يتم تفعيل Google Calendar API في مشروع Google Cloud. يرجى تفعيلها."
+          }[lang] || "Sync Error: Google Calendar API is not enabled in your Google Cloud Project. Please enable the Calendar API.";
+          showStatus(t403, 'error');
+          throw new Error("Google Calendar API not enabled (403)");
+        }
+
         throw new Error("HTTP error " + response.status);
       }
 
@@ -3142,8 +3233,22 @@ const UIController = {
       StorageManager.saveCalendar();
       this.renderCalendar();
       this.renderBrief();
+
+      const tSuccess = {
+        en: `Google Calendar synced successfully! (${googleEvents.length} events loaded)`,
+        tr: `Google Takvim başarıyla senkronize edildi! (${googleEvents.length} etkinlik yüklendi)`,
+        ar: `تمت مزامنة تقويم جوجل بنجاح! (تم تحميل ${googleEvents.length} من الفعاليات)`
+      }[lang] || `Google Calendar synced successfully! (${googleEvents.length} events loaded)`;
+      
+      showStatus(tSuccess, 'success');
     } catch (err) {
       console.error("Google Calendar Sync Error:", err);
+      const tError = {
+        en: `Google Calendar Sync Error: ${err.message}`,
+        tr: `Google Takvim Senkronizasyon Hatası: ${err.message}`,
+        ar: `خطأ في مزامنة تقويم جوجل: ${err.message}`
+      }[lang] || `Google Calendar Sync Error: ${err.message}`;
+      showStatus(tError, 'error');
     }
   },
 
