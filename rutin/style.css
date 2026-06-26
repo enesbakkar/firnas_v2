@@ -2409,11 +2409,27 @@ body::after {
   padding: 1rem;
   cursor: pointer;
   transition: all var(--transition-fast);
+  border-left: 3px solid transparent;
 }
 .journal-list-item:hover, .journal-list-item.active {
   background: rgba(6, 182, 212, 0.08);
   border-color: var(--primary-light);
   transform: translateX(3px);
+}
+.journal-list-item[data-mood-type="awesome"] {
+  border-left-color: #eab308;
+}
+.journal-list-item[data-mood-type="good"] {
+  border-left-color: #10b981;
+}
+.journal-list-item[data-mood-type="neutral"] {
+  border-left-color: #06b6d4;
+}
+.journal-list-item[data-mood-type="tired"] {
+  border-left-color: #8b5cf6;
+}
+.journal-list-item[data-mood-type="bad"] {
+  border-left-color: #f43f5e;
 }
 .journal-list-item .item-header {
   display: flex;
@@ -2434,21 +2450,65 @@ body::after {
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.journal-list-item p {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  margin-top: 0.25rem;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+.item-tags-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin-top: 0.5rem;
 }
+.journal-item-tag {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 0.15rem 0.4rem;
+  font-size: 0.65rem;
+  color: var(--text-muted);
+  font-weight: 500;
+  display: inline-block;
+}
+.journal-item-tag.empty-tags {
+  border-style: dashed;
+  opacity: 0.6;
+}
+.journal-list-item.active .journal-item-tag {
+  background: rgba(6, 182, 212, 0.12);
+  border-color: rgba(6, 182, 212, 0.25);
+  color: var(--primary-light);
+}
+
 .journal-editor-panel {
   padding: 2rem;
   min-height: 600px;
   display: flex;
   flex-direction: column;
+  transition: border-color var(--transition-normal);
 }
+.journal-editor-panel[data-active-mood="awesome"] {
+  --mood-color: #eab308;
+  --mood-glow: rgba(234, 179, 8, 0.25);
+  --mood-bg: rgba(234, 179, 8, 0.05);
+}
+.journal-editor-panel[data-active-mood="good"] {
+  --mood-color: #10b981;
+  --mood-glow: rgba(16, 185, 129, 0.25);
+  --mood-bg: rgba(16, 185, 129, 0.05);
+}
+.journal-editor-panel[data-active-mood="neutral"] {
+  --mood-color: #06b6d4;
+  --mood-glow: rgba(6, 182, 212, 0.25);
+  --mood-bg: rgba(6, 182, 212, 0.05);
+}
+.journal-editor-panel[data-active-mood="tired"] {
+  --mood-color: #8b5cf6;
+  --mood-glow: rgba(139, 92, 246, 0.25);
+  --mood-bg: rgba(139, 92, 246, 0.05);
+}
+.journal-editor-panel[data-active-mood="bad"] {
+  --mood-color: #f43f5e;
+  --mood-glow: rgba(244, 63, 94, 0.25);
+  --mood-bg: rgba(244, 63, 94, 0.05);
+}
+
 .journal-editor-panel .panel-header {
   display: flex;
   justify-content: space-between;
@@ -2478,22 +2538,82 @@ body::after {
   margin-top: 0.25rem;
 }
 .mood-btn {
-  font-size: 1.6rem;
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.6rem 0.4rem;
   border-radius: var(--radius-md);
-  padding: 0.5rem;
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border-color);
   cursor: pointer;
   transition: all var(--transition-fast);
   flex: 1;
-  text-align: center;
 }
-.mood-btn:hover, .mood-btn.active {
-  background: rgba(6, 182, 212, 0.15);
-  border-color: var(--primary-light);
-  transform: scale(1.1);
-  box-shadow: 0 0 10px var(--primary-glow);
+.mood-btn .mood-emoji {
+  font-size: 1.6rem;
+  transition: transform var(--transition-fast);
 }
+.mood-btn:hover .mood-emoji, 
+.mood-btn.active .mood-emoji {
+  transform: scale(1.2);
+}
+.mood-btn .mood-text {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  transition: color var(--transition-fast);
+}
+.mood-btn:hover .mood-text, 
+.mood-btn.active .mood-text {
+  color: var(--text-main);
+}
+
+.mood-btn[data-mood-type="awesome"]:hover, .mood-btn[data-mood-type="awesome"].active {
+  background: rgba(234, 179, 8, 0.12);
+  border-color: #eab308;
+  box-shadow: 0 0 12px rgba(234, 179, 8, 0.3);
+  color: #fef08a;
+}
+.mood-btn[data-mood-type="good"]:hover, .mood-btn[data-mood-type="good"].active {
+  background: rgba(16, 185, 129, 0.12);
+  border-color: #10b981;
+  box-shadow: 0 0 12px rgba(16, 185, 129, 0.3);
+  color: #a7f3d0;
+}
+.mood-btn[data-mood-type="neutral"]:hover, .mood-btn[data-mood-type="neutral"].active {
+  background: rgba(6, 182, 212, 0.12);
+  border-color: #06b6d4;
+  box-shadow: 0 0 12px rgba(6, 182, 212, 0.3);
+  color: #cffafe;
+}
+.mood-btn[data-mood-type="tired"]:hover, .mood-btn[data-mood-type="tired"].active {
+  background: rgba(139, 92, 246, 0.12);
+  border-color: #8b5cf6;
+  box-shadow: 0 0 12px rgba(139, 92, 246, 0.3);
+  color: #ddd6fe;
+}
+.mood-btn[data-mood-type="bad"]:hover, .mood-btn[data-mood-type="bad"].active {
+  background: rgba(244, 63, 94, 0.12);
+  border-color: #f43f5e;
+  box-shadow: 0 0 12px rgba(244, 63, 94, 0.3);
+  color: #fecdd3;
+}
+
+.input-group label {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+.input-group label .field-icon {
+  color: var(--mood-color, var(--primary-light));
+  transition: color var(--transition-fast);
+}
+
 .journal-form-layout textarea {
   flex: 1;
   min-height: 250px;
@@ -2506,11 +2626,12 @@ body::after {
   font-size: 0.95rem;
   line-height: 1.5;
   resize: none;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 .journal-form-layout textarea:focus, .journal-form-layout input:focus {
   outline: none;
-  border-color: var(--primary-light);
-  box-shadow: 0 0 10px var(--primary-glow);
+  border-color: var(--mood-color, var(--primary-light));
+  box-shadow: 0 0 12px var(--mood-glow, var(--primary-glow));
 }
 .journal-form-layout input[type="text"], .journal-form-layout input[type="date"] {
   width: 100%;
@@ -2521,6 +2642,7 @@ body::after {
   color: var(--text-main);
   font-family: inherit;
   font-size: 0.95rem;
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
 }
 .form-actions {
   display: flex;

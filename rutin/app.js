@@ -214,6 +214,11 @@ const TRANSLATIONS = {
     journal_new: "+ New",
     journal_date: "Date",
     journal_mood: "Your Mood Today",
+    mood_awesome: "Awesome",
+    mood_good: "Good",
+    mood_neutral: "Neutral",
+    mood_tired: "Tired",
+    mood_bad: "Bad",
     journal_summary: "Daily Summary & Mental State",
     journal_placeholder: "What did you achieve today? What challenges did you face? Any thoughts occupying your mind?...",
     journal_tags: "Tags (comma separated)",
@@ -449,6 +454,11 @@ const TRANSLATIONS = {
     journal_new: "+ Yeni",
     journal_date: "Tarih",
     journal_mood: "Bugünkü Ruh Halin",
+    mood_awesome: "Mükemmel",
+    mood_good: "İyi",
+    mood_neutral: "Normal",
+    mood_tired: "Yorgun",
+    mood_bad: "Kötü",
     journal_summary: "Günün Özeti & Zihinsel Durumun",
     journal_placeholder: "Bugün neler başardın? Karşılaştığın zorluklar nelerdi? Zihnini meşgul eden düşünceler var mı?...",
     journal_tags: "Etiketler (Virgülle ayırın)",
@@ -2822,15 +2832,29 @@ const UIController = {
   },
 
   setupJournalTab() {
-    let selectedMood = "😐";
-    
+    const moodMap = {
+      "🤩": "awesome",
+      "🙂": "good",
+      "😐": "neutral",
+      "😴": "tired",
+      "😔": "bad"
+    };
+
+    const updateMoodTheme = (mood) => {
+      const editorPanel = document.querySelector('.journal-editor-panel');
+      if (editorPanel) {
+        editorPanel.setAttribute('data-active-mood', moodMap[mood] || 'neutral');
+      }
+    };
+
     // Bind mood buttons
     const moodBtns = document.querySelectorAll('.mood-btn');
     moodBtns.forEach(btn => {
       btn.addEventListener('click', () => {
         moodBtns.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        selectedMood = btn.getAttribute('data-mood');
+        const mood = btn.getAttribute('data-mood');
+        updateMoodTheme(mood);
       });
     });
 
@@ -2842,7 +2866,7 @@ const UIController = {
         moodBtns.forEach(b => b.classList.remove('active'));
         const defMood = document.querySelector('.mood-btn[data-mood="😐"]');
         if (defMood) defMood.classList.add('active');
-        selectedMood = "😐";
+        updateMoodTheme("😐");
         this.dom.journalDeleteBtn.style.display = 'none';
       });
     }
@@ -2869,8 +2893,11 @@ const UIController = {
         const content = this.dom.journalContentInput.value;
         const tags = this.dom.journalTagsInput.value;
 
+        const activeBtn = document.querySelector('.mood-btn.active');
+        const currentMood = activeBtn ? activeBtn.getAttribute('data-mood') : '😐';
+
         STATE.journal[dateKey] = {
-          mood: selectedMood,
+          mood: currentMood,
           content: content,
           tags: tags,
           updatedAt: new Date().toISOString()
@@ -2898,6 +2925,21 @@ const UIController = {
       this.dom.journalDateInput.value = activeDateKey;
     }
 
+    const moodMap = {
+      "🤩": "awesome",
+      "🙂": "good",
+      "😐": "neutral",
+      "😴": "tired",
+      "😔": "bad"
+    };
+
+    const updateMoodTheme = (mood) => {
+      const editorPanel = document.querySelector('.journal-editor-panel');
+      if (editorPanel) {
+        editorPanel.setAttribute('data-active-mood', moodMap[mood] || 'neutral');
+      }
+    };
+
     // Pre-fill if exists for active date
     const entry = STATE.journal[activeDateKey];
     const moodBtns = document.querySelectorAll('.mood-btn');
@@ -2913,6 +2955,7 @@ const UIController = {
           b.classList.remove('active');
         }
       });
+      updateMoodTheme(entry.mood);
     } else {
       if (this.dom.journalContentInput) this.dom.journalContentInput.value = '';
       if (this.dom.journalTagsInput) this.dom.journalTagsInput.value = '';
@@ -2920,6 +2963,7 @@ const UIController = {
       moodBtns.forEach(b => b.classList.remove('active'));
       const defMood = document.querySelector('.mood-btn[data-mood="😐"]');
       if (defMood) defMood.classList.add('active');
+      updateMoodTheme("😐");
     }
 
     // Load History list
@@ -2927,22 +2971,46 @@ const UIController = {
       this.dom.journalHistoryList.innerHTML = '';
       const sortedKeys = Object.keys(STATE.journal).sort().reverse();
       
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
       if (sortedKeys.length === 0) {
-        this.dom.journalHistoryList.innerHTML = '<div class="empty-state">Henüz kayıt yok. İlk günlüğünü yaz!</div>';
+        const emptyMsg = dict.journal_empty || "Henüz kayıt yok. İlk günlüğünü yaz!";
+        this.dom.journalHistoryList.innerHTML = `<div class="empty-state">${emptyMsg}</div>`;
         return;
       }
 
       sortedKeys.forEach(k => {
         const item = STATE.journal[k];
         const row = document.createElement('div');
+        const moodType = moodMap[item.mood] || 'neutral';
         row.className = `journal-list-item ${k === activeDateKey ? 'active' : ''}`;
+        row.setAttribute('data-mood-type', moodType);
+
+        const formatShortDate = (key, lang) => {
+          const [y, m, d] = key.split('-').map(Number);
+          const monthsTr = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"];
+          const monthsEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          const months = lang === 'tr' ? monthsTr : monthsEn;
+          return `${d} ${months[m - 1]} ${y}`;
+        };
+
+        let tagsHtml = '';
+        if (item.tags) {
+          const tagsList = item.tags.split(',').map(t => t.trim()).filter(t => t.length > 0);
+          tagsList.forEach(t => {
+            tagsHtml += `<span class="journal-item-tag">${t}</span>`;
+          });
+        } else {
+          const noTagsLabel = dict.journal_no_tags || (STATE.language === 'tr' ? 'Etiket yok' : 'No tags');
+          tagsHtml = `<span class="journal-item-tag empty-tags">${noTagsLabel}</span>`;
+        }
+
         row.innerHTML = `
           <div class="item-header">
-            <span>${k}</span>
+            <span>${formatShortDate(k, STATE.language)}</span>
             <span class="item-mood">${item.mood}</span>
           </div>
           <h4>${item.content.substring(0, 30)}${item.content.length > 30 ? '...' : ''}</h4>
-          <p>${item.tags ? item.tags : 'Etiket yok'}</p>
+          <div class="item-tags-container">${tagsHtml}</div>
         `;
         row.addEventListener('click', () => {
           STATE.activeDate = new Date(k);

@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=3.3">
+  <link rel="stylesheet" href="style.css?v=3.4">
   <!-- Tab Icon (Favicon) -->
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2.4">
   <link rel="shortcut icon" type="image/png" href="icon-192.png?v=2.4">
@@ -1079,30 +1079,57 @@
                   <div class="form-row">
                     <!-- Date Selector -->
                     <div class="input-group flex-1">
-                      <label for="journal-date-input" data-i18n="journal_date">Date</label>
+                      <label for="journal-date-input">
+                        <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <span data-i18n="journal_date">Date</span>
+                      </label>
                       <input type="date" id="journal-date-input" required>
                     </div>
                     
                     <!-- Mood Selector -->
                     <div class="input-group flex-1">
-                      <label data-i18n="journal_mood">Your Mood Today</label>
+                      <label>
+                        <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                        <span data-i18n="journal_mood">Your Mood Today</span>
+                      </label>
                       <div class="mood-selector-container">
-                        <button type="button" class="mood-btn" data-mood="🤩" title="Mükemmel">🤩</button>
-                        <button type="button" class="mood-btn" data-mood="🙂" title="İyi">🙂</button>
-                        <button type="button" class="mood-btn" data-mood="😐" title="Normal">😐</button>
-                        <button type="button" class="mood-btn" data-mood="😴" title="Yorgun">😴</button>
-                        <button type="button" class="mood-btn" data-mood="😔" title="Kötü">😔</button>
+                        <button type="button" class="mood-btn" data-mood="🤩" title="Mükemmel" data-mood-type="awesome">
+                          <span class="mood-emoji">🤩</span>
+                          <span class="mood-text" data-i18n="mood_awesome">Mükemmel</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="🙂" title="İyi" data-mood-type="good">
+                          <span class="mood-emoji">🙂</span>
+                          <span class="mood-text" data-i18n="mood_good">İyi</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="😐" title="Normal" data-mood-type="neutral">
+                          <span class="mood-emoji">😐</span>
+                          <span class="mood-text" data-i18n="mood_neutral">Normal</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="😴" title="Yorgun" data-mood-type="tired">
+                          <span class="mood-emoji">😴</span>
+                          <span class="mood-text" data-i18n="mood_tired">Yorgun</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="😔" title="Kötü" data-mood-type="bad">
+                          <span class="mood-emoji">😔</span>
+                          <span class="mood-text" data-i18n="mood_bad">Kötü</span>
+                        </button>
                       </div>
                     </div>
                   </div>
 
                   <div class="input-group" style="flex: 1; display: flex; flex-direction: column;">
-                    <label for="journal-content-input" data-i18n="journal_summary">Daily Summary & Mental State</label>
+                    <label for="journal-content-input">
+                      <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                      <span data-i18n="journal_summary">Daily Summary & Mental State</span>
+                    </label>
                     <textarea id="journal-content-input" data-i18n-placeholder="journal_placeholder" placeholder="What did you achieve today? What challenges did you face? Any thoughts occupying your mind?..." required></textarea>
                   </div>
 
                   <div class="input-group">
-                    <label for="journal-tags-input" data-i18n="journal_tags">Tags (comma separated)</label>
+                    <label for="journal-tags-input">
+                      <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                      <span data-i18n="journal_tags">Tags (comma separated)</span>
+                    </label>
                     <input type="text" id="journal-tags-input" data-i18n-placeholder="journal_tags_placeholder" placeholder="e.g. work, gym, devotion, family">
                   </div>
 
@@ -1517,6 +1544,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=3.2"></script>
+  <script src="app.js?v=3.3"></script>
 </body>
 </html>
