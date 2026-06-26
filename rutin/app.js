@@ -1698,6 +1698,14 @@ const UIController = {
           this.renderFinance();
         } else if (targetTab === 'calendar-tab') {
           this.renderCalendar();
+          // Sync Google Calendar whenever the tab is opened (if connected)
+          const token = localStorage.getItem('google_access_token');
+          if (token && !this._isSyncingCalendar) {
+            this._isSyncingCalendar = true;
+            this.syncGoogleCalendar(token).finally(() => {
+              this._isSyncingCalendar = false;
+            });
+          }
         }
       });
     });
@@ -3258,15 +3266,6 @@ const UIController = {
     const dayLabel = document.getElementById('calendar-active-day');
     if (dayLabel) {
       dayLabel.textContent = CalendarEngine.getGregorianString(STATE.activeDate);
-    }
-
-    // Auto trigger sync if token exists
-    const cachedToken = localStorage.getItem('google_access_token');
-    if (cachedToken && !this._isSyncingCalendar) {
-      this._isSyncingCalendar = true;
-      this.syncGoogleCalendar(cachedToken).finally(() => {
-        this._isSyncingCalendar = false;
-      });
     }
 
     if (this.dom.calendarTimelineEvents) {
