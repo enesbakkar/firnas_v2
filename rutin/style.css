@@ -3387,6 +3387,45 @@ body::after {
   box-shadow: 0 0 12px rgba(0, 168, 204, 0.4);
 }
 
+/* Two-column layout for transaction modal on wider screens */
+.fin-modal-columns {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  width: 100%;
+}
+.fin-modal-left-col, .fin-modal-right-col {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+@media (min-width: 768px) {
+  #fin-tx-modal .fin-modal-content {
+    max-width: 820px !important;
+  }
+  .fin-modal-columns {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr;
+    gap: 2rem;
+  }
+}
+
+/* Category Grid custom scrollbar for visual excellence */
+.category-grid::-webkit-scrollbar {
+  width: 6px;
+}
+.category-grid::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 10px;
+}
+.category-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+}
+.category-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 /* ================= CALENDAR VIEW (TAKVİM) STYLING ================= */
 .calendar-layout-container {
   display: flex;

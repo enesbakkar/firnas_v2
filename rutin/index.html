@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=2.4">
+  <link rel="stylesheet" href="style.css?v=3.0">
   <!-- Tab Icon (Favicon) -->
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=2.4">
   <link rel="shortcut icon" type="image/png" href="icon-192.png?v=2.4">
@@ -1250,79 +1250,87 @@
                 <button id="fin-modal-close" class="fin-close-btn">&times;</button>
               </div>
               <form id="finance-transaction-form" class="fin-modal-form">
-                <!-- Type Switcher -->
-                <div class="fin-modal-type-switcher">
-                  <button type="button" class="type-btn active" data-type="expense" data-i18n="fin_add_expense">Expense</button>
-                  <button type="button" class="type-btn" data-type="income" data-i18n="fin_add_income">Income</button>
-                  <button type="button" class="type-btn" data-type="transfer" data-i18n="fin_add_transfer">Transfer</button>
-                </div>
+                <div class="fin-modal-columns">
+                  <!-- Left Column: Type Switcher, Amount, and Keypad -->
+                  <div class="fin-modal-left-col">
+                    <!-- Type Switcher -->
+                    <div class="fin-modal-type-switcher">
+                      <button type="button" class="type-btn active" data-type="expense" data-i18n="fin_add_expense">Expense</button>
+                      <button type="button" class="type-btn" data-type="income" data-i18n="fin_add_income">Income</button>
+                      <button type="button" class="type-btn" data-type="transfer" data-i18n="fin_add_transfer">Transfer</button>
+                    </div>
 
-                <!-- Amount Input -->
-                <div class="form-group amount-group">
-                  <label for="fin-amount-input" data-i18n="finance_amount">Amount</label>
-                  <div class="amount-input-wrapper">
-                    <input type="text" id="fin-amount-input" required placeholder="0.00" inputmode="none">
-                    <span class="currency">TL</span>
-                  </div>
-                </div>
+                    <!-- Amount Input -->
+                    <div class="form-group amount-group">
+                      <label for="fin-amount-input" data-i18n="finance_amount">Amount</label>
+                      <div class="amount-input-wrapper">
+                        <input type="text" id="fin-amount-input" required placeholder="0.00" inputmode="none">
+                        <span class="currency">TL</span>
+                      </div>
+                    </div>
 
-                <!-- Category Picker Grid -->
-                <div class="form-group" id="fin-modal-category-group">
-                  <label data-i18n="finance_category">Category</label>
-                  <div class="category-grid" id="fin-modal-category-grid">
-                    <!-- Loaded dynamically by JS -->
+                    <!-- Custom Keypad for Transaction Amount -->
+                    <div class="fin-keypad" id="fin-tx-keypad">
+                      <button type="button" class="key-btn" data-val="7">7</button>
+                      <button type="button" class="key-btn" data-val="8">8</button>
+                      <button type="button" class="key-btn" data-val="9">9</button>
+                      <button type="button" class="key-btn action-key" data-val="backspace">⌫</button>
+                      
+                      <button type="button" class="key-btn" data-val="4">4</button>
+                      <button type="button" class="key-btn" data-val="5">5</button>
+                      <button type="button" class="key-btn" data-val="6">6</button>
+                      <button type="button" class="key-btn action-key" data-val="clear">C</button>
+                      
+                      <button type="button" class="key-btn" data-val="1">1</button>
+                      <button type="button" class="key-btn" data-val="2">2</button>
+                      <button type="button" class="key-btn" data-val="3">3</button>
+                      <button type="button" class="key-btn action-key" data-val="00">00</button>
+                      
+                      <button type="button" class="key-btn" data-val="-">-</button>
+                      <button type="button" class="key-btn" data-val="0">0</button>
+                      <button type="button" class="key-btn" data-val=".">.</button>
+                      <button type="button" class="key-btn action-key" data-val="ok">OK</button>
+                    </div>
                   </div>
-                </div>
 
-                <!-- Account Selection -->
-                <div class="form-row">
-                  <div class="form-group flex-1" id="fin-modal-source-account-group">
-                    <label for="fin-account-select" id="fin-modal-source-account-label" data-i18n="fin_source_account">Account</label>
-                    <select id="fin-account-select" required>
-                      <!-- Dynamically populated -->
-                    </select>
-                  </div>
-                  <div class="form-group flex-1 hidden" id="fin-target-account-group">
-                    <label for="fin-target-account-select" data-i18n="fin_target_account">To Account</label>
-                    <select id="fin-target-account-select">
-                      <!-- Dynamically populated -->
-                    </select>
-                  </div>
-                </div>
+                  <!-- Right Column: Category, Account, Date, and Note -->
+                  <div class="fin-modal-right-col">
+                    <!-- Category Picker Grid -->
+                    <div class="form-group" id="fin-modal-category-group">
+                      <label data-i18n="finance_category">Category</label>
+                      <div class="category-grid" id="fin-modal-category-grid">
+                        <!-- Loaded dynamically by JS -->
+                      </div>
+                    </div>
 
-                <!-- Date and Note -->
-                <div class="form-row">
-                  <div class="form-group flex-1">
-                    <label for="fin-date-input" data-i18n="fin_date_label">Date</label>
-                    <input type="date" id="fin-date-input" required>
-                  </div>
-                  <div class="form-group flex-2">
-                    <label for="fin-desc-input" data-i18n="fin_desc_label">Note / Description</label>
-                    <input type="text" id="fin-desc-input" data-i18n-placeholder="finance_desc_placeholder" placeholder="Enter transaction details..." required>
-                  </div>
-                </div>
+                    <!-- Account Selection -->
+                    <div class="form-row">
+                      <div class="form-group flex-1" id="fin-modal-source-account-group">
+                        <label for="fin-account-select" id="fin-modal-source-account-label" data-i18n="fin_source_account">Account</label>
+                        <select id="fin-account-select" required>
+                          <!-- Dynamically populated -->
+                        </select>
+                      </div>
+                      <div class="form-group flex-1 hidden" id="fin-target-account-group">
+                        <label for="fin-target-account-select" data-i18n="fin_target_account">To Account</label>
+                        <select id="fin-target-account-select">
+                          <!-- Dynamically populated -->
+                        </select>
+                      </div>
+                    </div>
 
-                <!-- Custom Keypad for Transaction Amount -->
-                <div class="fin-keypad" id="fin-tx-keypad">
-                  <button type="button" class="key-btn" data-val="7">7</button>
-                  <button type="button" class="key-btn" data-val="8">8</button>
-                  <button type="button" class="key-btn" data-val="9">9</button>
-                  <button type="button" class="key-btn action-key" data-val="backspace">⌫</button>
-                  
-                  <button type="button" class="key-btn" data-val="4">4</button>
-                  <button type="button" class="key-btn" data-val="5">5</button>
-                  <button type="button" class="key-btn" data-val="6">6</button>
-                  <button type="button" class="key-btn action-key" data-val="clear">C</button>
-                  
-                  <button type="button" class="key-btn" data-val="1">1</button>
-                  <button type="button" class="key-btn" data-val="2">2</button>
-                  <button type="button" class="key-btn" data-val="3">3</button>
-                  <button type="button" class="key-btn action-key" data-val="00">00</button>
-                  
-                  <button type="button" class="key-btn" data-val="-">-</button>
-                  <button type="button" class="key-btn" data-val="0">0</button>
-                  <button type="button" class="key-btn" data-val=".">.</button>
-                  <button type="button" class="key-btn action-key" data-val="ok">OK</button>
+                    <!-- Date and Note -->
+                    <div class="form-row">
+                      <div class="form-group flex-1">
+                        <label for="fin-date-input" data-i18n="fin_date_label">Date</label>
+                        <input type="date" id="fin-date-input" required>
+                      </div>
+                      <div class="form-group flex-2">
+                        <label for="fin-desc-input" data-i18n="fin_desc_label">Note / Description</label>
+                        <input type="text" id="fin-desc-input" data-i18n-placeholder="finance_desc_placeholder" placeholder="Enter transaction details..." required>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
                 <!-- Action Buttons -->
