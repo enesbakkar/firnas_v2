@@ -48,6 +48,11 @@ jobs:
           cd rutin
           npx cap sync android
 
+      - name: Generate App Assets (Icons & Splash)
+        run: |
+          cd rutin
+          npx @capacitor/assets generate --android
+
       - name: Build APK with Gradle
         run: |
           cd rutin/android
