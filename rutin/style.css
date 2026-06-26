@@ -3333,6 +3333,60 @@ body::after {
   font-weight: 600;
 }
 
+/* Custom Keypad Styles */
+.fin-keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.6rem;
+  margin: 1.25rem 0 0.5rem 0;
+  width: 100%;
+}
+.fin-keypad .key-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.85rem 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-md);
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  font-family: 'Outfit', sans-serif;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+}
+.fin-keypad .key-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+.fin-keypad .key-btn:active {
+  background: rgba(255, 255, 255, 0.12);
+  transform: translateY(1px);
+}
+.fin-keypad .key-btn.action-key {
+  background: rgba(0, 168, 204, 0.08);
+  border-color: rgba(0, 168, 204, 0.2);
+  color: var(--primary-light);
+}
+.fin-keypad .key-btn.action-key:hover {
+  background: rgba(0, 168, 204, 0.15);
+  border-color: rgba(0, 168, 204, 0.35);
+}
+.fin-keypad .key-btn[data-val="ok"] {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--bg-dark);
+}
+.fin-keypad .key-btn[data-val="ok"]:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-light);
+  box-shadow: 0 0 12px rgba(0, 168, 204, 0.4);
+}
+
 /* ================= CALENDAR VIEW (TAKVİM) STYLING ================= */
 .calendar-layout-container {
   display: flex;

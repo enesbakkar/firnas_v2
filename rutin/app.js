@@ -890,6 +890,91 @@ function formatDateKey(date) {
   return `${y}-${m}-${d}`;
 }
 
+// Setup virtual keypad handler with desktop physical keyboard filtering
+function setupKeypad(inputEl, keypadEl, onOkCallback) {
+  if (!inputEl || !keypadEl) return;
+
+  const buttons = keypadEl.querySelectorAll('.key-btn');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      const val = btn.getAttribute('data-val');
+      let currentVal = inputEl.value;
+
+      if (val === 'clear') {
+        inputEl.value = '';
+      } else if (val === 'backspace') {
+        inputEl.value = currentVal.slice(0, -1);
+      } else if (val === '00') {
+        if (currentVal !== '' && currentVal !== '-') {
+          inputEl.value = currentVal + '00';
+        }
+      } else if (val === '.') {
+        if (currentVal === '' || currentVal === '-') {
+          inputEl.value = currentVal + '0.';
+        } else if (!currentVal.includes('.')) {
+          inputEl.value = currentVal + '.';
+        }
+      } else if (val === '-') {
+        if (currentVal.startsWith('-')) {
+          inputEl.value = currentVal.slice(1);
+        } else {
+          inputEl.value = '-' + currentVal;
+        }
+      } else if (val === 'ok') {
+        if (onOkCallback) onOkCallback();
+      } else {
+        if (currentVal === '0') {
+          inputEl.value = val;
+        } else if (currentVal === '-0') {
+          inputEl.value = '-' + val;
+        } else {
+          inputEl.value = currentVal + val;
+        }
+      }
+      
+      inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+      inputEl.focus();
+    });
+  });
+
+  inputEl.addEventListener('keydown', (e) => {
+    const allowedKeys = ['Backspace', 'Delete', 'ArrowLeft', 'ArrowRight', 'Tab', 'Escape', 'Enter'];
+    if (allowedKeys.includes(e.key) || e.ctrlKey || e.metaKey) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        if (onOkCallback) onOkCallback();
+      }
+      return;
+    }
+
+    if (/^[0-9]$/.test(e.key)) {
+      return;
+    }
+
+    if (e.key === '-') {
+      e.preventDefault();
+      let currentVal = inputEl.value;
+      if (currentVal.startsWith('-')) {
+        inputEl.value = currentVal.slice(1);
+      } else {
+        inputEl.value = '-' + currentVal;
+      }
+      inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+      return;
+    }
+
+    if (e.key === '.') {
+      if (inputEl.value.includes('.')) {
+        e.preventDefault();
+      }
+      return;
+    }
+
+    e.preventDefault();
+  });
+}
+
 const FINANCE_CATEGORIES = {
   expense: [
     { id: "cat_food", val: "Gıda", emoji: "🍔", color: "#f59e0b" },
@@ -1536,6 +1621,12 @@ const UIController = {
     finTotalBalance: document.getElementById('fin-total-balance'),
     finMonthlyIncome: document.getElementById('fin-monthly-income'),
     finMonthlyExpense: document.getElementById('fin-monthly-expense'),
+    finAdjustModal: document.getElementById('fin-adjust-modal'),
+    finAdjustAmountInput: document.getElementById('fin-adjust-amount-input'),
+    financeAdjustForm: document.getElementById('finance-adjust-form'),
+    finAdjustCancelBtn: document.getElementById('fin-adjust-cancel-btn'),
+    finAdjustModalClose: document.getElementById('fin-adjust-modal-close'),
+    finAdjustModalTitle: document.getElementById('fin-adjust-modal-title'),
 
     // Calendar DOM elements
     calendarEventForm: document.getElementById('calendar-event-form'),
@@ -3072,6 +3163,51 @@ const UIController = {
         this.renderFinanceSummary();
       });
     }
+
+    // 7. Keypads and Adjust Balance modal listeners
+    const txKeypadEl = document.getElementById('fin-tx-keypad');
+    if (this.dom.finAmountInput && txKeypadEl) {
+      setupKeypad(this.dom.finAmountInput, txKeypadEl, () => {
+        if (this.dom.financeForm) this.dom.financeForm.requestSubmit();
+      });
+    }
+
+    const adjustKeypadEl = document.getElementById('fin-adjust-keypad');
+    if (this.dom.finAdjustAmountInput && adjustKeypadEl) {
+      setupKeypad(this.dom.finAdjustAmountInput, adjustKeypadEl, () => {
+        if (this.dom.financeAdjustForm) this.dom.financeAdjustForm.requestSubmit();
+      });
+    }
+
+    const closeAdjustModal = () => {
+      if (this.dom.finAdjustModal) this.dom.finAdjustModal.classList.remove('active');
+    };
+    if (this.dom.finAdjustModalClose) this.dom.finAdjustModalClose.addEventListener('click', closeAdjustModal);
+    if (this.dom.finAdjustCancelBtn) this.dom.finAdjustCancelBtn.addEventListener('click', closeAdjustModal);
+    if (this.dom.finAdjustModal) {
+      this.dom.finAdjustModal.addEventListener('click', (e) => {
+        if (e.target === this.dom.finAdjustModal) closeAdjustModal();
+      });
+    }
+
+    if (this.dom.financeAdjustForm) {
+      this.dom.financeAdjustForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const valStr = this.dom.finAdjustAmountInput.value;
+        const newVal = parseFloat(valStr);
+        if (!isNaN(newVal)) {
+          const accountKey = this.dom.financeAdjustForm.getAttribute('data-account-key');
+          if (accountKey && STATE.finance.accounts[accountKey]) {
+            STATE.finance.accounts[accountKey].balance = newVal;
+            StorageManager.saveFinance();
+            AudioFeedback.playSuccess();
+            this.renderFinance();
+            this.renderBrief();
+            closeAdjustModal();
+          }
+        }
+      });
+    }
   },
 
   renderFinanceModalCategories() {
@@ -3505,17 +3641,19 @@ const UIController = {
       `;
 
       card.querySelector('.account-card-adjust-btn').addEventListener('click', () => {
-        const titleStr = (dict.fin_adjust_balance_title || "Enter new balance for {account}:").replace('{account}', localizedAccName);
-        const input = prompt(titleStr, acc.balance);
-        if (input !== null) {
-          const newVal = parseFloat(input);
-          if (!isNaN(newVal)) {
-            acc.balance = newVal;
-            StorageManager.saveFinance();
-            AudioFeedback.playSuccess();
-            this.renderFinance();
-            this.renderBrief();
-          }
+        const titleStr = (dict.fin_adjust_balance_title || "New balance for {account}").replace('{account}', localizedAccName);
+        if (this.dom.finAdjustModalTitle) {
+          this.dom.finAdjustModalTitle.textContent = titleStr;
+        }
+        if (this.dom.finAdjustAmountInput) {
+          this.dom.finAdjustAmountInput.value = acc.balance;
+        }
+        if (this.dom.financeAdjustForm) {
+          this.dom.financeAdjustForm.setAttribute('data-account-key', k);
+        }
+        if (this.dom.finAdjustModal) {
+          this.dom.finAdjustModal.classList.add('active');
+          setTimeout(() => this.dom.finAdjustAmountInput.focus(), 150);
         }
       });
 

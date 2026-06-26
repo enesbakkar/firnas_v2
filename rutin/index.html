@@ -1261,7 +1261,7 @@
                 <div class="form-group amount-group">
                   <label for="fin-amount-input" data-i18n="finance_amount">Amount</label>
                   <div class="amount-input-wrapper">
-                    <input type="number" step="0.01" id="fin-amount-input" required placeholder="0.00">
+                    <input type="text" id="fin-amount-input" required placeholder="0.00" inputmode="none">
                     <span class="currency">TL</span>
                   </div>
                 </div>
@@ -1302,9 +1302,77 @@
                   </div>
                 </div>
 
+                <!-- Custom Keypad for Transaction Amount -->
+                <div class="fin-keypad" id="fin-tx-keypad">
+                  <button type="button" class="key-btn" data-val="7">7</button>
+                  <button type="button" class="key-btn" data-val="8">8</button>
+                  <button type="button" class="key-btn" data-val="9">9</button>
+                  <button type="button" class="key-btn action-key" data-val="backspace">⌫</button>
+                  
+                  <button type="button" class="key-btn" data-val="4">4</button>
+                  <button type="button" class="key-btn" data-val="5">5</button>
+                  <button type="button" class="key-btn" data-val="6">6</button>
+                  <button type="button" class="key-btn action-key" data-val="clear">C</button>
+                  
+                  <button type="button" class="key-btn" data-val="1">1</button>
+                  <button type="button" class="key-btn" data-val="2">2</button>
+                  <button type="button" class="key-btn" data-val="3">3</button>
+                  <button type="button" class="key-btn action-key" data-val="00">00</button>
+                  
+                  <button type="button" class="key-btn" data-val="-">-</button>
+                  <button type="button" class="key-btn" data-val="0">0</button>
+                  <button type="button" class="key-btn" data-val=".">.</button>
+                  <button type="button" class="key-btn action-key" data-val="ok">OK</button>
+                </div>
+
                 <!-- Action Buttons -->
                 <div class="fin-modal-actions">
                   <button type="button" id="fin-modal-cancel-btn" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
+                  <button type="submit" class="btn btn-primary" data-i18n="finance_save">Save</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+          <!-- Adjust Balance Modal -->
+          <div id="fin-adjust-modal" class="fin-modal-overlay">
+            <div class="fin-modal-content glass-card animate-scale-in" style="max-width: 380px;">
+              <div class="fin-modal-header">
+                <h3 id="fin-adjust-modal-title" data-i18n="fin_adjust_balance">Adjust Balance</h3>
+                <button id="fin-adjust-modal-close" class="fin-close-btn">&times;</button>
+              </div>
+              <form id="finance-adjust-form" class="fin-modal-form">
+                <div class="form-group amount-group">
+                  <label for="fin-adjust-amount-input" id="fin-adjust-label">New Balance</label>
+                  <div class="amount-input-wrapper">
+                    <input type="text" id="fin-adjust-amount-input" required placeholder="0.00" inputmode="none">
+                    <span class="currency">TL</span>
+                  </div>
+                </div>
+                <!-- Custom Keypad for Adjust Balance -->
+                <div class="fin-keypad" id="fin-adjust-keypad">
+                  <button type="button" class="key-btn" data-val="7">7</button>
+                  <button type="button" class="key-btn" data-val="8">8</button>
+                  <button type="button" class="key-btn" data-val="9">9</button>
+                  <button type="button" class="key-btn action-key" data-val="backspace">⌫</button>
+                  
+                  <button type="button" class="key-btn" data-val="4">4</button>
+                  <button type="button" class="key-btn" data-val="5">5</button>
+                  <button type="button" class="key-btn" data-val="6">6</button>
+                  <button type="button" class="key-btn action-key" data-val="clear">C</button>
+                  
+                  <button type="button" class="key-btn" data-val="1">1</button>
+                  <button type="button" class="key-btn" data-val="2">2</button>
+                  <button type="button" class="key-btn" data-val="3">3</button>
+                  <button type="button" class="key-btn action-key" data-val="00">00</button>
+                  
+                  <button type="button" class="key-btn" data-val="-">-</button>
+                  <button type="button" class="key-btn" data-val="0">0</button>
+                  <button type="button" class="key-btn" data-val=".">.</button>
+                  <button type="button" class="key-btn action-key" data-val="ok">OK</button>
+                </div>
+                <div class="fin-modal-actions">
+                  <button type="button" id="fin-adjust-cancel-btn" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
                   <button type="submit" class="btn btn-primary" data-i18n="finance_save">Save</button>
                 </div>
               </form>
