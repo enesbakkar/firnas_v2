@@ -392,7 +392,25 @@ const TRANSLATIONS = {
     brief_weather_desc: "Istanbul - Clear & Sunny",
     kpi_top_none: "None yet",
     kpi_focus_none: "None yet",
-    brief_today_events_label: "Events"
+    brief_today_events_label: "Events",
+    fin_subtab_daily: "Daily",
+    fin_subtab_calendar: "Calendar",
+    fin_subtab_summary: "Summary",
+    fin_subtab_accounts: "Accounts",
+    fin_net_balance: "Net Balance",
+    fin_add_income: "Income",
+    fin_add_expense: "Expense",
+    fin_add_transfer: "Transfer",
+    fin_category_group: "Category",
+    fin_select_category: "Select Category",
+    fin_amount_label: "Amount",
+    fin_date_label: "Date",
+    fin_desc_label: "Description / Note",
+    fin_source_account: "From Account",
+    fin_target_account: "To Account",
+    fin_adjust_balance: "Adjust Balance",
+    fin_adjust_balance_title: "Enter new balance for {account}:",
+    fin_delete_tx_confirm: "Are you sure you want to delete this transaction?"
   },
   tr: {
     nav_brief: "Ana Panel",
@@ -608,7 +626,25 @@ const TRANSLATIONS = {
     brief_weather_desc: "İstanbul - Açık & Güneşli",
     kpi_top_none: "Henüz Yok",
     kpi_focus_none: "Henüz Yok",
-    brief_today_events_label: "Etkinlik"
+    brief_today_events_label: "Etkinlik",
+    fin_subtab_daily: "Günlük",
+    fin_subtab_calendar: "Takvim",
+    fin_subtab_summary: "İstatistik",
+    fin_subtab_accounts: "Hesaplar",
+    fin_net_balance: "Net Bakiye",
+    fin_add_income: "Gelir",
+    fin_add_expense: "Gider",
+    fin_add_transfer: "Transfer",
+    fin_category_group: "Kategori",
+    fin_select_category: "Kategori Seçin",
+    fin_amount_label: "Tutar",
+    fin_date_label: "Tarih",
+    fin_desc_label: "Açıklama / Not",
+    fin_source_account: "Kaynak Hesap",
+    fin_target_account: "Hedef Hesap",
+    fin_adjust_balance: "Bakiyeyi Düzenle",
+    fin_adjust_balance_title: "{account} hesabı için yeni bakiye girin:",
+    fin_delete_tx_confirm: "Bu işlemi silmek istediğinize emin misiniz?"
   },
   ar: {
     nav_brief: "اللوحة الرئيسية",
@@ -824,7 +860,25 @@ const TRANSLATIONS = {
     brief_weather_desc: "اسطنبول - مشمس وصافٍ",
     kpi_top_none: "لا يوجد بعد",
     kpi_focus_none: "لا يوجد بعد",
-    brief_today_events_label: "فعاليات"
+    brief_today_events_label: "فعاليات",
+    fin_subtab_daily: "يومي",
+    fin_subtab_calendar: "التقويم",
+    fin_subtab_summary: "إحصائيات",
+    fin_subtab_accounts: "الحسابات",
+    fin_net_balance: "صافي الرصيد",
+    fin_add_income: "دخل",
+    fin_add_expense: "مصروف",
+    fin_add_transfer: "تحويل",
+    fin_category_group: "الفئة",
+    fin_select_category: "اختر الفئة",
+    fin_amount_label: "المبلغ",
+    fin_date_label: "التاريخ",
+    fin_desc_label: "الوصف / ملاحظة",
+    fin_source_account: "من حساب",
+    fin_target_account: "إلى حساب",
+    fin_adjust_balance: "تعديل الرصيد",
+    fin_adjust_balance_title: "أدخل الرصيد الجديد لحساب {account}:",
+    fin_delete_tx_confirm: "هل أنت متأكد من رغبتك في حذف هذه المعاملة؟"
   }
 };
 
@@ -835,6 +889,39 @@ function formatDateKey(date) {
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
 }
+
+const FINANCE_CATEGORIES = {
+  expense: [
+    { id: "cat_food", val: "Gıda", emoji: "🍔", color: "#f59e0b" },
+    { id: "cat_cafe", val: "Kafe", emoji: "☕", color: "#b45309" },
+    { id: "cat_transport", val: "Ulaşım", emoji: "🚗", color: "#3b82f6" },
+    { id: "cat_tech", val: "Teknoloji", emoji: "💻", color: "#06b6d4" },
+    { id: "cat_bills", val: "Faturalar", emoji: "⚡", color: "#ef4444" },
+    { id: "cat_invest", val: "Yatırım", emoji: "📈", color: "#eab308" },
+    { id: "cat_edu", val: "Eğitim", emoji: "📚", color: "#f97316" },
+    { id: "cat_shopping", val: "Alışveriş", emoji: "🛒", color: "#ec4899" },
+    { id: "cat_housing", val: "Konut", emoji: "🏠", color: "#10b981" },
+    { id: "cat_health", val: "Sağlık", emoji: "⚕️", color: "#06b6d4" },
+    { id: "cat_entertainment", val: "Eğlence", emoji: "🎬", color: "#8b5cf6" },
+    { id: "cat_other", val: "Diğer", emoji: "📦", color: "#6b7280" }
+  ],
+  income: [
+    { id: "cat_income", val: "Gelir", emoji: "💰", color: "#10b981" },
+    { id: "cat_salary", val: "Maaş", emoji: "💼", color: "#10b981" },
+    { id: "cat_invest", val: "Yatırım", emoji: "📈", color: "#eab308" },
+    { id: "cat_freelance", val: "Ek Gelir", emoji: "💻", color: "#06b6d4" },
+    { id: "cat_gift", val: "Hediye", emoji: "🎁", color: "#ec4899" },
+    { id: "cat_other", val: "Diğer", emoji: "💰", color: "#6b7280" }
+  ]
+};
+
+const catInfo = (category, type) => {
+  const list = FINANCE_CATEGORIES[type === 'income' ? 'income' : 'expense'] || [];
+  const found = list.find(c => c.val === category);
+  if (found) return found;
+  const fallback = [...FINANCE_CATEGORIES.expense, ...FINANCE_CATEGORIES.income].find(c => c.val === category);
+  return fallback || { val: category, emoji: "📦", color: "#6b7280" };
+};
 
 // ================= STORAGE ADAPTER =================
 const StorageManager = {
@@ -2773,49 +2860,158 @@ const UIController = {
   },
 
   setupFinanceTab() {
-    let selectedType = "expense";
-
-    // Bind type buttons
-    const typeBtns = document.querySelectorAll('.finance-type-toggle .type-btn');
-    const targetGroup = document.getElementById('fin-target-account-group');
-    const sourceLabel = document.querySelector('#fin-account-group label');
-
-    typeBtns.forEach(btn => {
+    // 1. Tab switches
+    const tabButtons = document.querySelectorAll('.fin-subtab-btn');
+    tabButtons.forEach(btn => {
       btn.addEventListener('click', () => {
-        typeBtns.forEach(b => b.classList.remove('active'));
+        tabButtons.forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        selectedType = btn.getAttribute('data-type');
+        STATE.financeActiveSubTab = btn.getAttribute('data-subtab');
         
-        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-        if (selectedType === 'transfer') {
-          if (targetGroup) targetGroup.classList.remove('hidden');
-          if (sourceLabel) sourceLabel.textContent = dict.finance_account || "Source Account";
-        } else {
-          if (targetGroup) targetGroup.classList.add('hidden');
-          if (sourceLabel) sourceLabel.textContent = selectedType === 'income' ? (dict.finance_target_account || 'Target Account') : (dict.finance_account || 'Source Account');
-        }
+        // Hide/show views
+        document.querySelectorAll('.finflow-view-pane').forEach(p => p.classList.remove('active'));
+        const activePane = document.getElementById(`fin-view-${STATE.financeActiveSubTab}`);
+        if (activePane) activePane.classList.add('active');
+        
+        this.renderFinance();
       });
     });
 
-    // Form submit
-    if (this.dom.financeForm) {
-      this.dom.financeForm.addEventListener('submit', (e) => {
+    // 2. Month controls
+    const prevBtn = document.getElementById('fin-prev-month');
+    const nextBtn = document.getElementById('fin-next-month');
+    
+    if (prevBtn && nextBtn) {
+      const shiftMonth = (direction) => {
+        if (!STATE.financeActiveMonth) {
+          STATE.financeActiveMonth = formatDateKey(STATE.activeDate).substring(0, 7);
+        }
+        let [year, month] = STATE.financeActiveMonth.split('-').map(Number);
+        month += direction;
+        if (month === 0) {
+          month = 12;
+          year -= 1;
+        } else if (month === 13) {
+          month = 1;
+          year += 1;
+        }
+        STATE.financeActiveMonth = `${year}-${String(month).padStart(2, '0')}`;
+        this.renderFinance();
+      };
+      
+      prevBtn.addEventListener('click', () => shiftMonth(-1));
+      nextBtn.addEventListener('click', () => shiftMonth(1));
+    }
+
+    // 3. Add Transaction Modal Controls
+    const addTrigger = document.getElementById('fin-add-tx-trigger');
+    const modal = document.getElementById('fin-tx-modal');
+    const modalClose = document.getElementById('fin-modal-close');
+    const modalCancel = document.getElementById('fin-modal-cancel-btn');
+    
+    if (addTrigger && modal) {
+      addTrigger.addEventListener('click', () => {
+        // Reset and prefill modal fields
+        const dateInput = document.getElementById('fin-date-input');
+        if (dateInput) dateInput.value = formatDateKey(new Date());
+        
+        // Populate category grid for default type (expense)
+        STATE.financeSelectedTxType = 'expense';
+        STATE.financeSelectedCategory = '';
+        
+        const typeBtns = modal.querySelectorAll('.fin-modal-type-switcher .type-btn');
+        typeBtns.forEach(b => {
+          if (b.getAttribute('data-type') === 'expense') b.classList.add('active');
+          else b.classList.remove('active');
+        });
+        
+        document.getElementById('fin-target-account-group').classList.add('hidden');
+        document.getElementById('fin-modal-category-group').classList.remove('hidden');
+        document.querySelector('#fin-modal-source-account-group label').setAttribute('data-i18n', 'finance_account');
+        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+        document.querySelector('#fin-modal-source-account-group label').textContent = dict.finance_account || 'Account';
+        
+        this.renderFinanceModalCategories();
+        modal.classList.add('active');
+      });
+    }
+    
+    const closeModal = () => {
+      if (modal) modal.classList.remove('active');
+    };
+    if (modalClose) modalClose.addEventListener('click', closeModal);
+    if (modalCancel) modalCancel.addEventListener('click', closeModal);
+    if (modal) {
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+    }
+
+    // 4. Modal Type Switcher
+    if (modal) {
+      const typeBtns = modal.querySelectorAll('.fin-modal-type-switcher .type-btn');
+      typeBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          typeBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          STATE.financeSelectedTxType = btn.getAttribute('data-type');
+          STATE.financeSelectedCategory = '';
+          
+          const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+          
+          // Target account vs Category display logic
+          const targetGroup = document.getElementById('fin-target-account-group');
+          const categoryGroup = document.getElementById('fin-modal-category-group');
+          const sourceLabel = document.querySelector('#fin-modal-source-account-group label');
+          
+          if (STATE.financeSelectedTxType === 'transfer') {
+            if (targetGroup) targetGroup.classList.remove('hidden');
+            if (categoryGroup) categoryGroup.classList.add('hidden');
+            if (sourceLabel) {
+              sourceLabel.setAttribute('data-i18n', 'fin_source_account');
+              sourceLabel.textContent = dict.fin_source_account || "From Account";
+            }
+          } else {
+            if (targetGroup) targetGroup.classList.add('hidden');
+            if (categoryGroup) categoryGroup.classList.remove('hidden');
+            if (sourceLabel) {
+              if (STATE.financeSelectedTxType === 'income') {
+                sourceLabel.setAttribute('data-i18n', 'fin_target_account');
+                sourceLabel.textContent = dict.fin_target_account || 'To Account';
+              } else {
+                sourceLabel.setAttribute('data-i18n', 'fin_source_account');
+                sourceLabel.textContent = dict.fin_source_account || 'From Account';
+              }
+            }
+            this.renderFinanceModalCategories();
+          }
+        });
+      });
+    }
+
+    // 5. Submit transaction form
+    const form = document.getElementById('finance-transaction-form');
+    if (form) {
+      form.addEventListener('submit', (e) => {
         e.preventDefault();
-        const amount = parseFloat(this.dom.finAmountInput.value);
-        const category = this.dom.finCategorySelect.value;
-        const account = this.dom.finAccountSelect.value;
-        const targetAccount = this.dom.finTargetAccountSelect.value;
+        const amount = parseFloat(document.getElementById('fin-amount-input').value);
+        const account = document.getElementById('fin-account-select').value;
+        const targetAccount = document.getElementById('fin-target-account-select').value;
         const dateVal = document.getElementById('fin-date-input').value;
-        const description = document.getElementById('fin-desc-input').value || category;
-
+        const description = document.getElementById('fin-desc-input').value;
+        const selectedType = STATE.financeSelectedTxType;
+        let category = STATE.financeSelectedCategory;
+        
         if (isNaN(amount) || amount <= 0) return;
-
-        // Apply account balance mutations
-        if (selectedType === 'expense') {
-          STATE.finance.accounts[account].balance -= amount;
-        } else if (selectedType === 'income') {
-          STATE.finance.accounts[account].balance += amount;
-        } else if (selectedType === 'transfer') {
+        
+        if (selectedType !== 'transfer' && !category) {
+          const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+          alert(dict.fin_select_category || "Please select a category!");
+          return;
+        }
+        
+        if (selectedType === 'transfer') {
+          category = "Transfer";
           if (account === targetAccount) {
             const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
             alert(dict.alert_same_accounts || "Source and target accounts cannot be the same!");
@@ -2823,8 +3019,12 @@ const UIController = {
           }
           STATE.finance.accounts[account].balance -= amount;
           STATE.finance.accounts[targetAccount].balance += amount;
+        } else if (selectedType === 'expense') {
+          STATE.finance.accounts[account].balance -= amount;
+        } else if (selectedType === 'income') {
+          STATE.finance.accounts[account].balance += amount;
         }
-
+        
         // Add transaction
         const newTx = {
           id: 'tx-' + Date.now(),
@@ -2834,128 +3034,235 @@ const UIController = {
           category: category,
           account: account,
           targetAccount: selectedType === 'transfer' ? targetAccount : '',
-          description: description
+          description: description || category
         };
-
+        
         STATE.finance.transactions.push(newTx);
         StorageManager.saveFinance();
         AudioFeedback.playSuccess();
-
+        
         // Auto check checklist finance task
         const dayData = StorageManager.getDayState(dateVal);
         dayData.fin_flow = true;
         StorageManager.saveDayState(dateVal, dayData);
         this.loadDateData();
-
-        // Clear form & re-render
-        this.dom.financeForm.reset();
-        document.getElementById('fin-date-input').value = formatDateKey(STATE.todayDate);
+        
+        // Close modal, reset form & re-render
+        closeModal();
+        form.reset();
         this.renderFinance();
         this.renderBrief();
       });
     }
+
+    // 6. Summary Toggle (Expense vs Income chart)
+    const toggleExpense = document.getElementById('fin-summary-toggle-expense');
+    const toggleIncome = document.getElementById('fin-summary-toggle-income');
+    if (toggleExpense && toggleIncome) {
+      toggleExpense.addEventListener('click', () => {
+        toggleExpense.classList.add('active');
+        toggleIncome.classList.remove('active');
+        STATE.financeSummaryToggleType = 'expense';
+        this.renderFinanceSummary();
+      });
+      toggleIncome.addEventListener('click', () => {
+        toggleIncome.classList.add('active');
+        toggleExpense.classList.remove('active');
+        STATE.financeSummaryToggleType = 'income';
+        this.renderFinanceSummary();
+      });
+    }
+  },
+
+  renderFinanceModalCategories() {
+    const grid = document.getElementById('fin-modal-category-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    
+    const type = STATE.financeSelectedTxType || 'expense';
+    const list = FINANCE_CATEGORIES[type] || [];
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    
+    list.forEach(cat => {
+      const item = document.createElement('div');
+      item.className = 'category-grid-item';
+      if (STATE.financeSelectedCategory === cat.val) {
+        item.classList.add('selected');
+      }
+      
+      const localizedLabel = dict[cat.id] || cat.val;
+      
+      item.innerHTML = `
+        <div class="badge" style="background:${cat.color}22; color:${cat.color};">${cat.emoji}</div>
+        <span class="cat-label">${localizedLabel}</span>
+      `;
+      
+      item.addEventListener('click', () => {
+        document.querySelectorAll('#fin-modal-category-grid .category-grid-item').forEach(el => el.classList.remove('selected'));
+        item.classList.add('selected');
+        STATE.financeSelectedCategory = cat.val;
+      });
+      
+      grid.appendChild(item);
+    });
   },
 
   renderFinance() {
     const activeDateKey = formatDateKey(STATE.activeDate);
-    const activeMonth = activeDateKey.substring(0, 7); // e.g. "2026-06"
-    
-    // Set date input default
-    const dateInput = document.getElementById('fin-date-input');
-    if (dateInput && !dateInput.value) {
-      dateInput.value = activeDateKey;
+    if (!STATE.financeActiveMonth) {
+      STATE.financeActiveMonth = activeDateKey.substring(0, 7);
+    }
+    if (!STATE.financeActiveSubTab) {
+      STATE.financeActiveSubTab = 'daily';
+    }
+    if (!STATE.financeSummaryToggleType) {
+      STATE.financeSummaryToggleType = 'expense';
     }
 
-    // Populate accounts select fields
-    if (this.dom.finAccountSelect && this.dom.finTargetAccountSelect) {
+    // Set month title
+    const monthTitle = document.getElementById('fin-current-month');
+    if (monthTitle) {
+      const [year, month] = STATE.financeActiveMonth.split('-');
+      const monthNames = {
+        en: ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"],
+        tr: ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"],
+        ar: ["يناير", "فبراير", "مارس", "أبريل", "مايو", "يونيو", "يوليو", "أغسطس", "سبتمبر", "أكتوبر", "نوفمبر", "ديسمبر"]
+      };
+      const langNames = monthNames[STATE.language] || monthNames.en;
+      monthTitle.textContent = `${langNames[Number(month) - 1]} ${year}`;
+    }
+
+    // Populate standard select boxes in modal
+    const sourceSelect = document.getElementById('fin-account-select');
+    const targetSelect = document.getElementById('fin-target-account-select');
+    if (sourceSelect && targetSelect) {
       const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
       const accountsMarkup = Object.keys(STATE.finance.accounts).map(k => {
         const acc = STATE.finance.accounts[k];
         const localizedAccName = dict[`acc_${k}`] || acc.name;
         return `<option value="${k}">${localizedAccName} (${acc.balance.toFixed(0)} TL)</option>`;
       }).join('');
-      
-      this.dom.finAccountSelect.innerHTML = accountsMarkup;
-      this.dom.finTargetAccountSelect.innerHTML = accountsMarkup;
+      sourceSelect.innerHTML = accountsMarkup;
+      targetSelect.innerHTML = accountsMarkup;
     }
 
-    // Render accounts card list
-    const accList = document.getElementById('fin-accounts-list');
-    if (accList) {
-      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-      accList.innerHTML = Object.keys(STATE.finance.accounts).map(k => {
-        const acc = STATE.finance.accounts[k];
-        const localizedAccName = dict[`acc_${k}`] || acc.name;
-        return `
-          <div class="account-item">
-            <span class="acc-name">${localizedAccName}</span>
-            <span class="acc-balance">${acc.balance.toFixed(2)} TL</span>
-          </div>
-        `;
-      }).join('');
+    // Call sub-view renderer
+    if (STATE.financeActiveSubTab === 'daily') {
+      this.renderFinanceDaily();
+    } else if (STATE.financeActiveSubTab === 'calendar') {
+      this.renderFinanceCalendar();
+    } else if (STATE.financeActiveSubTab === 'summary') {
+      this.renderFinanceSummary();
+    } else if (STATE.financeActiveSubTab === 'accounts') {
+      this.renderFinanceAccounts();
     }
+  },
 
-    // Calculate summary statistics
-    const totalBalance = Object.keys(STATE.finance.accounts).reduce((sum, k) => sum + STATE.finance.accounts[k].balance, 0);
+  renderFinanceDaily() {
+    const dailyList = document.getElementById('fin-daily-grouped-list');
+    if (!dailyList) return;
+    dailyList.innerHTML = '';
+
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const monthlyTxs = STATE.finance.transactions.filter(tx => tx.date.startsWith(STATE.financeActiveMonth));
     
-    // Filter monthly transactions
-    const monthlyTxs = STATE.finance.transactions.filter(tx => tx.date.startsWith(activeMonth));
-    const monthlyIncome = monthlyTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
-    const monthlyExpense = monthlyTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
+    // Sort transactions descending by date
+    const grouped = {};
+    monthlyTxs.forEach(tx => {
+      if (!grouped[tx.date]) grouped[tx.date] = [];
+      grouped[tx.date].push(tx);
+    });
+
+    // Monthly totals
+    const totalIncome = monthlyTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
+    const totalExpense = monthlyTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
+    const netTotal = totalIncome - totalExpense;
 
     const localeCode = STATE.language === 'tr' ? 'tr-TR' : 'en-US';
-    if (this.dom.finTotalBalance) this.dom.finTotalBalance.textContent = `${totalBalance.toLocaleString(localeCode)} TL`;
-    if (this.dom.finMonthlyIncome) this.dom.finMonthlyIncome.textContent = `${monthlyIncome.toLocaleString(localeCode)} TL`;
-    if (this.dom.finMonthlyExpense) this.dom.finMonthlyExpense.textContent = `${monthlyExpense.toLocaleString(localeCode)} TL`;
+    document.getElementById('fin-daily-summary-income').textContent = `${totalIncome.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
+    document.getElementById('fin-daily-summary-expense').textContent = `${totalExpense.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
+    document.getElementById('fin-daily-summary-total').textContent = `${netTotal.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
 
-    // Render transaction history list
-    if (this.dom.finTransactionsList) {
-      this.dom.finTransactionsList.innerHTML = '';
-      const sortedTxs = [...STATE.finance.transactions].sort((a, b) => b.date.localeCompare(a.date));
-      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-      
-      if (sortedTxs.length === 0) {
-        this.dom.finTransactionsList.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:2rem; color:var(--text-muted);">${dict.finance_empty || 'No financial transactions recorded yet.'}</td></tr>`;
-      } else {
-        sortedTxs.slice(0, 20).forEach(tx => {
-          const row = document.createElement('tr');
-          let amtClass = 'expense-val';
-          let amtPrefix = '-';
-          if (tx.type === 'income') {
-            amtClass = 'income-val';
-            amtPrefix = '+';
-          } else if (tx.type === 'transfer') {
-            amtClass = 'transfer-val';
-            amtPrefix = '⇄';
-          }
+    const sortedDates = Object.keys(grouped).sort().reverse();
+    if (sortedDates.length === 0) {
+      dailyList.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted); font-weight:600;">${dict.finance_empty || 'No transactions recorded for this month.'}</div>`;
+      return;
+    }
 
-          const localizedAccName = dict[`acc_${tx.account}`] || (STATE.finance.accounts[tx.account] ? STATE.finance.accounts[tx.account].name : tx.account);
-          const localizedTargetName = tx.targetAccount ? (dict[`acc_${tx.targetAccount}`] || (STATE.finance.accounts[tx.targetAccount] ? STATE.finance.accounts[tx.targetAccount].name : tx.targetAccount)) : '';
-          
-          const catMap = {
-            "Gıda": "cat_food",
-            "Ulaşım": "cat_transport",
-            "Teknoloji": "cat_tech",
-            "Faturalar": "cat_bills",
-            "Yatırım": "cat_invest",
-            "Eğitim": "cat_edu",
-            "Gelir": "cat_income",
-            "Diğer": "cat_other"
-          };
-          const catKey = catMap[tx.category] || 'cat_other';
-          const localizedCat = dict[catKey] || tx.category;
+    sortedDates.forEach(dateStr => {
+      const txs = grouped[dateStr];
+      const dayIncome = txs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
+      const dayExpense = txs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
 
-          row.innerHTML = `
-            <td>${tx.date}</td>
-            <td>${tx.description}</td>
-            <td><span class="date-badge" style="background:rgba(255,255,255,0.05); color:var(--text-muted); padding:0.25rem 0.5rem; font-size:0.7rem;">${localizedCat}</span></td>
-            <td>${localizedAccName}${tx.targetAccount ? ' → ' + localizedTargetName : ''}</td>
-            <td class="${amtClass}">${amtPrefix}${tx.amount.toFixed(2)} TL</td>
-            <td><button class="delete-tx-btn" data-id="${tx.id}">×</button></td>
-          `;
+      // Parse date to show day of week
+      const dateObj = new Date(dateStr);
+      const daysOfWeek = {
+        en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
+        tr: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"],
+        ar: ["الأحد", "الاثنين", "الثلاثاء", "الأربعاء", "الخميس", "الجمعة", "السبت"]
+      };
+      const dayName = daysOfWeek[STATE.language] ? daysOfWeek[STATE.language][dateObj.getDay()] : daysOfWeek.en[dateObj.getDay()];
+      const dayNum = dateStr.substring(8, 10);
 
-          row.querySelector('.delete-tx-btn').addEventListener('click', () => {
-            // Reverse account balance effects
+      const groupEl = document.createElement('div');
+      groupEl.className = 'fin-daily-group';
+
+      let headerSums = '';
+      if (dayIncome > 0) headerSums += `<span class="day-income">+${dayIncome.toFixed(0)}</span>`;
+      if (dayExpense > 0) headerSums += `<span class="day-expense">-${dayExpense.toFixed(0)}</span>`;
+
+      groupEl.innerHTML = `
+        <div class="fin-daily-group-header">
+          <div class="fin-daily-group-date">
+            <span class="day-num">${dayNum}</span>
+            <span class="day-name">${dayName}</span>
+          </div>
+          <div class="fin-daily-group-sums">
+            ${headerSums}
+          </div>
+        </div>
+        <div class="fin-daily-tx-list"></div>
+      `;
+
+      const listContainer = groupEl.querySelector('.fin-daily-tx-list');
+      txs.forEach(tx => {
+        const itemEl = document.createElement('div');
+        itemEl.className = 'fin-daily-tx-item';
+
+        const cat = catInfo(tx.category, tx.type);
+        const localizedCatLabel = dict[cat.id] || cat.val;
+        const localizedAccName = dict[`acc_${tx.account}`] || (STATE.finance.accounts[tx.account] ? STATE.finance.accounts[tx.account].name : tx.account);
+        const localizedTargetName = tx.targetAccount ? (dict[`acc_${tx.targetAccount}`] || (STATE.finance.accounts[tx.targetAccount] ? STATE.finance.accounts[tx.targetAccount].name : tx.targetAccount)) : '';
+
+        let amtClass = 'expense';
+        let amtPrefix = '-';
+        if (tx.type === 'income') {
+          amtClass = 'income';
+          amtPrefix = '+';
+        } else if (tx.type === 'transfer') {
+          amtClass = 'transfer';
+          amtPrefix = '⇄';
+        }
+
+        itemEl.innerHTML = `
+          <div class="fin-daily-tx-left">
+            <div class="fin-daily-tx-icon-badge" style="background:${cat.color}15; color:${cat.color};">${cat.emoji}</div>
+            <div class="fin-daily-tx-details">
+              <span class="fin-daily-tx-desc">${tx.description}</span>
+              <div class="fin-daily-tx-sub">
+                <span class="acc-tag">${localizedAccName}${tx.targetAccount ? ' → ' + localizedTargetName : ''}</span>
+                <span>${localizedCatLabel}</span>
+              </div>
+            </div>
+          </div>
+          <div class="fin-daily-tx-right">
+            <span class="fin-daily-tx-amount ${amtClass}">${amtPrefix}${tx.amount.toFixed(2)} TL</span>
+            <button class="fin-daily-tx-delete-btn" data-id="${tx.id}">&times;</button>
+          </div>
+        `;
+
+        itemEl.querySelector('.fin-daily-tx-delete-btn').addEventListener('click', () => {
+          if (confirm(dict.fin_delete_tx_confirm || 'Are you sure you want to delete this transaction?')) {
             if (tx.type === 'expense') {
               STATE.finance.accounts[tx.account].balance += tx.amount;
             } else if (tx.type === 'income') {
@@ -2970,65 +3277,250 @@ const UIController = {
             AudioFeedback.playSuccess();
             this.renderFinance();
             this.renderBrief();
-          });
-
-          this.dom.finTransactionsList.appendChild(row);
+          }
         });
-      }
+
+        listContainer.appendChild(itemEl);
+      });
+
+      dailyList.appendChild(groupEl);
+    });
+  },
+
+  renderFinanceCalendar() {
+    const daysGrid = document.getElementById('fin-calendar-days');
+    if (!daysGrid) return;
+    daysGrid.innerHTML = '';
+
+    const [year, month] = STATE.financeActiveMonth.split('-').map(Number);
+    const firstDayDate = new Date(year, month - 1, 1);
+    let startDayIdx = firstDayDate.getDay(); 
+    startDayIdx = startDayIdx === 0 ? 6 : startDayIdx - 1; // shift Sunday to index 6
+
+    const totalDays = new Date(year, month, 0).getDate();
+    
+    // Add empty cell offsets for Monday layout
+    for (let i = 0; i < startDayIdx; i++) {
+      const emptyCell = document.createElement('div');
+      emptyCell.className = 'fin-calendar-day-cell other-month';
+      daysGrid.appendChild(emptyCell);
     }
 
-    // Render category spending breakdown bars
-    if (this.dom.finCategoryBreakdown) {
-      this.dom.finCategoryBreakdown.innerHTML = '';
-      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const modal = document.getElementById('fin-tx-modal');
+
+    // Fill days
+    for (let day = 1; day <= totalDays; day++) {
+      const dayStr = String(day).padStart(2, '0');
+      const dateKey = `${year}-${String(month).padStart(2, '0')}-${dayStr}`;
       
-      const categoryTotals = {};
-      monthlyTxs.filter(tx => tx.type === 'expense').forEach(tx => {
-        categoryTotals[tx.category] = (categoryTotals[tx.category] || 0) + tx.amount;
-      });
+      const dayTxs = STATE.finance.transactions.filter(tx => tx.date === dateKey);
+      const dayIncome = dayTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
+      const dayExpense = dayTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
 
-      const categories = ['Gıda', 'Ulaşım', 'Teknoloji', 'Faturalar', 'Yatırım', 'Eğitim', 'Diğer'];
+      const cell = document.createElement('div');
+      cell.className = 'fin-calendar-day-cell';
       
-      const categoryKeys = {
-        Gıda: "cat_food",
-        Ulaşım: "cat_transport",
-        Teknoloji: "cat_tech",
-        Faturalar: "cat_bills",
-        Yatırım: "cat_invest",
-        Eğitim: "cat_edu",
-        Diğer: "cat_other"
-      };
+      const todayKey = formatDateKey(new Date());
+      if (dateKey === todayKey) cell.classList.add('today');
 
-      let maxSpend = 0;
-      categories.forEach(c => {
-        const amt = categoryTotals[c] || 0;
-        if (amt > maxSpend) maxSpend = amt;
-      });
+      let valuesMarkup = '';
+      if (dayIncome > 0) valuesMarkup += `<span class="income-val">+${dayIncome.toFixed(0)}</span>`;
+      if (dayExpense > 0) valuesMarkup += `<span class="expense-val">-${dayExpense.toFixed(0)}</span>`;
 
-      categories.forEach(c => {
-        const amt = categoryTotals[c] || 0;
-        const pct = maxSpend > 0 ? (amt / maxSpend) * 100 : 0;
-        const catLabel = dict[categoryKeys[c]] || c;
+      cell.innerHTML = `
+        <span class="fin-calendar-day-num">${day}</span>
+        <div class="fin-calendar-day-values">
+          ${valuesMarkup}
+        </div>
+      `;
+
+      cell.addEventListener('click', () => {
+        // Prefill modal form with selected date
+        const dateInput = document.getElementById('fin-date-input');
+        if (dateInput) dateInput.value = dateKey;
         
-        const item = document.createElement('div');
-        item.className = 'category-bar-item';
-        item.innerHTML = `
-          <div class="category-bar-info">
-            <span>${catLabel}</span>
-            <span class="val">${amt.toFixed(2)} TL</span>
-          </div>
-          <div class="category-bar-track">
-            <div class="category-bar-fill" style="width: 0%"></div>
-          </div>
-        `;
-
-        this.dom.finCategoryBreakdown.appendChild(item);
-        requestAnimationFrame(() => {
-          const fill = item.querySelector('.category-bar-fill');
-          if (fill) fill.style.width = `${pct}%`;
+        STATE.financeSelectedTxType = 'expense';
+        STATE.financeSelectedCategory = '';
+        
+        const typeBtns = document.querySelectorAll('.fin-modal-type-switcher .type-btn');
+        typeBtns.forEach(b => {
+          if (b.getAttribute('data-type') === 'expense') b.classList.add('active');
+          else b.classList.remove('active');
         });
+        
+        document.getElementById('fin-target-account-group').classList.add('hidden');
+        document.getElementById('fin-modal-category-group').classList.remove('hidden');
+        document.querySelector('#fin-modal-source-account-group label').textContent = dict.finance_account || 'Account';
+        
+        this.renderFinanceModalCategories();
+        if (modal) modal.classList.add('active');
       });
+
+      daysGrid.appendChild(cell);
     }
+  },
+
+  renderFinanceSummary() {
+    const categoryList = document.getElementById('fin-summary-category-list');
+    const svg = document.getElementById('fin-donut-chart-svg');
+    if (!categoryList || !svg) return;
+
+    categoryList.innerHTML = '';
+    // Clear segments except background circle
+    const circles = svg.querySelectorAll('circle');
+    circles.forEach((c, idx) => {
+      if (idx > 0) c.remove();
+    });
+
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const type = STATE.financeSummaryToggleType || 'expense';
+    const monthlyTxs = STATE.finance.transactions.filter(tx => tx.date.startsWith(STATE.financeActiveMonth));
+    const targetTxs = monthlyTxs.filter(tx => tx.type === type);
+
+    const titleHeader = document.getElementById('fin-summary-category-header');
+    if (titleHeader) {
+      titleHeader.textContent = type === 'expense' ? (dict.finance_category_title || "Expenses by Category") : (dict.finance_monthly_income || "Inflow by Category");
+    }
+
+    const labelCenter = document.getElementById('fin-donut-center-label');
+    if (labelCenter) {
+      labelCenter.textContent = type === 'expense' ? (dict.finance_tx_expense || "Expense") : (dict.finance_tx_income || "Income");
+    }
+
+    const catTotals = {};
+    targetTxs.forEach(tx => {
+      catTotals[tx.category] = (catTotals[tx.category] || 0) + tx.amount;
+    });
+
+    const totalSum = targetTxs.reduce((sum, tx) => sum + tx.amount, 0);
+    const centerPercent = document.getElementById('fin-donut-center-percent');
+    const localeCode = STATE.language === 'tr' ? 'tr-TR' : 'en-US';
+    if (centerPercent) {
+      centerPercent.textContent = `${totalSum.toLocaleString(localeCode, {maximumFractionDigits:0})} TL`;
+    }
+
+    if (totalSum === 0) {
+      categoryList.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted); font-weight:600;">${dict.finance_empty || 'No transactions recorded.'}</div>`;
+      return;
+    }
+
+    // Sort categories descending
+    const list = FINANCE_CATEGORIES[type] || [];
+    const sortedCats = list
+      .map(c => ({
+        ...c,
+        total: catTotals[c.val] || 0,
+        percent: totalSum > 0 ? ((catTotals[c.val] || 0) / totalSum) * 100 : 0
+      }))
+      .filter(c => c.total > 0)
+      .sort((a, b) => b.total - a.total);
+
+    const r = 70;
+    const circumference = 2 * Math.PI * r; // 439.8
+    let accumulatedPercent = 0;
+
+    sortedCats.forEach(cat => {
+      // SVG segment
+      const segment = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      segment.setAttribute('cx', '100');
+      segment.setAttribute('cy', '100');
+      segment.setAttribute('r', String(r));
+      segment.setAttribute('fill', 'transparent');
+      segment.setAttribute('stroke', cat.color);
+      segment.setAttribute('stroke-width', '20');
+      
+      const strokeDasharray = `${(cat.percent / 100) * circumference} ${circumference}`;
+      const strokeDashoffset = String(circumference - (accumulatedPercent / 100) * circumference + (circumference / 4));
+      
+      segment.setAttribute('stroke-dasharray', strokeDasharray);
+      segment.setAttribute('stroke-dashoffset', strokeDashoffset);
+      svg.appendChild(segment);
+      
+      accumulatedPercent += cat.percent;
+
+      // Info list item
+      const item = document.createElement('div');
+      item.className = 'fin-category-progress-item';
+      const catLabel = dict[cat.id] || cat.val;
+
+      item.innerHTML = `
+        <div class="badge" style="background:${cat.color}15; color:${cat.color};">${cat.emoji}</div>
+        <div class="fin-category-progress-details">
+          <div class="fin-category-progress-row">
+            <span class="cat-name">${catLabel}<span class="cat-percent">${cat.percent.toFixed(1)}%</span></span>
+            <span class="cat-amount">${cat.total.toLocaleString(localeCode, {minimumFractionDigits:2})} TL</span>
+          </div>
+          <div class="fin-category-progress-track">
+            <div class="fin-category-progress-fill" style="width:0%; background:${cat.color};"></div>
+          </div>
+        </div>
+      `;
+
+      categoryList.appendChild(item);
+      requestAnimationFrame(() => {
+        const fill = item.querySelector('.fin-category-progress-fill');
+        if (fill) fill.style.width = `${cat.percent}%`;
+      });
+    });
+  },
+
+  renderFinanceAccounts() {
+    const grid = document.getElementById('fin-accounts-grid');
+    if (!grid) return;
+    grid.innerHTML = '';
+
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const totalBalance = Object.keys(STATE.finance.accounts).reduce((sum, k) => sum + STATE.finance.accounts[k].balance, 0);
+    const localeCode = STATE.language === 'tr' ? 'tr-TR' : 'en-US';
+    
+    document.getElementById('fin-accounts-total-balance').textContent = `${totalBalance.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
+
+    const accountIcons = {
+      cash: "👛",
+      bank: "🏦",
+      credit: "💳",
+      business: "💼"
+    };
+
+    Object.keys(STATE.finance.accounts).forEach(k => {
+      const acc = STATE.finance.accounts[k];
+      const localizedAccName = dict[`acc_${k}`] || acc.name;
+      const emoji = accountIcons[k] || "💰";
+
+      const card = document.createElement('div');
+      card.className = `account-card ${k}`;
+      
+      card.innerHTML = `
+        <div class="account-card-header">
+          <span class="acc-title">${localizedAccName}</span>
+          <span class="acc-icon">${emoji}</span>
+        </div>
+        <div class="account-card-body">
+          <span class="acc-balance">${acc.balance.toLocaleString(localeCode, {minimumFractionDigits:2})} TL</span>
+        </div>
+        <div class="account-card-footer">
+          <button class="account-card-adjust-btn">${dict.fin_adjust_balance || 'Adjust Balance'}</button>
+        </div>
+      `;
+
+      card.querySelector('.account-card-adjust-btn').addEventListener('click', () => {
+        const titleStr = (dict.fin_adjust_balance_title || "Enter new balance for {account}:").replace('{account}', localizedAccName);
+        const input = prompt(titleStr, acc.balance);
+        if (input !== null) {
+          const newVal = parseFloat(input);
+          if (!isNaN(newVal)) {
+            acc.balance = newVal;
+            StorageManager.saveFinance();
+            AudioFeedback.playSuccess();
+            this.renderFinance();
+            this.renderBrief();
+          }
+        }
+      });
+
+      grid.appendChild(card);
+    });
   },
 
   setupCalendarTab() {

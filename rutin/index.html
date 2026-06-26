@@ -1121,159 +1121,194 @@
         <section id="finance-tab" class="tab-pane">
           <div class="finance-layout-container animate-fade-in">
             
-            <!-- Summary stats row -->
-            <div class="finance-summary-grid">
-              
-              <!-- Total Balance Card -->
-              <div class="finance-summary-card glass-card bg-cyan-glow">
-                <span class="label" data-i18n="finance_total_balance">Total Net Balance</span>
-                <span class="value" id="fin-total-balance">0.00 TL</span>
-                <div class="trend positive" data-i18n="finance_health_status">Financial Health: Stable</div>
+            <!-- FinFlow Navigation and Month Picker -->
+            <div class="finflow-nav-container glass-card">
+              <div class="fin-month-selector">
+                <button id="fin-prev-month" class="fin-nav-btn">◀</button>
+                <span id="fin-current-month" class="fin-month-title">June 2026</span>
+                <button id="fin-next-month" class="fin-nav-btn">▶</button>
               </div>
-
-              <!-- Monthly Income Card -->
-              <div class="finance-summary-card glass-card bg-green-glow">
-                <span class="label" data-i18n="finance_monthly_income">Monthly Inflow</span>
-                <span class="value" id="fin-monthly-income">0.00 TL</span>
-                <div class="trend positive" data-i18n="finance_inflow_desc">▲ Active Inflows</div>
+              <div class="finflow-subtabs">
+                <button class="fin-subtab-btn active" data-subtab="daily" data-i18n="fin_subtab_daily">Daily</button>
+                <button class="fin-subtab-btn" data-subtab="calendar" data-i18n="fin_subtab_calendar">Calendar</button>
+                <button class="fin-subtab-btn" data-subtab="summary" data-i18n="fin_subtab_summary">Summary</button>
+                <button class="fin-subtab-btn" data-subtab="accounts" data-i18n="fin_subtab_accounts">Accounts</button>
               </div>
-
-              <!-- Monthly Expense Card -->
-              <div class="finance-summary-card glass-card bg-red-glow">
-                <span class="label" data-i18n="finance_monthly_expense">Monthly Outflow</span>
-                <span class="value" id="fin-monthly-expense">0.00 TL</span>
-                <div class="trend negative" data-i18n="finance_outflow_desc">▼ Spending</div>
-              </div>
-
+              <button id="fin-add-tx-trigger" class="btn btn-primary fin-floating-add-btn">
+                <span class="plus-icon">+</span> <span data-i18n="finance_new_tx">Add Transaction</span>
+              </button>
             </div>
 
-            <!-- Mid Section: Accounts + Chart + Form -->
-            <div class="finance-mid-grid">
+            <!-- Views Wrapper -->
+            <div class="finflow-views-wrapper">
               
-              <!-- Accounts list & Add Transaction form -->
-              <div class="finance-left-column">
-                
-                <!-- Accounts Widget -->
-                <div class="finance-accounts-card glass-card">
-                  <div class="card-header">
-                    <h3 data-i18n="finance_accounts_title">Account Summary</h3>
+              <!-- 1. Daily Tab View -->
+              <div id="fin-view-daily" class="finflow-view-pane active">
+                <!-- Summary bar at the top of Daily view -->
+                <div class="fin-daily-summary-bar glass-card">
+                  <div class="summary-item income">
+                    <span class="label" data-i18n="finance_monthly_income">Monthly Inflow</span>
+                    <span class="value" id="fin-daily-summary-income">0.00 TL</span>
                   </div>
-                  <div class="accounts-list-container" id="fin-accounts-list">
-                    <!-- Populated dynamically -->
+                  <div class="summary-item expense">
+                    <span class="label" data-i18n="finance_monthly_expense">Monthly Outflow</span>
+                    <span class="value" id="fin-daily-summary-expense">0.00 TL</span>
+                  </div>
+                  <div class="summary-item total">
+                    <span class="label" data-i18n="fin_net_balance">Net Balance</span>
+                    <span class="value" id="fin-daily-summary-total">0.00 TL</span>
                   </div>
                 </div>
+                <!-- Grouped list of transactions -->
+                <div id="fin-daily-grouped-list" class="fin-daily-list-container">
+                  <!-- Loaded dynamically by JS -->
+                </div>
+              </div>
 
-                <!-- Add Transaction form -->
-                <div class="finance-form-card glass-card">
-                  <div class="card-header">
-                    <h3 data-i18n="finance_new_tx">Log Transaction</h3>
+              <!-- 2. Calendar Tab View -->
+              <div id="fin-view-calendar" class="finflow-view-pane">
+                <div class="fin-calendar-container glass-card">
+                  <!-- Calendar Header: Weekdays -->
+                  <div class="fin-calendar-weekdays">
+                    <span data-i18n="day_mon">Mon</span>
+                    <span data-i18n="day_tue">Tue</span>
+                    <span data-i18n="day_wed">Wed</span>
+                    <span data-i18n="day_thu">Thu</span>
+                    <span data-i18n="day_fri">Fri</span>
+                    <span data-i18n="day_sat">Sat</span>
+                    <span data-i18n="day_sun">Sun</span>
                   </div>
-                  <form id="finance-transaction-form" class="finance-form">
+                  <!-- Calendar Days Grid -->
+                  <div id="fin-calendar-days" class="fin-calendar-days-grid">
+                    <!-- Populated dynamically by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Summary (Charts) Tab View -->
+              <div id="fin-view-summary" class="finflow-view-pane">
+                <div class="fin-summary-layout">
+                  <!-- Chart Panel -->
+                  <div class="fin-chart-panel glass-card">
+                    <div class="chart-header">
+                      <h3 data-i18n="finance_category_title">Category Breakdown</h3>
+                      <div class="summary-type-toggle">
+                        <button id="fin-summary-toggle-expense" class="toggle-btn active" data-type="expense" data-i18n="finance_tx_expense">Expense</button>
+                        <button id="fin-summary-toggle-income" class="toggle-btn" data-type="income" data-i18n="finance_tx_income">Income</button>
+                      </div>
+                    </div>
                     
-                    <div class="form-row">
-                      <div class="input-group flex-1">
-                        <label data-i18n="finance_tx_type">Type</label>
-                        <div class="finance-type-toggle">
-                          <button type="button" class="type-btn active" data-type="expense" data-i18n="finance_tx_expense">Expense</button>
-                          <button type="button" class="type-btn" data-type="income" data-i18n="finance_tx_income">Income</button>
-                          <button type="button" class="type-btn" data-type="transfer" data-i18n="finance_tx_transfer">Transfer</button>
+                    <div class="chart-container-wrapper">
+                      <!-- Custom donut chart drawing area -->
+                      <div class="donut-chart-box">
+                        <svg width="200" height="200" viewBox="0 0 200 200" id="fin-donut-chart-svg">
+                          <circle cx="100" cy="100" r="70" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="20"></circle>
+                          <!-- Dynamic segments will be drawn here -->
+                        </svg>
+                        <div class="donut-chart-text">
+                          <span class="percent" id="fin-donut-center-percent">0%</span>
+                          <span class="label" id="fin-donut-center-label" data-i18n="finance_tx_expense">Expense</span>
                         </div>
                       </div>
-                      
-                      <div class="input-group flex-1">
-                        <label for="fin-amount-input" data-i18n="finance_amount">Amount (TL)</label>
-                        <input type="number" step="0.01" id="fin-amount-input" required placeholder="0.00">
-                      </div>
                     </div>
+                  </div>
 
-                    <div class="form-row">
-                      <div class="input-group flex-1">
-                        <label for="fin-category-select" data-i18n="finance_category">Category</label>
-                        <select id="fin-category-select" required>
-                          <option value="Gıda" data-i18n="cat_food">🍔 Food & Groceries</option>
-                          <option value="Ulaşım" data-i18n="cat_transport">🚗 Transport & Fuel</option>
-                          <option value="Teknoloji" data-i18n="cat_tech">💻 Software & Devices</option>
-                          <option value="Faturalar" data-i18n="cat_bills">⚡ Bills & Subscriptions</option>
-                          <option value="Yatırım" data-i18n="cat_invest">📈 Investments</option>
-                          <option value="Eğitim" data-i18n="cat_edu">📚 Books & Education</option>
-                          <option value="Gelir" data-i18n="cat_income">💰 Work/Project Income</option>
-                          <option value="Diğer" data-i18n="cat_other">📦 Other</option>
-                        </select>
-                      </div>
-
-                      <div class="input-group flex-1" id="fin-account-group">
-                        <label for="fin-account-select" data-i18n="finance_account">Source Account</label>
-                        <select id="fin-account-select" required>
-                          <!-- Dynamic accounts selection -->
-                        </select>
-                      </div>
-
-                      <div class="input-group flex-1 hidden" id="fin-target-account-group">
-                        <label for="fin-target-account-select" data-i18n="finance_target_account">Target Account</label>
-                        <select id="fin-target-account-select">
-                          <!-- Dynamic target accounts selection -->
-                        </select>
-                      </div>
+                  <!-- Category progress list -->
+                  <div class="fin-category-list-panel glass-card">
+                    <div class="card-header">
+                      <h3 id="fin-summary-category-header" data-i18n="finance_category_title">Expenses by Category</h3>
                     </div>
-
-                    <div class="form-row">
-                      <div class="input-group flex-1">
-                        <label for="fin-date-input" data-i18n="finance_table_date">Date</label>
-                        <input type="date" id="fin-date-input" required>
-                      </div>
-                      <div class="input-group flex-2">
-                        <label for="fin-desc-input" data-i18n="finance_table_desc">Description</label>
-                        <input type="text" id="fin-desc-input" data-i18n-placeholder="finance_desc_placeholder" placeholder="Enter transaction details...">
-                      </div>
+                    <div id="fin-summary-category-list" class="fin-category-progress-list">
+                      <!-- Loaded dynamically by JS -->
                     </div>
-
-                    <button type="submit" class="btn btn-primary btn-block" data-i18n="finance_save">Log Transaction</button>
-                  </form>
+                  </div>
                 </div>
-
               </div>
 
-              <!-- History and breakdown charts -->
-              <div class="finance-right-column">
-                
-                <!-- Category spending progress chart -->
-                <div class="finance-chart-card glass-card">
-                  <div class="card-header">
-                    <h3 data-i18n="finance_category_title">Monthly Expense Breakdown</h3>
+              <!-- 4. Accounts Tab View -->
+              <div id="fin-view-accounts" class="finflow-view-pane">
+                <div class="fin-accounts-overview">
+                  <div class="total-assets-card glass-card">
+                    <span class="label" data-i18n="finance_total_balance">Total Assets</span>
+                    <span class="value" id="fin-accounts-total-balance">0.00 TL</span>
                   </div>
-                  <div class="category-bars-list" id="fin-category-breakdown">
-                    <!-- Progress bars loaded dynamically -->
-                  </div>
-                </div>
-
-                <!-- Recent Transactions list -->
-                <div class="finance-history-card glass-card">
-                  <div class="card-header">
-                    <h3 data-i18n="finance_history_title">Recent Transactions</h3>
-                  </div>
-                  <div class="finance-table-wrapper">
-                    <table class="finance-table">
-                      <thead>
-                        <tr>
-                          <th data-i18n="finance_table_date">Date</th>
-                          <th data-i18n="finance_table_desc">Description</th>
-                          <th data-i18n="finance_category">Category</th>
-                          <th data-i18n="finance_account">Account</th>
-                          <th data-i18n="finance_table_amt">Amount</th>
-                          <th></th>
-                        </tr>
-                      </thead>
-                      <tbody id="fin-transactions-list">
-                        <!-- Loaded dynamically -->
-                      </tbody>
-                    </table>
+                  <div class="accounts-grid" id="fin-accounts-grid">
+                    <!-- Populated dynamically: Cash, Bank, Credit Card, Business -->
                   </div>
                 </div>
-
               </div>
 
             </div>
 
+          </div>
+
+          <!-- Add/Edit Transaction Modal -->
+          <div id="fin-tx-modal" class="fin-modal-overlay">
+            <div class="fin-modal-content glass-card animate-scale-in">
+              <div class="fin-modal-header">
+                <h3 id="fin-modal-title" data-i18n="finance_new_tx">Log Transaction</h3>
+                <button id="fin-modal-close" class="fin-close-btn">&times;</button>
+              </div>
+              <form id="finance-transaction-form" class="fin-modal-form">
+                <!-- Type Switcher -->
+                <div class="fin-modal-type-switcher">
+                  <button type="button" class="type-btn active" data-type="expense" data-i18n="fin_add_expense">Expense</button>
+                  <button type="button" class="type-btn" data-type="income" data-i18n="fin_add_income">Income</button>
+                  <button type="button" class="type-btn" data-type="transfer" data-i18n="fin_add_transfer">Transfer</button>
+                </div>
+
+                <!-- Amount Input -->
+                <div class="form-group amount-group">
+                  <label for="fin-amount-input" data-i18n="finance_amount">Amount</label>
+                  <div class="amount-input-wrapper">
+                    <input type="number" step="0.01" id="fin-amount-input" required placeholder="0.00">
+                    <span class="currency">TL</span>
+                  </div>
+                </div>
+
+                <!-- Category Picker Grid -->
+                <div class="form-group" id="fin-modal-category-group">
+                  <label data-i18n="finance_category">Category</label>
+                  <div class="category-grid" id="fin-modal-category-grid">
+                    <!-- Loaded dynamically by JS -->
+                  </div>
+                </div>
+
+                <!-- Account Selection -->
+                <div class="form-row">
+                  <div class="form-group flex-1" id="fin-modal-source-account-group">
+                    <label for="fin-account-select" id="fin-modal-source-account-label" data-i18n="fin_source_account">Account</label>
+                    <select id="fin-account-select" required>
+                      <!-- Dynamically populated -->
+                    </select>
+                  </div>
+                  <div class="form-group flex-1 hidden" id="fin-target-account-group">
+                    <label for="fin-target-account-select" data-i18n="fin_target_account">To Account</label>
+                    <select id="fin-target-account-select">
+                      <!-- Dynamically populated -->
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Date and Note -->
+                <div class="form-row">
+                  <div class="form-group flex-1">
+                    <label for="fin-date-input" data-i18n="fin_date_label">Date</label>
+                    <input type="date" id="fin-date-input" required>
+                  </div>
+                  <div class="form-group flex-2">
+                    <label for="fin-desc-input" data-i18n="fin_desc_label">Note / Description</label>
+                    <input type="text" id="fin-desc-input" data-i18n-placeholder="finance_desc_placeholder" placeholder="Enter transaction details..." required>
+                  </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="fin-modal-actions">
+                  <button type="button" id="fin-modal-cancel-btn" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
+                  <button type="submit" class="btn btn-primary" data-i18n="finance_save">Save</button>
+                </div>
+              </form>
+            </div>
           </div>
         </section>
 
