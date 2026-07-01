@@ -7,7 +7,31 @@
     <title>İletişim | Firnas Technologies</title>
     <link class="favicon" rel="icon" type="image/png" href="/asset/firnas_logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/styles.css">
+    <style>
+        :root {
+            --primary: #0f2e4a;
+            --primary-dark: #051421;
+            --accent: #00b8d4;
+            --accent-glow: rgba(0, 184, 212, 0.4);
+            --bg-white: #ffffff;
+            --bg-light: #f0f7fb;
+            --text-main: #1a202c;
+            --text-muted: #64748b;
+            --border-glass: rgba(255, 255, 255, 0.2);
+            --border-light: rgba(15, 46, 74, 0.1);
+            --font-sans: 'Inter', sans-serif;
+            --font-display: 'Outfit', sans-serif;
+        }
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-main);
+            background-color: var(--bg-light);
+            background-image: radial-gradient(rgba(15, 46, 74, 0.04) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+    </style>
+    <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* Success/Error Modal Overlay - Z-index Fixed */
@@ -432,7 +456,7 @@
                     })
                     .then(response => {
                         if (!response.ok) {
-                            throw new Error(`HTTP error! status: ${response.status}`);
+                            throw response;
                         }
                         return response.json();
                     })
@@ -444,15 +468,53 @@
                             showModal('success-modal');
                             contactForm.reset();
                         } else {
-                            document.getElementById('error-message').textContent = errorMessages[currentLang] || errorMessages['en'];
-                            showModal('error-modal');
+                            throw new Error('Response success field is false');
                         }
                     })
                     .catch(error => {
                         console.error('Form submission error:', error);
                         submitBtn.disabled = false;
                         submitBtn.innerHTML = originalBtnText;
-                        document.getElementById('error-message').textContent = errorMessages[currentLang] || errorMessages['en'];
+                        
+                        let errorMsg = '';
+                        if (!navigator.onLine) {
+                            errorMsg = {
+                                tr: "İnternet bağlantısı yok. Lütfen ağınızı kontrol edip tekrar deneyin.",
+                                en: "No internet connection. Please check your network and try again.",
+                                ar: "لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة والمحاولة مرة أخرى."
+                            }[currentLang] || "İnternet bağlantısı yok. Lütfen ağınızı kontrol edip tekrar deneyin.";
+                        } else if (error instanceof Response) {
+                            if (error.status >= 500) {
+                                errorMsg = {
+                                    tr: "Gönderim servisi şu anda kullanılamıyor (Sunucu Hatası). Lütfen daha sonra tekrar deneyin.",
+                                    en: "The submission service is currently unavailable (Server Error). Please try again later.",
+                                    ar: "خدمة الإرسال غير متوفرة حالياً (خطأ في الخادم). يرجى المحاولة مرة أخرى لاحقاً."
+                                }[currentLang] || "Gönderim servisi şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.";
+                            } else if (error.status === 400 || error.status === 403) {
+                                errorMsg = {
+                                    tr: "Geçersiz form verisi veya yetkisiz erişim. Lütfen alanları kontrol edin.",
+                                    en: "Invalid form data or unauthorized access. Please check the fields.",
+                                    ar: "بيانات النموذج غير صالحة أو وصول غير مصرح به. يرجى التحقق من الحقول."
+                                }[currentLang] || "Geçersiz form verisi. Lütfen alanları kontrol edin.";
+                            } else {
+                                errorMsg = {
+                                    tr: `Sunucu hatası (Durum kodu: ${error.status}). Lütfen daha sonra tekrar deneyin.`,
+                                    en: `Server error (Status code: ${error.status}). Please try again later.`,
+                                    ar: `خطأ في الخادم (رمز الحالة: ${error.status}). يرجى المحاولة مرة أخرى لاحقاً.`
+                                }[currentLang] || `Sunucu hatası (Durum kodu: ${error.status}). Lütfen daha sonra tekrar deneyin.`;
+                            }
+                        } else {
+                            errorMsg = {
+                                tr: "Bağlantı hatası veya CORS engellemesi. Lütfen daha sonra tekrar deneyin.",
+                                en: "Connection error or CORS issue. Please try again later.",
+                                ar: "خطأ في الاتصال أو مشكلة CORS. يرجى المحاولة مرة أخرى لاحقاً."
+                            }[currentLang] || "Mesajınız gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.";
+                        }
+                        
+                        const errorDesc = document.getElementById('error-message');
+                        if (errorDesc) {
+                            errorDesc.textContent = errorMsg;
+                        }
                         showModal('error-modal');
                     });
                 });

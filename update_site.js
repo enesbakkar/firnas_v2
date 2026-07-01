@@ -650,7 +650,7 @@ function updateHtml(filename) {
         '<select onchange="changeLanguage(this.value)">\\n                            <option value="tr">🇹🇷 TR</option>\\n                            <option value="en">🇬🇧 EN</option>\\n                            <option value="ar">🇸🇦 AR</option>\\n                        </select>'
     );
     
-    if (filename === 'hakkimizda.html') {
+    if (filename === 'about/index.html') {
         content = content.replace('<h1>Kurumsal <span class="text-accent">Kimliğimiz</span></h1>', '<h1 data-i18n="about_header_title">Kurumsal <span class="text-accent">Kimliğimiz</span></h1>');
         content = content.replace('<p>Geçmişin ilhamıyla geleceğin yazılım ve havacılık teknolojilerini inşa eden teknoloji merkezi.</p>', '<p data-i18n="about_header_desc">Geçmişin ilhamıyla geleceğin yazılım ve havacılık teknolojilerini inşa eden teknoloji merkezi.</p>');
         
@@ -666,7 +666,7 @@ function updateHtml(filename) {
         content = content.replace('<h3>Yazılım Ekibi</h3>', '<h3 data-i18n="team_3_name">Yazılım Ekibi</h3>');
         content = content.replace('<p>Sistem ve Otonomi Geliştirme</p>', '<p data-i18n="team_3_role">Sistem ve Otonomi Geliştirme</p>');
 
-    } else if (filename === 'projeler.html') {
+    } else if (filename === 'products/index.html') {
         content = content.replace('<h1>Ürünler ve <span class="text-accent">Projeler</span></h1>', '<h1 data-i18n="projects_header_title">Ürünler ve <span class="text-accent">Projeler</span></h1>');
         content = content.replace('<p>Yerli kaynaklarla geliştirdiğimiz, profesyonel havacılık ve yazılım çözümlerimiz.</p>', '<p data-i18n="projects_header_desc">Yerli kaynaklarla geliştirdiğimiz, profesyonel havacılık ve yazılım çözümlerimiz.</p>');
         
@@ -686,7 +686,7 @@ function updateHtml(filename) {
         content = content.replace('<li><i class="fas fa-check-circle"></i> <span>Otonom Karar Alma Yeteneği</span></li>', '<li><i class="fas fa-check-circle"></i> <span data-i18n="proj_3_f2">Otonom Karar Alma Yeteneği</span></li>');
         content = content.replace('<li><i class="fas fa-check-circle"></i> <span>Kriptolu Veri İletişimi</span></li>', '<li><i class="fas fa-check-circle"></i> <span data-i18n="proj_3_f3">Kriptolu Veri İletişimi</span></li>');
 
-    } else if (filename === 'iletisim.html') {
+    } else if (filename === 'contact/index.html') {
         content = content.replace('<h1>Kurumsal <span class="text-accent">İletişim</span></h1>', '<h1 data-i18n="contact_header_title">Kurumsal <span class="text-accent">İletişim</span></h1>');
         content = content.replace('<p>Projelerimiz ve kurumsal hizmetlerimiz hakkında detaylı bilgi almak için bizimle iletişime geçin.</p>', '<p data-i18n="contact_header_desc">Projelerimiz ve kurumsal hizmetlerimiz hakkında detaylı bilgi almak için bizimle iletişime geçin.</p>');
         
@@ -713,5 +713,5 @@ function updateHtml(filename) {
     writeFile(filepath, content);
 }
 
-['index.html', 'hakkimizda.html', 'projeler.html', 'iletisim.html'].forEach(updateHtml);
+['index.html', 'about/index.html', 'products/index.html', 'contact/index.html'].forEach(updateHtml);
 console.log("Done updating files!");

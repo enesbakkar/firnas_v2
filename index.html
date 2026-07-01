@@ -9,7 +9,31 @@
     <link rel="shortcut icon" type="image/png" href="/asset/firnas_logo.png">
     <link rel="apple-touch-icon" href="/asset/firnas_logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=1.1">
+    <style>
+        :root {
+            --primary: #0f2e4a;
+            --primary-dark: #051421;
+            --accent: #00b8d4;
+            --accent-glow: rgba(0, 184, 212, 0.4);
+            --bg-white: #ffffff;
+            --bg-light: #f0f7fb;
+            --text-main: #1a202c;
+            --text-muted: #64748b;
+            --border-glass: rgba(255, 255, 255, 0.2);
+            --border-light: rgba(15, 46, 74, 0.1);
+            --font-sans: 'Inter', sans-serif;
+            --font-display: 'Outfit', sans-serif;
+        }
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-main);
+            background-color: var(--bg-light);
+            background-image: radial-gradient(rgba(15, 46, 74, 0.04) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+    </style>
+    <link rel="preload" href="styles.css?v=1.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="styles.css?v=1.1"></noscript>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* Typewriter Effect Container - Fixed Height to Prevent Shift */
@@ -28,7 +52,7 @@
         <div class="offline-glow"></div>
         <div class="offline-content">
             <div class="offline-icon-wrapper">
-                <i class="fas fa-wifi-slash offline-icon"></i>
+                <i class="fas fa-wifi-slash offline-icon" aria-label="İnternet Bağlantısı Yok"></i>
             </div>
             <h2 class="offline-title">BAĞLANTI KESİLDİ</h2>
             <p class="offline-subtitle">İnternet bağlantınızı kontrol edip lütfen tekrar deneyin.</p>
@@ -116,7 +140,7 @@
                         <span id="hero-sub-prefix"></span><span id="hero-typewriter" class="text-accent"></span><span id="hero-cursor" class="text-accent animate-blink">|</span>
                     </span>
                 </h1>
-                <p data-i18n="hero_subtitle" style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">Sadece uçan donanımlar değil, onları zeki kılan algoritmalar inşa ediyoruz. H[...]
+                <p data-i18n="hero_subtitle" style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">Sadece uçan donanımlar değil, onları zeki kılan algoritmalar inşa ediyoruz. Havacılık, uzay ve yazılımın kesiştiği noktadayız.</p>
                 <a href="/products/" class="btn btn-primary" data-i18n="hero_btn_explore">Ekosistemi Keşfet</a>
             </div>
         </div>
@@ -169,8 +193,8 @@
     <section class="section-padding fico-interactive-section">
         <div class="container">
             <div class="section-header" style="text-align: center; margin-bottom: 5rem;">
-                <h2 data-i18n="focus_title" style="color: #ffffff; background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: tran[...]
-                <p class="text-muted" style="max-width: 800px; margin: 1.5rem auto 0; color: #94a3b8;" data-i18n="focus_desc">Sıradan bir drone değil; tamamen yerli donanım, açık kaynak geli[...]
+                <h2 data-i18n="focus_title" style="color: #ffffff; background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">FiCo: Eğitimde STEM Devrimi</h2>
+                <p class="text-muted" style="max-width: 800px; margin: 1.5rem auto 0; color: #94a3b8;" data-i18n="focus_desc">Sıradan bir drone değil; tamamen yerli donanım, açık kaynak geliştirme altyapısı ve yapay zeka entegrasyonu ile donatılmış programlanabilir bir öğrenme ekosistemi.</p>
             </div>
             
             <div class="fico-interactive-grid">
@@ -213,7 +237,7 @@
                         <div class="fico-spec-content active" id="spec-sensor">
                             <i class="fas fa-eye spec-icon"></i>
                             <h3 data-i18n="fico_hs_1_title">Sensör Füzyonu</h3>
-                            <p data-i18n="fico_hs_1_desc" class="lead text-muted">Yerleşik ultrasonik, kızılötesi ve optik akış sensörleri ile kapalı alanlarda ve GPS olmayan laboratuvarl[...]
+                            <p data-i18n="fico_hs_1_desc" class="lead text-muted">Yerleşik ultrasonik, kızılötesi ve optik akış sensörleri ile kapalı alanlarda ve GPS olmayan laboratuvarlarda milimetrik uçuş sabitleme sağlar.</p>
                             <div class="spec-metrics">
                                 <div class="metric-row">
                                     <span>Hassasiyet (Optik Akış):</span>
@@ -230,7 +254,7 @@
                         <div class="fico-spec-content" id="spec-frame">
                             <i class="fas fa-shield-halved spec-icon"></i>
                             <h3 data-i18n="fico_hs_2_title">Karbon-Fiber Gövde</h3>
-                            <p data-i18n="fico_hs_2_desc" class="lead text-muted">Çarpmalara karşı %100 dayanıklı, ultra hafif ve modüler karbon-fiber kafes gövdesi ile sınıf ortamında [...]
+                            <p data-i18n="fico_hs_2_desc" class="lead text-muted">Çarpmalara karşı %100 dayanıklı, ultra hafif ve modüler karbon-fiber kafes gövdesi ile sınıf ortamında tamamen güvenli eğitim uçuşları sunar.</p>
                             <div class="spec-metrics">
                                 <div class="metric-row">
                                     <span>Darbe Dayanımı:</span>
@@ -247,7 +271,7 @@
                         <div class="fico-spec-content" id="spec-ai">
                             <i class="fas fa-brain spec-icon"></i>
                             <h3 data-i18n="fico_hs_3_title">Yapay Zeka İşlemci</h3>
-                            <p data-i18n="fico_hs_3_desc" class="lead text-muted">Üzerindeki yardımcı işlemci kartı sayesinde Python tabanlı görüntü işleme, gerçek zamanlı nesne tespi[...]
+                            <p data-i18n="fico_hs_3_desc" class="lead text-muted">Üzerindeki yardımcı işlemci kartı sayesinde Python tabanlı görüntü işleme, gerçek zamanlı nesne tespiti ve makine öğrenimi modellerini havada çalıştırır.</p>
                             <div class="spec-metrics">
                                 <div class="metric-row">
                                     <span>AI İşlem Kapasitesi:</span>
@@ -264,7 +288,7 @@
                         <div class="fico-spec-content" id="spec-fc">
                             <i class="fas fa-microchip spec-icon"></i>
                             <h3 data-i18n="fico_hs_4_title">Gelişmiş Otonom Kart</h3>
-                            <p data-i18n="fico_hs_4_desc" class="lead text-muted">Özgün mühendislikle geliştirilen stabilite algoritmaları ve çift işlemcili uçuş kontrolörü sayesinde �[...]
+                            <p data-i18n="fico_hs_4_desc" class="lead text-muted">Özgün mühendislikle geliştirilen stabilite algoritmaları ve çift işlemcili uçuş kontrolörü sayesinde üstün havada asılı kalma (hover) kararlılığı sunar.</p>
                             <div class="spec-metrics">
                                 <div class="metric-row">
                                     <span>Uçuş Kararlılığı:</span>
@@ -354,14 +378,25 @@
                         offlineScreen.style.display = 'none';
                     }
                     
-                    // Redirect to live website if running locally in Capacitor WebView
+                    // Redirect to live website if running locally in Capacitor WebView (unless dev mode is active)
                     var isLocal = window.location.hostname === 'localhost' || 
                                   window.location.hostname === '127.0.0.1' || 
                                   window.location.protocol === 'file:';
                                   
+                    // Allow bypassing redirect via query parameter (e.g. ?dev=true or ?no-redirect) or port (Vite dev server)
+                    var urlParams = new URLSearchParams(window.location.search);
+                    if (urlParams.has('dev') || urlParams.has('no-redirect')) {
+                        localStorage.setItem('disable_redirect', 'true');
+                    } else if (urlParams.has('enable-redirect')) {
+                        localStorage.removeItem('disable_redirect');
+                    }
+                    
+                    var isDevMode = localStorage.getItem('disable_redirect') === 'true' || 
+                                    (window.location.port && window.location.port !== '80' && window.location.port !== '443');
+
                     // Check window.Capacitor asynchronously since it might load a bit later
                     setTimeout(function() {
-                        if ((window.Capacitor || window.webkit || window.Android) && isLocal) {
+                        if ((window.Capacitor || window.webkit || window.Android) && isLocal && !isDevMode) {
                             window.location.href = "https://firnastechnologies.com/";
                         }
                     }, 100);

@@ -3790,11 +3790,68 @@ const UIController = {
         this.syncGoogleCalendar(cachedToken);
       }
 
-      authBtn.addEventListener('click', () => {
+      authBtn.addEventListener('click', async () => {
         const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+        
         if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-          alert(dict.alert_google_load_fail || "Google API library could not be loaded. Please check your internet connection and refresh the page.");
-          return;
+          const originalText = authBtn.innerHTML;
+          const loadingLibText = {
+            en: "Loading Google library...",
+            tr: "Google kütüphanesi yükleniyor...",
+            ar: "جاري تحميل مكتبة جوجل..."
+          }[STATE.language] || "Loading Google library...";
+          
+          authBtn.innerHTML = `<svg viewBox="0 0 50 50" style="width:16px;height:16px;margin-right:8px;display:inline-block;vertical-align:middle;stroke:#fff;stroke-width:5;stroke-linecap:round;animation:google_lib_spin 1s linear infinite;"><style>@keyframes google_lib_spin {100%{transform:rotate(360deg);}}</style><circle cx="25" cy="25" r="20" fill="none" stroke-dasharray="80" stroke-dashoffset="0"></circle></svg> ${loadingLibText}`;
+          authBtn.disabled = true;
+          
+          try {
+            await new Promise((resolve, reject) => {
+              let script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
+              if (!script) {
+                script = document.createElement('script');
+                script.src = "https://accounts.google.com/gsi/client";
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+              } else {
+                script.remove();
+                script = document.createElement('script');
+                script.src = "https://accounts.google.com/gsi/client";
+                script.async = true;
+                script.defer = true;
+                document.head.appendChild(script);
+              }
+              
+              script.onload = () => {
+                if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+                  resolve();
+                } else {
+                  reject(new Error("Google library loaded but namespace not found"));
+                }
+              };
+              
+              script.onerror = () => {
+                reject(new Error("Failed to load Google library script"));
+              };
+              
+              setTimeout(() => {
+                if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
+                  resolve();
+                } else {
+                  reject(new Error("Timeout loading Google library"));
+                }
+              }, 6000);
+            });
+            
+            authBtn.disabled = false;
+            authBtn.innerHTML = originalText;
+          } catch (err) {
+            authBtn.disabled = false;
+            authBtn.innerHTML = originalText;
+            console.error("Failed to load Google client dynamically:", err);
+            alert(dict.alert_google_load_fail || "Google API library could not be loaded. Please check your internet connection and refresh the page.");
+            return;
+          }
         }
 
         try {
