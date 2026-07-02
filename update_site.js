@@ -1333,7 +1333,7 @@ function typeTerminal() {
     }
 }`;
 
-writeFile('C:\\\\Users\\\\enesb\\\\OneDrive\\\\Belgeler\\\\software_projects\\\\first_project\\\\script.js', new_translations + "\\n" + js_logic);
+writeFile('C:\\\\Users\\\\enesb\\\\OneDrive\\\\Belgeler\\\\software_projects\\\\first_project\\\\script.js', new_translations + "\n" + js_logic);
 
 function updateHtml(filename) {
     const filepath = 'C:\\\\Users\\\\enesb\\\\OneDrive\\\\Belgeler\\\\software_projects\\\\first_project\\\\' + filename;

@@ -830,7 +830,8 @@ const translations = {
         "offline_subtitle": "يرجى التحقق من اتصال الإنترنت الخاص بك والمحاولة مرة أخرى.",
         "offline_retry": "أعد المحاولة"
     }
-};\n
+};
+
 function changeLanguage(lang) {
     localStorage.setItem('site_lang', lang);
     window.location.reload();
