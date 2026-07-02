@@ -48,16 +48,16 @@
 <body>
 
     <!-- Futuristic Offline Overlay -->
-    <div id="app-offline-screen" class="offline-container hidden">
+    <div id="app-offline-screen" class="offline-container hidden" style="display: none;">
         <div class="offline-glow"></div>
         <div class="offline-content">
             <div class="offline-icon-wrapper">
                 <i class="fas fa-wifi-slash offline-icon" aria-label="İnternet Bağlantısı Yok"></i>
             </div>
-            <h2 class="offline-title">BAĞLANTI KESİLDİ</h2>
-            <p class="offline-subtitle">İnternet bağlantınızı kontrol edip lütfen tekrar deneyin.</p>
+            <h2 class="offline-title" data-i18n="offline_title">BAĞLANTI KESİLDİ</h2>
+            <p class="offline-subtitle" data-i18n="offline_subtitle">İnternet bağlantınızı kontrol edip lütfen tekrar deneyin.</p>
             <button onclick="checkConnectionRetry()" class="btn btn-primary btn-retry">
-                <i class="fas fa-redo" style="margin-right: 8px;"></i> Tekrar Dene
+                <i class="fas fa-redo" style="margin-right: 8px;"></i> <span data-i18n="offline_retry">Tekrar Dene</span>
             </button>
         </div>
     </div>
@@ -240,11 +240,11 @@
                             <p data-i18n="fico_hs_1_desc" class="lead text-muted">Yerleşik ultrasonik, kızılötesi ve optik akış sensörleri ile kapalı alanlarda ve GPS olmayan laboratuvarlarda milimetrik uçuş sabitleme sağlar.</p>
                             <div class="spec-metrics">
                                 <div class="metric-row">
-                                    <span>Hassasiyet (Optik Akış):</span>
+                                    <span data-i18n="fico_hs_1_metric_1">Hassasiyet (Optik Akış):</span>
                                     <div class="metric-bar"><div class="metric-fill" style="--target-width: 95%;"></div></div>
                                 </div>
                                 <div class="metric-row">
-                                    <span>Engel Algılama:</span>
+                                    <span data-i18n="fico_hs_1_metric_2">Engel Algılama:</span>
                                     <div class="metric-bar"><div class="metric-fill" style="--target-width: 90%;"></div></div>
                                 </div>
                             </div>
@@ -257,11 +257,11 @@
                             <p data-i18n="fico_hs_2_desc" class="lead text-muted">Çarpmalara karşı %100 dayanıklı, ultra hafif ve modüler karbon-fiber kafes gövdesi ile sınıf ortamında tamamen güvenli eğitim uçuşları sunar.</p>
                             <div class="spec-metrics">
                                 <div class="metric-row">
-                                    <span>Darbe Dayanımı:</span>
+                                    <span data-i18n="fico_hs_2_metric_1">Darbe Dayanımı:</span>
                                     <div class="metric-bar"><div class="metric-fill" style="--target-width: 100%;"></div></div>
                                 </div>
                                 <div class="metric-row">
-                                    <span>Ağırlık Verimliliği:</span>
+                                    <span data-i18n="fico_hs_2_metric_2">Ağırlık Verimliliği:</span>
                                     <div class="metric-bar"><div class="metric-fill" style="--target-width: 85%;"></div></div>
                                 </div>
                             </div>
@@ -274,11 +274,11 @@
                             <p data-i18n="fico_hs_3_desc" class="lead text-muted">Üzerindeki yardımcı işlemci kartı sayesinde Python tabanlı görüntü işleme, gerçek zamanlı nesne tespiti ve makine öğrenimi modellerini havada çalıştırır.</p>
                             <div class="spec-metrics">
                                 <div class="metric-row">
-                                    <span>AI İşlem Kapasitesi:</span>
+                                    <span data-i18n="fico_hs_3_metric_1">AI İşlem Kapasitesi:</span>
                                     <div class="metric-bar"><div class="metric-fill" style="--target-width: 88%;"></div></div>
                                 </div>
                                 <div class="metric-row">
-                                    <span>Gerçek Zamanlı Takip:</span>
+                                    <span data-i18n="fico_hs_3_metric_2">Gerçek Zamanlı Takip:</span>
                                     <div class="metric-bar"><div class="metric-fill" style="--target-width: 92%;"></div></div>
                                 </div>
                             </div>
@@ -291,11 +291,11 @@
                             <p data-i18n="fico_hs_4_desc" class="lead text-muted">Özgün mühendislikle geliştirilen stabilite algoritmaları ve çift işlemcili uçuş kontrolörü sayesinde üstün havada asılı kalma (hover) kararlılığı sunar.</p>
                             <div class="spec-metrics">
                                 <div class="metric-row">
-                                    <span>Uçuş Kararlılığı:</span>
+                                    <span data-i18n="fico_hs_4_metric_1">Uçuş Kararlılığı:</span>
                                     <div class="metric-bar"><div class="metric-fill" style="--target-width: 98%;"></div></div>
                                 </div>
                                 <div class="metric-row">
-                                    <span>Çift İşlemci Gücü:</span>
+                                    <span data-i18n="fico_hs_4_metric_2">Çift İşlemci Gücü:</span>
                                     <div class="metric-bar"><div class="metric-fill" style="--target-width: 90%;"></div></div>
                                 </div>
                             </div>

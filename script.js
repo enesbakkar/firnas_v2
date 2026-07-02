@@ -93,6 +93,16 @@ const translations = {
         "fico_hs_3_desc": "Üzerindeki yardımcı işlemci kartı sayesinde Python tabanlı görüntü işleme, gerçeğe yakın nesne tespiti ve makine öğrenimi modellerini havada çalıştırır.",
         "fico_hs_4_title": "Gelişmiş Otonom Kart",
         "fico_hs_4_desc": "Özgün mühendislikle geliştirilen stabilite algoritmaları ve çift işlemcili uçuş kontrolörü sayesinde üstün havada asili kalma (hover) kararlılığı sunar.",
+        "fico_hs_1_metric_1": "Hassasiyet (Optik Akış):",
+        "fico_hs_1_metric_2": "Engel Algılama:",
+        "fico_hs_2_metric_1": "Darbe Dayanımı:",
+        "fico_hs_2_metric_2": "Ağırlık Verimliliği:",
+        "fico_hs_3_metric_1": "AI İşlem Kapasitesi:",
+        "fico_hs_3_metric_2": "Gerçek Zamanlı Takip:",
+        "fico_hs_4_metric_1": "Uçuş Kararlılığı:",
+        "fico_hs_4_metric_2": "Çift İşlemci Gücü:",
+        "team_4_role": "Mekanik Tasarım Sorumlusu",
+        "ach_tgb_img_alt": "Türkiye Girişimci Buluşması 1.lik Ödülü",
         "contact_title": "İletişim",
         "contact_socials": "Sosyal Medya",
         "contact_locations_title": "Lokasyonlarımız",
@@ -260,7 +270,11 @@ const translations = {
         "et_pos_1_role": "Sosyal Medya Uzmanı & Proje Koordinatörü",
         "et_pos_2_title": "Firnas Technologies",
         "et_pos_2_role": "Sosyal Medya Uzmanı",
-        "et_close": "Geri Dön / Kapat"
+        "et_close": "Geri Dön / Kapat",
+        "team_3_desc": "Firnas Technologies bünyesindeki yazılım ekibimiz; otonom uçuş kontrol algoritmaları, yapay zeka tabanlı nesne tespiti ve bilgisayarlı görü sistemleri geliştirmektedir.",
+        "offline_title": "BAĞLANTI KESİLDİ",
+        "offline_subtitle": "İnternet bağlantınızı kontrol edip lütfen tekrar deneyin.",
+        "offline_retry": "Tekrar Dene"
     },
     "en": {
         "nav_home": "Home",
@@ -356,6 +370,16 @@ const translations = {
         "fico_hs_3_desc": "Features an on-board coprocessor card that runs Python-based image processing, real-time object detection, and machine learning models in mid-air.",
         "fico_hs_4_title": "Advanced Autonomous Board",
         "fico_hs_4_desc": "Delivers superior hover stability thanks to dual processors and proprietary stability control flight algorithms built on high engineering standards.",
+        "fico_hs_1_metric_1": "Precision (Optical Flow):",
+        "fico_hs_1_metric_2": "Obstacle Detection:",
+        "fico_hs_2_metric_1": "Impact Resistance:",
+        "fico_hs_2_metric_2": "Weight Efficiency:",
+        "fico_hs_3_metric_1": "AI Processing Capacity:",
+        "fico_hs_3_metric_2": "Real-Time Tracking:",
+        "fico_hs_4_metric_1": "Flight Stability:",
+        "fico_hs_4_metric_2": "Dual Processor Power:",
+        "team_4_role": "Mechanical Design Lead",
+        "ach_tgb_img_alt": "Turkey Entrepreneurship Meeting 1st Place Award",
         "contact_title": "Contact",
         "contact_socials": "Social Media",
         "contact_locations_title": "Our Locations",
@@ -523,7 +547,11 @@ const translations = {
         "et_pos_1_role": "Social Media Specialist & Project Coordinator",
         "et_pos_2_title": "Firnas Technologies",
         "et_pos_2_role": "Social Media Specialist",
-        "et_close": "Go Back / Close"
+        "et_close": "Go Back / Close",
+        "team_3_desc": "Our software engineering team develops autonomous flight control algorithms, AI-powered object detection, and computer vision systems.",
+        "offline_title": "CONNECTION LOST",
+        "offline_subtitle": "Please check your internet connection and try again.",
+        "offline_retry": "Retry"
     },
     "ar": {
         "nav_home": "الرئيسية",
@@ -619,6 +647,16 @@ const translations = {
         "fico_hs_3_desc": "يمكّن معالجة الصور المستندة إلى لغة Python واكتشاف الكائنات في الوقت الفعلي ونماذج التعلم الآلي من العمل مباشرة في الهواء.",
         "fico_hs_4_title": "وحدة التحكم المتقدمة في الطيران",
         "fico_hs_4_desc": "توفر وحدة التحكم ثنائية النواة وخوارزميات الاستقرار المطورة محليًا ثباتًا فائقًا في التحليق.",
+        "fico_hs_1_metric_1": "الدقة (التدفق البصري):",
+        "fico_hs_1_metric_2": "كشف العقبات:",
+        "fico_hs_2_metric_1": "مقاومة الصدمات:",
+        "fico_hs_2_metric_2": "كفاءة الوزن:",
+        "fico_hs_3_metric_1": "قدرة معالجة الذكاء الاصطناعي:",
+        "fico_hs_3_metric_2": "التتبع في الوقت الحقيقي:",
+        "fico_hs_4_metric_1": "استقرار الطيران:",
+        "fico_hs_4_metric_2": "قوة المعالج المزدوج:",
+        "team_4_role": "مسؤول التصميم الميكانيكي",
+        "ach_tgb_img_alt": "جائزة المركز الأول في لقاء ريادة الأعمال في تركيا",
         "contact_title": "اتصل بنا",
         "contact_socials": "وسائل التواصل الاجتماعي",
         "contact_locations_title": "مواقعنا",
@@ -786,10 +824,13 @@ const translations = {
         "et_pos_1_role": "أخصائي إعلام اجتماعي ومنسق مشاريع",
         "et_pos_2_title": "Firnas Technologies",
         "et_pos_2_role": "أخصائي إعلام اجتماعي",
-        "et_close": "الرجوع / إغلاق"
+        "et_close": "الرجوع / إغلاق",
+        "team_3_desc": "يقوم فريق هندسة البرمجيات لدينا بتطوير خوارزميات التحكم في الطيران المستقل، واكتشاف الأشياء المدعوم بالذكاء الاصطناعي، وأنظمة الرؤية الحاسوبية.",
+        "offline_title": "تم قطع الاتصال",
+        "offline_subtitle": "يرجى التحقق من اتصال الإنترنت الخاص بك والمحاولة مرة أخرى.",
+        "offline_retry": "أعد المحاولة"
     }
-};
-
+};\n
 function changeLanguage(lang) {
     localStorage.setItem('site_lang', lang);
     window.location.reload();
@@ -868,12 +909,16 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // Translate the page
-    const elementsToTranslate = document.querySelectorAll('[data-i18n]');
+    const elementsToTranslate = document.querySelectorAll('[data-i18n], [data-i18n-alt]');
     if (translations[currentLang]) {
         elementsToTranslate.forEach(el => {
             const key = el.getAttribute('data-i18n');
-            if (translations[currentLang][key]) {
+            if (key && translations[currentLang][key]) {
                 el.innerHTML = translations[currentLang][key];
+            }
+            const altKey = el.getAttribute('data-i18n-alt');
+            if (altKey && translations[currentLang][altKey]) {
+                el.setAttribute('alt', translations[currentLang][altKey]);
             }
         });
 
@@ -948,11 +993,11 @@ document.addEventListener('DOMContentLoaded', () => {
         const subPrefixEl = document.getElementById('hero-sub-prefix');
         
         // Translate prefix & sub-prefix
-        if (prefixEl && translations[currentLang]["hero_prefix"]) {
-            prefixEl.innerHTML = translations[currentLang]["hero_prefix"];
+        if (prefixEl) {
+            prefixEl.innerHTML = translations[currentLang]["hero_prefix"] || "";
         }
-        if (subPrefixEl && translations[currentLang]["hero_sub_prefix"]) {
-            subPrefixEl.innerHTML = translations[currentLang]["hero_sub_prefix"];
+        if (subPrefixEl) {
+            subPrefixEl.innerHTML = translations[currentLang]["hero_sub_prefix"] !== undefined ? translations[currentLang]["hero_sub_prefix"] : "";
         }
         
         const words = [
@@ -1202,26 +1247,53 @@ function activateHotspot(specId) {
 
 // FiCo Terminal Simulator
 let terminalIndex = 0;
-const terminalLines = [
-    "import fico_drone",
-    "drone = fico_drone.connect()",
-    "drone.takeoff(altitude=1.2)",
-    "// [INFO] Uçuş stabilizasyonu aktif.",
-    "drone.detect_object('ball', color='red')",
-    "// [AI] Kırmızı nesne algılandı! Rota güncelleniyor...",
-    "drone.follow_target()",
-    "// [SYSTEM] Otonom STEM görevi tamamlandı."
-];
 
 function typeTerminal() {
     const term = document.getElementById("fico-terminal");
     if (!term) return;
     
+    const currentLang = localStorage.getItem('site_lang') || 'tr';
+    let terminalLines = [];
+    if (currentLang === 'tr') {
+        terminalLines = [
+            "import fico_drone",
+            "drone = fico_drone.connect()",
+            "drone.takeoff(altitude=1.2)",
+            "# [INFO] Uçuş stabilizasyonu aktif.",
+            "drone.detect_object('ball', color='red')",
+            "# [AI] Kırmızı nesne algılandı! Rota güncelleniyor...",
+            "drone.follow_target()",
+            "# [SYSTEM] Otonom STEM görevi tamamlandı."
+        ];
+    } else if (currentLang === 'ar') {
+        terminalLines = [
+            "import fico_drone",
+            "drone = fico_drone.connect()",
+            "drone.takeoff(altitude=1.2)",
+            "# [INFO] استقرار الطيران نشط.",
+            "drone.detect_object('ball', color='red')",
+            "# [AI] تم الكشف عن جسم أحمر! تحديث المسار...",
+            "drone.follow_target()",
+            "# [SYSTEM] اكتملت مهمة STEM المستقلة."
+        ];
+    } else {
+        terminalLines = [
+            "import fico_drone",
+            "drone = fico_drone.connect()",
+            "drone.takeoff(altitude=1.2)",
+            "# [INFO] Flight stabilization active.",
+            "drone.detect_object('ball', color='red')",
+            "# [AI] Red object detected! Updating route...",
+            "drone.follow_target()",
+            "# [SYSTEM] Autonomous STEM mission completed."
+        ];
+    }
+    
     if (terminalIndex < terminalLines.length) {
         let line = terminalLines[terminalIndex];
         let p = document.createElement("p");
         p.style.margin = "0 0 8px 0";
-        if (line.startsWith("//")) {
+        if (line.startsWith("#")) {
             p.style.color = "var(--accent)";
         } else {
             p.style.color = "#a6e22e";
@@ -1248,4 +1320,3 @@ function typeTerminal() {
         }, 5000);
     }
 }
-

@@ -31,16 +31,20 @@
         }
         .project-visual {
             overflow: hidden;
-            border-radius: 28px !important;
-            border: 1px solid rgba(0, 184, 212, 0.18) !important;
-            background: rgba(5, 20, 33, 0.6) !important;
+            background: rgba(5, 20, 33, 0.4) !important;
             display: flex;
             align-items: center;
             justify-content: center;
             padding: 0 !important;
-            aspect-ratio: 16/10;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            width: 100% !important;
+            height: 100% !important;
             position: relative;
+        }
+        @media (max-width: 991px) {
+            .project-visual {
+                aspect-ratio: 16/10 !important;
+                height: auto !important;
+            }
         }
         .product-showcase-img {
             width: 100%;
@@ -70,6 +74,14 @@
             background: linear-gradient(135deg, rgba(15, 46, 74, 0.96) 0%, rgba(5, 20, 33, 0.98) 100%) !important;
             border: 1px solid rgba(0, 184, 212, 0.28) !important;
             box-shadow: 0 15px 35px rgba(15, 46, 74, 0.12), 0 0 25px rgba(0, 184, 212, 0.04) !important;
+            grid-template-columns: 1.2fr 1fr !important;
+            gap: 2.5rem !important;
+        }
+        .project-showcase.reversed {
+            grid-template-columns: 1fr 1.2fr !important;
+        }
+        .project-info {
+            padding: 3rem !important;
         }
 
         .project-showcase:hover {
@@ -86,11 +98,7 @@
             color: #cbd5e1 !important; /* highly legible light grey on dark background */
         }
 
-        /* Align image containers inside the dark theme card */
-        .project-visual {
-            background: rgba(5, 20, 33, 0.4) !important;
-            border: none !important; /* blend seamlessly */
-        }
+
     </style>
     <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
     <noscript><link rel="stylesheet" href="/styles.css"></noscript>
@@ -165,7 +173,7 @@
                 <!-- ÜSKA -->
                 <div class="project-showcase reversed">
                     <div class="project-visual">
-                        <img src="/asset/uska_showcase.png" alt="ÜSKA İnsansız Muharebe Aracı" class="product-showcase-img">
+                        <img src="/asset/uska_corporate.png" alt="ÜSKA İnsansız Muharebe Aracı" class="product-showcase-img fico-img-style">
                     </div>
                     <div class="project-info">
                         <h2 data-i18n="proj_2_title">ÜSKA</h2>
@@ -186,7 +194,7 @@
                         </div>
                     </div>
                     <div class="project-visual">
-                        <img src="/asset/muhafiz_showcase.png" alt="MUHAFIZ Yapay Zeka Hava Savunma" class="product-showcase-img">
+                        <img src="/asset/muhafiz_corporate.png" alt="MUHAFIZ Yapay Zeka Hava Savunma" class="product-showcase-img fico-img-style">
                     </div>
                 </div>
             </div>
