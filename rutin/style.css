@@ -6,47 +6,53 @@
 }
 
 :root {
-  /* HSL Color Tokens for Custom Slate-Teal Glassmorphic UI */
-  --bg-dark: #030712;         /* Pitch black with slate undertone */
-  --bg-panel: rgba(15, 23, 42, 0.65); /* Slate 900 glass card bg */
-  --bg-element: rgba(30, 41, 59, 0.5); /* Slate 800 sub-card elements */
-  --bg-sidebar: #090f1d;      /* Fixed dark sidebar background */
-  --border-color: rgba(6, 182, 212, 0.15); /* Sleek cyan border outline */
-  --border-glow: rgba(6, 182, 212, 0.25);
-  
-  /* Accent Colors */
-  --primary: #06b6d4;         /* Neon Cyan/Teal */
-  --primary-hover: #0891b2;
-  --primary-light: #22d3ee;
-  --primary-glow: rgba(6, 182, 212, 0.3);
-  
-  --accent-gold: #fbbf24;     /* Warm Gold for streaks */
-  --accent-gold-glow: rgba(251, 191, 36, 0.2);
-  
-  --accent-purple: #a855f7;   /* Purple for Night routines */
-  --accent-purple-glow: rgba(168, 85, 247, 0.25);
-  
-  --text-main: #f8fafc;       /* Slate 50 */
-  --text-muted: #94a3b8;      /* Slate 400 */
-  --text-dark: #475569;       /* Slate 600 */
-  
+  /* ── Firnas-inspired Deep Navy × Vivid Cyan Palette ── */
+  --bg-dark: #020d1a;             /* Deep navy-black like Firnas hero */
+  --bg-panel: rgba(10, 25, 50, 0.72); /* Dark navy glass card */
+  --bg-element: rgba(15, 46, 74, 0.55); /* Mid navy element */
+  --bg-sidebar: #060f1e;          /* Deep navy sidebar */
+  --border-color: rgba(0, 184, 212, 0.18);
+  --border-glow:  rgba(0, 184, 212, 0.35);
+
+  /* Primary: Firnas cyan #00b8d4 */
+  --primary:       #00b8d4;
+  --primary-hover: #0097b2;
+  --primary-light: #33d4eb;
+  --primary-glow:  rgba(0, 184, 212, 0.35);
+
+  /* Gold accent */
+  --accent-gold:      #f59e0b;
+  --accent-gold-glow: rgba(245, 158, 11, 0.25);
+
+  /* Purple accent */
+  --accent-purple:      #818cf8;
+  --accent-purple-glow: rgba(129, 140, 248, 0.28);
+
+  /* Electric green accent (new) */
+  --accent-green:      #10d9a0;
+  --accent-green-glow: rgba(16, 217, 160, 0.25);
+
+  --text-main:  #e8f4fc;
+  --text-muted: #7eb8cc;
+  --text-dark:  #3a6b84;
+
   /* Statuses */
-  --danger: #ef4444;          /* Red */
-  --success: #10b981;         /* Green */
-  --warning: #f59e0b;         /* Yellow */
-  
+  --danger:  #f43f5e;
+  --success: #10d9a0;
+  --warning: #f59e0b;
+
   /* Typography & Transitions */
   --font-sans: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-fast:   0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  
+
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 20px;
-  
-  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.1);
-  --shadow-md: 0 10px 30px rgba(0, 0, 0, 0.35);
-  --shadow-glow: 0 0 15px var(--primary-glow);
+
+  --shadow-sm:   0 4px 12px rgba(0, 0, 0, 0.2);
+  --shadow-md:   0 12px 35px rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px var(--primary-glow);
 }
 
 body {
@@ -57,31 +63,33 @@ body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
   overflow-x: hidden;
-  /* Deep base ambient glow layers */
-  background-image: 
-    radial-gradient(circle at 10% 20%, rgba(6, 182, 212, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 90% 80%, rgba(168, 85, 247, 0.07) 0%, transparent 50%),
-    radial-gradient(circle at 50% 50%, rgba(3, 7, 18, 0.5) 0%, var(--bg-dark) 100%);
-  background-size: 100% 100%, 100% 100%, 100% 100%;
+  /* Firnas-style layered gradient orb background */
+  background-image:
+    radial-gradient(circle at 12% 18%,  rgba(0, 184, 212, 0.14) 0%, transparent 45%),
+    radial-gradient(circle at 88% 78%,  rgba(129, 140, 248, 0.12) 0%, transparent 45%),
+    radial-gradient(circle at 50% 95%,  rgba(16, 217, 160, 0.08) 0%, transparent 40%),
+    radial-gradient(circle at 75% 10%,  rgba(0, 184, 212, 0.07) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%,  rgba(2, 13, 26, 0.6) 0%, var(--bg-dark) 100%);
+  background-size: 100% 100%;
   background-attachment: fixed;
-  isolation: isolate; /* Create a stacking context so z-index children render correctly */
+  isolation: isolate;
 }
 
-/* Advanced cybernetic mesh grid with glowing intersection dots */
+/* Firnas-style dot mesh grid */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
-  background-image: 
-    radial-gradient(rgba(6, 182, 212, 0.28) 1.5px, transparent 1.5px),
-    linear-gradient(rgba(6, 182, 212, 0.08) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(6, 182, 212, 0.08) 1px, transparent 1px);
-  background-size: 55px 55px, 55px 55px, 55px 55px;
+  background-image:
+    radial-gradient(rgba(0, 184, 212, 0.22) 1.5px, transparent 1.5px),
+    linear-gradient(rgba(0, 184, 212, 0.06) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 184, 212, 0.06) 1px, transparent 1px);
+  background-size: 48px 48px, 48px 48px, 48px 48px;
   background-position: center;
   pointer-events: none;
-  z-index: -2; /* Sits above background and orbs, but below content */
-  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 20%, rgba(0, 0, 0, 0.15) 85%, transparent 100%);
-  mask-image: radial-gradient(circle at 50% 50%, black 20%, rgba(0, 0, 0, 0.15) 85%, transparent 100%);
+  z-index: -2;
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, black 15%, rgba(0,0,0,0.1) 80%, transparent 100%);
+  mask-image:         radial-gradient(circle at 50% 50%, black 15%, rgba(0,0,0,0.1) 80%, transparent 100%);
 }
 
 /* Soft dark vignette shadow framing the dashboard screen */
@@ -294,6 +302,19 @@ body::after {
 .btn-secondary:hover {
   background-color: rgba(30, 41, 59, 0.8);
   border-color: var(--primary-light);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: #ffffff;
+}
+.btn-danger:hover {
+  background-color: #f87171;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.2);
+  transform: translateY(-1px);
+}
+.btn-danger:active {
+  transform: translateY(0);
 }
 
 .btn-sm {
@@ -559,6 +580,17 @@ body::after {
 .sidebar-nav .sync-settings-btn:hover {
   border-style: solid !important;
   border-color: var(--primary-light) !important;
+}
+
+/* ================= MOBILE-ONLY UTILITIES ================= */
+.mobile-only {
+  display: none !important;
+}
+
+@media (max-width: 1023px) {
+  .mobile-only {
+    display: block !important;
+  }
 }
 
 /* ================= MOBILE BOTTOM NAVIGATION & HEADER ================= */
@@ -1452,6 +1484,7 @@ body::after {
   .blocks-grid {
     display: flex !important;
     flex-direction: column !important;
+    align-items: stretch !important;
   }
 
   .blocks-column {
@@ -1469,15 +1502,20 @@ body::after {
     bottom: 0;
     left: 0;
     width: 100%;
-    height: 4.5rem;
+    height: 4.25rem;
     background-color: rgba(9, 15, 29, 0.95);
     border-top: 1px solid var(--border-color);
-    justify-content: space-around;
+    justify-content: space-between;
     align-items: center;
     z-index: 150;
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
+    padding: 0 1.5rem;
     padding-bottom: env(safe-area-inset-bottom); /* iOS notch compatibility */
+  }
+
+  .mobile-tabs::-webkit-scrollbar {
+    display: none; /* Hide scrollbar Chrome/Safari */
   }
 
   .mobile-tabs .tab-btn {
@@ -1488,9 +1526,10 @@ body::after {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 0.3rem;
+    gap: 0.25rem;
     cursor: pointer;
-    width: 30%;
+    flex: 1 1 0;
+    width: auto;
     height: 100%;
     font-family: inherit;
     transition: var(--transition-fast);
@@ -1502,8 +1541,9 @@ body::after {
   }
 
   .mobile-tabs .tab-btn span {
-    font-size: 0.75rem;
+    font-size: 0.68rem;
     font-weight: 500;
+    white-space: nowrap;
   }
 
   .mobile-tabs .tab-btn.active {
@@ -1601,7 +1641,7 @@ body::after {
 
   /* Padding for layout view content to account for top header & bottom nav */
   .dashboard-content {
-    padding: 1.25rem 1rem;
+    padding: 1.25rem 1.5rem;
     padding-bottom: 6rem; /* extra spacing for bottom menu bar */
   }
 
@@ -1619,6 +1659,37 @@ body::after {
     order: 1;
     position: relative;
     top: 0;
+  }
+
+  .daily-navigator-card {
+    padding: 1rem !important;
+  }
+
+  .progress-showcase {
+    padding: 0.25rem 0 !important;
+  }
+
+  .progress-ring-outer {
+    width: 110px !important;
+    height: 110px !important;
+  }
+
+  .progress-ring-svg {
+    width: 110px !important;
+    height: 110px !important;
+  }
+
+  .progress-text-box .percent-val {
+    font-size: 1.35rem !important;
+  }
+
+  .progress-text-box .percent-label {
+    font-size: 0.55rem !important;
+  }
+
+  .daily-status-inspirational {
+    padding: 0.4rem 0.6rem !important;
+    font-size: 0.75rem !important;
   }
 
   /* Split KPI Cards into 2x2 grid */
@@ -1833,6 +1904,9 @@ body::after {
 .modal-card {
   width: 90%;
   max-width: 440px;
+  max-height: 90vh;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
   background: rgba(15, 23, 42, 0.85);
   border: 1px solid var(--border-color);
   border-top: 4px solid var(--primary);
@@ -1841,6 +1915,17 @@ body::after {
   box-shadow: var(--shadow-md);
   position: relative;
   animation: modalScaleIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.modal-card::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-card::-webkit-scrollbar-track {
+  background: transparent;
+}
+.modal-card::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
 }
 
 @keyframes modalScaleIn {
@@ -2246,29 +2331,225 @@ body::after {
   font-size: 0.95rem;
   margin-top: 0.25rem;
 }
+/* ===== PREMIUM WEATHER CARD — Firnas × Dark Glassmorphic ===== */
 .brief-weather-card {
-  background: rgba(3, 7, 18, 0.4);
-  padding: 0.85rem 1.25rem;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--border-color);
-  text-align: right;
-  min-width: 170px;
+  position: relative;
+  width: 300px;
+  min-height: 150px;
+  padding: 1.25rem 1.4rem;
+  background:
+    linear-gradient(135deg,
+      rgba(0, 184, 212, 0.14) 0%,
+      rgba(10, 25, 50, 0.85) 60%,
+      rgba(15, 46, 74, 0.9) 100%);
+  border: 1px solid rgba(0, 184, 212, 0.3);
+  border-radius: 20px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  box-shadow:
+    0 0 0 1px rgba(0, 184, 212, 0.1) inset,
+    0 4px 24px rgba(0, 0, 0, 0.55),
+    0 0 40px rgba(0, 184, 212, 0.08);
+  transition: all 0.5s cubic-bezier(0.15, 0.83, 0.66, 1);
+  cursor: pointer;
+  overflow: hidden;
+  flex-shrink: 0;
 }
-.weather-main {
+
+/* Animated top-edge glow line */
+.brief-weather-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 10%; right: 10%;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent,
+    rgba(0, 184, 212, 0.8) 40%,
+    rgba(51, 212, 235, 0.9) 60%,
+    transparent);
+  animation: weather-edge-pulse 3s ease-in-out infinite;
+}
+@keyframes weather-edge-pulse {
+  0%, 100% { opacity: 0.4; transform: scaleX(0.8); }
+  50%       { opacity: 1;   transform: scaleX(1); }
+}
+
+/* Corner accent dot */
+.brief-weather-card::after {
+  content: '';
+  position: absolute;
+  top: 12px; right: 12px;
+  width: 6px; height: 6px;
+  background: var(--primary);
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--primary), 0 0 16px var(--primary-glow);
+  animation: weather-dot-blink 2s ease-in-out infinite;
+}
+@keyframes weather-dot-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.3; }
+}
+
+.brief-weather-card:hover {
+  transform: translateY(-4px) scale(1.02);
+  border-color: rgba(0, 184, 212, 0.5);
+  box-shadow:
+    0 0 0 1px rgba(0, 184, 212, 0.2) inset,
+    0 8px 40px rgba(0, 0, 0, 0.6),
+    0 0 60px rgba(0, 184, 212, 0.15);
+}
+
+/* Header: city name + temp */
+.weather-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 0.85rem;
+  position: relative;
+  z-index: 2;
+}
+.weather-card-header #weather-desc {
+  font-weight: 700;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-muted);
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  word-break: break-word;
+  max-width: 140px;
+}
+.weather-temp-display {
+  font-weight: 800;
+  font-size: 2.2rem;
+  line-height: 1;
+  color: var(--primary-light);
+  text-shadow: 0 0 20px rgba(0, 184, 212, 0.5);
+  letter-spacing: -0.02em;
+}
+
+/* Animated cloud + sun scene */
+.weather-scene-container {
+  width: 170px;
+  height: 170px;
+  position: absolute;
+  right: -20px;
+  bottom: -30px;
   display: flex;
   align-items: center;
-  justify-content: flex-end;
-  gap: 0.5rem;
-  font-size: 1.35rem;
+  justify-content: center;
+  transform: scale(0.65);
+  pointer-events: none;
+  opacity: 0.55;
+  filter: hue-rotate(180deg) saturate(1.5) brightness(1.2);
+}
+
+/* Sun (now looks cyan in dark mode via hue-rotate) */
+.weather-sun {
+  width: 110px;
+  height: 110px;
+  border-radius: 60px;
+  display: inline-block;
+  position: absolute;
+}
+.weather-sun-core {
+  width: 110px;
+  height: 110px;
+  background: linear-gradient(to right, #fcbb04, #fffc00);
+  border-radius: 60px;
+  position: absolute;
+}
+.weather-sun-shine {
+  width: 110px;
+  height: 110px;
+  background: linear-gradient(to right, #fcbb04, #fffc00);
+  border-radius: 60px;
+  position: absolute;
+  animation: weather-sunshines 2s infinite;
+}
+@keyframes weather-sunshines {
+  0%   { transform: scale(1);   opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Clouds */
+.weather-cloud {
+  width: 200px;
+  display: inline-flex;
+  align-items: flex-end;
+}
+.weather-cloud-front {
+  padding-top: 40px;
+  margin-left: 20px;
+  position: absolute;
+  z-index: 11;
+  animation: weather-clouds 8s infinite ease-in-out;
+}
+.weather-cloud-back {
+  margin-top: -25px;
+  margin-left: 120px;
+  z-index: 12;
+  animation: weather-clouds 12s infinite ease-in-out;
+}
+.weather-cloud-right-front {
+  width: 40px; height: 40px;
+  border-radius: 50% 50% 50% 0%;
+  background-color: #4c9beb;
+  display: inline-block;
+  margin-left: -22px;
+  z-index: 5;
+}
+.weather-cloud-left-front {
+  width: 58px; height: 58px;
+  border-radius: 50% 50% 0% 50%;
+  background-color: #4c9beb;
+  display: inline-block;
+  z-index: 5;
+}
+.weather-cloud-right-back {
+  width: 44px; height: 44px;
+  border-radius: 50% 50% 50% 0%;
+  background-color: #4c9beb;
+  display: inline-block;
+  margin-left: -18px;
+  z-index: 5;
+}
+.weather-cloud-left-back {
+  width: 26px; height: 26px;
+  border-radius: 50% 50% 0% 50%;
+  background-color: #4c9beb;
+  display: inline-block;
+  z-index: 5;
+}
+@keyframes weather-clouds {
+  0%   { transform: translateX(15px); }
+  50%  { transform: translateX(0px); }
+  100% { transform: translateX(15px); }
+}
+
+/* Bottom condition pill */
+.weather-temp-scale {
+  position: absolute;
+  left: 1.4rem;
+  bottom: 1rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 12px;
+  background: rgba(0, 184, 212, 0.12);
+  border: 1px solid rgba(0, 184, 212, 0.25);
+  border-radius: 20px;
+  backdrop-filter: blur(8px);
+  z-index: 3;
+}
+.weather-temp-scale #weather-icon {
   font-weight: 700;
+  font-size: 11px;
   color: var(--primary-light);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
 }
-#weather-desc {
-  font-size: 0.75rem;
-  color: var(--text-muted);
-  display: block;
-  margin-top: 0.15rem;
-}
+
 .ayah-card {
   padding: 2rem;
   position: relative;
@@ -2655,14 +2936,15 @@ body::after {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 1rem;
-  padding: 1rem 1.5rem;
+  gap: 0.75rem;
+  padding: 0.85rem 1.25rem;
   border-radius: var(--radius-lg);
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
   background: rgba(30, 41, 59, 0.25);
   border: 1px solid var(--border-color);
   backdrop-filter: blur(12px);
   flex-wrap: wrap;
+  row-gap: 0.75rem;
 }
 .fin-month-selector {
   display: flex;
@@ -2698,13 +2980,17 @@ body::after {
 }
 .finflow-subtabs {
   display: flex;
+  flex-wrap: wrap;
   background: rgba(3, 7, 18, 0.4);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  padding: 0.25rem;
+  padding: 0.2rem;
+  gap: 0;
+  min-width: 0;
+  flex: 1 1 auto;
 }
 .fin-subtab-btn {
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 0.75rem;
   border-radius: 6px;
   background: transparent;
   border: none;
@@ -2712,7 +2998,10 @@ body::after {
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
-  font-size: 0.85rem;
+  font-size: 0.8rem;
+  white-space: nowrap;
+  flex: 1 1 auto;
+  text-align: center;
 }
 .fin-subtab-btn:hover {
   color: var(--text-main);
@@ -2724,11 +3013,13 @@ body::after {
 .fin-floating-add-btn {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.4rem;
   font-weight: 600;
-  padding: 0.6rem 1.2rem;
+  padding: 0.55rem 1rem;
   border-radius: var(--radius-md);
   box-shadow: 0 4px 15px rgba(0, 168, 204, 0.2);
+  white-space: nowrap;
+  flex-shrink: 0;
 }
 .fin-floating-add-btn .plus-icon {
   font-size: 1.1rem;
@@ -2749,30 +3040,33 @@ body::after {
 .fin-daily-summary-bar {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  padding: 1.25rem;
+  padding: 1rem;
   border-radius: var(--radius-md);
   margin-bottom: 1.25rem;
   background: rgba(30, 41, 59, 0.15);
   border: 1px solid var(--border-color);
   text-align: center;
+  gap: 0;
 }
 .summary-item {
   display: flex;
   flex-direction: column;
-  gap: 0.25rem;
+  gap: 0.2rem;
+  padding: 0.5rem 0.25rem;
 }
 .summary-item:not(:last-child) {
   border-right: 1px solid var(--border-color);
 }
 .summary-item .label {
-  font-size: 0.75rem;
+  font-size: 0.65rem;
   color: var(--text-muted);
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.4px;
+  line-height: 1.3;
 }
 .summary-item .value {
-  font-size: 1.3rem;
+  font-size: 1.1rem;
   font-weight: 700;
   font-family: 'Outfit', sans-serif;
 }
@@ -3197,6 +3491,19 @@ body::after {
 .account-card.business {
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.12) 0%, rgba(109, 40, 217, 0.03) 100%);
 }
+/* Dynamically-created accounts — 4 rotating gradient styles */
+.account-card.acc-color-0 {
+  background: linear-gradient(135deg, rgba(0, 184, 212, 0.12) 0%, rgba(0, 100, 140, 0.03) 100%);
+}
+.account-card.acc-color-1 {
+  background: linear-gradient(135deg, rgba(16, 217, 160, 0.12) 0%, rgba(4, 120, 87, 0.03) 100%);
+}
+.account-card.acc-color-2 {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(180, 83, 9, 0.03) 100%);
+}
+.account-card.acc-color-3 {
+  background: linear-gradient(135deg, rgba(129, 140, 248, 0.12) 0%, rgba(79, 70, 229, 0.03) 100%);
+}
 .account-card-header {
   display: flex;
   justify-content: space-between;
@@ -3226,7 +3533,7 @@ body::after {
   justify-content: flex-end;
   margin-top: 1rem;
 }
-.account-card-adjust-btn {
+.account-card-adjust-btn, .account-card-edit-btn {
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-color);
   padding: 0.4rem 0.85rem;
@@ -3237,7 +3544,7 @@ body::after {
   cursor: pointer;
   transition: all var(--transition-fast);
 }
-.account-card-adjust-btn:hover {
+.account-card-adjust-btn:hover, .account-card-edit-btn:hover {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-main);
   border-color: rgba(255,255,255,0.2);
@@ -3375,7 +3682,8 @@ body::after {
 }
 .fin-modal-form select,
 .fin-modal-form input[type=date],
-.fin-modal-form input[type=text] {
+.fin-modal-form input[type=text],
+.fin-modal-form input[type=number] {
   width: 100%;
   padding: 0.75rem 1rem;
   background-color: rgba(3, 7, 18, 0.45);
@@ -3388,8 +3696,10 @@ body::after {
 }
 .fin-modal-form select:focus,
 .fin-modal-form input[type=date]:focus,
-.fin-modal-form input[type=text]:focus {
+.fin-modal-form input[type=text]:focus,
+.fin-modal-form input[type=number]:focus {
   border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(0, 184, 212, 0.15);
 }
 
 .category-grid {
@@ -3530,6 +3840,87 @@ body::after {
     display: grid;
     grid-template-columns: 1fr 1.2fr;
     gap: 2rem;
+  }
+}
+
+/* ===== FINFLOW MOBILE FIXES (≤480px) ===== */
+@media (max-width: 480px) {
+  .finflow-nav-container {
+    padding: 0.75rem 1rem;
+    gap: 0.6rem;
+  }
+
+  /* Month selector + subtabs on same row, add btn below */
+  .fin-month-selector {
+    order: 0;
+    flex: 0 0 auto;
+  }
+  .finflow-subtabs {
+    order: 2;
+    width: 100%;
+    flex: 1 1 100%;
+  }
+  .fin-subtab-btn {
+    font-size: 0.72rem;
+    padding: 0.4rem 0.3rem;
+    flex: 1;
+  }
+  .fin-floating-add-btn {
+    order: 1;
+    flex: 1 1 auto;
+    justify-content: center;
+    padding: 0.5rem 0.75rem;
+    font-size: 0.82rem;
+  }
+  .fin-floating-add-btn .plus-icon {
+    font-size: 1rem;
+  }
+
+  /* Summary bar — make values fit */
+  .summary-item .value {
+    font-size: 0.95rem;
+  }
+  .summary-item .label {
+    font-size: 0.58rem;
+  }
+
+  /* Accounts grid — single column */
+  .accounts-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Modal full screen on mobile */
+  .fin-modal-overlay {
+    padding: 0;
+  }
+  .fin-modal-content {
+    margin: 0;
+    min-height: 100dvh;
+    border-radius: 0;
+    display: flex;
+    flex-direction: column;
+  }
+  .fin-modal-form {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  /* Account card adjust/edit buttons larger tap target */
+  .account-card-edit-btn,
+  .account-card-adjust-btn {
+    padding: 0.55rem 1.1rem;
+    font-size: 0.8rem;
+  }
+
+  /* Emoji grid larger on mobile */
+  .emoji-selector-grid {
+    grid-template-columns: repeat(6, 1fr);
+  }
+  .emoji-btn {
+    font-size: 1.4rem;
+    padding: 0.55rem;
   }
 }
 
@@ -3734,4 +4125,36 @@ body::after {
     width: 100%;
     height: 180px;
   }
+}
+
+/* Emoji Picker Grid */
+.emoji-selector-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.emoji-btn {
+  background: rgba(3, 7, 18, 0.4);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  font-size: 1.25rem;
+  padding: 0.5rem 0;
+  cursor: pointer;
+  transition: var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.emoji-btn:hover {
+  background: rgba(6, 182, 212, 0.15);
+  border-color: rgba(6, 182, 212, 0.3);
+}
+
+.emoji-btn.active {
+  background: var(--primary-glow);
+  border-color: var(--primary);
+  box-shadow: 0 0 8px var(--primary-glow);
 }

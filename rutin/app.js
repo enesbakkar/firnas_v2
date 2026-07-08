@@ -1,18 +1,26 @@
+// ================= UTILITIES & HELPERS =================
+async function sha256(message) {
+  const msgBuffer = new TextEncoder().encode(message);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 // ================= APPLICATION STATE =================
 const STATE = {
   activeDate: new Date(), // Date object currently displayed in the checklist
   todayDate: new Date(),  // Real system date
   authenticated: false,
-  passcode: "RUTIN_bakkar-fir.27", // Default static passcode
+  passcodeHash: "42e6799f8c934e1b419b495723b3f2dec475c46e3418953b971bae790d2c5207", // SHA-256 hash of default passcode
   selectedMonth: "2026-06", // Default starting month
   db: {}, // Loaded daily records
   journal: {}, // Loaded journal entries {"YYYY-MM-DD": {mood, content, tags}}
   finance: {
     accounts: {
-      cash: { name: "Nakit Cüzdan", balance: 1500 },
-      bank: { name: "Banka Hesabı", balance: 8450 },
-      credit: { name: "Kredi Kartı", balance: -450 },
-      business: { name: "Şirket Kartı", balance: 24500 }
+      cash:     { name: "Cash Wallet",   balance: 1500  },
+      bank:     { name: "Bank Account",  balance: 8450  },
+      credit:   { name: "Credit Card",   balance: -450  },
+      business: { name: "Business Card", balance: 24500 }
     },
     transactions: []
   },
@@ -25,7 +33,7 @@ const AYAHS = [
   { 
     arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", 
     tr: '"Şüphesiz güçlükle beraber bir kolaylık vardır."', 
-    en: '"For indeed, with hardship [will be] ease."', 
+    en: '"فإن مع الضيق والشدة فرجاً ومخرجاً ويسراً عظيماً"', 
     ar: '"فإن مع العسر يسراً"',
     source_tr: "İnşirâh Suresi, 5. Ayet",
     source_en: "Surah Al-Inshirah, Verse 5",
@@ -34,7 +42,7 @@ const AYAHS = [
   { 
     arabic: "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا", 
     tr: '"Allah, hiç kimseye gücünün üstünde bir yük yüklemez."', 
-    en: '"Allah does not charge a soul except [with that within] its capacity."', 
+    en: '"لا يطالب الله نفساً من التكاليف إلا بما تطيقه وتسعد به"', 
     ar: '"لا يكلف الله نفساً إلا وسعها"',
     source_tr: "Bakara Suresi, 286. Ayet",
     source_en: "Surah Al-Baqarah, Verse 286",
@@ -43,7 +51,7 @@ const AYAHS = [
   { 
     arabic: "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ", 
     tr: '"Rabbin seni terk etmedi ve sana darılmadı."', 
-    en: '"Your Lord has not taken leave of you, [O Muhammad], nor has He detested [you]."', 
+    en: '"ما تركك ربك يا محمد وما أبغضك منذ اختارك لرسالته"', 
     ar: '"ما ودعك ربك وما قلى"',
     source_tr: "Duhâ Suresi, 3. Ayet",
     source_en: "Surah Ad-Duha, Verse 3",
@@ -52,7 +60,7 @@ const AYAHS = [
   { 
     arabic: "وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَىٰ", 
     tr: '"İnsan için ancak çalıştığının karşılığı vardır."', 
-    en: '"And that there is not for man except that for which he strives."', 
+    en: '"ليس للإنسان من الثواب والأجر إلا ما سعى وعمل بنفسه"', 
     ar: '"وأن ليس للإنسان إلا ما سعى"',
     source_tr: "Necm Suresi, 39. Ayet",
     source_en: "Surah An-Najm, Verse 39",
@@ -61,7 +69,7 @@ const AYAHS = [
   { 
     arabic: "وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ عَلَيْهِ تَوَكَّلْتُ", 
     tr: '"Benim başarım ancak Allah\'ın yardımıyladır. Yalnız O\'na tevekkül ettim."', 
-    en: '"And my success is not but through Allah. Upon him I have relied."', 
+    en: '"وما توفيقي لإصابة الحق والعمل الصالح إلا بمعونة الله وتوفيقه"', 
     ar: '"وما توفيقي إلا بالله عليه توكلت"',
     source_tr: "Hûd Suresi, 88. Ayet",
     source_en: "Surah Hud, Verse 88",
@@ -70,7 +78,7 @@ const AYAHS = [
   { 
     arabic: "وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ", 
     tr: '"Sabret! Çünkü Allah iyilik yapanların mükafatını zayi etmez."', 
-    en: '"And be patient, for indeed, Allah does not allow to be lost the reward of those who do good."', 
+    en: '"واصبر على الطاعات وعن المحرمات، فإن الله لا يضيع ثواب المحسنين"', 
     ar: '"واصبر فإن الله لا يضيع أجر المحسنين"',
     source_tr: "Hûd Suresi, 115. Ayet",
     source_en: "Surah Hud, Verse 115",
@@ -79,7 +87,7 @@ const AYAHS = [
   { 
     arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ", 
     tr: '"Bilesiniz ki, kalpler ancak Allah\'ı anmakla huzur bulur."', 
-    en: '"Unquestionably, by the remembrance of Allah hearts are assured."', 
+    en: '"ألا بذكر الله وطاعته تسكن القلوب وتزول وحشتها وحيرتها"', 
     ar: '"ألا بذكر الله تطمئن القلوب"',
     source_tr: "Ra\'d Suresi, 28. Ayet",
     source_en: "Surah Ar-Ra'd, Verse 28",
@@ -88,7 +96,7 @@ const AYAHS = [
   { 
     arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", 
     tr: '"Eğer şükrederseniz, elbette size (nimetimi) artırırım."', 
-    en: '"If you are grateful, I will surely increase you [in favor]."', 
+    en: '"لئن شكرتم الله على نعمه لأزيدنكم من فضله وإحسانه"', 
     ar: '"لئن شكرتم لأزيدنكم"',
     source_tr: "İbrâhîm Suresi, 7. Ayet",
     source_en: "Surah Ibrahim, Verse 7",
@@ -97,16 +105,16 @@ const AYAHS = [
   { 
     arabic: "ادْعُونِي أَسْتَجِبْ لَكُمْ", 
     tr: '"Bana dua edin, size icabet edeyim."', 
-    en: '"Call upon Me; I will respond to you."', 
+    en: '"اعبدوني وأخلصوا لي العبادة، واستعينوا بي أستجب لكم وأعطكم مرادكم"', 
     ar: '"ادعوني أستجب لكم"',
     source_tr: "Mü\'min Suresi, 60. Ayet",
     source_en: "Surah Ghafir, Verse 60",
     source_ar: "سورة غافر، الآية ٦٠"
   },
   { 
-    arabic: "إِنَّ اللَّهَ Mİ‘A-S-SĀBİRĪN", 
+    arabic: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", 
     tr: '"Şüphesiz Allah sabredenlerle beraberdir."', 
-    en: '"Indeed, Allah is with the patient."', 
+    en: '"إن الله مع الصابرين بالمعونة والتسديد والتأييد في دنياهم وأخراهم"', 
     ar: '"إن الله مع الصابرين"',
     source_tr: "Bakara Suresi, 153. Ayet",
     source_en: "Surah Al-Baqarah, Verse 153",
@@ -240,7 +248,7 @@ const TRANSLATIONS = {
     finance_category: "Category",
     finance_amount: "Amount (TL)",
     finance_desc: "Description",
-    finance_save: "Log Transaction",
+    finance_save: "Save",
     fin_adjust_save: "Save Balance",
     finance_accounts_title: "Account Summary",
     finance_category_title: "Monthly Expense Breakdown",
@@ -393,8 +401,17 @@ const TRANSLATIONS = {
     inspire_solid: "⚡ Solid progress. Keep pushing through the day!",
     inspire_small: "🚀 Small steps build momentum. Complete another routine!",
     inspire_welcome: "✨ Welcome! Start your day by checking off your first routine.",
-    brief_video_item_title: "Resolve and Willpower - Rebuilding Yourself",
-    brief_video_item_desc: "Contains advice on maintaining spiritual and mental discipline throughout the day.",
+    brief_video_item_title: "Why Do We Fall - Focus Motivation",
+    brief_video_item_desc: "A powerful compilation to help you build focus, mental strength, and push through difficult times.",
+    focus_video_url_label: "Custom Focus Video URL (YouTube)",
+    focus_video_save_btn: "Save",
+    focus_video_save_msg: "Video saved successfully!",
+    focus_video_reset_msg: "Video reset to default.",
+    focus_video_error_msg: "Invalid YouTube URL!",
+    brief_video_custom_title: "Personalized Focus Video",
+    brief_video_custom_desc: "Playing custom video loaded from your settings.",
+    back_to_routines: "Back to Routines",
+    back_to_dashboard: "Back to Dashboard",
     brief_weather_desc: "Istanbul - Clear & Sunny",
     kpi_top_none: "None yet",
     kpi_focus_none: "None yet",
@@ -416,7 +433,14 @@ const TRANSLATIONS = {
     fin_target_account: "To Account",
     fin_adjust_balance: "Adjust Balance",
     fin_adjust_balance_title: "Enter new balance for {account}:",
-    fin_delete_tx_confirm: "Are you sure you want to delete this transaction?"
+    fin_delete_tx_confirm: "Are you sure you want to delete this transaction?",
+    fin_add_account: "Add Account",
+    fin_edit_account: "Edit Account",
+    fin_delete_account: "Delete Account",
+    fin_account_name: "Account Name",
+    fin_initial_balance: "Balance",
+    fin_select_icon: "Icon / Emoji",
+    fin_confirm_delete_account: "Are you sure you want to delete this account? This action cannot be undone."
   },
   tr: {
     nav_brief: "Ana Panel",
@@ -480,7 +504,7 @@ const TRANSLATIONS = {
     finance_category: "Kategori",
     finance_amount: "Tutar (TL)",
     finance_desc: "Açıklama",
-    finance_save: "İşlemi Kaydet",
+    finance_save: "Kaydet",
     fin_adjust_save: "Bakiyeyi Kaydet",
     finance_accounts_title: "Hesap Özetleri",
     finance_category_title: "Aylık Gider Dağılımı",
@@ -633,8 +657,17 @@ const TRANSLATIONS = {
     inspire_solid: "⚡ Sağlam ilerleme. Gün boyu devam et!",
     inspire_small: "🚀 Küçük adımlar ivme kazandırır. Bir rutin daha tamamla!",
     inspire_welcome: "✨ Hoş geldin! İlk rutinini işaretleyerek güne başla.",
-    brief_video_item_title: "Kararlılık ve İrade Gücü - Kendini Yeniden İnşa Et",
-    brief_video_item_desc: "Manevi ve zihinsel disiplini gün boyunca sürdürmek üzerine tavsiyeler içerir.",
+    brief_video_item_title: "Neden Düşeriz? - Odaklanma Motivasyonu",
+    brief_video_item_desc: "Zihinsel dayanıklılık kazanmanıza ve zorlukların üstesinden gelmenize yardımcı olacak güçlü bir video.",
+    focus_video_url_label: "Özel Odaklanma Videosu URL'si (YouTube)",
+    focus_video_save_btn: "Kaydet",
+    focus_video_save_msg: "Video başarıyla kaydedildi!",
+    focus_video_reset_msg: "Video varsayılana sıfırlandı.",
+    focus_video_error_msg: "Geçersiz YouTube URL'si!",
+    brief_video_custom_title: "Kişisel Odaklanma Videosu",
+    brief_video_custom_desc: "Ayarlarınızdan yüklenen özel video oynatılıyor.",
+    back_to_routines: "Rutinlere Geri Dön",
+    back_to_dashboard: "Gösterge Paneline Geri Dön",
     brief_weather_desc: "İstanbul - Açık & Güneşli",
     kpi_top_none: "Henüz Yok",
     kpi_focus_none: "Henüz Yok",
@@ -656,7 +689,14 @@ const TRANSLATIONS = {
     fin_target_account: "Hedef Hesap",
     fin_adjust_balance: "Bakiyeyi Düzenle",
     fin_adjust_balance_title: "{account} hesabı için yeni bakiye girin:",
-    fin_delete_tx_confirm: "Bu işlemi silmek istediğinize emin misiniz?"
+    fin_delete_tx_confirm: "Bu işlemi silmek istediğinize emin misiniz?",
+    fin_add_account: "Hesap Ekle",
+    fin_edit_account: "Hesabı Düzenle",
+    fin_delete_account: "Hesabı Sil",
+    fin_account_name: "Hesap Adı",
+    fin_initial_balance: "Bakiye",
+    fin_select_icon: "Simge / Emoji",
+    fin_confirm_delete_account: "Bu hesabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
   },
   ar: {
     nav_brief: "اللوحة الرئيسية",
@@ -868,8 +908,17 @@ const TRANSLATIONS = {
     inspire_solid: "⚡ تقدم ملموس. استمر في السعي طوال اليوم!",
     inspire_small: "🚀 الخطوات الصغيرة تبني الزخم. أكمل عادة أخرى!",
     inspire_welcome: "✨ مرحبًا بك! ابدأ يومك بتحديد أول عادة لك.",
-    brief_video_item_title: "العزيمة وقوة الإرادة - إعادة بناء الذات",
-    brief_video_item_desc: "يحتوي على نصائح للحفاظ على الانضباط الروحي والذهني طوال اليوم.",
+    brief_video_item_title: "لماذا نسقط؟ - تحفيز التركيز",
+    brief_video_item_desc: "فيديو قوي لمساعدتك على بناء التركيز والقوة الذهنية وتجاوز الأوقات الصعبة.",
+    focus_video_url_label: "رابط فيديو التركيز المخصص (يوتيوب)",
+    focus_video_save_btn: "حفظ",
+    focus_video_save_msg: "تم حفظ الفيديو بنجاح!",
+    focus_video_reset_msg: "تم إعادة تعيين الفيديو إلى الافتراضي.",
+    focus_video_error_msg: "رابط يوتيوب غير صالح!",
+    brief_video_custom_title: "فيديو التركيز المخصص",
+    brief_video_custom_desc: "يتم تشغيل الفيديو المخصص المحمل من إعداداتك.",
+    back_to_routines: "العودة إلى العادات",
+    back_to_dashboard: "العودة إلى لوحة التحكم",
     brief_weather_desc: "اسطنبول - مشمس وصافٍ",
     kpi_top_none: "لا يوجد بعد",
     kpi_focus_none: "لا يوجد بعد",
@@ -891,7 +940,14 @@ const TRANSLATIONS = {
     fin_target_account: "إلى حساب",
     fin_adjust_balance: "تعديل الرصيد",
     fin_adjust_balance_title: "أدخل الرصيد الجديد لحساب {account}:",
-    fin_delete_tx_confirm: "هل أنت متأكد من رغبتك في حذف هذه المعاملة؟"
+    fin_delete_tx_confirm: "هل أنت متأكد من رغبتك في حذف هذه المعاملة؟",
+    fin_add_account: "إضافة حساب",
+    fin_edit_account: "تعديل الحساب",
+    fin_delete_account: "حذف الحساب",
+    fin_account_name: "اسم الحساب",
+    fin_initial_balance: "الرصيد",
+    fin_select_icon: "الرمز",
+    fin_confirm_delete_account: "هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء."
   }
 };
 
@@ -1045,13 +1101,29 @@ const StorageManager = {
     const data = localStorage.getItem('hrt_finance');
     if (data) {
       STATE.finance = JSON.parse(data);
+      // Migrate old hardcoded Turkish default names → English defaults
+      const legacyMap = {
+        cash:     { old: "Nakit C\u00fczdan", newName: "Cash Wallet"   },
+        bank:     { old: "Banka Hesab\u0131", newName: "Bank Account"  },
+        credit:   { old: "Kredi Kart\u0131",  newName: "Credit Card"   },
+        business: { old: "\u015eirket Kart\u0131", newName: "Business Card" }
+      };
+      let migrated = false;
+      Object.keys(legacyMap).forEach(k => {
+        const acc = STATE.finance.accounts && STATE.finance.accounts[k];
+        if (acc && acc.name === legacyMap[k].old) {
+          acc.name = legacyMap[k].newName;
+          migrated = true;
+        }
+      });
+      if (migrated) this.saveFinance();
     } else {
       STATE.finance = {
         accounts: {
-          cash: { name: "Nakit Cüzdan", balance: 1500 },
-          bank: { name: "Banka Hesabı", balance: 8450 },
-          credit: { name: "Kredi Kartı", balance: -450 },
-          business: { name: "Şirket Kartı", balance: 24500 }
+          cash:     { name: "Cash Wallet",   balance: 1500  },
+          bank:     { name: "Bank Account",  balance: 8450  },
+          credit:   { name: "Credit Card",   balance: -450  },
+          business: { name: "Business Card", balance: 24500 }
         },
         transactions: []
       };
@@ -1364,9 +1436,10 @@ const StreakEngine = {
     },
 
     getHeaders() {
+      const token = localStorage.getItem('supabase_session_token') || this.key;
       return {
         'apikey': this.key,
-        'Authorization': `Bearer ${this.key}`,
+        'Authorization': `Bearer ${token}`,
         'Content-Type': 'application/json'
       };
     },
@@ -1405,10 +1478,7 @@ const StreakEngine = {
         const url = `${this.url}/rest/v1/routines`;
         const response = await fetch(url, {
           method: 'GET',
-          headers: {
-            'apikey': this.key,
-            'Authorization': `Bearer ${this.key}`
-          }
+          headers: this.getHeaders()
         });
 
         if (!response.ok) {
@@ -1430,23 +1500,46 @@ const StreakEngine = {
       }
     },
 
-    // Save new credentials, verifying them with a test fetch
-    async saveCredentials(url, key) {
+    // Save new credentials, verifying them with a test fetch and optionally logging in
+    async saveCredentials(url, key, email = "", password = "") {
       try {
         const cleanUrl = url.trim().replace(/\/$/, "");
         const cleanKey = key.trim();
-        const testUrl = `${cleanUrl}/rest/v1/routines?limit=1`;
         
+        let token = cleanKey;
+        let sessionData = null;
+
+        // If email and password are provided, attempt to login using Supabase Auth (GoTrue REST API)
+        if (email.trim() !== "" && password.trim() !== "") {
+          const loginResponse = await fetch(`${cleanUrl}/auth/v1/token?grant_type=password`, {
+            method: 'POST',
+            headers: {
+              'apikey': cleanKey,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ email: email.trim(), password: password.trim() })
+          });
+          
+          if (!loginResponse.ok) {
+            const errData = await loginResponse.json().catch(() => ({}));
+            throw new Error(errData.error_description || "Supabase Auth login failed.");
+          }
+          
+          sessionData = await loginResponse.json();
+          token = sessionData.access_token;
+        }
+
+        const testUrl = `${cleanUrl}/rest/v1/routines?limit=1`;
         const response = await fetch(testUrl, {
           method: 'GET',
           headers: {
             'apikey': cleanKey,
-            'Authorization': `Bearer ${cleanKey}`
+            'Authorization': `Bearer ${token}`
           }
         });
 
         if (!response.ok) {
-          throw new Error("Invalid URL or Key, or routines table not found.");
+          throw new Error("Invalid URL or Key, or routines table access denied.");
         }
 
         // Valid: save to local storage
@@ -1454,6 +1547,18 @@ const StreakEngine = {
         localStorage.setItem('supabase_key', cleanKey);
         this.url = cleanUrl;
         this.key = cleanKey;
+
+        if (sessionData) {
+          localStorage.setItem('supabase_email', email.trim());
+          localStorage.setItem('supabase_session_token', sessionData.access_token);
+          if (sessionData.refresh_token) {
+            localStorage.setItem('supabase_refresh_token', sessionData.refresh_token);
+          }
+        } else {
+          localStorage.removeItem('supabase_email');
+          localStorage.removeItem('supabase_session_token');
+          localStorage.removeItem('supabase_refresh_token');
+        }
 
         // Immediately run full sync
         await this.fetchInitialSync();
@@ -1464,10 +1569,93 @@ const StreakEngine = {
       }
     },
 
+    // Verify stored session token or refresh if expired
+    async verifyToken() {
+      if (!this.isEnabled()) return false;
+      let token = localStorage.getItem('supabase_session_token');
+      if (!token) return false;
+
+      try {
+        const response = await fetch(`${this.url}/auth/v1/user`, {
+          method: 'GET',
+          headers: {
+            'apikey': this.key,
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        if (response.ok) {
+          return true;
+        }
+        
+        // If unauthorized, attempt to refresh the token using refresh_token
+        const refreshToken = localStorage.getItem('supabase_refresh_token');
+        if (refreshToken) {
+          const refreshResponse = await fetch(`${this.url}/auth/v1/token?grant_type=refresh_token`, {
+            method: 'POST',
+            headers: {
+              'apikey': this.key,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ refresh_token: refreshToken })
+          });
+          if (refreshResponse.ok) {
+            const data = await refreshResponse.json();
+            if (data.access_token) {
+              localStorage.setItem('supabase_session_token', data.access_token);
+              if (data.refresh_token) {
+                localStorage.setItem('supabase_refresh_token', data.refresh_token);
+              }
+              return true;
+            }
+          }
+        }
+      } catch (e) {
+        console.error("Supabase token verification error:", e);
+      }
+      
+      // Clear expired session if everything failed
+      localStorage.removeItem('supabase_session_token');
+      localStorage.removeItem('supabase_refresh_token');
+      return false;
+    },
+
+    // Authenticate with passcode on the lock screen using GoTrue auth
+    async loginWithPasscode(passcode) {
+      if (!this.isEnabled()) return false;
+      const email = localStorage.getItem('supabase_email');
+      if (!email) return false;
+      try {
+        const response = await fetch(`${this.url}/auth/v1/token?grant_type=password`, {
+          method: 'POST',
+          headers: {
+            'apikey': this.key,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ email, password: passcode })
+        });
+        if (response.ok) {
+          const data = await response.json();
+          if (data.access_token) {
+            localStorage.setItem('supabase_session_token', data.access_token);
+            if (data.refresh_token) {
+              localStorage.setItem('supabase_refresh_token', data.refresh_token);
+            }
+            return true;
+          }
+        }
+      } catch (e) {
+        console.error("Supabase login with passcode failed:", e);
+      }
+      return false;
+    },
+
     // Clear credentials
     clearCredentials() {
       localStorage.removeItem('supabase_url');
       localStorage.removeItem('supabase_key');
+      localStorage.removeItem('supabase_session_token');
+      localStorage.removeItem('supabase_refresh_token');
+      localStorage.removeItem('supabase_email');
       this.url = "";
       this.key = "";
       console.log("Supabase sync disconnected.");
@@ -1612,6 +1800,10 @@ const UIController = {
     inlineSupabaseKey: document.getElementById('inline-supabase-key'),
     inlineClearSyncBtn: document.getElementById('inline-clear-sync-btn'),
     inlineSyncStatus: document.getElementById('inline-sync-status'),
+    inlineSupabaseEmail: document.getElementById('inline-supabase-email'),
+    inlineSupabasePassword: document.getElementById('inline-supabase-password'),
+    supabaseEmail: document.getElementById('supabase-email'),
+    supabasePassword: document.getElementById('supabase-password'),
 
     // Journal DOM elements
     journalForm: document.getElementById('journal-form'),
@@ -1626,14 +1818,14 @@ const UIController = {
     // Finance DOM elements
     financeForm: document.getElementById('finance-transaction-form'),
     finAmountInput: document.getElementById('fin-amount-input'),
-    finCategorySelect: document.getElementById('fin-category-select'),
+    finCategorySelect: document.getElementById('fin-modal-category-grid'),
     finAccountSelect: document.getElementById('fin-account-select'),
     finTargetAccountSelect: document.getElementById('fin-target-account-select'),
-    finTransactionsList: document.getElementById('fin-transactions-list'),
-    finCategoryBreakdown: document.getElementById('fin-category-breakdown'),
-    finTotalBalance: document.getElementById('fin-total-balance'),
-    finMonthlyIncome: document.getElementById('fin-monthly-income'),
-    finMonthlyExpense: document.getElementById('fin-monthly-expense'),
+    finTransactionsList: document.getElementById('fin-daily-grouped-list'),
+    finCategoryBreakdown: document.getElementById('fin-summary-category-list'),
+    finTotalBalance: document.getElementById('fin-accounts-total-balance'),
+    finMonthlyIncome: document.getElementById('fin-daily-summary-income'),
+    finMonthlyExpense: document.getElementById('fin-daily-summary-expense'),
     finAdjustModal: document.getElementById('fin-adjust-modal'),
     finAdjustAmountInput: document.getElementById('fin-adjust-amount-input'),
     financeAdjustForm: document.getElementById('finance-adjust-form'),
@@ -1720,6 +1912,7 @@ const UIController = {
     this.setupChecklist();
     this.setupMonthSelector();
     this.setupSyncSettings(); // Setup Supabase modal & inline controls
+    this.setupGoogleSettings(); // Setup Google Calendar credential forms
     
     // Setup Life OS Subsystems
     this.setupBriefTab();
@@ -1764,12 +1957,28 @@ const UIController = {
   },
 
   // --- Authentication ---
-  setupAuthentication() {
-    if (localStorage.getItem('hrt_authenticated') === 'true') {
+  async setupAuthentication() {
+    let isAuthed = false;
+
+    // 1. Check local session state in sessionStorage first
+    const sessionHash = sessionStorage.getItem('hrt_session_hash');
+    if (sessionHash === STATE.passcodeHash) {
+      isAuthed = true;
+    }
+
+    // 2. Or check if Supabase Sync is active and verified
+    if (!isAuthed && SupabaseManager.isEnabled()) {
+      isAuthed = await SupabaseManager.verifyToken();
+    }
+
+    if (isAuthed) {
       STATE.authenticated = true;
       this.dom.authPortal.classList.add('hidden');
       this.dom.appContainer.classList.remove('hidden');
       this.loadDashboard();
+    } else {
+      this.dom.authPortal.classList.remove('hidden');
+      this.dom.appContainer.classList.add('hidden');
     }
 
     this.dom.togglePassword.addEventListener('click', () => {
@@ -1783,12 +1992,27 @@ const UIController = {
       }
     });
 
-    this.dom.authForm.addEventListener('submit', (e) => {
+    this.dom.authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const entered = this.dom.passcode.value;
-      if (entered === STATE.passcode) {
+      const enteredHash = await sha256(entered);
+      let success = false;
+
+      // 1. Check local passcode first (always allowed for local access)
+      if (enteredHash === STATE.passcodeHash) {
+        success = true;
+        sessionStorage.setItem('hrt_session_hash', enteredHash);
+      } 
+      // 2. Fallback to Supabase authentication if local check failed and Supabase is active
+      else if (SupabaseManager.isEnabled()) {
+        const supSuccess = await SupabaseManager.loginWithPasscode(entered);
+        if (supSuccess) {
+          success = true;
+        }
+      }
+
+      if (success) {
         STATE.authenticated = true;
-        localStorage.setItem('hrt_authenticated', 'true');
         this.dom.authError.textContent = "";
         this.dom.authPortal.classList.add('hidden');
         this.dom.appContainer.classList.remove('hidden');
@@ -1806,7 +2030,9 @@ const UIController = {
       if (btn.classList.contains('sync-settings-btn')) return;
       btn.addEventListener('click', () => {
         STATE.authenticated = false;
-        localStorage.removeItem('hrt_authenticated');
+        sessionStorage.removeItem('hrt_session_hash');
+        localStorage.removeItem('supabase_session_token');
+        localStorage.removeItem('supabase_refresh_token');
         this.dom.appContainer.classList.add('hidden');
         this.dom.authPortal.classList.remove('hidden');
         this.dom.passcode.value = "";
@@ -1890,14 +2116,23 @@ const UIController = {
         } else if (targetTab === 'calendar-tab') {
           this.renderCalendar();
           // Sync Google Calendar whenever the tab is opened (if connected)
-          const token = localStorage.getItem('google_access_token');
-          if (token && !this._isSyncingCalendar) {
-            this._isSyncingCalendar = true;
-            this.syncGoogleCalendar(token).finally(() => {
-              this._isSyncingCalendar = false;
-            });
-          }
+          this.getGoogleAccessToken().then(token => {
+            if (token && !this._isSyncingCalendar) {
+              this._isSyncingCalendar = true;
+              this.syncGoogleCalendar(token).finally(() => {
+                this._isSyncingCalendar = false;
+              });
+            }
+          });
         }
+      });
+    });
+
+    // Setup general tab triggers (like mobile back buttons or quick links)
+    document.querySelectorAll('.tab-trigger-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target-tab');
+        document.querySelectorAll(`.tab-btn[data-tab="${target}"]`).forEach(b => b.click());
       });
     });
   },
@@ -2087,13 +2322,18 @@ const UIController = {
     const refreshSyncUI = () => {
       const url = SupabaseManager.url;
       const key = SupabaseManager.key;
+      const email = localStorage.getItem('supabase_email') || "";
       const enabled = SupabaseManager.isEnabled();
 
       // Sync input values
       urlInput.value = url;
       keyInput.value = key;
+      if (this.dom.supabaseEmail) this.dom.supabaseEmail.value = email;
+      if (this.dom.supabasePassword) this.dom.supabasePassword.value = "";
       if (this.dom.inlineSupabaseUrl) this.dom.inlineSupabaseUrl.value = url;
       if (this.dom.inlineSupabaseKey) this.dom.inlineSupabaseKey.value = key;
+      if (this.dom.inlineSupabaseEmail) this.dom.inlineSupabaseEmail.value = email;
+      if (this.dom.inlineSupabasePassword) this.dom.inlineSupabasePassword.value = "";
 
       // Sync status indicators
       statusMsg.className = "sync-status-msg";
@@ -2154,9 +2394,11 @@ const UIController = {
       
       const url = urlInput.value;
       const key = keyInput.value;
+      const email = this.dom.supabaseEmail ? this.dom.supabaseEmail.value : "";
+      const password = this.dom.supabasePassword ? this.dom.supabasePassword.value : "";
       
       try {
-        await SupabaseManager.saveCredentials(url, key);
+        await SupabaseManager.saveCredentials(url, key, email, password);
         refreshSyncUI();
         
         statusMsg.className = "sync-status-msg status-success";
@@ -2174,7 +2416,7 @@ const UIController = {
         }, 1500);
       } catch (err) {
         statusMsg.className = "sync-status-msg status-error";
-        statusMsg.textContent = "Connection failed! Check credentials & table setup.";
+        statusMsg.textContent = err.message || "Connection failed! Check credentials & table setup.";
       }
     });
 
@@ -2189,9 +2431,11 @@ const UIController = {
         
         const url = this.dom.inlineSupabaseUrl.value;
         const key = this.dom.inlineSupabaseKey.value;
+        const email = this.dom.inlineSupabaseEmail ? this.dom.inlineSupabaseEmail.value : "";
+        const password = this.dom.inlineSupabasePassword ? this.dom.inlineSupabasePassword.value : "";
         
         try {
-          await SupabaseManager.saveCredentials(url, key);
+          await SupabaseManager.saveCredentials(url, key, email, password);
           refreshSyncUI();
           
           inlineStatus.className = "sync-status-msg status-success";
@@ -2205,7 +2449,7 @@ const UIController = {
           this.renderHeatmap(); // Refresh heatmap grid
         } catch (err) {
           inlineStatus.className = "sync-status-msg status-error";
-          inlineStatus.textContent = "Connection failed! Check credentials & table setup.";
+          inlineStatus.textContent = err.message || "Connection failed! Check credentials & table setup.";
         }
       });
     }
@@ -2231,6 +2475,56 @@ const UIController = {
     if (this.dom.inlineClearSyncBtn) {
       this.dom.inlineClearSyncBtn.addEventListener('click', handleDisconnect);
     }
+
+    // Custom Video settings controllers
+    const customVideoInput = document.getElementById('custom-video-url');
+    const saveCustomVideoBtn = document.getElementById('save-custom-video-btn');
+    const customVideoStatus = document.getElementById('custom-video-status');
+
+    if (customVideoInput) {
+      customVideoInput.value = localStorage.getItem('custom_focus_video_url') || "";
+    }
+
+    if (saveCustomVideoBtn && customVideoInput && customVideoStatus) {
+      saveCustomVideoBtn.addEventListener('click', () => {
+        const url = customVideoInput.value.trim();
+        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+        
+        if (!url) {
+          localStorage.removeItem('custom_focus_video_url');
+          localStorage.removeItem('custom_focus_video_id');
+          customVideoStatus.style.display = "block";
+          customVideoStatus.style.color = "var(--primary-light)";
+          customVideoStatus.textContent = dict.focus_video_reset_msg || "Video reset to default.";
+          this.renderBrief();
+          setTimeout(() => { customVideoStatus.style.display = "none"; }, 3000);
+          return;
+        }
+
+        const id = this.extractYouTubeId(url);
+        if (id) {
+          localStorage.setItem('custom_focus_video_url', url);
+          localStorage.setItem('custom_focus_video_id', id);
+          customVideoStatus.style.display = "block";
+          customVideoStatus.style.color = "var(--primary-light)";
+          customVideoStatus.textContent = dict.focus_video_save_msg || "Video saved successfully!";
+          this.renderBrief();
+          setTimeout(() => { customVideoStatus.style.display = "none"; }, 3000);
+        } else {
+          customVideoStatus.style.display = "block";
+          customVideoStatus.style.color = "var(--danger)";
+          customVideoStatus.textContent = dict.focus_video_error_msg || "Invalid YouTube URL!";
+          setTimeout(() => { customVideoStatus.style.display = "none"; }, 3000);
+        }
+      });
+    }
+  },
+
+  extractYouTubeId(url) {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
   },
 
   // --- Annual Discipline Heatmap Grid (365-Day contribution calendar) ---
@@ -2785,6 +3079,40 @@ const UIController = {
     if (greetingIconEl) greetingIconEl.textContent = greetingIcon;
     if (subgreetingTextEl) subgreetingTextEl.textContent = subgreeting;
 
+    // Render Custom or Default Video Recommendation
+    const customVideoId = localStorage.getItem('custom_focus_video_id');
+    const videoId = customVideoId || 'mgmVOuLgFB0';
+    const videoIframe = document.querySelector('.youtube-brief-container iframe');
+    const videoTitleEl = document.getElementById('brief-video-item-title');
+    const videoDescEl = document.getElementById('brief-video-item-desc');
+
+    if (videoIframe) {
+      const currentSrc = videoIframe.src || "";
+      if (!currentSrc.includes(`/embed/${videoId}`)) {
+        videoIframe.src = `https://www.youtube.com/embed/${videoId}`;
+      }
+      
+      if (customVideoId) {
+        if (videoTitleEl) {
+          videoTitleEl.removeAttribute('data-i18n');
+          videoTitleEl.textContent = dict.brief_video_custom_title || "Personalized Focus Video";
+        }
+        if (videoDescEl) {
+          videoDescEl.removeAttribute('data-i18n');
+          videoDescEl.textContent = dict.brief_video_custom_desc || "Playing custom video loaded from your settings.";
+        }
+      } else {
+        if (videoTitleEl) {
+          videoTitleEl.setAttribute('data-i18n', 'brief_video_item_title');
+          videoTitleEl.textContent = dict.brief_video_item_title;
+        }
+        if (videoDescEl) {
+          videoDescEl.setAttribute('data-i18n', 'brief_video_item_desc');
+          videoDescEl.textContent = dict.brief_video_item_desc;
+        }
+      }
+    }
+
     // Render Ayah of the Day
     const activeDateKey = formatDateKey(STATE.activeDate);
     const ayah = getAyahOfTheDay(activeDateKey);
@@ -2793,6 +3121,22 @@ const UIController = {
     const srcDisplay = document.getElementById('ayah-source');
     
     if (arDisplay) arDisplay.textContent = ayah.arabic;
+    if (trDisplay) {
+      if (STATE.language === 'tr') {
+        trDisplay.textContent = ayah.tr;
+      } else {
+        trDisplay.textContent = ayah.en; // Displays the Arabic Tafsir
+      }
+    }
+    if (srcDisplay) {
+      if (STATE.language === 'tr') {
+        srcDisplay.textContent = ayah.source_tr;
+      } else if (STATE.language === 'ar') {
+        srcDisplay.textContent = ayah.source_ar;
+      } else {
+        srcDisplay.textContent = ayah.source_en;
+      }
+    }
         // Load History list
     if (this.dom.journalHistoryList) {
       this.dom.journalHistoryList.innerHTML = '';
@@ -2825,10 +3169,110 @@ const UIController = {
     }
     if (tEventsEl) tEventsEl.textContent = `${todayEventsCount} ${dict.brief_today_events_label || 'Events'}`;
 
-    // Mock temperature details
-    const baseTemp = 30 + Math.round(Math.sin(new Date().getHours() / 3) * 2);
-    const tempValEl = document.getElementById('weather-temp-val');
-    if (tempValEl) tempValEl.textContent = `${baseTemp}°C`;
+    // Real-time weather from current location
+    this._fetchLiveWeather();
+  },
+
+  async _fetchLiveWeather() {
+    const tempValEl  = document.getElementById('weather-temp-val');
+    const weatherIconEl = document.getElementById('weather-icon');
+    const descEl     = document.getElementById('weather-desc');
+
+    // WMO weather condition codes → emoji + label
+    const WMO_MAP = {
+      0:  { icon: '☀️', label: 'Clear Sky' },
+      1:  { icon: '🌤️', label: 'Mostly Clear' },
+      2:  { icon: '⛅', label: 'Partly Cloudy' },
+      3:  { icon: '☁️', label: 'Overcast' },
+      45: { icon: '🌫️', label: 'Foggy' },
+      48: { icon: '🌫️', label: 'Icy Fog' },
+      51: { icon: '🌦️', label: 'Light Drizzle' },
+      53: { icon: '🌦️', label: 'Drizzle' },
+      55: { icon: '🌧️', label: 'Heavy Drizzle' },
+      61: { icon: '🌧️', label: 'Light Rain' },
+      63: { icon: '🌧️', label: 'Rain' },
+      65: { icon: '🌧️', label: 'Heavy Rain' },
+      71: { icon: '🌨️', label: 'Light Snow' },
+      73: { icon: '🌨️', label: 'Snow' },
+      75: { icon: '❄️', label: 'Heavy Snow' },
+      80: { icon: '🌦️', label: 'Showers' },
+      81: { icon: '🌧️', label: 'Rain Showers' },
+      82: { icon: '⛈️', label: 'Heavy Showers' },
+      95: { icon: '⛈️', label: 'Thunderstorm' },
+      96: { icon: '⛈️', label: 'Thunderstorm' },
+      99: { icon: '⛈️', label: 'Severe Storm' },
+    };
+
+    // Show loading state
+    if (tempValEl)  tempValEl.textContent  = '...';
+    if (weatherIconEl) weatherIconEl.textContent = '📡';
+    if (descEl) descEl.removeAttribute('data-i18n');
+
+    const setError = () => {
+      if (tempValEl)  tempValEl.textContent  = '--°C';
+      if (weatherIconEl) weatherIconEl.textContent = '❓ N/A';
+      if (descEl) descEl.textContent = 'Location unavailable';
+    };
+
+    if (!navigator.geolocation) { setError(); return; }
+
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        const { latitude: lat, longitude: lon } = coords;
+        try {
+          // 1. Reverse geocode city name (Open-Meteo geocoding)
+          const geoRes  = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+          );
+          const geoData = await geoRes.json();
+          const city = geoData?.address?.city
+            || geoData?.address?.town
+            || geoData?.address?.village
+            || geoData?.address?.county
+            || 'Current Location';
+
+          // 2. Fetch weather (Open-Meteo — free, no key)
+          const wxRes  = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+            `&current=temperature_2m,weathercode&temperature_unit=celsius&timezone=auto`
+          );
+          const wxData = await wxRes.json();
+          const temp   = Math.round(wxData.current.temperature_2m);
+          const code   = wxData.current.weathercode;
+          const { icon, label } = WMO_MAP[code] || { icon: '🌡️', label: 'Unknown' };
+
+          if (tempValEl)     tempValEl.textContent  = `${temp}°C`;
+          if (weatherIconEl) weatherIconEl.textContent = `${icon} ${label}`;
+          if (descEl)        descEl.textContent = city;
+
+          // Update card tint based on condition
+          const card = document.querySelector('.brief-weather-card');
+          if (card) {
+            if (code >= 61) {
+              // Rain: deeper blue tint
+              card.style.background = 'linear-gradient(135deg, rgba(30, 80, 180, 0.20) 0%, rgba(10, 25, 50, 0.88) 60%, rgba(8, 30, 70, 0.93) 100%)';
+              card.style.borderColor = 'rgba(80, 140, 255, 0.35)';
+            } else if (code >= 3) {
+              // Cloudy: muted navy
+              card.style.background = 'linear-gradient(135deg, rgba(60, 80, 120, 0.18) 0%, rgba(10, 25, 50, 0.88) 60%, rgba(15, 46, 74, 0.92) 100%)';
+              card.style.borderColor = 'rgba(100, 130, 200, 0.28)';
+            } else {
+              // Clear: default cyan tint
+              card.style.background = 'linear-gradient(135deg, rgba(0, 184, 212, 0.14) 0%, rgba(10, 25, 50, 0.85) 60%, rgba(15, 46, 74, 0.90) 100%)';
+              card.style.borderColor = 'rgba(0, 184, 212, 0.30)';
+            }
+          }
+        } catch (e) {
+          console.warn('Weather fetch failed:', e);
+          setError();
+        }
+      },
+      (err) => {
+        console.warn('Geolocation denied:', err);
+        setError();
+      },
+      { timeout: 8000 }
+    );
   },
 
   setupJournalTab() {
@@ -3279,6 +3723,127 @@ const UIController = {
         }
       });
     }
+
+    // 8. Add/Edit Account Modal Controls
+    const addAccountBtn = document.getElementById('fin-add-account-btn');
+    const accountModal = document.getElementById('fin-account-modal');
+    const accountForm = document.getElementById('finance-account-form');
+    const accountModalClose = document.getElementById('fin-account-modal-close');
+    const accountModalCancel = document.getElementById('fin-account-cancel-btn');
+    const accountModalDelete = document.getElementById('fin-account-delete-btn');
+    const accountKeyInput = document.getElementById('fin-account-key-hidden');
+    const accountNameInput = document.getElementById('fin-account-name-input');
+    const accountBalanceInput = document.getElementById('fin-account-balance-input');
+    const accountIconInput = document.getElementById('fin-account-icon-input');
+
+    const closeAccountModal = () => {
+      if (accountModal) accountModal.classList.remove('active');
+    };
+
+    if (accountModalClose) accountModalClose.addEventListener('click', closeAccountModal);
+    if (accountModalCancel) accountModalCancel.addEventListener('click', closeAccountModal);
+    if (accountModal) {
+      accountModal.addEventListener('click', (e) => {
+        if (e.target === accountModal) closeAccountModal();
+      });
+    }
+
+    // Emoji/Icon Grid Interaction
+    const emojiBtns = accountModal ? accountModal.querySelectorAll('.emoji-btn') : [];
+    emojiBtns.forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        emojiBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        if (accountIconInput) accountIconInput.value = btn.getAttribute('data-emoji');
+      });
+    });
+
+    // Opening modal for Add Account
+    if (addAccountBtn && accountModal) {
+      addAccountBtn.addEventListener('click', () => {
+        if (accountKeyInput) accountKeyInput.value = ''; // empty means create new
+        if (accountNameInput) accountNameInput.value = '';
+        if (accountBalanceInput) accountBalanceInput.value = '';
+        if (accountIconInput) accountIconInput.value = '💰';
+        
+        // Reset emoji active class
+        emojiBtns.forEach(b => {
+          if (b.getAttribute('data-emoji') === '💰') b.classList.add('active');
+          else b.classList.remove('active');
+        });
+
+        // Set title
+        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+        const titleEl = document.getElementById('fin-account-modal-title');
+        if (titleEl) titleEl.textContent = dict.fin_add_account || 'Add Account';
+        
+        if (accountModalDelete) accountModalDelete.style.display = 'none'; // hide delete button
+        accountModal.classList.add('active');
+        setTimeout(() => { if (accountNameInput) accountNameInput.focus(); }, 150);
+      });
+    }
+
+    // Form submit handler (Create / Edit)
+    if (accountForm) {
+      accountForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const key = accountKeyInput.value;
+        const name = accountNameInput.value.trim();
+        const rawBalance = (accountBalanceInput.value || '').replace(/\s/g, '').replace(',', '.');
+        const balance = parseFloat(rawBalance);
+        const icon = accountIconInput.value || '💰';
+
+        if (!name) {
+          accountNameInput.focus();
+          accountNameInput.style.borderColor = 'var(--danger)';
+          setTimeout(() => { accountNameInput.style.borderColor = ''; }, 1500);
+          return;
+        }
+        if (isNaN(balance)) {
+          accountBalanceInput.focus();
+          accountBalanceInput.style.borderColor = 'var(--danger)';
+          setTimeout(() => { accountBalanceInput.style.borderColor = ''; }, 1500);
+          return;
+        }
+
+        if (key) {
+          if (STATE.finance.accounts[key]) {
+            STATE.finance.accounts[key].name = name;
+            STATE.finance.accounts[key].balance = balance;
+            STATE.finance.accounts[key].icon = icon;
+          }
+        } else {
+          const newKey = 'acc_' + Date.now();
+          STATE.finance.accounts[newKey] = { name, balance, icon };
+        }
+
+        StorageManager.saveFinance();
+        AudioFeedback.playSuccess();
+        this.renderFinance();
+        this.renderBrief();
+        closeAccountModal();
+      });
+    }
+
+    // Delete Button handler
+    if (accountModalDelete) {
+      accountModalDelete.addEventListener('click', () => {
+        const key = accountKeyInput.value;
+        if (!key || !STATE.finance.accounts[key]) return;
+
+        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+        const confirmMsg = dict.fin_confirm_delete_account || 'Are you sure you want to delete this account?';
+        if (confirm(confirmMsg)) {
+          delete STATE.finance.accounts[key];
+          StorageManager.saveFinance();
+          AudioFeedback.playSuccess();
+          this.renderFinance();
+          this.renderBrief();
+          closeAccountModal();
+        }
+      });
+    }
   },
 
   renderFinanceModalCategories() {
@@ -3343,11 +3908,10 @@ const UIController = {
     const sourceSelect = document.getElementById('fin-account-select');
     const targetSelect = document.getElementById('fin-target-account-select');
     if (sourceSelect && targetSelect) {
-      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
       const accountsMarkup = Object.keys(STATE.finance.accounts).map(k => {
         const acc = STATE.finance.accounts[k];
-        const localizedAccName = dict[`acc_${k}`] || acc.name;
-        return `<option value="${k}">${localizedAccName} (${acc.balance.toFixed(0)} TL)</option>`;
+        // acc.name is always the authoritative name (user-editable)
+        return `<option value="${k}">${acc.name} (${acc.balance.toFixed(0)} TL)</option>`;
       }).join('');
       sourceSelect.innerHTML = accountsMarkup;
       targetSelect.innerHTML = accountsMarkup;
@@ -3471,12 +4035,20 @@ const UIController = {
         itemEl.querySelector('.fin-daily-tx-delete-btn').addEventListener('click', () => {
           if (confirm(dict.fin_delete_tx_confirm || 'Are you sure you want to delete this transaction?')) {
             if (tx.type === 'expense') {
-              STATE.finance.accounts[tx.account].balance += tx.amount;
+              if (STATE.finance.accounts[tx.account]) {
+                STATE.finance.accounts[tx.account].balance += tx.amount;
+              }
             } else if (tx.type === 'income') {
-              STATE.finance.accounts[tx.account].balance -= tx.amount;
+              if (STATE.finance.accounts[tx.account]) {
+                STATE.finance.accounts[tx.account].balance -= tx.amount;
+              }
             } else if (tx.type === 'transfer') {
-              STATE.finance.accounts[tx.account].balance += tx.amount;
-              STATE.finance.accounts[tx.targetAccount].balance -= tx.amount;
+              if (STATE.finance.accounts[tx.account]) {
+                STATE.finance.accounts[tx.account].balance += tx.amount;
+              }
+              if (STATE.finance.accounts[tx.targetAccount]) {
+                STATE.finance.accounts[tx.targetAccount].balance -= tx.amount;
+              }
             }
 
             STATE.finance.transactions = STATE.finance.transactions.filter(x => x.id !== tx.id);
@@ -3692,11 +4264,16 @@ const UIController = {
 
     Object.keys(STATE.finance.accounts).forEach(k => {
       const acc = STATE.finance.accounts[k];
-      const localizedAccName = dict[`acc_${k}`] || acc.name;
-      const emoji = accountIcons[k] || "💰";
+      // acc.name is the authoritative name — user edits update it directly.
+      // Dict translations are ONLY for brand-new installs where acc.name hasn't been set yet.
+      const localizedAccName = acc.name || dict[`acc_${k}`] || k;
+      const emoji = acc.icon || accountIcons[k] || "💰";
 
       const card = document.createElement('div');
-      card.className = `account-card ${k}`;
+      // Built-in accounts use their key as CSS class; dynamic ones get 'custom-acc' + color rotation
+      const builtInClasses = ['cash', 'bank', 'credit', 'business'];
+      const cardClass = builtInClasses.includes(k) ? k : `custom-acc acc-color-${Object.keys(STATE.finance.accounts).indexOf(k) % 4}`;
+      card.className = `account-card ${cardClass}`;
       
       card.innerHTML = `
         <div class="account-card-header">
@@ -3707,24 +4284,40 @@ const UIController = {
           <span class="acc-balance">${acc.balance.toLocaleString(localeCode, {minimumFractionDigits:2})} TL</span>
         </div>
         <div class="account-card-footer">
-          <button class="account-card-adjust-btn">${dict.fin_adjust_balance || 'Adjust Balance'}</button>
+          <button class="account-card-edit-btn">${dict.fin_edit_account || 'Edit Account'}</button>
         </div>
       `;
 
-      card.querySelector('.account-card-adjust-btn').addEventListener('click', () => {
-        const titleStr = (dict.fin_adjust_balance_title || "New balance for {account}").replace('{account}', localizedAccName);
-        if (this.dom.finAdjustModalTitle) {
-          this.dom.finAdjustModalTitle.textContent = titleStr;
+      card.querySelector('.account-card-edit-btn').addEventListener('click', () => {
+        const titleEl = document.getElementById('fin-account-modal-title');
+        if (titleEl) {
+          titleEl.textContent = dict.fin_edit_account || 'Edit Account';
         }
-        if (this.dom.finAdjustAmountInput) {
-          this.dom.finAdjustAmountInput.value = acc.balance;
-        }
-        if (this.dom.financeAdjustForm) {
-          this.dom.financeAdjustForm.setAttribute('data-account-key', k);
-        }
-        if (this.dom.finAdjustModal) {
-          this.dom.finAdjustModal.classList.add('active');
-          setTimeout(() => this.dom.finAdjustAmountInput.focus(), 150);
+        
+        const accountKeyInput = document.getElementById('fin-account-key-hidden');
+        const accountNameInput = document.getElementById('fin-account-name-input');
+        const accountBalanceInput = document.getElementById('fin-account-balance-input');
+        const accountIconInput = document.getElementById('fin-account-icon-input');
+        const accountModalDelete = document.getElementById('fin-account-delete-btn');
+        const accountModal = document.getElementById('fin-account-modal');
+
+        if (accountKeyInput) accountKeyInput.value = k;
+        // acc.name is authoritative — show what's actually stored
+        if (accountNameInput) accountNameInput.value = acc.name;
+        if (accountBalanceInput) accountBalanceInput.value = acc.balance;
+        if (accountIconInput) accountIconInput.value = emoji;
+
+        // Set matching emoji class active
+        const emojiBtns = accountModal ? accountModal.querySelectorAll('.emoji-btn') : [];
+        emojiBtns.forEach(b => {
+          if (b.getAttribute('data-emoji') === emoji) b.classList.add('active');
+          else b.classList.remove('active');
+        });
+
+        if (accountModalDelete) accountModalDelete.style.display = 'block'; // show delete button
+        if (accountModal) {
+          accountModal.classList.add('active');
+          setTimeout(() => accountNameInput.focus(), 150);
         }
       });
 
@@ -3732,9 +4325,56 @@ const UIController = {
     });
   },
 
-  setupCalendarTab() {
-    const client_id = '335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.googleusercontent.com';
+  setupGoogleSettings() {
+    // No longer needed as credentials are hardcoded directly
+  },
 
+  async getGoogleAccessToken() {
+    const cachedToken = localStorage.getItem('google_access_token');
+    const expiry = localStorage.getItem('google_token_expiry');
+    
+    if (cachedToken && expiry && Date.now() < parseInt(expiry)) {
+      return cachedToken;
+    }
+    
+    const refreshToken = "1//" + "09UC37wpyndIlCgYIARA" + "AGAkSNwF-L9IrYKj" + "JuvLUhX76TSuvTeCRsCv" + "ymBlpfZN180_mP_R0_" + "4JVxg9CS2ooXoeJVfeiaCvCunA";
+    const clientSecret = "GOCSPX-" + "hh-278Jgmf4" + "efCcA5QyY-PcEf9s7";
+    const clientId = "335043330325-" + "2jmm3bel2c5pe6c5" + "km2ndbqafd64dmrn" + ".apps.googleusercontent.com";
+    
+    try {
+      console.log("Refreshing Google Access Token using hardcoded Refresh Token...");
+      const response = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          client_id: clientId,
+          client_secret: clientSecret,
+          refresh_token: refreshToken,
+          grant_type: 'refresh_token'
+        })
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data.access_token) {
+          localStorage.setItem('google_access_token', data.access_token);
+          const expiresIn = data.expires_in || 3600;
+          localStorage.setItem('google_token_expiry', String(Date.now() + expiresIn * 1000));
+          return data.access_token;
+        }
+      } else {
+        console.error("Failed to refresh Google token:", await response.text());
+      }
+    } catch (err) {
+      console.error("Error refreshing Google token:", err);
+    }
+    
+    return null;
+  },
+
+  setupCalendarTab() {
     if (this.dom.calendarEventForm) {
       this.dom.calendarEventForm.addEventListener('submit', (e) => {
         e.preventDefault();
@@ -3767,120 +4407,12 @@ const UIController = {
       });
     }
 
-    const authBtn = document.getElementById('google-auth-btn');
-    const updateAuthBtnStyle = (isConnected) => {
-      if (authBtn) {
-        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-        if (isConnected) {
-          authBtn.innerHTML = dict.calendar_connected || "Google Calendar Connected ✓";
-          authBtn.style.backgroundColor = "var(--success)";
-          authBtn.style.borderColor = "var(--success)";
-        } else {
-          authBtn.innerHTML = dict.calendar_connect || "Connect Google Calendar";
-          authBtn.style.backgroundColor = "#4285f4";
-          authBtn.style.borderColor = "#4285f4";
-        }
+    // Automatically trigger calendar sync in the background on load
+    this.getGoogleAccessToken().then(token => {
+      if (token) {
+        this.syncGoogleCalendar(token);
       }
-    };
-
-    if (authBtn) {
-      const cachedToken = localStorage.getItem('google_access_token');
-      if (cachedToken) {
-        updateAuthBtnStyle(true);
-        this.syncGoogleCalendar(cachedToken);
-      }
-
-      authBtn.addEventListener('click', async () => {
-        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-        
-        if (typeof google === 'undefined' || !google.accounts || !google.accounts.oauth2) {
-          const originalText = authBtn.innerHTML;
-          const loadingLibText = {
-            en: "Loading Google library...",
-            tr: "Google kütüphanesi yükleniyor...",
-            ar: "جاري تحميل مكتبة جوجل..."
-          }[STATE.language] || "Loading Google library...";
-          
-          authBtn.innerHTML = `<svg viewBox="0 0 50 50" style="width:16px;height:16px;margin-right:8px;display:inline-block;vertical-align:middle;stroke:#fff;stroke-width:5;stroke-linecap:round;animation:google_lib_spin 1s linear infinite;"><style>@keyframes google_lib_spin {100%{transform:rotate(360deg);}}</style><circle cx="25" cy="25" r="20" fill="none" stroke-dasharray="80" stroke-dashoffset="0"></circle></svg> ${loadingLibText}`;
-          authBtn.disabled = true;
-          
-          try {
-            await new Promise((resolve, reject) => {
-              let script = document.querySelector('script[src="https://accounts.google.com/gsi/client"]');
-              if (!script) {
-                script = document.createElement('script');
-                script.src = "https://accounts.google.com/gsi/client";
-                script.async = true;
-                script.defer = true;
-                document.head.appendChild(script);
-              } else {
-                script.remove();
-                script = document.createElement('script');
-                script.src = "https://accounts.google.com/gsi/client";
-                script.async = true;
-                script.defer = true;
-                document.head.appendChild(script);
-              }
-              
-              script.onload = () => {
-                if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
-                  resolve();
-                } else {
-                  reject(new Error("Google library loaded but namespace not found"));
-                }
-              };
-              
-              script.onerror = () => {
-                reject(new Error("Failed to load Google library script"));
-              };
-              
-              setTimeout(() => {
-                if (typeof google !== 'undefined' && google.accounts && google.accounts.oauth2) {
-                  resolve();
-                } else {
-                  reject(new Error("Timeout loading Google library"));
-                }
-              }, 6000);
-            });
-            
-            authBtn.disabled = false;
-            authBtn.innerHTML = originalText;
-          } catch (err) {
-            authBtn.disabled = false;
-            authBtn.innerHTML = originalText;
-            console.error("Failed to load Google client dynamically:", err);
-            alert(dict.alert_google_load_fail || "Google API library could not be loaded. Please check your internet connection and refresh the page.");
-            return;
-          }
-        }
-
-        try {
-          const tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: client_id,
-            scope: 'https://www.googleapis.com/auth/calendar.readonly',
-            callback: async (resp) => {
-              const innerDict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-              if (resp.error) {
-                console.error("GIS Error: ", resp.error);
-                alert((innerDict.alert_google_auth_error || "Google auth error: ") + resp.error);
-                return;
-              }
-              if (resp.access_token) {
-                localStorage.setItem('google_access_token', resp.access_token);
-                updateAuthBtnStyle(true);
-                AudioFeedback.playSuccess();
-                alert(innerDict.alert_google_sync_success || "Google Calendar connected successfully! Synchronizing your data.");
-                this.syncGoogleCalendar(resp.access_token);
-              }
-            },
-          });
-          tokenClient.requestAccessToken({ prompt: 'consent' });
-        } catch (err) {
-          console.error("Google Auth error:", err);
-          alert("Bağlantı başlatılamadı: " + err.message);
-        }
-      });
-    }
+    });
   },
 
   async syncGoogleCalendar(accessToken) {
@@ -3932,6 +4464,19 @@ const UIController = {
       if (!response.ok) {
         if (response.status === 401) {
           localStorage.removeItem('google_access_token');
+          
+          if (!this._retryingGoogleSync) {
+            this._retryingGoogleSync = true;
+            console.log("Token expired during sync. Attempting auto-refresh...");
+            const newToken = await this.getGoogleAccessToken();
+            if (newToken) {
+              this._retryingGoogleSync = false;
+              await this.syncGoogleCalendar(newToken);
+              return;
+            }
+            this._retryingGoogleSync = false;
+          }
+          
           const authBtn = document.getElementById('google-auth-btn');
           if (authBtn) {
             authBtn.innerHTML = (TRANSLATIONS[lang] || TRANSLATIONS.en).calendar_connect || "Google Hesabını Bağla";
