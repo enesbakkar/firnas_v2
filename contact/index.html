@@ -471,49 +471,51 @@
                     })
                     .catch(error => {
                         console.error('Form submission error:', error);
-                        submitBtn.disabled = false;
-                        submitBtn.innerHTML = originalBtnText;
                         
-                        let errorMsg = '';
-                        if (!navigator.onLine) {
-                            errorMsg = {
-                                tr: "İnternet bağlantısı yok. Lütfen ağınızı kontrol edip tekrar deneyin.",
-                                en: "No internet connection. Please check your network and try again.",
-                                ar: "لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة والمحاولة مرة أخرى."
-                            }[currentLang] || "İnternet bağlantısı yok. Lütfen ağınızı kontrol edip tekrar deneyin.";
-                        } else if (error instanceof Response) {
-                            if (error.status >= 500) {
+                        // Fallback: Submit using standard HTML form post to bypass CORS/activation block.
+                        try {
+                            // Add _next input to redirect back to this page after submission
+                            if (!contactForm.querySelector('input[name="_next"]')) {
+                                const nextInput = document.createElement('input');
+                                nextInput.type = 'hidden';
+                                nextInput.name = '_next';
+                                nextInput.value = window.location.href;
+                                contactForm.appendChild(nextInput);
+                            }
+                            
+                            contactForm.action = "https://formsubmit.co/firnastechno@gmail.com";
+                            contactForm.method = "POST";
+                            // Remove dynamic submit handler and submit the form directly
+                            contactForm.removeAttribute('onsubmit');
+                            // But wait! contactForm uses addEventListener('submit'), not onsubmit attribute.
+                            // To bypass the event listener on submit, we can call contactForm.submit() which bypasses submit event handlers!
+                            contactForm.submit();
+                        } catch (submitErr) {
+                            console.error('Fallback submission error:', submitErr);
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnText;
+                            
+                            let errorMsg = '';
+                            if (!navigator.onLine) {
                                 errorMsg = {
-                                    tr: "Gönderim servisi şu anda kullanılamıyor (Sunucu Hatası). Lütfen daha sonra tekrar deneyin.",
-                                    en: "The submission service is currently unavailable (Server Error). Please try again later.",
-                                    ar: "خدمة الإرسال غير متوفرة حالياً (خطأ في الخادم). يرجى المحاولة مرة أخرى لاحقاً."
-                                }[currentLang] || "Gönderim servisi şu anda kullanılamıyor. Lütfen daha sonra tekrar deneyin.";
-                            } else if (error.status === 400 || error.status === 403) {
-                                errorMsg = {
-                                    tr: "Geçersiz form verisi veya yetkisiz erişim. Lütfen alanları kontrol edin.",
-                                    en: "Invalid form data or unauthorized access. Please check the fields.",
-                                    ar: "بيانات النموذج غير صالحة أو وصول غير مصرح به. يرجى التحقق من الحقول."
-                                }[currentLang] || "Geçersiz form verisi. Lütfen alanları kontrol edin.";
+                                    tr: "İnternet bağlantısı yok. Lütfen ağınızı kontrol edip tekrar deneyin.",
+                                    en: "No internet connection. Please check your network and try again.",
+                                    ar: "لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة والمحاولة مرة أخرى."
+                                }[currentLang] || "İnternet bağlantısı yok. Lütfen ağınızı kontrol edip tekrar deneyin.";
                             } else {
                                 errorMsg = {
-                                    tr: `Sunucu hatası (Durum kodu: ${error.status}). Lütfen daha sonra tekrar deneyin.`,
-                                    en: `Server error (Status code: ${error.status}). Please try again later.`,
-                                    ar: `خطأ في الخادم (رمز الحالة: ${error.status}). يرجى المحاولة مرة أخرى لاحقاً.`
-                                }[currentLang] || `Sunucu hatası (Durum kodu: ${error.status}). Lütfen daha sonra tekrar deneyin.`;
+                                    tr: "Bağlantı hatası veya CORS engellemesi. Lütfen daha sonra tekrar deneyin.",
+                                    en: "Connection error or CORS issue. Please try again later.",
+                                    ar: "خطأ في الاتصال أو مشكلة CORS. يرجı المحاولة مرة أخرى لاحقاً."
+                                }[currentLang] || "Mesajınız gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.";
                             }
-                        } else {
-                            errorMsg = {
-                                tr: "Bağlantı hatası veya CORS engellemesi. Lütfen daha sonra tekrar deneyin.",
-                                en: "Connection error or CORS issue. Please try again later.",
-                                ar: "خطأ في الاتصال أو مشكلة CORS. يرجى المحاولة مرة أخرى لاحقاً."
-                            }[currentLang] || "Mesajınız gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.";
+                            
+                            const errorDesc = document.getElementById('error-message');
+                            if (errorDesc) {
+                                errorDesc.textContent = errorMsg;
+                            }
+                            showModal('error-modal');
                         }
-                        
-                        const errorDesc = document.getElementById('error-message');
-                        if (errorDesc) {
-                            errorDesc.textContent = errorMsg;
-                        }
-                        showModal('error-modal');
                     });
                 });
             }
