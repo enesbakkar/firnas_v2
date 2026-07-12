@@ -438,21 +438,19 @@
                     submitBtn.disabled = true;
                     submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin" style="margin-right: 8px;" aria-hidden="true"></i> ${loadingText}`;
 
-                    const formData = {
-                        name: contactForm.querySelector('input[name="name"]').value,
-                        organization: contactForm.querySelector('input[name="organization"]').value,
-                        email: contactForm.querySelector('input[name="email"]').value,
-                        subject: document.getElementById('contact-subject').value,
-                        message: contactForm.querySelector('textarea[name="message"]').value
-                    };
+                    const formData = new FormData();
+                    formData.append('name', contactForm.querySelector('input[name="name"]').value);
+                    formData.append('organization', contactForm.querySelector('input[name="organization"]').value);
+                    formData.append('email', contactForm.querySelector('input[name="email"]').value);
+                    formData.append('subject', document.getElementById('contact-subject').value);
+                    formData.append('message', contactForm.querySelector('textarea[name="message"]').value);
 
                     fetch("https://formsubmit.co/ajax/firnastechno@gmail.com", {
                         method: "POST",
                         headers: { 
-                            'Content-Type': 'application/json',
                             'Accept': 'application/json'
                         },
-                        body: JSON.stringify(formData)
+                        body: formData
                     })
                     .then(response => {
                         if (!response.ok) {

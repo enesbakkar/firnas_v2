@@ -610,21 +610,19 @@
             submitBtn.disabled = true;
             submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> ${loadingText}`;
 
-            const formData = {
-                _subject: "FiCo Ön Sipariş Talebi / Pre-Order Request",
-                name: form.querySelector('input[name="name"]').value,
-                email: form.querySelector('input[name="email"]').value,
-                quantity: form.querySelector('input[name="quantity"]').value,
-                notes: form.querySelector('textarea[name="notes"]').value
-            };
+            const formData = new FormData();
+            formData.append('_subject', "FiCo Ön Sipariş Talebi / Pre-Order Request");
+            formData.append('name', form.querySelector('input[name="name"]').value);
+            formData.append('email', form.querySelector('input[name="email"]').value);
+            formData.append('quantity', form.querySelector('input[name="quantity"]').value);
+            formData.append('notes', form.querySelector('textarea[name="notes"]').value);
 
             fetch("https://formsubmit.co/ajax/firnastechno@gmail.com", {
                 method: "POST",
                 headers: { 
-                    'Content-Type': 'application/json',
                     'Accept': 'application/json'
                 },
-                body: JSON.stringify(formData)
+                body: formData
             })
             .then(response => {
                 if (!response.ok) {
@@ -644,6 +642,7 @@
                 }
             })
             .catch(error => {
+                console.error('Pre-order form submission error:', error);
                 submitBtn.disabled = false;
                 submitBtn.innerHTML = originalBtnText;
                 
