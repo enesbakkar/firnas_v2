@@ -422,11 +422,35 @@
                     
                     // Get current language for dynamic loading text
                     const currentLang = localStorage.getItem('site_lang') || 'tr';
+                    
+                    // Custom Email Validation
+                    const emailInput = contactForm.querySelector('input[name="email"]');
+                    const emailValue = emailInput.value.trim();
+                    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    
+                    if (!emailRegex.test(emailValue)) {
+                        let emailError = 'Lütfen geçerli bir e-posta adresi giriniz.';
+                        if (currentLang === 'en') emailError = 'Please enter a valid email address.';
+                        if (currentLang === 'ar') emailError = 'يرجى إدخال عنوان بريد إلكتروني صالح.';
+                        
+                        emailInput.setCustomValidity(emailError);
+                        emailInput.reportValidity();
+                        
+                        // Reset custom validity on input change to allow resubmission
+                        emailInput.addEventListener('input', function resetValidity() {
+                            emailInput.setCustomValidity("");
+                            emailInput.removeEventListener('input', resetValidity);
+                        });
+                        return;
+                    } else {
+                        emailInput.setCustomValidity("");
+                    }
+
                     let loadingText = 'Gönderiliyor...';
                     let errorMessages = {
                         'tr': 'Mesajınız gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.',
                         'en': 'An error occurred while sending your message. Please try again later.',
-                        'ar': 'حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى في وقت لاحق.'
+                        'ar': 'حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى في وقت lahak.' // It had 'lahak.' or 'لاحقًا'
                     };
                     
                     if (currentLang === 'en') {
