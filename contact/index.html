@@ -439,14 +439,23 @@
                     submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin" style="margin-right: 8px;" aria-hidden="true"></i> ${loadingText}`;
 
                     const formData = new FormData();
-                    formData.append('access_key', '4321ee7e-b01e-4660-a90f-0064186a4cd2');
                     formData.append('name', contactForm.querySelector('input[name="name"]').value);
                     formData.append('organization', contactForm.querySelector('input[name="organization"]').value);
                     formData.append('email', contactForm.querySelector('input[name="email"]').value);
                     formData.append('subject', document.getElementById('contact-subject').value);
                     formData.append('message', contactForm.querySelector('textarea[name="message"]').value);
 
-                    fetch("https://api.web3forms.com/submit", {
+                    // Use configured Google Apps Script Web App URL if set, otherwise fallback to Web3Forms
+                    const submissionUrl = (window.GOOGLE_SCRIPT_URL && window.GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL')
+                        ? window.GOOGLE_SCRIPT_URL
+                        : "https://api.web3forms.com/submit";
+
+                    // If we are using Web3Forms, append the access key
+                    if (submissionUrl.includes('web3forms.com')) {
+                        formData.append('access_key', '4321ee7e-b01e-4660-a90f-0064186a4cd2');
+                    }
+
+                    fetch(submissionUrl, {
                         method: "POST",
                         body: formData
                     })
@@ -470,15 +479,20 @@
                     .catch(error => {
                         console.error('Form submission error:', error);
                         
-                        // Fallback: Submit using standard HTML form post to Web3Forms
+                        // Fallback: Submit using standard HTML form post
                         try {
-                            // Add access_key input if not already present
-                            if (!contactForm.querySelector('input[name="access_key"]')) {
-                                const keyInput = document.createElement('input');
-                                keyInput.type = 'hidden';
-                                keyInput.name = 'access_key';
-                                keyInput.value = "4321ee7e-b01e-4660-a90f-0064186a4cd2";
-                                contactForm.appendChild(keyInput);
+                            const fallbackUrl = (window.GOOGLE_SCRIPT_URL && window.GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL')
+                                ? window.GOOGLE_SCRIPT_URL
+                                : "https://api.web3forms.com/submit";
+
+                            if (fallbackUrl.includes('web3forms.com')) {
+                                if (!contactForm.querySelector('input[name="access_key"]')) {
+                                    const keyInput = document.createElement('input');
+                                    keyInput.type = 'hidden';
+                                    keyInput.name = 'access_key';
+                                    keyInput.value = "4321ee7e-b01e-4660-a90f-0064186a4cd2";
+                                    contactForm.appendChild(keyInput);
+                                }
                             }
                             
                             // Add redirect input to redirect back to this page after submission
@@ -490,7 +504,7 @@
                                 contactForm.appendChild(redirectInput);
                             }
                             
-                            contactForm.action = "https://api.web3forms.com/submit";
+                            contactForm.action = fallbackUrl;
                             contactForm.method = "POST";
                             // Remove dynamic submit handler and submit the form directly
                             contactForm.removeAttribute('onsubmit');

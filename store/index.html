@@ -611,14 +611,23 @@
             submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> ${loadingText}`;
 
             const formData = new FormData();
-            formData.append('access_key', '4321ee7e-b01e-4660-a90f-0064186a4cd2');
             formData.append('subject', "FiCo Ön Sipariş Talebi / Pre-Order Request");
             formData.append('name', form.querySelector('input[name="name"]').value);
             formData.append('email', form.querySelector('input[name="email"]').value);
             formData.append('quantity', form.querySelector('input[name="quantity"]').value);
             formData.append('notes', form.querySelector('textarea[name="notes"]').value);
 
-            fetch("https://api.web3forms.com/submit", {
+            // Use configured Google Apps Script Web App URL if set, otherwise fallback to Web3Forms
+            const submissionUrl = (window.GOOGLE_SCRIPT_URL && window.GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL')
+                ? window.GOOGLE_SCRIPT_URL
+                : "https://api.web3forms.com/submit";
+
+            // If we are using Web3Forms, append the access key
+            if (submissionUrl.includes('web3forms.com')) {
+                formData.append('access_key', '4321ee7e-b01e-4660-a90f-0064186a4cd2');
+            }
+
+            fetch(submissionUrl, {
                 method: "POST",
                 body: formData
             })
@@ -642,15 +651,20 @@
             .catch(error => {
                 console.error('Pre-order form submission error:', error);
                 
-                // Fallback: Submit using standard HTML form post to Web3Forms.
+                // Fallback: Submit using standard HTML form post.
                 try {
-                    // Append access_key if not already present
-                    if (!form.querySelector('input[name="access_key"]')) {
-                        const keyInput = document.createElement('input');
-                        keyInput.type = 'hidden';
-                        keyInput.name = 'access_key';
-                        keyInput.value = "4321ee7e-b01e-4660-a90f-0064186a4cd2";
-                        form.appendChild(keyInput);
+                    const fallbackUrl = (window.GOOGLE_SCRIPT_URL && window.GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL')
+                        ? window.GOOGLE_SCRIPT_URL
+                        : "https://api.web3forms.com/submit";
+
+                    if (fallbackUrl.includes('web3forms.com')) {
+                        if (!form.querySelector('input[name="access_key"]')) {
+                            const keyInput = document.createElement('input');
+                            keyInput.type = 'hidden';
+                            keyInput.name = 'access_key';
+                            keyInput.value = "4321ee7e-b01e-4660-a90f-0064186a4cd2";
+                            form.appendChild(keyInput);
+                        }
                     }
                     
                     // Append subject if not already present
@@ -671,7 +685,7 @@
                         form.appendChild(redirectInput);
                     }
                     
-                    form.action = "https://api.web3forms.com/submit";
+                    form.action = fallbackUrl;
                     form.method = "POST";
                     form.removeAttribute('onsubmit'); // Remove AJAX handler to allow normal post
                     form.submit();

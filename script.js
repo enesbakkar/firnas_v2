@@ -1249,3 +1249,6 @@ function typeTerminal() {
     }
 }
 
+// Global Form Configuration (Google Apps Script URL)
+window.GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_URL";
+
