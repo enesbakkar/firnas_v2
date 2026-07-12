@@ -439,17 +439,15 @@
                     submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin" style="margin-right: 8px;" aria-hidden="true"></i> ${loadingText}`;
 
                     const formData = new FormData();
+                    formData.append('access_key', 'YOUR_WEB3FORMS_ACCESS_KEY');
                     formData.append('name', contactForm.querySelector('input[name="name"]').value);
                     formData.append('organization', contactForm.querySelector('input[name="organization"]').value);
                     formData.append('email', contactForm.querySelector('input[name="email"]').value);
                     formData.append('subject', document.getElementById('contact-subject').value);
                     formData.append('message', contactForm.querySelector('textarea[name="message"]').value);
 
-                    fetch("https://formsubmit.co/ajax/firnastechno@gmail.com", {
+                    fetch("https://api.web3forms.com/submit", {
                         method: "POST",
-                        headers: { 
-                            'Accept': 'application/json'
-                        },
                         body: formData
                     })
                     .then(response => {
@@ -472,23 +470,30 @@
                     .catch(error => {
                         console.error('Form submission error:', error);
                         
-                        // Fallback: Submit using standard HTML form post to bypass CORS/activation block.
+                        // Fallback: Submit using standard HTML form post to Web3Forms
                         try {
-                            // Add _next input to redirect back to this page after submission
-                            if (!contactForm.querySelector('input[name="_next"]')) {
-                                const nextInput = document.createElement('input');
-                                nextInput.type = 'hidden';
-                                nextInput.name = '_next';
-                                nextInput.value = window.location.href;
-                                contactForm.appendChild(nextInput);
+                            // Add access_key input if not already present
+                            if (!contactForm.querySelector('input[name="access_key"]')) {
+                                const keyInput = document.createElement('input');
+                                keyInput.type = 'hidden';
+                                keyInput.name = 'access_key';
+                                keyInput.value = "YOUR_WEB3FORMS_ACCESS_KEY";
+                                contactForm.appendChild(keyInput);
                             }
                             
-                            contactForm.action = "https://formsubmit.co/firnastechno@gmail.com";
+                            // Add redirect input to redirect back to this page after submission
+                            if (!contactForm.querySelector('input[name="redirect"]')) {
+                                const redirectInput = document.createElement('input');
+                                redirectInput.type = 'hidden';
+                                redirectInput.name = 'redirect';
+                                redirectInput.value = window.location.href;
+                                contactForm.appendChild(redirectInput);
+                            }
+                            
+                            contactForm.action = "https://api.web3forms.com/submit";
                             contactForm.method = "POST";
                             // Remove dynamic submit handler and submit the form directly
                             contactForm.removeAttribute('onsubmit');
-                            // But wait! contactForm uses addEventListener('submit'), not onsubmit attribute.
-                            // To bypass the event listener on submit, we can call contactForm.submit() which bypasses submit event handlers!
                             contactForm.submit();
                         } catch (submitErr) {
                             console.error('Fallback submission error:', submitErr);
