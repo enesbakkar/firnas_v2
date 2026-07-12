@@ -1250,5 +1250,5 @@ function typeTerminal() {
 }
 
 // Global Form Configuration (Google Apps Script URL)
-window.GOOGLE_SCRIPT_URL = "YOUR_GOOGLE_SCRIPT_URL";
+window.GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwHnP2nz_kRMkqjlJprcWaAWFh7NwxFoJVYeChPULtQ4pxDia5z4NVl8dRN7iEXoGRZ/exec";
 
