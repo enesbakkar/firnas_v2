@@ -18,5 +18,6 @@ build/
 # Operating System Files
 Thumbs.db
 ehthumbs.db
-Desktop.ini
-.DS_Store
+# Sensitive Credentials
+rutin/google_credentials.js
+
