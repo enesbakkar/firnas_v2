@@ -555,6 +555,79 @@
             font-size: 0.95rem;
         }
 
+        /* TEAM SHOWCASE GRID */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 1.25rem;
+            margin-top: 1.5rem;
+        }
+
+        .team-card {
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-glass);
+            border-radius: var(--radius-md);
+            padding: 1.25rem;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-4px);
+            border-color: var(--accent-cyan);
+        }
+
+        .team-avatar {
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 0.8rem;
+            border: 2px solid var(--accent-cyan);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+
+        .team-name {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #ffffff;
+        }
+
+        .team-role {
+            font-size: 0.82rem;
+            color: var(--accent-cyan);
+            font-weight: 600;
+            margin-bottom: 0.4rem;
+        }
+
+        /* PARTNER LOGOS BANNER */
+        .partner-logos {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            padding: 1.5rem;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: var(--radius-md);
+            margin-top: 1.5rem;
+        }
+
+        .partner-logos img {
+            height: 45px;
+            width: auto;
+            object-fit: contain;
+            opacity: 0.85;
+            filter: grayscale(20%) brightness(1.2);
+            transition: all 0.3s ease;
+        }
+
+        .partner-logos img:hover {
+            opacity: 1;
+            filter: grayscale(0%) drop-shadow(0 0 8px var(--accent-cyan));
+            transform: scale(1.05);
+        }
+
         /* SKILLS GRID */
         .skills-grid {
             display: grid;
@@ -766,10 +839,10 @@
             color: #051421;
         }
 
-        /* GALLERY & MEDIA */
+        /* GALLERY & MEDIA EXPANSIOIN */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.25rem;
         }
 
@@ -796,7 +869,7 @@
         .gallery-overlay {
             position: absolute;
             inset: 0;
-            background: linear-gradient(0deg, rgba(5, 20, 33, 0.9) 0%, transparent 60%);
+            background: linear-gradient(0deg, rgba(5, 20, 33, 0.92) 0%, rgba(5, 20, 33, 0.2) 60%);
             display: flex;
             flex-direction: column;
             justify-content: flex-end;
@@ -811,13 +884,15 @@
 
         .gallery-caption {
             color: #ffffff;
-            font-weight: 600;
-            font-size: 0.95rem;
+            font-weight: 700;
+            font-size: 1rem;
         }
 
         .gallery-sub {
             color: var(--accent-cyan);
-            font-size: 0.8rem;
+            font-size: 0.82rem;
+            font-weight: 500;
+            margin-top: 2px;
         }
 
         /* MEDIA QUOTE CARDS */
@@ -1163,6 +1238,10 @@
                 grid-template-columns: 1fr 1fr;
                 gap: 0.75rem;
             }
+
+            .partner-logos img {
+                height: 32px;
+            }
         }
 
         @media (max-width: 480px) {
@@ -1258,8 +1337,8 @@
                 <button class="tab-btn" data-tab="projects" role="tab"><i class="fas fa-plane-rocket"></i> <span data-i18n="tabs.projects">Projeler & AR-GE</span></button>
                 <button class="tab-btn" data-tab="experience" role="tab"><i class="fas fa-briefcase"></i> <span data-i18n="tabs.experience">Deneyim & Programlar</span></button>
                 <button class="tab-btn" data-tab="awards" role="tab"><i class="fas fa-trophy"></i> <span data-i18n="tabs.awards">Ödüller & Başarılar</span></button>
-                <button class="tab-btn" data-tab="media" role="tab"><i class="fas fa-globe"></i> <span data-i18n="tabs.media">Uluslararası Etkinlikler & Medya</span></button>
-                <button class="tab-btn" data-tab="contact" role="tab"><i class="fas fa-paper-plane"></i> <span data-i18n="tabs.contact">İletişim & Sosyal</span></button>
+                <button class="tab-btn" data-tab="media" role="tab"><i class="fas fa-camera-retro"></i> <span data-i18n="tabs.media">Foto Galerisi & Medya</span></button>
+                <button class="tab-btn" data-tab="contact" role="tab"><i class="fas fa-paper-plane"></i> <span data-i18n="tabs.contact">İletişim & Bağlantılar</span></button>
             </div>
         </div>
 
@@ -1286,6 +1365,21 @@
                 </div>
             </div>
 
+            <!-- INSTITUTIONAL PARTNERS BANNER -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-handshake"></i> <span data-i18n="overview.partners_title">Paydaş Kurumlar ve Ortaklıklar</span></h2>
+                </div>
+                <div class="partner-logos">
+                    <img src="/asset/t3_logo.png" alt="T3 Vakfı Logo" title="T3 Vakfı / Deneyap Teknoloji Atölyeleri">
+                    <img src="/asset/genc_ihh_logo.png" alt="Genç İHH Logo" title="İstanbul Genç İHH ATOM">
+                    <img src="/asset/iau_logo.png" alt="İstanbul Aydın Üniversitesi Logo" title="İstanbul Aydın Üniversitesi Bilgisayar Müh.">
+                    <img src="/asset/ifm_logo_fullcolor_tr.png" alt="İstanbul Finans Merkezi Logo" title="OIC Youth Conference 2026">
+                    <img src="/asset/atolye_uskudar_logo.png" alt="Atölye Üsküdar Logo" title="Firnas FEAM Programı Partneri">
+                    <img src="/asset/avcim_logo.png" alt="AVÇİM Logo" title="AVÇİM Akademi Partneri">
+                </div>
+            </div>
+
             <div class="content-card">
                 <div class="card-header">
                     <h2 class="card-title"><i class="fas fa-compass"></i> <span data-i18n="overview.bio_title">Profil & Biyografi Özeti</span></h2>
@@ -1307,7 +1401,7 @@
 
                 <div class="cta-buttons">
                     <a href="#projects" onclick="switchTab('projects')" class="btn-primary"><i class="fas fa-drone"></i> <span data-i18n="btn.view_fico">FiCo Projesini İncele</span></a>
-                    <a href="#media" onclick="switchTab('media')" class="btn-outline"><i class="fas fa-globe"></i> <span data-i18n="btn.view_media">Uluslararası Konferans & Medya</span></a>
+                    <a href="#media" onclick="switchTab('media')" class="btn-outline"><i class="fas fa-camera"></i> <span data-i18n="btn.view_media">Tüm Foto Galerisi & Medya</span></a>
                     <a href="/asset/Enes_BAKKAR_CV_2024.pdf" target="_blank" class="btn-outline"><i class="fas fa-file-download"></i> <span data-i18n="btn.download_cv">Özgeçmiş (CV) İndir</span></a>
                 </div>
             </div>
@@ -1419,6 +1513,7 @@
                             <li data-i18n="fico.spec3">Karbon fiber & 3D baskılı dayanıklı hafif modüler koruma şasisi</li>
                             <li data-i18n="fico.spec4">Scratch blok kodlamadan metin tabanlı Python / C++ kodlamaya geçiş</li>
                         </ul>
+                        <a href="https://drive.google.com/file/d/19bwAbUODwTifjv_U-rjxoX72pTZvLb6G/view" target="_blank" class="link-btn-small" style="align-self: flex-start; margin-top: 0.5rem;"><i class="fas fa-file-powerpoint"></i> FiCo Sunumunu İncele (PPTX / Drive)</a>
                     </div>
                 </div>
 
@@ -1448,8 +1543,42 @@
             </div>
         </div>
 
-        <!-- TAB 4: DENEYİM & PROGRAMLAR (EXPERIENCE & PROGRAMS) -->
+        <!-- TAB 4: DENEYİM & PROGRAMLAR & EKİP (EXPERIENCE & TEAM) -->
         <div id="experience" class="tab-pane" role="tabpanel">
+            
+            <!-- FIRNAS R&D TEAM SHOWCASE -->
+            <div class="content-card">
+                <div class="card-header">
+                    <h2 class="card-title"><i class="fas fa-users-gear"></i> <span data-i18n="exp.team_title">Firnas Teknoloji AR-GE Ekibi</span></h2>
+                </div>
+                <div class="team-grid">
+                    <div class="team-card">
+                        <img src="/asset/enes_bakkar.jpg" alt="Enes Bakkar" class="team-avatar">
+                        <div class="team-name">Enes Bakkar</div>
+                        <div class="team-role" data-i18n="team.enes_role">Kurucu Ortak & R&D Lideri</div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Mekanik Tasarım, Donanım Mimarisi & İHA Sistemleri</p>
+                    </div>
+                    <div class="team-card">
+                        <img src="/asset/bayerli_foto.png" alt="Mahmud Bayerli" class="team-avatar">
+                        <div class="team-name">Mahmud Bayerli</div>
+                        <div class="team-role" data-i18n="team.bayerli_role">Kurucu Ortak & Yazılım / Gömülü Sistemler</div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Deneyap Kart v2, Uçuş Yazılımı & Algoritma</p>
+                    </div>
+                    <div class="team-card">
+                        <img src="/asset/hahydar_irmrak.jpeg" alt="Haydar Irmak" class="team-avatar">
+                        <div class="team-name">Haydar Irmak</div>
+                        <div class="team-role" data-i18n="team.irmak_role">Donanım & Üretim Sorumlusu</div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">3D Baskı Optimizasyonu & Karbon Şasi</p>
+                    </div>
+                    <div class="team-card">
+                        <img src="/asset/emin_turkmen.jpg" alt="Emin Türkmen" class="team-avatar">
+                        <div class="team-name">Emin Türkmen</div>
+                        <div class="team-role" data-i18n="team.turkmen_role">Prototipleme & Görsel Tasarım</div>
+                        <p style="font-size: 0.8rem; color: var(--text-muted);">Ürün Prototipleme & Görsel Kimlik</p>
+                    </div>
+                </div>
+            </div>
+
             <div class="content-card">
                 <div class="card-header">
                     <h2 class="card-title"><i class="fas fa-briefcase"></i> <span data-i18n="exp.h">Katıldığı Programlar ve Görevler</span></h2>
@@ -1520,7 +1649,7 @@
                         <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.tgb_d">
                             FiCo projesi ile Uluslararası Proje Kategorisinde 1.'lik kazanılmıştır. Ödül, GİV Başkanı Ali Bakaner tarafından takdim edilmiş; törende Gençlik ve Spor Bakan Yardımcısı Dr. Enes Eminoğlu ve TÜGVA Genel Başkanı İbrahim Beşinci hazır bulunmuştur.
                         </p>
-                        <a href="https://tr.linkedin.com/posts/ens-bkkr_ekibimiz-a%C3%A7%C4%B1s%C4%B1ndan-bu-ba%C5%9Far%C4%B1-sadece-bir-activity-7275947020052316160-Hwmt" target="_blank" class="link-btn-small"><i class="fab fa-linkedin"></i> Ödül Töreni Fotoğrafı</a>
+                        <a href="https://tr.linkedin.com/posts/ens-bkkr_ekibimiz-a%C3%A7%C4%B1s%C4%B1ndan-bu-ba%C5%9Far%C4%B1-sadece-bir-activity-7275947020052316160-Hwmt" target="_blank" class="link-btn-small"><i class="fab fa-linkedin"></i> Ödül Töreni Gönderisi</a>
                     </div>
 
                     <!-- Ödül 2: Üretken Esenler -->
@@ -1583,7 +1712,7 @@
             </div>
         </div>
 
-        <!-- TAB 6: ULUSLARARASI ETKİNLİKLER & MEDYA (MEDIA & EVENTS) -->
+        <!-- TAB 6: FOTO GALERİSİ & MEDYA (MEDIA & GALLERY) -->
         <div id="media" class="tab-pane" role="tabpanel">
             <div class="content-card">
                 <div class="card-header">
@@ -1602,6 +1731,7 @@
                     <p style="color: var(--accent-cyan); font-size: 0.88rem; font-weight: 600;" data-i18n="media.oic_guests">
                         Stant Ziyaretçileri: Sanayi ve Teknoloji Bakan Yardımcısı Zekeriya Çoştu ve ICYF Başkanı Taha Ayhan Firnas Teknoloji standını ziyaret etmişlerdir.
                     </p>
+                    <a href="https://tr.linkedin.com/company/firnas-technologies" target="_blank" class="link-btn-small" style="margin-top: 0.75rem;"><i class="fab fa-linkedin"></i> Konferans Albümü (Firnas LinkedIn)</a>
                 </div>
 
                 <div class="media-quote-card">
@@ -1625,40 +1755,121 @@
                 </div>
             </div>
 
+            <!-- COMPREHENSIVE HIGH-RES PHOTO GALLERY -->
             <div class="content-card">
                 <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-images"></i> <span data-i18n="media.gallery_h">Etkinlik & Belgesel Fotoğraf Galerisi</span></h2>
+                    <h2 class="card-title"><i class="fas fa-camera-retro"></i> <span data-i18n="media.gallery_h">Kapsamlı Etkinlik & Belgesel Fotoğraf Galerisi</span></h2>
                 </div>
 
                 <div class="gallery-grid">
+                    <!-- GİV TGB Award Stage -->
                     <div class="gallery-item">
-                        <img src="/asset/bogazici_program_01.jpg" alt="Boğaziçi Programı Fotoğrafı">
+                        <img src="/asset/tgb_sahne.jpg" alt="TGB Sahne Ödül Töreni">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">GİV TGB Uluslararası 1.'lik Ödülü</div>
+                            <div class="gallery-sub">GİV Başkanı Ali Bakaner & Bakan Yrd. Dr. Enes Eminoğlu ile</div>
+                        </div>
+                    </div>
+
+                    <!-- FEAM Program Banner -->
+                    <div class="gallery-item">
+                        <img src="/asset/feam_banner.png" alt="Firnas FEAM Programı Banner">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Firnas FEAM Akademi Programı</div>
+                            <div class="gallery-sub">AVÇİM & Atölye Üsküdar İş Birliği</div>
+                        </div>
+                    </div>
+
+                    <!-- Boğaziçi 1 -->
+                    <div class="gallery-item">
+                        <img src="/asset/bogazici_program_01.jpg" alt="Boğaziçi Programı Fotoğrafı 1">
                         <div class="gallery-overlay">
                             <div class="gallery-caption">Boğaziçi Üniversitesi Konuşması</div>
                             <div class="gallery-sub">"Bugünden Yarını Tasarlamak"</div>
                         </div>
                     </div>
+
+                    <!-- Boğaziçi 2 -->
                     <div class="gallery-item">
-                        <img src="/asset/mem_belgesel_01.jpg" alt="İl MEM Belgeseli Fotoğrafı">
+                        <img src="/asset/bogazici_program_02.jpg" alt="Boğaziçi Programı Fotoğrafı 2">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Boğaziçi Akademik Sunum</div>
+                            <div class="gallery-sub">Öğrenci Metodolojisi & STEM</div>
+                        </div>
+                    </div>
+
+                    <!-- Boğaziçi 3 -->
+                    <div class="gallery-item">
+                        <img src="/asset/bogazici_program_03.jpg" alt="Boğaziçi Programı Fotoğrafı 3">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Boğaziçi Katılımcı Grubu</div>
+                            <div class="gallery-sub">Söyleşi ve Soru-Cevap</div>
+                        </div>
+                    </div>
+
+                    <!-- İl MEM Belgesel 1 -->
+                    <div class="gallery-item">
+                        <img src="/asset/mem_belgesel_01.jpg" alt="İl MEM Belgeseli Fotoğrafı 1">
                         <div class="gallery-overlay">
                             <div class="gallery-caption">İstanbul İl MEM Belgeseli</div>
-                            <div class="gallery-sub">Çekim Sahnesi & Röportaj</div>
+                            <div class="gallery-sub">Çekim Sahnesi & Atölye</div>
                         </div>
                     </div>
+
+                    <!-- İl MEM Belgesel 2 -->
                     <div class="gallery-item">
-                        <img src="/asset/mem_belgesel_03.jpg" alt="Belgesel Çekim Görseli">
+                        <img src="/asset/mem_belgesel_02.jpg" alt="İl MEM Belgeseli Fotoğrafı 2">
                         <div class="gallery-overlay">
-                            <div class="gallery-caption">Belgesel Gösterim Günü</div>
-                            <div class="gallery-sub">Mayıs 2026</div>
+                            <div class="gallery-caption">MEB Başarı Hikayeleri</div>
+                            <div class="gallery-sub">Lise Laboratuvar Çekimleri</div>
                         </div>
                     </div>
+
+                    <!-- İl MEM Belgesel 3 -->
                     <div class="gallery-item">
-                        <img src="/asset/tgb_sahne.jpg" alt="TGB Sahne Ödül">
+                        <img src="/asset/mem_belgesel_03.jpg" alt="Belgesel Çekim Görseli 3">
                         <div class="gallery-overlay">
-                            <div class="gallery-caption">GİV TGB Ödül Töreni</div>
-                            <div class="gallery-sub">Uluslararası Proje 1.'liği</div>
+                            <div class="gallery-caption">Belgesel Gala & Gösterim Günü</div>
+                            <div class="gallery-sub">Mayıs 2026 Gösterimi</div>
                         </div>
                     </div>
+
+                    <!-- İl MEM Belgesel 4 -->
+                    <div class="gallery-item">
+                        <img src="/asset/mem_belgesel_04.jpg" alt="Belgesel Röportaj Sahnesi">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Röportaj Sahnesi</div>
+                            <div class="gallery-sub">İHA ve Donanım Vizyonu</div>
+                        </div>
+                    </div>
+
+                    <!-- MEB Belgesel 01 -->
+                    <div class="gallery-item">
+                        <img src="/asset/meb_belgesel_01.jpg" alt="MEB Belgesel karesi 1">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">EBİAL Lise Yılları</div>
+                            <div class="gallery-sub">Robotik & Kodlama Atölyesi</div>
+                        </div>
+                    </div>
+
+                    <!-- MEB Belgesel 05 -->
+                    <div class="gallery-item">
+                        <img src="/asset/meb_belgesel_05.jpg" alt="MEB Belgesel karesi 5">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Model İHA ve Protokol</div>
+                            <div class="gallery-sub">Saha Çalışmaları</div>
+                        </div>
+                    </div>
+
+                    <!-- X Post Gözyumma -->
+                    <div class="gallery-item">
+                        <img src="/asset/x_post_gozyumma.jpg" alt="İnsani Farkındalık Paylaşımı">
+                        <div class="gallery-overlay">
+                            <div class="gallery-caption">Toplumsal & İnsani Duyarlılık</div>
+                            <div class="gallery-sub">Sosyal Farkındalık Paylaşımı</div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -1678,8 +1889,15 @@
                     <a href="https://www.linkedin.com/in/ens-bkkr/" target="_blank" class="social-btn">
                         <i class="fab fa-linkedin"></i>
                         <div class="social-btn-text">
-                            LinkedIn
+                            LinkedIn (Şahsi)
                             <span>/in/ens-bkkr</span>
+                        </div>
+                    </a>
+                    <a href="https://tr.linkedin.com/company/firnas-technologies" target="_blank" class="social-btn">
+                        <i class="fab fa-linkedin-in"></i>
+                        <div class="social-btn-text">
+                            Firnas LinkedIn
+                            <span>/company/firnas-technologies</span>
                         </div>
                     </a>
                     <a href="https://github.com/enesbakkar" target="_blank" class="social-btn">
@@ -1703,6 +1921,13 @@
                             <span>@ens_bkkr</span>
                         </div>
                     </a>
+                    <a href="https://youtube.com/@ens_bkkr" target="_blank" class="social-btn">
+                        <i class="fab fa-youtube"></i>
+                        <div class="social-btn-text">
+                            YouTube
+                            <span>@ens_bkkr</span>
+                        </div>
+                    </a>
                     <a href="mailto:bakkarenes@gmail.com" class="social-btn">
                         <i class="fas fa-envelope"></i>
                         <div class="social-btn-text">
@@ -1719,7 +1944,17 @@
                     </a>
                 </div>
 
-                <div class="cta-buttons" style="margin-top: 2.5rem;">
+                <!-- DIRECT PDF & RESOURCES LINKS MATRIX -->
+                <div class="content-card" style="margin-top: 2rem; background: rgba(0,0,0,0.2);">
+                    <h3 style="color: var(--accent-cyan); margin-bottom: 1rem; font-size: 1.1rem;"><i class="fas fa-folder-open"></i> <span data-i18n="contact.drive_h">Drive & Resmi Belge Envanteri</span></h3>
+                    <div class="skills-grid">
+                        <a href="https://drive.google.com/file/d/1picGgdlZjQXTXfBISB7Kzk7QiqWJR54a/view" target="_blank" class="link-btn-small"><i class="fas fa-file-pdf"></i> Enes Bakkar CV 2025 (PDF - Drive)</a>
+                        <a href="https://drive.google.com/file/d/1xeaZsvWhDMde6pKiIPnImOh1cXgV3p8w/view" target="_blank" class="link-btn-small"><i class="fas fa-file-pdf"></i> Kapsamlı Portfolyo 12 MB (PDF - Drive)</a>
+                        <a href="https://drive.google.com/file/d/19bwAbUODwTifjv_U-rjxoX72pTZvLb6G/view" target="_blank" class="link-btn-small"><i class="fas fa-file-powerpoint"></i> FiCo Proje Sunumu (PPTX - Drive)</a>
+                    </div>
+                </div>
+
+                <div class="cta-buttons" style="margin-top: 2rem;">
                     <a href="/asset/Enes_BAKKAR_CV_2024.pdf" target="_blank" class="btn-primary"><i class="fas fa-file-pdf"></i> <span data-i18n="btn.download_cv">Resmi CV'yi İndir (PDF)</span></a>
                     <a href="/asset/Enes_Bakkar_Portfolyo.pdf" target="_blank" class="btn-outline"><i class="fas fa-book-open"></i> <span data-i18n="btn.download_portfolio">Kapsamlı Portfolyoyu İndir (PDF)</span></a>
                 </div>
@@ -1748,7 +1983,7 @@
                     "İAÜ Bilgisayar Mühendisliği Öğrencisi & İHA Geliştiricisi"
                 ],
                 nav: { home: "Ana Sayfa", about_site: "Hakkımızda", products: "Ürünler", store: "Mağaza", contact_site: "İletişim" },
-                tabs: { overview: "Genel Bakış", about: "Hakkımda & Biyografi", projects: "Projeler & AR-GE", experience: "Deneyim & Programlar", awards: "Ödüller & Başarılar", media: "Uluslararası Etkinlikler & Medya", contact: "İletişim & Sosyal" },
+                tabs: { overview: "Genel Bakış", about: "Hakkımda & Biyografi", projects: "Projeler & AR-GE", experience: "Deneyim & Ekip", awards: "Ödüller & Başarılar", media: "Foto Galerisi & Medya", contact: "İletişim & Bağlantılar" },
                 hero: {
                     name: "Enes Bakkar",
                     snippet: "Donanım mimarisi, aerodinamik mekanik tasarım, insansız hava araçları (İHA), eğitim teknolojileri ve yapay zeka entegrasyonuyla geleceğin mühendislerini yetiştiren teknoloji girişimcisi.",
@@ -1756,6 +1991,7 @@
                 },
                 stats: { giv: "Türkiye Girişimci Buluşması Uluslararası Proje 1.'si", esenler: "Üretken Esenler Proje Yarışması 2.'lik Ödülü", t3_burs: "T3 Vakfı Özdemir Bayraktar Burslu Eğitmeni", lang_cap: "Akıcı 3 Dilde İletişim Kabiliyeti" },
                 overview: {
+                    partners_title: "Paydaş Kurumlar ve Ortaklıklar",
                     bio_title: "Profil & Biyografi Özeti",
                     bio_p1: "Enes Bakkar (Anas Bakkar), 27 Nisan 2006 doğumlu olup teknoloji, insansız hava araçları (İHA), eğitim teknolojileri ve sivil toplum kesişiminde çalışan genç bir girişimci ve mühendislik öğrencisidir. Mekke doğumlu ve Suriye kökenli olup çalışmalarını İstanbul merkezli sürdürmektedir.",
                     bio_p2: "Firnas Teknoloji Kurucu Ortağı olarak amiral gemisi ürünü olan FiCo (Programlanabilir Eğitim Dronu Ekosistemi) projesini geliştirmektedir. Mekanik tasarım, donanım mimarisi, 3D baskı optimizasyonu ve uçuş kontrolör entegrasyonuna liderlik etmektedir.",
@@ -1763,7 +1999,7 @@
                     quote: '"İstanbul İl Millî Eğitim Müdürlüğü tarafından düzenlenen özel programda kısa belgeselimizin gösterimi gerçekleştirildi. Lakin şunu görüyorum ki: Yol uzun, vakit kısa ve bizler henüz seferin en başındayız."',
                     quote_author: "— Enes Bakkar (Mayıs 2026, İstanbul İl MEM Belgesel Gösterimi)"
                 },
-                btn: { view_fico: "FiCo Projesini İncele", view_media: "Uluslararası Konferans & Medya", download_cv: "Özgeçmiş (CV) İndir", download_portfolio: "Portfolyo İndir (PDF)" },
+                btn: { view_fico: "FiCo Projesini İncele", view_media: "Tüm Foto Galerisi & Medya", download_cv: "Özgeçmiş (CV) İndir", download_portfolio: "Portfolyo İndir (PDF)" },
                 about: {
                     title: "Kişisel Bilgiler & Uzmanlık Alanları",
                     p1: "27 Nisan 2006 Mekke doğumlu Enes Bakkar (Anas Bakkar), Suriye kökenlidir. Lise öğrenimini İstanbul'da Borsa İstanbul Anadolu Lisesi'nde (EBİAL) dereceyle tamamlamıştır. 2024 yılı itibarıyla İstanbul Aydın Üniversitesi Bilgisayar Mühendisliği (İngilizce) lisans eğitimini sürdürmektedir.",
@@ -1778,6 +2014,7 @@
                 },
                 defense: { title: "Otonom Sistemler & Konsept Çalışmaları", uska: "Sarp arazilerde devriye ve otonom keşif yapabilen insansız kara/hava konsept mimarisi.", muhafiz: "Mini İHA ve drone tehditlerine karşı hızlı önleme sağlayan savunma sistemi konsepti." },
                 exp: {
+                    team_title: "Firnas Teknoloji AR-GE Ekibi",
                     h: "Katıldığı Programlar ve Görevler",
                     t3_burs_t: "T3 Vakfı – Özdemir Bayraktar Milli Teknoloji Burs Programı",
                     t3_burs_d: "Eğitmen ve Mentor olarak seçilmiştir. Deneyap Teknoloji Atölyeleri'nde gençlere teknoloji üretimi, robotik, kodlama ve havacılık alanlarında rehberlik etmektedir.",
@@ -1789,6 +2026,12 @@
                     atom_d: "Akademi ve Teknoloji Organizasyon Merkezi (ATOM) il sorumlusu olarak TEKNOFEST ve TÜBİTAK ekiplerine mentorluk, mühendislik atölyeleri ve havacılık dersleri.",
                     fab_t: "FabLab Stajyeri / Mentor — Gelecek Üsküdar",
                     fab_d: "3D baskı parkuru yönetimi, drone atölyeleri ve girişimci ekiplere prototipleme desteği."
+                },
+                team: {
+                    enes_role: "Kurucu Ortak & R&D Lideri",
+                    bayerli_role: "Kurucu Ortak & Yazılım / Gömülü Sistemler",
+                    irmak_role: "Donanım & Üretim Sorumlusu",
+                    turkmen_role: "Prototipleme & Görsel Tasarım"
                 },
                 awards: {
                     h: "Kazanılan Ödüller ve Başarılar",
@@ -1813,9 +2056,9 @@
                     iha_quote: '"Esenler Belediyesi’nin düzenlediği Üretken Esenler proje yarışması kapsamında tasarladığımız eğitim drone’u projesiyle ikincilik ödülü almış olduk. İlkokul ve ortaokul öğrencilerine robotik kodlamayı eğlenerek öğretmeyi hedefliyoruz."',
                     meb_quote: '"Geçen yıl mezun ettiğimiz şimdi Bilgisayar Mühendisliği bölümünde okuyan öğrencimiz Enes Bakkar başarılarıyla ve ödül alan ulusal ve uluslararası projeleri ile gerek okulumuzun ve ülkemizin gurur kaynağı olmuştur. Bakanlığımıza bildirdiğimiz bu öğrencimiz belgesele konu oldu."',
                     bogazici_quote: '"Boğaziçi Üniversitesi\'nde Bugünden Yarını Tasarlamak başlıklı programımızı tamamladık."',
-                    gallery_h: "Etkinlik & Belgesel Fotoğraf Galerisi"
+                    gallery_h: "Kapsamlı Etkinlik & Belgesel Fotoğraf Galerisi"
                 },
-                contact: { h: "Doğrudan İletişim & Sosyal Medya Matrisi", sub: "Proje iş birlikleri, eğitmenlik/mentorluk talepleri veya teknik görüşmeler için ulaşabilirsiniz." }
+                contact: { h: "Doğrudan İletişim & Sosyal Medya Matrisi", sub: "Proje iş birlikleri, eğitmenlik/mentorluk talepleri veya teknik görüşmeler için ulaşabilirsiniz.", drive_h: "Drive & Resmi Belge Envanteri" }
             },
             en: {
                 dir: 'ltr',
@@ -1827,7 +2070,7 @@
                     "Computer Engineering Student & UAV Developer"
                 ],
                 nav: { home: "Home", about_site: "About Us", products: "Products", store: "Store", contact_site: "Contact" },
-                tabs: { overview: "Overview", about: "About & Biography", projects: "Projects & R&D", experience: "Experience & Programs", awards: "Awards & Honors", media: "International Events & Media", contact: "Contact & Social" },
+                tabs: { overview: "Overview", about: "About & Biography", projects: "Projects & R&D", experience: "Experience & Team", awards: "Awards & Honors", media: "Photo Gallery & Media", contact: "Contact & Links" },
                 hero: {
                     name: "Enes Bakkar",
                     snippet: "Tech entrepreneur training future engineers through hardware architecture, aerodynamic mechanical design, UAV drones, educational technologies, and AI integration.",
@@ -1835,6 +2078,7 @@
                 },
                 stats: { giv: "1st Place Award in Turkey Entrepreneurship Meeting", esenler: "2nd Place Award in Uretken Esenler Project Contest", t3_burs: "T3 Foundation Ozdemir Bayraktar Scholar Instructor", lang_cap: "Trilingual Communication Capability" },
                 overview: {
+                    partners_title: "Institutional Partners & Collaborations",
                     bio_title: "Profile & Biographical Summary",
                     bio_p1: "Enes Bakkar (Anas Bakkar), born April 27, 2006, is a young entrepreneur and engineering student working at the intersection of technology, UAVs, educational tech, and civil society in Istanbul.",
                     bio_p2: "As Co-Founder of Firnas Technology, he leads the R&D of the flagship FiCo (Programmable Educational Drone Ecosystem) platform, directing mechanical design, hardware architecture, and 3D printing optimization.",
@@ -1842,7 +2086,7 @@
                     quote: '"Our short documentary was premiered at a special program hosted by the Istanbul Provincial Directorate of National Education. Yet I see that: The road is long, time is short, and we are just at the very beginning of our journey."',
                     quote_author: "— Enes Bakkar (May 2026, Istanbul Provincial Directorate Documentary Screening)"
                 },
-                btn: { view_fico: "Explore FiCo Drone", view_media: "International Conference & Media", download_cv: "Download Resume (PDF)", download_portfolio: "Download Portfolio (PDF)" },
+                btn: { view_fico: "Explore FiCo Drone", view_media: "Full Photo Gallery & Media", download_cv: "Download Resume (PDF)", download_portfolio: "Download Portfolio (PDF)" },
                 about: {
                     title: "Personal Profile & Expertise",
                     p1: "Born on April 27, 2006 in Mecca, Enes Bakkar (Anas Bakkar) is of Syrian descent. He completed high school at Borsa Istanbul Anatolian High School (EBİAL) and is studying Computer Engineering (English) at Istanbul Aydin University.",
@@ -1857,6 +2101,7 @@
                 },
                 defense: { title: "Autonomous Systems & Concepts", uska: "Unmanned ground/aerial vehicle concept architecture for patrol and autonomous reconnaissance.", muhafiz: "Air defense system concept for rapid interception against mini-UAV and drone threats." },
                 exp: {
+                    team_title: "Firnas Technology R&D Team",
                     h: "Participated Programs & Roles",
                     t3_burs_t: "T3 Foundation – Ozdemir Bayraktar Scholarship Program",
                     t3_burs_d: "Selected as Instructor and Mentor for 12 months, guiding students in robotics, coding, and aviation at Deneyap Workshops.",
@@ -1868,6 +2113,12 @@
                     atom_d: "Mentoring TEKNOFEST & TUBITAK teams, organizing engineering workshops and aviation classes.",
                     fab_t: "FabLab Intern / Mentor — Gelecek Uskudar",
                     fab_d: "3D printing lab management, drone workshops, and prototyping mentorship."
+                },
+                team: {
+                    enes_role: "Co-Founder & R&D Lead",
+                    bayerli_role: "Co-Founder & Software / Embedded Systems",
+                    irmak_role: "Hardware & Production Lead",
+                    turkmen_role: "Prototyping & Visual Design"
                 },
                 awards: {
                     h: "Awards & Accomplishments",
@@ -1892,9 +2143,9 @@
                     iha_quote: '"We won second place in the Uretken Esenler competition with our educational drone. We aim to teach primary and secondary students robotics and coding through fun aerial experiences."',
                     meb_quote: '"Our graduate Enes Bakkar, studying Computer Engineering, has become a source of pride with his national and international award-winning projects. He was featured in our ministry documentary."',
                     bogazici_quote: '"Completed our program Designing Tomorrow Today at Bogazici University."',
-                    gallery_h: "Event & Documentary Gallery"
+                    gallery_h: "Comprehensive Event & Documentary Photo Gallery"
                 },
-                contact: { h: "Direct Contact & Social Matrix", sub: "Feel free to reach out for project collaborations, speaking invitations, or technical inquiries." }
+                contact: { h: "Direct Contact & Social Matrix", sub: "Feel free to reach out for project collaborations, speaking invitations, or technical inquiries.", drive_h: "Drive & Official Documents Inventory" }
             },
             ar: {
                 dir: 'rtl',
@@ -1906,7 +2157,7 @@
                     "طالب هندسة حاسوب ومطور طائرات مسيرة (UAV)"
                 ],
                 nav: { home: "الرئيسية", about_site: "من نحن", products: "المنتجات", store: "المتجر", contact_site: "تواصل معنا" },
-                tabs: { overview: "نظرة عامة", about: "نبذة عني والسيرة", projects: "المشاريع والأبحاث", experience: "الخبرات والبرامج", awards: "الجوائز والإنجازات", media: "الفعاليات الدولية والإعلام", contact: "التواصل والشبكات" },
+                tabs: { overview: "نظرة عامة", about: "نبذة عني والسيرة", projects: "المشاريع والأبحاث", experience: "الخبرات والفريق", awards: "الجوائز والإنجازات", media: "معرض الصور والإعلام", contact: "التواصل والروابط" },
                 hero: {
                     name: "أنس بكار",
                     snippet: "طالب هندسة حاسوب ورائد أعمال تكنولوجي يعمل على تطوير التعليم التكنولوجي والهندسي (STEM) من خلال تصميم هيكليات العتاد والتصميم الميكانيكي والطائرات المسيرة والذكاء الاصطناعي.",
@@ -1914,6 +2165,7 @@
                 },
                 stats: { giv: "المركز الأول في ملتقى رواد الأعمال في تركيا (دولياً)", esenler: "المركز الثاني في مسابقة esenler للمشاريع", t3_burs: "مدرب بمنحة أوزديمير بايراكتار في وقف T3", lang_cap: "قدرات تواصل بثلاث لغات" },
                 overview: {
+                    partners_title: "المؤسسات الشريكة والتعاون",
                     bio_title: "ملخص السيرة الذاتية والشخصية",
                     bio_p1: "أنس بكار (Enes Bakkar)، من مواليد 27 أبريل 2006 في مكة المكرمة ومن أصل سوري، رائد أعمال شاب وطالب هندسة حاسوب يعمل في تقاطع التكنولوجيا والتعليم والمجتمع المدني في إسطنبول.",
                     bio_p2: "بصفتي الشريك المؤسس لشركة فيرناس للتكنولوجيا، أقود تطوير منظومة طائرة FiCo التعليمية المبرمجة وتصميم العتاد والهياكل.",
@@ -1936,6 +2188,7 @@
                 },
                 defense: { title: "الأنظمة ذاتية التحكم والمفاهيم", uska: "مركبة برية/جوية ذاتية التحكم للاستطلاع والدوريات في المناطق الوعرة.", muhafiz: "منظومة دفاعية للتصدي السريع للطائرات المسيرة الصغيرة." },
                 exp: {
+                    team_title: "فريق الأبحاث للتكنولوجيا بشركة فيرناس",
                     h: "البرامج والمهام المشارك بها",
                     t3_burs_t: "برنامج منحة أوزديمير بايراكتار — وقف T3",
                     t3_burs_d: "تم اختياره كمدرب وموجه لمدة 12 شهراً لتدريب الشباب على الروبوتات والبرمجة والطيران في ورش Deneyap.",
@@ -1947,6 +2200,12 @@
                     atom_d: "توجيه فرق تكنوفست وتوبيتاك وتنظيم ورش الهندسة ودروس الطيران.",
                     fab_t: "تدريب FabLab — أكاديمية أوسكودار للمستقبل",
                     fab_d: "إدارة طابعات 3D وورش الطائرات المسيرة."
+                },
+                team: {
+                    enes_role: "الشريك المؤسس وقائد الأبحاث",
+                    bayerli_role: "الشريك المؤسس والبرمجيات والأنظمة المدمجة",
+                    irmak_role: "مسؤول العتاد والإنتاج",
+                    turkmen_role: "النماذج الأولية والتصميم البصري"
                 },
                 awards: {
                     h: "الجوائز والإنجازات",
@@ -1971,9 +2230,9 @@
                     iha_quote: '"حصلنا على المركز الثاني في مسابقة طائرة FiCo التعليمية ونهدف إلى تعليم الطلاب برمجة الروبوتات ومبادئ الطيران بطريقة ممتعة."',
                     meb_quote: '"طالبنا أنس بكار الخريج من مدرستنا والحالي بهندسة الحاسوب أصبح مفخرة لنا بمشاريعه الدولية والمحلية وتم تصوير وثائقي عنه من قبل الوزارة."',
                     bogazici_quote: '"إتمام برنامج تصميم الغد اليوم في جامعة بوغازيتشي."',
-                    gallery_h: "معرض الصور والوثائقي"
+                    gallery_h: "معرض الصور الكامل والوثائقي"
                 },
-                contact: { h: "التواصل المباشر والشبكات الاجتماعية", sub: "يسعدنا تواصلكم لبحث التعاون في المشاريع أو الاستشارات التقنية أو الدعوات." }
+                contact: { h: "التواصل المباشر والشبكات الاجتماعية", sub: "يسعدنا تواصلكم لبحث التعاون في المشاريع أو الاستشارات التقنية أو الدعوات.", drive_h: "سجل المستندات والوثائق" }
             }
         };
 
