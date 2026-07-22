@@ -2,7 +2,7 @@
 <html lang="tr" dir="ltr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
     
     <!-- SEO Meta Tags -->
     <title id="pageTitle">Enes Bakkar (@ans_bkkr) | Firnas Technologies Kurucusu & R&D Lideri</title>
@@ -63,8 +63,8 @@
     <style>
         :root {
             --bg-deep: #051421;
-            --bg-card: rgba(8, 26, 43, 0.78);
-            --bg-card-hover: rgba(12, 38, 62, 0.88);
+            --bg-card: rgba(8, 26, 43, 0.85);
+            --bg-card-hover: rgba(12, 38, 62, 0.95);
             --accent-cyan: #00b8d4;
             --accent-glow: rgba(0, 184, 212, 0.35);
             --accent-blue: #0284c7;
@@ -90,6 +90,11 @@
             padding: 0;
         }
 
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+        }
+
         body {
             background-color: var(--bg-deep);
             color: var(--text-main);
@@ -101,7 +106,6 @@
                 radial-gradient(circle at 85% 75%, rgba(2, 132, 199, 0.08) 0%, transparent 45%),
                 radial-gradient(rgba(0, 184, 212, 0.04) 1.5px, transparent 1.5px);
             background-size: 100% 100%, 100% 100%, 28px 28px;
-            overflow-x: hidden;
         }
 
         a {
@@ -119,11 +123,12 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(5, 20, 33, 0.88);
+            background: rgba(5, 20, 33, 0.92);
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
             border-bottom: 1px solid var(--border-glass);
             padding: 0.85rem 2rem;
+            width: 100%;
         }
 
         .header-container {
@@ -132,6 +137,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
+            width: 100%;
         }
 
         .brand-logo {
@@ -143,6 +149,7 @@
             font-size: 1.25rem;
             color: #ffffff;
             letter-spacing: -0.5px;
+            white-space: nowrap;
         }
 
         .brand-logo img {
@@ -180,7 +187,7 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            background: rgba(0, 184, 212, 0.1);
+            background: rgba(0, 184, 212, 0.12);
             border: 1px solid var(--border-glass);
             padding: 3px;
             border-radius: 50px;
@@ -218,6 +225,7 @@
             display: inline-flex;
             align-items: center;
             gap: 6px;
+            white-space: nowrap;
         }
 
         /* MAIN APP WRAPPER */
@@ -278,17 +286,18 @@
 
         .hero-meta h1 {
             font-family: var(--font-heading);
-            font-size: 2.8rem;
+            font-size: 2.6rem;
             font-weight: 800;
             letter-spacing: -1px;
             background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             margin-bottom: 0.3rem;
+            word-wrap: break-word;
         }
 
         .rotator-wrapper {
-            font-size: 1.25rem;
+            font-size: 1.2rem;
             font-weight: 600;
             color: var(--accent-cyan);
             min-height: 1.8rem;
@@ -343,6 +352,7 @@
             gap: 0.5rem;
             overflow-x: auto;
             scrollbar-width: none;
+            -webkit-overflow-scrolling: touch;
         }
 
         .tab-bar::-webkit-scrollbar {
@@ -364,6 +374,7 @@
             align-items: center;
             gap: 8px;
             transition: all 0.25s ease;
+            flex-shrink: 0;
         }
 
         .tab-btn i {
@@ -683,7 +694,7 @@
         /* AWARDS GRID */
         .awards-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 1.5rem;
         }
 
@@ -738,7 +749,7 @@
         /* GALLERY & MEDIA */
         .gallery-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
             gap: 1.25rem;
         }
 
@@ -911,26 +922,252 @@
             margin-top: 4rem;
         }
 
-        /* RESPONSIVE LAYOUT BREAKPOINTS */
-        @media (max-width: 960px) {
-            .profile-hero-card {
-                grid-template-columns: 1fr;
-                text-align: center;
-                gap: 1.5rem;
+        /* ==========================================================================
+           ULTRA-COMPREHENSIVE MOBILE RESPONSIVE MEDIA QUERIES (< 768px & < 480px)
+           ========================================================================== */
+        @media (max-width: 768px) {
+            .site-header {
+                padding: 0.6rem 1rem;
             }
-            .avatar-box {
-                margin: 0 auto;
-                width: 180px;
-                height: 180px;
+
+            .header-container {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 0.6rem;
+                justify-content: space-between;
+                align-items: center;
             }
-            .hero-meta h1 {
-                font-size: 2.2rem;
+
+            .brand-logo {
+                font-size: 1.05rem;
             }
-            .hero-quick-facts {
-                justify-content: center;
+
+            .brand-logo img {
+                height: 32px;
             }
+
             .main-site-links {
                 display: none;
+            }
+
+            .header-right-actions {
+                gap: 0.4rem;
+            }
+
+            .handle-badge {
+                font-size: 0.75rem;
+                padding: 0.2rem 0.6rem;
+            }
+
+            .lang-switch {
+                padding: 2px;
+            }
+
+            .lang-btn {
+                font-size: 0.72rem;
+                padding: 0.18rem 0.45rem;
+            }
+
+            .app-wrapper {
+                margin: 1rem auto 2.5rem;
+                padding: 0 0.85rem;
+            }
+
+            .profile-hero-card {
+                grid-template-columns: 1fr;
+                padding: 1.5rem 1.1rem;
+                gap: 1.25rem;
+                text-align: center;
+                border-radius: var(--radius-md);
+            }
+
+            .avatar-box {
+                width: 140px;
+                height: 140px;
+                margin: 0 auto;
+                border-radius: 18px;
+            }
+
+            .hero-meta h1 {
+                font-size: 1.65rem;
+                letter-spacing: -0.5px;
+                line-height: 1.25;
+            }
+
+            .rotator-wrapper {
+                font-size: 0.95rem;
+                justify-content: center;
+                min-height: 2.2rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .bio-snippet {
+                font-size: 0.92rem;
+                margin-bottom: 1.15rem;
+            }
+
+            .hero-quick-facts {
+                justify-content: center;
+                gap: 0.5rem 1rem;
+                font-size: 0.8rem;
+            }
+
+            .tab-bar-container {
+                top: 56px;
+                padding: 0.4rem;
+                border-radius: 12px;
+                margin-bottom: 1.25rem;
+            }
+
+            .tab-btn {
+                padding: 0.5rem 0.85rem;
+                font-size: 0.85rem;
+                border-radius: 10px;
+            }
+
+            .content-card {
+                padding: 1.25rem 1rem;
+                border-radius: 16px;
+                margin-bottom: 1.25rem;
+            }
+
+            .card-title {
+                font-size: 1.25rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
+
+            .stat-card {
+                padding: 1rem 0.6rem;
+            }
+
+            .stat-number {
+                font-size: 1.9rem;
+            }
+
+            .stat-label {
+                font-size: 0.78rem;
+            }
+
+            .quote-box {
+                padding: 1rem 1rem;
+                font-size: 0.95rem;
+                margin: 1rem 0;
+            }
+
+            .timeline {
+                padding-inline-start: 1.15rem;
+            }
+
+            .timeline-item {
+                margin-bottom: 1.35rem;
+            }
+
+            .timeline-item::before {
+                inset-inline-start: -1.15rem;
+                width: 10px;
+                height: 10px;
+                top: 5px;
+            }
+
+            .timeline-title {
+                font-size: 1.05rem;
+            }
+
+            .timeline-desc {
+                font-size: 0.86rem;
+            }
+
+            .skills-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .project-card-large {
+                grid-template-columns: 1fr;
+            }
+
+            .project-img-wrapper {
+                min-height: 190px;
+            }
+
+            .project-details {
+                padding: 1.25rem 1rem;
+            }
+
+            .project-title {
+                font-size: 1.35rem;
+            }
+
+            .awards-grid {
+                grid-template-columns: 1fr !important;
+                gap: 1rem;
+            }
+
+            .award-card {
+                padding: 1.2rem 1rem;
+            }
+
+            .award-title {
+                font-size: 1.1rem;
+            }
+
+            .media-quote-card {
+                padding: 1rem;
+            }
+
+            .cta-buttons {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+
+            .btn-primary, .btn-outline {
+                width: 100%;
+                justify-content: center;
+                padding: 0.8rem 1.15rem;
+                font-size: 0.88rem;
+            }
+
+            .social-matrix {
+                grid-template-columns: 1fr;
+                gap: 0.75rem;
+            }
+
+            .social-btn {
+                padding: 0.9rem;
+                font-size: 0.9rem;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header-container {
+                flex-direction: column;
+                gap: 0.4rem;
+                text-align: center;
+            }
+
+            .brand-logo {
+                font-size: 1rem;
+            }
+
+            .hero-meta h1 {
+                font-size: 1.45rem;
+            }
+
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .gallery-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -978,7 +1215,7 @@
                 <img src="/asset/enes_bakkar.jpg" alt="Enes Bakkar Profile Photo">
             </div>
             <div class="hero-meta">
-                <h1 data-i18n="hero.name">Enes Bakkar (Anas Bakkar)</h1>
+                <h1 id="heroNameHeading" data-i18n="hero.name">Enes Bakkar (Anas Bakkar)</h1>
                 <div class="rotator-wrapper" id="titleRotator">
                     <i class="fas fa-microchip"></i> <span id="rotatorText">Firnas Technologies Kurucusu & R&D Lideri</span>
                 </div>
@@ -988,7 +1225,7 @@
                 <div class="hero-quick-facts">
                     <div class="fact-item"><i class="fas fa-calendar-alt"></i> <span data-i18n="hero.dob">27 Nisan 2006</span></div>
                     <div class="fact-item"><i class="fas fa-map-marker-alt"></i> <span data-i18n="hero.location">İstanbul, Türkiye (Mekke Doğumlu)</span></div>
-                    <div class="fact-item"><i class="fas fa-graduation-cap"></i> <span data-i18n="hero.edu">İstanbul Aydın Üniversitesi — Bilgisayar Müh.</span></div>
+                    <div class="fact-item"><i class="fas fa-graduation-cap"></i> <span data-i18n="hero.edu">İstanbul Aydın Üniversitesi</span></div>
                     <div class="fact-item"><i class="fas fa-language"></i> <span data-i18n="hero.langs">Türkçe • Arapça • İngilizce</span></div>
                     <div class="fact-item"><i class="fas fa-envelope"></i> <span>bakkarenes@gmail.com</span></div>
                 </div>
@@ -1065,7 +1302,7 @@
                     <h2 class="card-title"><i class="fas fa-user-ninja"></i> <span data-i18n="about.title">Kişisel Bilgiler & Detaylı Hikaye</span></h2>
                 </div>
                 <p data-i18n="about.p1">
-                    27 Nisan 2006 doğumlu Enes Bakkar (Anas Bakkar), Mekke'de doğmuş olup Suriye kökenlidir. Lise öğrenimini İstanbul'da Borsa İstanbul Anadolu Lisesi'nde (EBİAL) tamamlamıştır. 2024 yılı itibarıyla <strong>İstanbul Aydın Üniversitesi Bilgisayar Mühendisliği (İngilizce)</strong> lisans eğitimini sürdürmektedir.
+                    27 Nisan 2006 doğumlu Enes Bakkar (Anas Bakkar), Mekke'de doğmuş olup Suriye kökenlidir. Lise öğrenimini İstanbul'da Borsa İstanbul Anadolu Lisesi'nde (EBİAL) tamamlamıştır. 2024 yılı itibarıyla İstanbul Aydın Üniversitesi Bilgisayar Mühendisliği (İngilizce) lisans eğitimini sürdürmektedir.
                 </p>
 
                 <h3 style="margin-top: 2rem; color: var(--accent-cyan); font-family: var(--font-heading);" data-i18n="about.vision_h">Vizyon & Misyon</h3>
@@ -1235,7 +1472,7 @@
 
                     <div class="timeline-item">
                         <div class="timeline-date">2021 – 2023</div>
-                        <div class="timeline-title" data-i18n="exp.design_t">Grafik Tasarımcı & Dergi Editörü — Zekatronik / Teta / Abaad</div>
+                        <div class="timeline-title" data-i18n="exp.design_t">Grafik Tasarımcı — Zekatronik / Teta / Abaad</div>
                         <div class="timeline-desc" data-i18n="exp.design_d">
                             Zekatronik Akıl ve Zeka Oyunları Dergileri (kapak/dizgi), Teta Game Studio, Badi Etkinlik, Abaad Decor grafik ve sosyal medya çalışmaları.
                         </div>
@@ -1260,7 +1497,7 @@
                         <h3 class="award-title" data-i18n="awards.esenler_t">Üretken Esenler Proje Yarışması — 2.'lik Ödülü</h3>
                         <div class="award-org">Esenler Belediyesi & Üretken Akademi</div>
                         <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.esenler_d">
-                            150'den fazla proje arasından ikincilik derecesi elde edildi. 300.000 TL ödül havuzundan pay alınarak AR-GE devam ettirildi ve TEKNOFEST çadırında sergilendi.
+                            150'den fazla proje arasından ikincilik derecesi elde edildi. 300.000 TL ödül havuzundan pay alınarak AR-GE sürdürüldü ve TEKNOFEST çadırında sergilendi.
                         </p>
                     </div>
 
@@ -1290,7 +1527,7 @@
                         <h3 class="award-title" data-i18n="awards.sultan_t">Üretken Sultanbeyli Girişimcilik — 3.'lük Ödülü</h3>
                         <div class="award-org">Sultanbeyli Belediyesi</div>
                         <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.sultan_d">
-                            Girişimcilik ve teknoloji alanında üçüncülük ödülü kazanıldı.
+                            Girişimcilik ve teknoloji alanında üçüncülük elde edildi.
                         </p>
                     </div>
 
@@ -1300,17 +1537,17 @@
                         <h3 class="award-title" data-i18n="awards.zeka_t">Esenyurt Zeka Oyunları — İlçe 2.'likleri</h3>
                         <div class="award-org">Esenyurt İlçe MEM</div>
                         <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.zeka_d">
-                            Zeka oyunları turnuvasında 2 yıl üst üste ilçe ikinciliği elde edildi.
+                            Zeka oyunları turnuvasında 2 yıl üst üste ilçe ikinciliği kazanıldı.
                         </p>
                     </div>
 
                     <div class="award-card">
                         <div class="award-icon-box"><i class="fas fa-video"></i></div>
                         <div class="award-year">2025 / 2026</div>
-                        <h3 class="award-title" data-i18n="awards.doc_t">İstanbul İl MEM Özel Belgesel Konusu</h3>
+                        <h3 class="award-title" data-i18n="awards.doc_t">İstanbul İl MEM Özel Belgeseli</h3>
                         <div class="award-org">İstanbul İl Milli Eğitim Müdürlüğü</div>
                         <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.doc_d">
-                            Öğrencilik ve girişimcilik başarıları Milli Eğitim Bakanlığı'na bildirilerek kısa belgesele konu olmuştur.
+                            Başarıları ve ulusal/uluslararası projeleri MEB tarafından belgesele konu oldu.
                         </p>
                     </div>
 
@@ -1341,7 +1578,7 @@
                         <span class="media-date">03 Haziran 2025</span>
                     </div>
                     <p style="font-style: italic; color: #e2e8f0;" data-i18n="media.meb_quote">
-                        "Geçen yıl mezun ettiğimiz şimdi Bilgisayar Mühendisliği bölümünde okuyan öğrencimiz Enes Bakkar başarılarıyla ve ödül alan ulusal ve uluslararası projeleri ile gerek okulumuzun ve ilçemizin, gerekse ülkemizin gurur kaynağı olmuştur. Bakanlığımıza bildirdiğimiz bu öğrencimiz belgesele konu oldu."
+                        "Geçen yıl mezun ettiğimiz şimdi Bilgisayar Mühendisliği bölümünde okuyan öğrencimiz Enes Bakkar başarılarıyla ve ödül alan ulusal ve uluslararası projeleri ile gerek okulumuzun ve ülkemizin gurur kaynağı olmuştur. Bakanlığımıza bildirdiğimiz bu öğrencimiz belgesele konu oldu."
                     </p>
                 </div>
 
@@ -1351,7 +1588,7 @@
                         <span class="media-date">Mayıs 2026</span>
                     </div>
                     <p style="font-style: italic; color: #e2e8f0;" data-i18n="media.bogazici_quote">
-                        "Boğaziçi Üniversitesi'nde 'Bugünden Yarını Tasarlamak' başlıklı programımızı tamamladık."
+                        "Boğaziçi Üniversitesi'nde Bugünden Yarını Tasarlamak başlıklı programımızı tamamladık."
                     </p>
                 </div>
             </div>
@@ -1402,7 +1639,7 @@
                 </div>
 
                 <p style="color: var(--text-muted); margin-bottom: 1.5rem;" data-i18n="contact.sub">
-                    Proje iş birlikleri, eğitmenlik/mentorluk talepleri, davetler veya teknik görüşmeler için aşağıdaki kanallardan ulaşabilirsiniz.
+                    Proje iş birlikleri, eğitmenlik/mentorluk talepleri veya teknik görüşmeler için ulaşabilirsiniz.
                 </p>
 
                 <div class="social-matrix">
@@ -1481,15 +1718,15 @@
                 nav: { home: "Ana Sayfa", about_site: "Hakkımızda", products: "Ürünler", store: "Mağaza", contact_site: "İletişim" },
                 tabs: { overview: "Genel Bakış", about: "Hakkımda & Biyografi", projects: "Projeler & AR-GE", experience: "Deneyim & Görevler", awards: "Ödüller & Dereceler", media: "Medya & Belgesel", contact: "İletişim & Sosyal" },
                 hero: {
-                    name: "Enes Bakkar (Anas Bakkar)",
+                    name: "Enes Bakkar",
                     snippet: "Donanım mimarisi, aerodinamik mekanik tasarım, insansız hava araçları (İHA) ve yapay zeka entegrasyonuyla STEM eğitimini dönüştüren mühendislik öğrencisi ve teknoloji girişimcisi.",
-                    dob: "27 Nisan 2006", location: "İstanbul, Türkiye (Mekke Doğumlu)", edu: "İstanbul Aydın Üniversitesi — Bilgisayar Müh.", langs: "Türkçe • Arapça • İngilizce"
+                    dob: "27 Nisan 2006", location: "İstanbul, Türkiye (Mekke Doğumlu)", edu: "İstanbul Aydın Üniversitesi", langs: "Türkçe • Arapça • İngilizce"
                 },
                 stats: { award: "Proje Arasından Ulusal 2.'lik Ödülü", students: "STEM & Robotik Eğitimi Alan Öğrenci", projects: "Donanım & İHA AR-GE Projesi", lang_cap: "Akıcı 3 Dilde İletişim Kabiliyeti" },
                 overview: {
                     bio_title: "Master Biyografi Özeti",
                     bio_p1: "Enes Bakkar (Anas Bakkar), 27 Nisan 2006 doğumlu olup teknoloji, eğitim ve sivil toplum kesişiminde çalışan genç bir girişimci ve mühendislik öğrencisidir. Mekke doğumlu ve Suriye kökenli olup çalışmalarını İstanbul merkezli sürdürmektedir.",
-                    bio_p2: "Kasım 2023'te kurduğu Firnas Technologies çatısı altında amiral gemisi ürünü olan FiCo (Firnas Copter) programlanabilir STEM eğitim dronunu geliştirmektedir. Mekanik tasarım, donanım mimarisi, karbon fiber gövde optimizasyonu, 3D baskı optimizasyonu ve uçuş kontrolör entegrasyonunda lider rol üstlenmektedir.",
+                    bio_p2: "Kasım 2023'te kurduğu Firnas Technologies çatısı altında amiral gemisi ürünü olan FiCo (Firnas Copter) programlanabilir STEM eğitim dronunu geliştirmektedir. Mekanik tasarım, donanım mimarisi, karbon fiber gövde optimizasyonu, 3D baskı optimizasyonu ve uçuş kontrolör entegrasyonunda lider rol üstlenmektedir. (Ekip arkadaşları: Mahmud Bayerli, Haydar Irmak, Gökhan Kutsal).",
                     bio_p3: "Aynı zamanda T3 Vakfı / Deneyap bünyesinde eğitmen-mentorluk ve İstanbul Genç İHH ATOM (Akademi ve Teknoloji Org. Merkezi) İl Başkanlığı görevlerini yürüterek TEKNOFEST ve TÜBİTAK ekiplerine mentorluk vermekte, yüzlerce gence robotik, yazılım ve havacılık eğitimi ulaştırmaktadır. Başarıları İstanbul İl Milli Eğitim Müdürlüğü kapsamında kısa bir belgesele konu olmuştur.",
                     quote: '"İstanbul İl Millî Eğitim Müdürlüğü tarafından düzenlenen özel programda kısa belgeselimizin gösterimi gerçekleştirildi. Lakin şunu görüyorum ki: Yol uzun, vakit kısa ve bizler henüz seferin en başındayız."',
                     quote_author: "— Enes Bakkar (Mayıs 2026, İstanbul İl MEM Belgesel Gösterimi)"
@@ -1525,9 +1762,9 @@
                 nav: { home: "Home", about_site: "About Us", products: "Products", store: "Store", contact_site: "Contact" },
                 tabs: { overview: "Overview", about: "About & Biography", projects: "Projects & R&D", experience: "Experience & Roles", awards: "Awards & Honors", media: "Media & Documentary", contact: "Contact & Social" },
                 hero: {
-                    name: "Enes Bakkar (Anas Bakkar)",
+                    name: "Enes Bakkar",
                     snippet: "Engineering student and tech entrepreneur transforming STEM education through hardware architecture, aerodynamic mechanical design, UAV drones, and AI integration.",
-                    dob: "April 27, 2006", location: "Istanbul, Turkey (Born in Mecca)", edu: "Istanbul Aydin University — Computer Eng.", langs: "Turkish • Arabic • English"
+                    dob: "April 27, 2006", location: "Istanbul, Turkey (Born in Mecca)", edu: "Istanbul Aydin University", langs: "Turkish • Arabic • English"
                 },
                 stats: { award: "2nd Place Award out of 150+ Projects", students: "Students Trained in STEM & Aviation", projects: "Hardware & UAV R&D Projects", lang_cap: "Trilingual Communication Capability" },
                 overview: {
@@ -1569,9 +1806,9 @@
                 nav: { home: "الرئيسية", about_site: "من نحن", products: "المنتجات", store: "المتجر", contact_site: "تواصل معنا" },
                 tabs: { overview: "نظرة عامة", about: "نبذة عني والسيرة", projects: "المشاريع والأبحاث", experience: "الخبرات والمهام", awards: "الجوائز والإنجازات", media: "الإعلام والوثائقي", contact: "التواصل والشبكات" },
                 hero: {
-                    name: "أنس بكار (Enes Bakkar)",
+                    name: "أنس بكار",
                     snippet: "طالب هندسة حاسوب ورائد أعمال تكنولوجي يعمل على تطوير التعليم التكنولوجي والهندسي (STEM) من خلال تصميم هيكليات العتاد والتصميم الميكانيكي والطائرات المسيرة والذكاء الاصطناعي.",
-                    dob: "27 أبريل 2006", location: "إسطنبول، تركيا (مواليد مكة المكرمة)", edu: "جامعة إسطنبول أيدن — هندسة الحاسوب", langs: "التركية • العربية • الإنجليزية"
+                    dob: "27 أبريل 2006", location: "إسطنبول، تركيا (مواليد مكة المكرمة)", edu: "جامعة إسطنبول أيدن", langs: "التركية • العربية • الإنجليزية"
                 },
                 stats: { award: "المركز الثاني من بين +150 مشروعاً", students: "طالب مدرب في مجالات STEM والطيران", projects: "مشروع أنظمة ذاتية التحكم وعتاد", lang_cap: "قدرات تواصل بثلاث لغات" },
                 overview: {
@@ -1585,7 +1822,7 @@
                 btn: { view_fico: "استكشف طائرة FiCo", view_media: "شاهد الوثائقي والإعلام", download_cv: "تحميل السيرة الذاتية (PDF)", download_portfolio: "تحميل البورتفوليو (PDF)" },
                 about: {
                     title: "الملف الشخصي والسيرة التفصيلية",
-                    p1: "ولد أنس بكار في 27 أبريل 2006 بمكة المكرمة وهو من أصل سوري. أتم دراسته الثانوية في ثانوية بورصة إسطنبول الأناضول، ويدرس حالياً هندسة الحاسوب (باللغة И الإنجليزية) بجامعة إسطنبول أيدن.",
+                    p1: "ولد أنس بكار في 27 أبريل 2006 بمكة المكرمة وهو من أصل سوري. أتم دراسته الثانوية في ثانوية بورصة إسطنبول الأناضول، ويدرس حالياً هندسة الحاسوب (باللغة الإنجليزية) بجامعة إسطنبول أيدن.",
                     vision_h: "الرؤية والرسالة", vision_p: "إلهاماً من شجاعة ورؤية عباس بن فرناس، نهدف لتطوير عتاد محلي ومصادر مفتوحة وأنظمة مسيرة لتسهيل تعليم الطيران والهندسة للجميع.",
                     edu_h: "الجدول الزمني للتعليم", edu_iau: "هندسة الحاسوب (بكالوريوس بالإنجليزية)", edu_ebial: "التخرج من الثانوية وموضوع فيلم وثائقي لوزارة التعليم", edu_t3: "أكاديمية Deneyap Kart للأنظمة المدمجة", edu_igu: "أكاديمية الصيف بجامعة إسطنبول جيليشيم — ورشة الطيران",
                     tech_h: "أدوات التكنولوجيا والذكاء الاصطناعي"
