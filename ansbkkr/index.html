@@ -1,2374 +1,565 @@
 <!DOCTYPE html>
-<html lang="tr" dir="ltr">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO Meta Tags -->
-    <title id="pageTitle">Enes Bakkar (@ans_bkkr) | Firnas Teknoloji Kurucusu | Donanım Mimarı & Sistem Yöneticisi</title>
-    <meta name="description" content="Enes Bakkar (@ans_bkkr) - Firnas Teknoloji Kurucusu, T3 Vakfı Eğitmeni, SysAdmin (Cloudflare/Bulut Altyapı), Gömülü Sistem Donanım Mimarı, FEAM Topluluk Lideri ve E-Ticaret Girişimcisi.">
-    <meta name="keywords" content="Enes Bakkar, Anas Bakkar, ans_bkkr, ansbkkr, Firnas Teknoloji Kurucusu, FiCo, T3 Vakfı, FEAM, Networking with FEAM, Cloudflare DNS, SysAdmin, ESP32 Quadcopter, 1S LiPo, GitHub Student Pro, E-Ticaret, Crochet">
+    <title>Enes Bakkar | Firnas Technologies Kurucusu & R&D Lideri</title>
+    <meta name="description" content="Enes Bakkar - Firnas Technologies Kurucusu, Donanım Mimarisi & R&D Lideri. Otonom sistemler, drone aerodinamiği ve FiCo STEM eğitim ekosisteminin tasarımcısı.">
+    <meta name="keywords" content="Enes Bakkar, Firnas Technologies, FiCo, otonom sistemler, mekanik tasarım, donanım AR-GE, drone mimarisi, havacılık mühendisliği, STEM">
     <meta name="robots" content="index, follow">
-    <link rel="canonical" href="https://firnastechnologies.com/ansbkkr/">
+    <link rel="canonical" href="https://firnastechnologies.com/enes-bakkar/">
 
-    <!-- Open Graph Tags -->
-    <meta property="og:title" content="Enes Bakkar (@ans_bkkr) | Portfolyo, Donanım & Girişimcilik">
-    <meta property="og:description" content="Firnas Teknoloji Kurucusu, Gömülü Sistem Mimarı, Bulut Altyapı Yöneticisi ve Topluluk Lideri Enes Bakkar'ın detaylı mesleki portfolyosu.">
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+    <meta property="og:title" content="Enes Bakkar | Firnas Technologies Kurucusu & R&D Lideri">
+    <meta property="og:description" content="Donanım Mimarisi ve Mekanik Tasarım Lideri. İnsani teknoloji ve otonom sistemler alanında Firnas AR-GE çalışmalarını koordine ediyor.">
     <meta property="og:image" content="https://firnastechnologies.com/asset/enes_bakkar.jpg">
-    <meta property="og:url" content="https://firnastechnologies.com/ansbkkr/">
+    <meta property="og:url" content="https://firnastechnologies.com/enes-bakkar/">
     <meta property="og:type" content="profile">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Enes Bakkar | Firnas Technologies Kurucusu">
+    <meta name="twitter:description" content="Firnas Technologies otonom sistemler ve eğitim teknolojileri R&D koordinatörü Enes Bakkar'ın mesleki portfolyosu.">
+    <meta name="twitter:image" content="https://firnastechnologies.com/asset/enes_bakkar.jpg">
 
-    <!-- Schema.org Person Data -->
+    <!-- Google Structured Data (JSON-LD Person Schema) -->
     <script type="application/ld+json">
     {
       "@context": "https://schema.org",
       "@type": "Person",
       "name": "Enes Bakkar",
-      "alternateName": ["Anas Bakkar", "ans_bkkr", "ansbkkr"],
-      "birthDate": "2006-04-27",
-      "birthPlace": "Mecca, Saudi Arabia",
       "jobTitle": "Founder & Hardware R&D Lead",
       "worksFor": {
         "@type": "Organization",
         "name": "Firnas Technologies",
         "url": "https://firnastechnologies.com/"
       },
-      "alumniOf": [
-        {
-          "@type": "EducationalOrganization",
-          "name": "İstanbul Aydın Üniversitesi"
-        },
-        {
-          "@type": "EducationalOrganization",
-          "name": "Borsa İstanbul Anadolu Lisesi"
-        }
-      ],
-      "url": "https://firnastechnologies.com/ansbkkr/",
+      "url": "https://firnastechnologies.com/enes-bakkar/",
       "image": "https://firnastechnologies.com/asset/enes_bakkar.jpg",
       "sameAs": [
         "https://www.linkedin.com/in/ens-bkkr/",
-        "https://github.com/enesbakkar",
-        "https://x.com/ens_bkkr",
         "https://www.instagram.com/ens_bkkr/",
-        "https://youtube.com/@ens_bkkr",
-        "https://linktr.ee/enesbakkar"
+        "https://x.com/ens_bkkr",
+        "https://nsosyal.com/ens_bkkr"
       ]
     }
     </script>
 
     <link rel="icon" type="image/png" href="/asset/firnas_logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;700;800;900&family=Noto+Sans+Arabic:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
     <style>
-        :root {
-            --bg-deep: #051421;
-            --bg-card: rgba(8, 26, 43, 0.85);
-            --bg-card-hover: rgba(12, 38, 62, 0.95);
-            --accent-cyan: #00b8d4;
-            --accent-glow: rgba(0, 184, 212, 0.35);
-            --accent-blue: #0284c7;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --border-glass: rgba(0, 184, 212, 0.18);
-            --border-light: rgba(255, 255, 255, 0.08);
-            --font-main: 'Inter', sans-serif;
-            --font-heading: 'Outfit', sans-serif;
-            --font-arabic: 'Noto Sans Arabic', sans-serif;
-            --radius-lg: 24px;
-            --radius-md: 16px;
-            --radius-sm: 10px;
-        }
-
-        [dir="rtl"] {
-            font-family: var(--font-arabic), var(--font-main);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        html, body {
-            overflow-x: hidden;
-            width: 100%;
-        }
-
         body {
-            background-color: var(--bg-deep);
-            color: var(--text-main);
-            font-family: var(--font-main);
+            background: #051421;
+            color: #ffffff;
+            font-family: var(--font-sans);
             min-height: 100vh;
-            line-height: 1.6;
-            background-image: 
-                radial-gradient(circle at 15% 15%, rgba(0, 184, 212, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 85% 75%, rgba(2, 132, 199, 0.08) 0%, transparent 45%),
-                radial-gradient(rgba(0, 184, 212, 0.04) 1.5px, transparent 1.5px);
-            background-size: 100% 100%, 100% 100%, 28px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            box-sizing: border-box;
+            background-image: radial-gradient(rgba(0, 184, 212, 0.05) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
         }
-
-        a {
-            color: var(--accent-cyan);
-            text-decoration: none;
-            transition: all 0.25s ease;
-        }
-
-        a:hover {
-            color: #38bdf8;
-        }
-
-        /* HEADER & GLOBAL NAV */
-        .site-header {
-            position: sticky;
-            top: 0;
-            z-index: 100;
-            background: rgba(5, 20, 33, 0.92);
-            backdrop-filter: blur(18px);
-            -webkit-backdrop-filter: blur(18px);
-            border-bottom: 1px solid var(--border-glass);
-            padding: 0.85rem 2rem;
+        .profile-container {
+            max-width: 1550px;
             width: 100%;
-        }
-
-        .header-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-        }
-
-        .brand-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            font-family: var(--font-heading);
-            font-weight: 800;
-            font-size: 1.25rem;
-            color: #ffffff;
-            letter-spacing: -0.5px;
-            white-space: nowrap;
-        }
-
-        .brand-logo img {
-            height: 42px;
-            width: auto;
-            filter: drop-shadow(0 0 8px var(--accent-glow));
-        }
-
-        .main-site-links {
-            display: flex;
-            align-items: center;
-            gap: 1.5rem;
-        }
-
-        .main-site-links a {
-            color: var(--text-muted);
-            font-weight: 500;
-            font-size: 0.95rem;
-            padding: 0.4rem 0.8rem;
-            border-radius: 8px;
-        }
-
-        .main-site-links a:hover, .main-site-links a.active {
-            color: #ffffff;
-            background: rgba(0, 184, 212, 0.1);
-        }
-
-        .header-right-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .lang-switch {
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            background: rgba(0, 184, 212, 0.12);
-            border: 1px solid var(--border-glass);
-            padding: 3px;
-            border-radius: 50px;
-        }
-
-        .lang-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-weight: 700;
-            font-size: 0.8rem;
-            padding: 0.25rem 0.65rem;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-
-        .lang-btn:hover {
-            color: #ffffff;
-        }
-
-        .lang-btn.active {
-            background: var(--accent-cyan);
-            color: #051421;
-        }
-
-        .handle-badge {
-            background: linear-gradient(135deg, rgba(0, 184, 212, 0.2), rgba(2, 132, 199, 0.2));
-            border: 1px solid var(--accent-cyan);
-            color: #ffffff;
-            padding: 0.35rem 0.9rem;
-            border-radius: 50px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-
-        /* MAIN APP WRAPPER */
-        .app-wrapper {
-            max-width: 1400px;
-            margin: 2rem auto 4rem;
-            padding: 0 1.5rem;
-        }
-
-        /* HERO CARD TOP */
-        .profile-hero-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-lg);
-            padding: 2.5rem;
-            backdrop-filter: blur(20px);
+            background: rgba(5, 20, 33, 0.75);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(0, 184, 212, 0.18);
+            border-radius: 36px;
+            padding: 4rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), inset 0 0 25px rgba(0, 184, 212, 0.05);
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
             display: grid;
-            grid-template-columns: 240px 1fr;
-            gap: 2.5rem;
+            grid-template-columns: 300px 1fr 460px;
+            gap: 3rem;
+            --hover-translate: 6px;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .profile-sidebar {
+            display: flex;
+            flex-direction: column;
             align-items: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5), inset 0 0 20px rgba(0, 184, 212, 0.05);
+            text-align: center;
+            border-inline-end: 1px solid rgba(0, 184, 212, 0.15);
+            padding-inline-end: 4rem;
+        }
+        .profile-avatar-wrapper {
+            position: relative;
             margin-bottom: 2rem;
-            position: relative;
-            overflow: hidden;
         }
-
-        .profile-hero-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            right: 0;
-            width: 300px;
-            height: 100%;
-            background: linear-gradient(225deg, rgba(0, 184, 212, 0.1) 0%, transparent 70%);
-            pointer-events: none;
-        }
-
-        .avatar-box {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            border-radius: 24px;
-            overflow: hidden;
-            border: 2px solid var(--accent-cyan);
-            box-shadow: 0 0 25px var(--accent-glow);
-        }
-
-        .avatar-box img {
-            width: 100%;
-            height: 100%;
+        .profile-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
             object-fit: cover;
-            transition: transform 0.5s ease;
+            border: 4px solid var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
-
-        .avatar-box:hover img {
-            transform: scale(1.05);
+        .profile-avatar:hover {
+            transform: scale(1.05) rotate(3deg);
+            box-shadow: 0 0 45px var(--accent);
         }
-
-        .hero-meta h1 {
-            font-family: var(--font-heading);
-            font-size: 2.6rem;
-            font-weight: 800;
-            letter-spacing: -1px;
-            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan) 100%);
+        .profile-title h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            font-family: var(--font-display);
+            margin: 0 0 0.5rem 0;
+            background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            margin-bottom: 0.3rem;
-            word-wrap: break-word;
+            filter: drop-shadow(0 0 10px rgba(0, 184, 212, 0.1));
         }
-
-        .rotator-wrapper {
-            font-size: 1.2rem;
+        .profile-role {
+            font-size: 1.1rem;
+            color: var(--accent);
             font-weight: 600;
-            color: var(--accent-cyan);
-            min-height: 1.8rem;
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: opacity 0.2s ease;
-        }
-
-        .bio-snippet {
-            color: var(--text-muted);
-            font-size: 1.05rem;
-            max-width: 850px;
-            margin-bottom: 1.5rem;
-        }
-
-        .hero-quick-facts {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem 2rem;
-            font-size: 0.9rem;
-            color: #cbd5e1;
-        }
-
-        .fact-item {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .fact-item i {
-            color: var(--accent-cyan);
-        }
-
-        /* TAB NAVIGATION SYSTEM */
-        .tab-bar-container {
-            position: sticky;
-            top: 67px;
-            z-index: 90;
-            background: rgba(5, 20, 33, 0.95);
-            backdrop-filter: blur(15px);
-            padding: 0.75rem;
-            border-radius: var(--radius-md);
-            border: 1px solid var(--border-glass);
-            margin-bottom: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-        }
-
-        .tab-bar {
-            display: flex;
-            gap: 0.5rem;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        .tab-bar::-webkit-scrollbar {
-            display: none;
-        }
-
-        .tab-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-family: inherit;
-            font-weight: 600;
-            font-size: 0.95rem;
-            padding: 0.75rem 1.25rem;
-            border-radius: 12px;
-            cursor: pointer;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.25s ease;
-            flex-shrink: 0;
-        }
-
-        .tab-btn i {
-            font-size: 1rem;
-        }
-
-        .tab-btn:hover {
-            color: #ffffff;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .tab-btn.active {
-            color: #ffffff;
-            background: linear-gradient(135deg, rgba(0, 184, 212, 0.25), rgba(2, 132, 199, 0.35));
-            border: 1px solid var(--accent-cyan);
-            box-shadow: 0 0 15px var(--accent-glow);
-        }
-
-        /* TAB PANELS */
-        .tab-pane {
-            display: none;
-            animation: fadeInTab 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        .tab-pane.active {
-            display: block;
-        }
-
-        @keyframes fadeInTab {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* CARD COMPONENT */
-        .content-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-md);
-            padding: 2rem;
-            margin-bottom: 2rem;
-            backdrop-filter: blur(16px);
-            transition: border-color 0.3s ease, transform 0.3s ease;
-        }
-
-        .content-card:hover {
-            border-color: rgba(0, 184, 212, 0.35);
-        }
-
-        .card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border-light);
-            padding-bottom: 1rem;
-        }
-
-        .card-title {
-            font-family: var(--font-heading);
-            font-size: 1.6rem;
-            font-weight: 700;
-            color: #ffffff;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .card-title i {
-            color: var(--accent-cyan);
-        }
-
-        /* STATS GRID */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 1.25rem;
-            margin-bottom: 2rem;
-        }
-
-        .stat-card {
-            background: linear-gradient(135deg, rgba(8, 26, 43, 0.8), rgba(15, 46, 74, 0.4));
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-number {
-            font-family: var(--font-heading);
-            font-size: 2.8rem;
-            font-weight: 800;
-            color: var(--accent-cyan);
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-
-        .stat-label {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            font-weight: 500;
-        }
-
-        /* QUOTE BOX */
-        .quote-box {
-            background: linear-gradient(135deg, rgba(0, 184, 212, 0.1), rgba(2, 132, 199, 0.05));
-            border-inline-start: 4px solid var(--accent-cyan);
-            border-radius: var(--radius-md);
-            padding: 1.5rem 2rem;
-            margin: 1.5rem 0;
-            font-style: italic;
-            font-size: 1.15rem;
-            color: #e2e8f0;
-        }
-
-        .quote-author {
-            display: block;
-            margin-top: 0.5rem;
-            font-style: normal;
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--accent-cyan);
-        }
-
-        /* TIMELINE */
-        .timeline {
-            position: relative;
-            padding-inline-start: 2rem;
-            margin-top: 1.5rem;
-        }
-
-        .timeline::before {
-            content: '';
-            position: absolute;
-            inset-inline-start: 7px;
-            top: 0;
-            bottom: 0;
-            width: 2px;
-            background: linear-gradient(180deg, var(--accent-cyan) 0%, rgba(0, 184, 212, 0.1) 100%);
-        }
-
-        .timeline-item {
-            position: relative;
-            margin-bottom: 2rem;
-        }
-
-        .timeline-item::before {
-            content: '';
-            position: absolute;
-            inset-inline-start: -2rem;
-            top: 4px;
-            width: 14px;
-            height: 14px;
-            border-radius: 50%;
-            background: var(--accent-cyan);
-            box-shadow: 0 0 10px var(--accent-cyan);
-        }
-
-        .timeline-date {
-            font-size: 0.85rem;
-            font-weight: 700;
-            color: var(--accent-cyan);
+            margin: 0 0 1rem 0;
+            letter-spacing: 0.05em;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.25rem;
         }
-
-        .timeline-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-bottom: 0.4rem;
-        }
-
-        .timeline-desc {
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        /* ELEGANT PARTNER LOGO GRID CARDS */
-        .partner-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.25rem;
-            margin-top: 1rem;
-        }
-
-        .partner-card {
-            background: linear-gradient(135deg, rgba(8, 26, 43, 0.7), rgba(15, 46, 74, 0.35));
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-md);
-            padding: 1.5rem 1.25rem;
+        .profile-company {
+            font-size: 1rem;
+            color: #cbd5e1;
+            margin: 0;
             display: flex;
-            flex-direction: column;
             align-items: center;
             justify-content: center;
-            gap: 12px;
-            text-align: center;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            backdrop-filter: blur(10px);
+            gap: 8px;
         }
-
-        .partner-card:hover {
-            border-color: var(--accent-cyan);
-            transform: translateY(-4px);
-            box-shadow: 0 12px 30px rgba(0, 184, 212, 0.2);
-            background: linear-gradient(135deg, rgba(12, 38, 62, 0.9), rgba(8, 26, 43, 0.8));
+        
+        /* Premium Social Panel */
+        .social-panel {
+            width: 100%;
+            margin-top: 3rem;
+            text-align: start;
         }
-
-        .partner-card img {
-            height: 52px;
-            width: auto;
-            max-width: 100%;
-            object-fit: contain;
-            filter: drop-shadow(0 0 8px var(--accent-glow));
-            transition: transform 0.3s ease;
-        }
-
-        .partner-card:hover img {
-            transform: scale(1.08);
-        }
-
-        .partner-name {
-            font-size: 0.92rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin-top: 4px;
-        }
-
-        .partner-sub {
-            font-size: 0.78rem;
-            color: var(--accent-cyan);
-            font-weight: 500;
-        }
-
-        /* SKILLS GRID */
-        .skills-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .skill-group {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-light);
-            border-radius: var(--radius-sm);
-            padding: 1.25rem;
-        }
-
-        .skill-group h4 {
-            color: var(--accent-cyan);
-            margin-bottom: 1rem;
-            font-size: 1.05rem;
+        .panel-title {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 184, 212, 0.15);
+            padding-bottom: 0.5rem;
             display: flex;
             align-items: center;
             gap: 8px;
         }
-
-        .tag-cloud {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.5rem;
+        .panel-title i {
+            color: var(--accent);
         }
-
-        .tech-tag {
-            background: rgba(0, 184, 212, 0.1);
-            border: 1px solid rgba(0, 184, 212, 0.25);
-            color: #e2e8f0;
-            padding: 0.35rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        /* PROJECT CARDS */
-        .project-showcase-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 2rem;
-        }
-
-        .project-card-large {
-            background: var(--bg-card);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 0;
-        }
-
-        @media (max-width: 900px) {
-            .project-card-large {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .project-img-wrapper {
-            position: relative;
-            min-height: 280px;
-            background: #020b14;
-            overflow: hidden;
-        }
-
-        .project-img-wrapper img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
-        }
-
-        .project-card-large:hover .project-img-wrapper img {
-            transform: scale(1.04);
-        }
-
-        .project-details {
-            padding: 2.25rem;
+        .social-grid {
             display: flex;
             flex-direction: column;
-            justify-content: center;
-        }
-
-        .project-badge {
-            align-self: flex-start;
-            background: rgba(0, 184, 212, 0.15);
-            color: var(--accent-cyan);
-            border: 1px solid var(--accent-cyan);
-            padding: 0.25rem 0.75rem;
-            border-radius: 50px;
-            font-size: 0.8rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 0.75rem;
-        }
-
-        .project-title {
-            font-family: var(--font-heading);
-            font-size: 1.8rem;
-            font-weight: 800;
-            color: #ffffff;
-            margin-bottom: 0.75rem;
-        }
-
-        .project-desc {
-            color: var(--text-muted);
-            font-size: 0.98rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .project-specs {
-            list-style: none;
-            margin-bottom: 1.5rem;
-        }
-
-        .project-specs li {
-            position: relative;
-            padding-inline-start: 1.5rem;
-            margin-bottom: 0.4rem;
-            font-size: 0.9rem;
-            color: #cbd5e1;
-        }
-
-        .project-specs li::before {
-            content: '✓';
-            position: absolute;
-            inset-inline-start: 0;
-            color: var(--accent-cyan);
-            font-weight: 700;
-        }
-
-        /* AWARDS GRID */
-        .awards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 1.5rem;
-        }
-
-        .award-card {
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-md);
-            padding: 1.75rem;
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .award-card:hover {
-            transform: translateY(-4px);
-            border-color: var(--accent-cyan);
-            box-shadow: 0 10px 25px rgba(0, 184, 212, 0.15);
-        }
-
-        .award-icon-box {
-            width: 50px;
-            height: 50px;
-            border-radius: 14px;
-            background: linear-gradient(135deg, rgba(0, 184, 212, 0.2), rgba(2, 132, 199, 0.2));
-            border: 1px solid var(--accent-cyan);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.4rem;
-            color: var(--accent-cyan);
-            margin-bottom: 1.25rem;
-        }
-
-        .award-year {
-            font-size: 0.8rem;
-            font-weight: 700;
-            color: var(--accent-cyan);
-        }
-
-        .award-title {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #ffffff;
-            margin: 0.3rem 0 0.5rem;
-        }
-
-        .award-org {
-            font-size: 0.9rem;
-            color: var(--text-muted);
-            margin-bottom: 0.75rem;
-        }
-
-        .link-btn-small {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 0.82rem;
-            font-weight: 600;
-            color: var(--accent-cyan);
-            background: rgba(0, 184, 212, 0.1);
-            border: 1px solid rgba(0, 184, 212, 0.3);
-            padding: 0.3rem 0.75rem;
-            border-radius: 20px;
-            margin-top: 0.75rem;
-            transition: all 0.2s ease;
-        }
-
-        .link-btn-small:hover {
-            background: var(--accent-cyan);
-            color: #051421;
-        }
-
-        .badge-updating {
-            font-size: 0.75rem;
-            background: rgba(234, 179, 8, 0.15);
-            color: #facc15;
-            border: 1px solid rgba(234, 179, 8, 0.4);
-            padding: 0.18rem 0.55rem;
-            border-radius: 12px;
-            font-weight: 600;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        /* GALLERY & MEDIA EXPANSIOIN */
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.25rem;
-        }
-
-        .gallery-item {
-            position: relative;
-            border-radius: var(--radius-md);
-            overflow: hidden;
-            aspect-ratio: 4/3;
-            border: 1px solid var(--border-glass);
-            cursor: pointer;
-        }
-
-        .gallery-item img {
+            gap: 1rem;
             width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.5s ease;
         }
-
-        .gallery-item:hover img {
-            transform: scale(1.08);
-        }
-
-        .gallery-overlay {
-            position: absolute;
-            inset: 0;
-            background: linear-gradient(0deg, rgba(5, 20, 33, 0.92) 0%, rgba(5, 20, 33, 0.2) 60%);
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
-            padding: 1.25rem;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .gallery-item:hover .gallery-overlay {
-            opacity: 1;
-        }
-
-        .gallery-caption {
-            color: #ffffff;
-            font-weight: 700;
-            font-size: 1rem;
-        }
-
-        .gallery-sub {
-            color: var(--accent-cyan);
-            font-size: 0.82rem;
-            font-weight: 500;
-            margin-top: 2px;
-        }
-
-        /* MEDIA QUOTE CARDS */
-        .media-quote-card {
-            background: rgba(255, 255, 255, 0.02);
-            border-inline-start: 3px solid var(--accent-cyan);
-            border-radius: var(--radius-md);
-            padding: 1.5rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .media-source {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 0.75rem;
-            font-size: 0.85rem;
-        }
-
-        .media-source-name {
-            font-weight: 700;
-            color: var(--accent-cyan);
-        }
-
-        .media-date {
-            color: var(--text-muted);
-        }
-
-        /* FOOTER & CONTACT MATRIX */
-        .social-matrix {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.25rem;
-            margin-top: 1.5rem;
-        }
-
-        .social-btn {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border-glass);
-            border-radius: var(--radius-md);
-            padding: 1.25rem;
+        .btn-social {
             display: flex;
             align-items: center;
             gap: 14px;
-            color: #ffffff;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-
-        .social-btn i {
-            font-size: 1.5rem;
-            color: var(--accent-cyan);
-        }
-
-        .social-btn:hover {
-            background: rgba(0, 184, 212, 0.12);
-            border-color: var(--accent-cyan);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 184, 212, 0.2);
-        }
-
-        .social-btn-text span {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            font-weight: 400;
-        }
-
-        .cta-buttons {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin-top: 1.5rem;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, var(--accent-cyan), var(--accent-blue));
-            color: #ffffff;
+            padding: 0.85rem 1.25rem;
+            border-radius: 14px;
+            text-decoration: none;
             font-weight: 700;
-            padding: 0.85rem 1.75rem;
-            border-radius: 12px;
-            border: none;
-            cursor: pointer;
-            display: inline-flex;
+            font-size: 0.95rem;
+            color: #ffffff;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: none !important;
+            box-sizing: border-box;
+        }
+        .btn-social i {
+            font-size: 1.15rem;
+        }
+        .btn-linkedin {
+            background: linear-gradient(135deg, #0a66c2 0%, #00b8d4 100%);
+            box-shadow: 0 4px 15px rgba(10, 102, 194, 0.25);
+        }
+        .btn-linkedin:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(10, 102, 194, 0.5);
+        }
+        .btn-instagram {
+            background: linear-gradient(135deg, #f9ce34 0%, #ee2a7b 50%, #6228d7 100%);
+            box-shadow: 0 4px 15px rgba(238, 42, 123, 0.25);
+        }
+        .btn-instagram:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(238, 42, 123, 0.5);
+        }
+        .btn-x {
+            background: linear-gradient(135deg, #14171a 0%, #000000 60%, #00b8d4 100%);
+            box-shadow: 0 4px 15px rgba(0, 184, 212, 0.15);
+        }
+        .btn-x:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(0, 184, 212, 0.4);
+        }
+        .btn-nsosyal {
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 60%, #00e5ff 100%);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.25);
+        }
+        .btn-nsosyal:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(79, 70, 229, 0.5);
+        }
+
+        /* Content Area styling */
+        .profile-content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            justify-content: flex-start;
+        }
+        .content-section {
+            background: rgba(5, 20, 33, 0.4);
+            border: 1px solid rgba(0, 184, 212, 0.12);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        .content-section h2 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-family: var(--font-display);
+            display: flex;
             align-items: center;
-            gap: 10px;
-            box-shadow: 0 5px 20px var(--accent-glow);
-            transition: all 0.3s ease;
+            gap: 12px;
         }
-
-        .btn-primary:hover {
-            color: #ffffff;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(0, 184, 212, 0.5);
+        .content-section h2 i {
+            color: var(--accent);
         }
-
-        .btn-outline {
-            background: transparent;
-            color: #ffffff;
+        .content-section p {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            line-height: 1.75;
+            margin: 0 0 1.25rem 0;
+        }
+        .content-section p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .grid-sub-sections {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
+        }
+        .skill-tag {
+            display: inline-block;
+            background: rgba(0, 184, 212, 0.08);
+            border: 1px solid rgba(0, 184, 212, 0.25);
+            color: var(--accent);
+            padding: 0.5rem 1.125rem;
+            border-radius: 100px;
             font-weight: 600;
-            padding: 0.85rem 1.75rem;
-            border-radius: 12px;
-            border: 1px solid var(--border-glass);
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
+            font-size: 0.9rem;
+            margin-inline-end: 0.5rem;
+            margin-bottom: 0.75rem;
             transition: all 0.3s ease;
         }
+        .skill-tag:hover {
+            background: rgba(0, 184, 212, 0.18);
+            border-color: #00e5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 212, 0.2);
+        }
 
-        .btn-outline:hover {
-            border-color: var(--accent-cyan);
-            background: rgba(0, 184, 212, 0.1);
+        .affiliation-item:hover {
+            background: rgba(0, 184, 212, 0.08) !important;
+            border-color: rgba(0, 184, 212, 0.35) !important;
+            transform: translateX(var(--hover-translate));
+            box-shadow: 0 5px 15px rgba(0, 184, 212, 0.1);
+        }
+
+        .close-btn-container {
+            margin-top: 1.5rem;
+            text-align: end;
+        }
+        .btn-close {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.85rem 2.25rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #00e5ff 100%);
+            border: none;
+            color: #051421;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(0, 184, 212, 0.25);
+        }
+        .btn-close:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 184, 212, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .profile-container {
+                grid-template-columns: 300px 1fr;
+                gap: 2.5rem;
+            }
+            .profile-right-sidebar {
+                grid-column: span 2;
+            }
+        }
+        @media (max-width: 992px) {
+            body {
+                padding: 2rem 1rem;
+            }
+            .profile-container {
+                grid-template-columns: 1fr;
+                padding: 2.5rem;
+                gap: 3rem;
+            }
+            .profile-sidebar {
+                border-inline-end: none;
+                padding-inline-end: 0;
+                border-bottom: 1px solid rgba(0, 184, 212, 0.15);
+                padding-bottom: 3rem;
+            }
+            .profile-right-sidebar {
+                grid-column: span 1;
+            }
+            .grid-sub-sections {
+                grid-template-columns: 1fr;
+            }
+            .close-btn-container {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 1rem 0.5rem !important;
+            }
+            .profile-container {
+                padding: 1.5rem 1rem !important;
+                gap: 1.75rem !important;
+                border-radius: 24px !important;
+            }
+            .profile-sidebar {
+                padding-bottom: 2rem !important;
+                margin-top: 1rem !important;
+            }
+            .profile-avatar {
+                width: 150px !important;
+                height: 150px !important;
+            }
+            .profile-title h1 {
+                font-size: 1.75rem !important;
+            }
+            .content-section {
+                padding: 1.5rem !important;
+                border-radius: 18px !important;
+            }
+            .content-section h2 {
+                font-size: 1.25rem !important;
+                margin-bottom: 1rem !important;
+            }
+            .content-section p {
+                font-size: 0.95rem !important;
+                line-height: 1.6 !important;
+            }
+            .social-panel {
+                margin-top: 2rem !important;
+            }
+            .btn-social {
+                padding: 0.75rem 1rem !important;
+                font-size: 0.85rem !important;
+            }
+            .btn-close {
+                padding: 0.75rem 1.5rem !important;
+                font-size: 0.9rem !important;
+                width: 100% !important;
+                justify-content: center !important;
+            }
+            .profile-lang-selector {
+                top: 1rem !important;
+                right: 1rem !important;
+            }
+        }
+        
+        /* Sleek Floating Language Dropdown Styles */
+        .profile-lang-selector {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+        .profile-lang-selector .lang-dropdown-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 184, 212, 0.25);
             color: #ffffff;
-        }
-
-        .site-footer {
-            border-top: 1px solid var(--border-glass);
-            padding: 2.5rem 0;
-            text-align: center;
-            color: var(--text-muted);
             font-size: 0.9rem;
-            margin-top: 4rem;
+            padding: 0.45rem 0.9rem;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 184, 212, 0.05);
         }
-
-        /* MOBILE RESPONSIVE MEDIA QUERIES (< 768px & < 480px) */
-        @media (max-width: 768px) {
-            .site-header {
-                padding: 0.6rem 1rem;
-            }
-
-            .header-container {
-                flex-direction: row;
-                flex-wrap: wrap;
-                gap: 0.6rem;
-                justify-content: space-between;
-                align-items: center;
-            }
-
-            .brand-logo {
-                font-size: 1.05rem;
-            }
-
-            .brand-logo img {
-                height: 32px;
-            }
-
-            .main-site-links {
-                display: none;
-            }
-
-            .header-right-actions {
-                gap: 0.4rem;
-            }
-
-            .handle-badge {
-                font-size: 0.75rem;
-                padding: 0.2rem 0.6rem;
-            }
-
-            .lang-switch {
-                padding: 2px;
-            }
-
-            .lang-btn {
-                font-size: 0.72rem;
-                padding: 0.18rem 0.45rem;
-            }
-
-            .app-wrapper {
-                margin: 1rem auto 2.5rem;
-                padding: 0 0.85rem;
-            }
-
-            .profile-hero-card {
-                grid-template-columns: 1fr;
-                padding: 1.5rem 1.1rem;
-                gap: 1.25rem;
-                text-align: center;
-                border-radius: var(--radius-md);
-            }
-
-            .avatar-box {
-                width: 140px;
-                height: 140px;
-                margin: 0 auto;
-                border-radius: 18px;
-            }
-
-            .hero-meta h1 {
-                font-size: 1.65rem;
-                letter-spacing: -0.5px;
-                line-height: 1.25;
-            }
-
-            .rotator-wrapper {
-                font-size: 0.95rem;
-                justify-content: center;
-                min-height: 2.2rem;
-                margin-bottom: 0.75rem;
-            }
-
-            .bio-snippet {
-                font-size: 0.92rem;
-                margin-bottom: 1.15rem;
-            }
-
-            .hero-quick-facts {
-                justify-content: center;
-                gap: 0.5rem 1rem;
-                font-size: 0.8rem;
-            }
-
-            .tab-bar-container {
-                top: 56px;
-                padding: 0.4rem;
-                border-radius: 12px;
-                margin-bottom: 1.25rem;
-            }
-
-            .tab-btn {
-                padding: 0.5rem 0.85rem;
-                font-size: 0.85rem;
-                border-radius: 10px;
-            }
-
-            .content-card {
-                padding: 1.25rem 1rem;
-                border-radius: 16px;
-                margin-bottom: 1.25rem;
-            }
-
-            .card-title {
-                font-size: 1.25rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 0.75rem;
-            }
-
-            .stat-card {
-                padding: 1rem 0.6rem;
-            }
-
-            .stat-number {
-                font-size: 1.9rem;
-            }
-
-            .stat-label {
-                font-size: 0.78rem;
-            }
-
-            .quote-box {
-                padding: 1rem 1rem;
-                font-size: 0.95rem;
-                margin: 1rem 0;
-            }
-
-            .timeline {
-                padding-inline-start: 1.15rem;
-            }
-
-            .timeline-item {
-                margin-bottom: 1.35rem;
-            }
-
-            .timeline-item::before {
-                inset-inline-start: -1.15rem;
-                width: 10px;
-                height: 10px;
-                top: 5px;
-            }
-
-            .timeline-title {
-                font-size: 1.05rem;
-            }
-
-            .timeline-desc {
-                font-size: 0.86rem;
-            }
-
-            .skills-grid {
-                grid-template-columns: 1fr;
-                gap: 1rem;
-            }
-
-            .project-card-large {
-                grid-template-columns: 1fr;
-            }
-
-            .project-img-wrapper {
-                min-height: 190px;
-            }
-
-            .project-details {
-                padding: 1.25rem 1rem;
-            }
-
-            .project-title {
-                font-size: 1.35rem;
-            }
-
-            .awards-grid {
-                grid-template-columns: 1fr !important;
-                gap: 1rem;
-            }
-
-            .award-card {
-                padding: 1.2rem 1rem;
-            }
-
-            .award-title {
-                font-size: 1.1rem;
-            }
-
-            .media-quote-card {
-                padding: 1rem;
-            }
-
-            .cta-buttons {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-
-            .btn-primary, .btn-outline {
-                width: 100%;
-                justify-content: center;
-                padding: 0.8rem 1.15rem;
-                font-size: 0.88rem;
-            }
-
-            .social-matrix {
-                grid-template-columns: 1fr;
-                gap: 0.75rem;
-            }
-
-            .social-btn {
-                padding: 0.9rem;
-                font-size: 0.9rem;
-            }
-
-            .gallery-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 0.75rem;
-            }
-
-            .partner-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 0.75rem;
-            }
-
-            .partner-card img {
-                height: 38px;
+        .profile-lang-selector .lang-dropdown-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .profile-lang-selector .lang-dropdown-menu {
+            background: rgba(5, 20, 33, 0.9);
+            border: 1px solid rgba(0, 184, 212, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            min-width: 110px;
+        }
+        .profile-lang-selector .lang-dropdown-menu li {
+            color: #ffffff;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+        .profile-lang-selector .lang-dropdown-menu li:hover {
+            background: rgba(0, 184, 212, 0.1);
+            color: var(--accent);
+        }
+        @media (max-width: 992px) {
+            .profile-lang-selector {
+                top: 1.5rem;
+                right: 1.5rem;
             }
         }
-
-        @media (max-width: 480px) {
-            .header-container {
-                flex-direction: column;
-                gap: 0.4rem;
-                text-align: center;
-            }
-
-            .brand-logo {
-                font-size: 1rem;
-            }
-
-            .hero-meta h1 {
-                font-size: 1.45rem;
-            }
-
-            .stats-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .gallery-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .partner-grid {
-                grid-template-columns: 1fr;
-            }
+        
+        /* Dynamic RTL Symmetrical Hovers & Layout Overrides */
+        html[dir="rtl"] .profile-container {
+            --hover-translate: -6px;
         }
     </style>
 </head>
 <body>
-
-    <!-- GLOBAL TOP NAVBAR -->
-    <header class="site-header">
-        <div class="header-container">
-            <a href="/" class="brand-logo">
-                <img src="/asset/firnas_logo.png" alt="Firnas Logo">
-                <span>Firnas Technologies</span>
-            </a>
-
-            <!-- MAIN SITE LINKS (CLEANED - NO /ansbkkr LINK IN BANNER) -->
-            <nav class="main-site-links">
-                <a href="/" data-i18n="nav.home">Ana Sayfa</a>
-                <a href="/about/" data-i18n="nav.about_site">Hakkımızda</a>
-                <a href="/products/" data-i18n="nav.products">Ürünler</a>
-                <a href="/store/" data-i18n="nav.store">Mağaza</a>
-                <a href="/contact/" data-i18n="nav.contact_site">İletişim</a>
-            </nav>
-
-            <div class="header-right-actions">
-                <!-- MULTI-LANGUAGE SWITCHER (TR / EN / AR) -->
-                <div class="lang-switch" role="group" aria-label="Language Selector">
-                    <button type="button" class="lang-btn active" id="btn-tr" onclick="changeLang('tr')">TR</button>
-                    <button type="button" class="lang-btn" id="btn-en" onclick="changeLang('en')">EN</button>
-                    <button type="button" class="lang-btn" id="btn-ar" onclick="changeLang('ar')">AR</button>
-                </div>
-
-                <span class="handle-badge">
-                    <i class="fab fa-x-twitter"></i> @ans_bkkr
-                </span>
-            </div>
+    <!-- Sleek Floating Language Selector at Viewport Level -->
+    <div class="profile-lang-selector">
+        <div class="lang-dropdown">
+            <button class="lang-dropdown-btn" id="lang-btn">
+                <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag" id="current-lang-flag">
+                <span id="current-lang-text">TR</span>
+                <i class="fas fa-chevron-down lang-arrow"></i>
+            </button>
+            <ul class="lang-dropdown-menu" id="lang-menu">
+                <li onclick="changeLanguage('tr')">
+                    <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag">
+                    <span>TR</span>
+                </li>
+                <li onclick="changeLanguage('en')">
+                    <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="lang-flag">
+                    <span>EN</span>
+                </li>
+                <li onclick="changeLanguage('ar')">
+                    <img src="https://flagcdn.com/w20/sy.png" alt="AR" class="lang-flag">
+                    <span>AR</span>
+                </li>
+            </ul>
         </div>
-    </header>
-
-    <!-- MAIN PORTFOLIO WRAPPER -->
-    <div class="app-wrapper">
-
-        <!-- TOP HERO PROFILE CARD -->
-        <section class="profile-hero-card">
-            <div class="avatar-box">
-                <img src="/asset/enes_bakkar.jpg" alt="Enes Bakkar Profile Photo">
-            </div>
-            <div class="hero-meta">
-                <h1 id="heroNameHeading" data-i18n="hero.name">Enes Bakkar</h1>
-                <div class="rotator-wrapper" id="titleRotator">
-                    <i class="fas fa-microchip"></i> <span id="rotatorText">Firnas Teknoloji Kurucusu & R&D Lideri</span>
-                </div>
-                <p class="bio-snippet" data-i18n="hero.snippet">
-                    Donanım lehim/devre mimarisi, ESP32 gömülü sistemler, Cloudflare bulut altyapısı, FEAM topluluk liderliği ve e-ticaret girişimciliğiyle çok yönlü teknoloji üreticisi.
-                </p>
-                <div class="hero-quick-facts">
-                    <div class="fact-item"><i class="fas fa-calendar-alt"></i> <span data-i18n="hero.dob">27 Nisan 2006</span></div>
-                    <div class="fact-item"><i class="fas fa-map-marker-alt"></i> <span data-i18n="hero.location">İstanbul, Türkiye (Mekke Doğumlu)</span></div>
-                    <div class="fact-item"><i class="fas fa-graduation-cap"></i> <span data-i18n="hero.edu">İstanbul Aydın Üniversitesi — Bilgisayar Müh.</span></div>
-                    <div class="fact-item"><i class="fab fa-github"></i> <span data-i18n="hero.github_pro">GitHub Student Developer Pro</span></div>
-                    <div class="fact-item"><i class="fas fa-language"></i> <span data-i18n="hero.langs">Türkçe • Arapça • İngilizce</span></div>
-                    <div class="fact-item"><i class="fas fa-envelope"></i> <span>bakkarenes@gmail.com</span></div>
-                </div>
-            </div>
-        </section>
-
-        <!-- STICKY TAB NAVIGATION BAR -->
-        <div class="tab-bar-container">
-            <div class="tab-bar" role="tablist">
-                <button class="tab-btn active" data-tab="overview" role="tab"><i class="fas fa-home"></i> <span data-i18n="tabs.overview">Genel Bakış</span></button>
-                <button class="tab-btn" data-tab="about" role="tab"><i class="fas fa-user-astronaut"></i> <span data-i18n="tabs.about">Hakkımda & Yetkinlikler</span></button>
-                <button class="tab-btn" data-tab="projects" role="tab"><i class="fas fa-plane-rocket"></i> <span data-i18n="tabs.projects">Projeler & Donanım AR-GE</span></button>
-                <button class="tab-btn" data-tab="experience" role="tab"><i class="fas fa-briefcase"></i> <span data-i18n="tabs.experience">Deneyim & Programlar</span></button>
-                <button class="tab-btn" data-tab="awards" role="tab"><i class="fas fa-trophy"></i> <span data-i18n="tabs.awards">Ödüller & Başarılar</span></button>
-                <button class="tab-btn" data-tab="media" role="tab"><i class="fas fa-camera-retro"></i> <span data-i18n="tabs.media">Foto Galerisi & Medya</span></button>
-                <button class="tab-btn" data-tab="contact" role="tab"><i class="fas fa-paper-plane"></i> <span data-i18n="tabs.contact">İletişim & Bağlantılar</span></button>
-            </div>
-        </div>
-
-        <!-- TAB CONTENT PANELS -->
-
-        <!-- TAB 1: GENEL BAKIŞ (OVERVIEW) -->
-        <div id="overview" class="tab-pane active" role="tabpanel">
-            <div class="stats-grid">
-                <div class="stat-card">
-                    <div class="stat-number">1.</div>
-                    <div class="stat-label" data-i18n="stats.giv">Türkiye Girişimci Buluşması Uluslararası Proje 1.'si</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">2.</div>
-                    <div class="stat-label" data-i18n="stats.esenler">Üretken Esenler Proje Yarışması 2.'lik Ödülü</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">12 Ay</div>
-                    <div class="stat-label" data-i18n="stats.t3_burs">T3 Vakfı Özdemir Bayraktar Burslu Eğitmeni</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-number">TR / EN / AR</div>
-                    <div class="stat-label" data-i18n="stats.lang_cap">Akıcı 3 Dilde İletişim Kabiliyeti</div>
-                </div>
-            </div>
-
-            <!-- ELEGANT GLASSMORPHIC PARTNER CARDS -->
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-handshake"></i> <span data-i18n="overview.partners_title">Paydaş Kurumlar ve Ortaklıklar</span></h2>
-                </div>
-                <div class="partner-grid">
-                    <div class="partner-card">
-                        <img src="/asset/t3_logo.png" alt="T3 Vakfı Logo">
-                        <div class="partner-name">T3 Vakfı</div>
-                        <div class="partner-sub">Deneyap Teknoloji Atölyeleri</div>
-                    </div>
-                    <div class="partner-card">
-                        <img src="/asset/genc_ihh_logo.png" alt="Genç İHH Logo">
-                        <div class="partner-name">Genç İHH ATOM</div>
-                        <div class="partner-sub">Akademi & Teknoloji Merkezi</div>
-                    </div>
-                    <div class="partner-card">
-                        <img src="/asset/iau_logo.png" alt="İstanbul Aydın Üniversitesi Logo">
-                        <div class="partner-name">İstanbul Aydın Üniv.</div>
-                        <div class="partner-sub">Bilgisayar Mühendisliği</div>
-                    </div>
-                    <div class="partner-card">
-                        <img src="/asset/atolye_uskudar_logo.png" alt="Atölye Üsküdar Logo">
-                        <div class="partner-name">Atölye Üsküdar</div>
-                        <div class="partner-sub">FEAM Akademi Partneri</div>
-                    </div>
-                    <div class="partner-card">
-                        <img src="/asset/iyiligin_mucitleri_logo.png" alt="İyiliğin Mucitleri Logo">
-                        <div class="partner-name">İyiliğin Mucitleri</div>
-                        <div class="partner-sub">Teknik Akademi Programı</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-compass"></i> <span data-i18n="overview.bio_title">Profil & Biyografi Özeti</span></h2>
-                </div>
-                <p data-i18n="overview.bio_p1">
-                    <strong>Enes Bakkar (Anas Bakkar)</strong>, 27 Nisan 2006 Mekke doğumlu ve Suriye kökenli olup teknoloji üretimi, gömülü sistemler donanım pratiği, sistem altyapı yönetimi, topluluk liderliği ve e-ticaret alanlarında aktif çalışan bir girişimci ve mühendislik öğrencisidir.
-                </p>
-                <p style="margin-top: 1rem;" data-i18n="overview.bio_p2">
-                    <strong>Firnas Teknoloji Kurucusu</strong> olarak amiral gemisi projesi <strong>FiCo (Programlanabilir STEM Eğitim Dronu)</strong> ekosistemini geliştirmekte; sıfırdan ESP32 gömülü devre lehimleme, Deneyap Kart v2 entegrasyonu, 1S LiPo güç yönetimi ve karbon fiber şasi montajı gibi elleri kirleten donanım pratiğini bizzat yürütmektedir.
-                </p>
-                <p style="margin-top: 1rem;" data-i18n="overview.bio_p3">
-                    Aynı zamanda <strong>firnastechnologies.com</strong> sistem altyapısının (Cloudflare DNS, SSL/HTTPS, sub-domain mimarileri) SysAdmin yönetimini üstlenmekte; <strong>"Networking with FEAM"</strong> topluluk etkinlikleriyle yüzlerce gencin teknoloji ağını koordine etmekte ve e-ticaret markası operasyonlarını yönetmektedir.
-                </p>
-
-                <div class="quote-box">
-                    <span data-i18n="overview.quote">"İstanbul İl Millî Eğitim Müdürlüğü tarafından düzenlenen özel programda kısa belgeselimizin gösterimi gerçekleştirildi. Lakin şunu görüyorum ki: Yol uzun, vakit kısa ve bizler henüz seferin en başındayız."</span>
-                    <span class="quote-author" data-i18n="overview.quote_author">— Enes Bakkar (Mayıs 2026, İstanbul İl MEM Belgesel Gösterimi)</span>
-                </div>
-
-                <div class="cta-buttons">
-                    <a href="#projects" onclick="switchTab('projects')" class="btn-primary"><i class="fas fa-drone"></i> <span data-i18n="btn.view_fico">FiCo Projesini İncele</span></a>
-                    <a href="#media" onclick="switchTab('media')" class="btn-outline"><i class="fas fa-camera"></i> <span data-i18n="btn.view_media">Tüm Foto Galerisi & Medya</span></a>
-                    <a href="javascript:void(0)" onclick="noticeUpdating('Özgeçmiş (CV)')" class="btn-outline" style="opacity: 0.85;"><i class="fas fa-file-download"></i> <span data-i18n="btn.download_cv">Özgeçmiş (CV)</span> <span class="badge-updating" data-i18n="btn.updating">Yakında Güncellenecek</span></a>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 2: HAKKIMDA (ABOUT & PRACTICAL SKILLS) -->
-        <div id="about" class="tab-pane" role="tabpanel">
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-user-ninja"></i> <span data-i18n="about.title">Kişisel Bilgiler & Somut Mühendislik Pratikleri</span></h2>
-                </div>
-                <p data-i18n="about.p1">
-                    27 Nisan 2006 Mekke doğumlu Enes Bakkar (Anas Bakkar), Suriye kökenlidir. Lise öğrenimini Borsa İstanbul Anadolu Lisesi'nde (EBİAL) dereceyle tamamlamıştır. 2024 yılı itibarıyla <strong>İstanbul Aydın Üniversitesi Bilgisayar Mühendisliği (İngilizce)</strong> lisans eğitimini sürdürmektedir. GitHub Student Developer Pro üyesidir.
-                </p>
-
-                <!-- REAL HANDS-ON PRACTICAL SKILLS -->
-                <div class="skills-grid" style="margin-top: 1.5rem;">
-                    
-                    <div class="skill-group" style="background: rgba(0, 184, 212, 0.04); border-color: var(--border-glass);">
-                        <h4 style="color: var(--accent-cyan); font-size: 1.1rem;"><i class="fas fa-microchip"></i> <span data-i18n="about.prac_hw_h">Donanım & Gömülü Sistem Pratiği</span></h4>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;" data-i18n="about.prac_hw_p">
-                            Masa başında teorik çizimle sınırlı kalmayıp, açık kaynaklı ESP32 firmware kodlaması, Deneyap Kart v2 mikrodenetleyici entegrasyonu, 1S/2S LiPo (PH2.0) pil şarj devresi lehimleme, fırçasız motor ESC kalibrasyonu ve optik akış sensörü füzyonuyla sıfırdan çalışan quadcopter devreleri inşa etmektedir.
-                        </p>
-                    </div>
-
-                    <div class="skill-group" style="background: rgba(2, 132, 199, 0.04); border-color: var(--border-glass);">
-                        <h4 style="color: var(--accent-blue); font-size: 1.1rem;"><i class="fas fa-server"></i> <span data-i18n="about.prac_sys_h">Sistem Altyapısı & Bulut Yönetimi (SysAdmin)</span></h4>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;" data-i18n="about.prac_sys_p">
-                            firnastechnologies.com bulut mimarisinin yönetimini üstlenmektedir. Cloudflare DNS yönlendirmeleri, SSL/HTTPS güvenlik sertifikaları, CDN optimizasyonu ve eğitim atölyeleri için özel alt alan adı (sub-domain) kurulumlarını bizzat yapılandırmaktadır.
-                        </p>
-                    </div>
-
-                    <div class="skill-group" style="background: rgba(168, 85, 247, 0.04); border-color: rgba(168, 85, 247, 0.2);">
-                        <h4 style="color: #c084fc; font-size: 1.1rem;"><i class="fas fa-users-line"></i> <span data-i18n="about.prac_community_h">Topluluk Liderliği & Etkinlik Yönetimi</span></h4>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;" data-i18n="about.prac_community_p">
-                            Firnas FEAM (Eğitim ve Akademik Mentorluk) topluluğunun kurucu lideri olarak, Atölye Üsküdar'da düzenlenen "Networking with FEAM" gibi fiziksel buluşmaları koordine etmekte; lise ve üniversite öğrencilerini mühendis mentörlerle buluşturmaktadır.
-                        </p>
-                    </div>
-
-                    <div class="skill-group" style="background: rgba(236, 72, 153, 0.04); border-color: rgba(236, 72, 153, 0.2);">
-                        <h4 style="color: #f472b6; font-size: 1.1rem;"><i class="fas fa-store"></i> <span data-i18n="about.prac_ecom_h">Çok Yönlü E-Ticaret & Ürün Yönetimi</span></h4>
-                        <p style="color: var(--text-muted); font-size: 0.9rem; margin-bottom: 0.75rem;" data-i18n="about.prac_ecom_p">
-                            Teknoloji alanının yanı sıra, el örgüsü (crochet) özel tasarım çanta markasının üretim, lifestyle ürün fotoğrafçılığı, dijital pazarlama ve e-ticaret satış operasyonlarını bizzat yöneterek ticari vizyonunu sergilemektedir.
-                        </p>
-                    </div>
-
-                </div>
-            </div>
-
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-graduation-cap"></i> <span data-i18n="about.edu_h">Eğitim Zaman Çizelgesi</span></h2>
-                </div>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-date">09.2024 – Devam Ediyor</div>
-                        <div class="timeline-title">İstanbul Aydın Üniversitesi</div>
-                        <div class="timeline-desc" data-i18n="about.edu_iau">Bilgisayar Mühendisliği (İngilizce) — Lisans Öğrenimi</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">09.2022 – 06.2024</div>
-                        <div class="timeline-title">Borsa İstanbul Anadolu Lisesi (EBİAL)</div>
-                        <div class="timeline-desc" data-i18n="about.edu_ebial">Lise Mezuniyeti & MEB / İl MEM Başarı Belgeseli Konusu</div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">2024</div>
-                        <div class="timeline-title">T3 Vakfı Deneyap Kart Akademi</div>
-                        <div class="timeline-desc" data-i18n="about.edu_t3">Yerli Mikrodenetleyici & Gömülü Sistemler Geliştirici Eğitimi</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-laptop-code"></i> <span data-i18n="about.tech_h">Geliştirici Araçları & Yetkinlik Etiketleri</span></h2>
-                </div>
-                <div class="skills-grid">
-                    <div class="skill-group">
-                        <h4><i class="fas fa-microchip"></i> Donanım & Gömülü Devre</h4>
-                        <div class="tag-cloud">
-                            <span class="tech-tag">ESP32 Firmware</span>
-                            <span class="tech-tag">Deneyap Kart v2</span>
-                            <span class="tech-tag">1S/2S LiPo (PH2.0)</span>
-                            <span class="tech-tag">Quadcopter PCB Wiring</span>
-                            <span class="tech-tag">Optik Akış Sensör Füzyonu</span>
-                            <span class="tech-tag">Pixhawk FC</span>
-                        </div>
-                    </div>
-                    <div class="skill-group">
-                        <h4><i class="fas fa-server"></i> SysAdmin & Bulut</h4>
-                        <div class="tag-cloud">
-                            <span class="tech-tag">Cloudflare DNS & Edge</span>
-                            <span class="tech-tag">SSL / HTTPS Security</span>
-                            <span class="tech-tag">Sub-domain Setup</span>
-                            <span class="tech-tag">GitHub Student Pro</span>
-                            <span class="tech-tag">Fusion 360 & 3D Baskı</span>
-                        </div>
-                    </div>
-                    <div class="skill-group">
-                        <h4><i class="fas fa-lightbulb"></i> Girişimcilik & Yönetim</h4>
-                        <div class="tag-cloud">
-                            <span class="tech-tag">Firnas FEAM Liderliği</span>
-                            <span class="tech-tag">Networking with FEAM</span>
-                            <span class="tech-tag">E-Ticaret & Crochet Brand</span>
-                            <span class="tech-tag">Lifestyle Fotoğrafçılık</span>
-                            <span class="tech-tag">Dijital Pazarlama</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 3: PROJELER (PROJECTS) -->
-        <div id="projects" class="tab-pane" role="tabpanel">
-            <div class="project-showcase-grid">
-                
-                <!-- FiCo Showcase -->
-                <div class="project-card-large">
-                    <div class="project-img-wrapper">
-                        <img src="/asset/fico_drone_modern_1777896358674.png" alt="FiCo STEM Drone Showcase">
-                    </div>
-                    <div class="project-details">
-                        <span class="project-badge" data-i18n="fico.badge">Uluslararası Birincilik Ödüllü Proje</span>
-                        <h2 class="project-title" data-i18n="fico.title">FiCo — Programlanabilir Eğitim Dronu Ekosistemi</h2>
-                        <p class="project-desc" data-i18n="fico.desc">
-                            Cumhurbaşkanlığı himayelerinde düzenlenen Türkiye Girişimci Buluşması'nda Uluslararası Proje 1.'liği kazanan, bizzat lehimlenen ESP32 ve Deneyap Kart v2 gömülü devreleriyle STEM eğitimi sunan modüler İHA platformu.
-                        </p>
-                        <ul class="project-specs">
-                            <li data-i18n="fico.spec1">Çift Mikrodenetleyici: Deneyap Kart v2 + ESP32 lehimli entegrasyonu</li>
-                            <li data-i18n="fico.spec2">Pixhawk seyrüsefer ve GPS'siz laboratuvar hover (sensör füzyonu)</li>
-                            <li data-i18n="fico.spec3">1S LiPo (PH2.0) pil devresi, karbon fiber ve 3D baskılı modüler gövde</li>
-                            <li data-i18n="fico.spec4">Scratch blok kodlamadan metin tabanlı Python / C++ kodlamaya geçiş</li>
-                        </ul>
-                        <a href="javascript:void(0)" onclick="noticeUpdating('FiCo Sunum')" class="link-btn-small" style="align-self: flex-start; margin-top: 0.5rem; opacity: 0.85;"><i class="fas fa-file-powerpoint"></i> FiCo Sunumu <span class="badge-updating" data-i18n="btn.updating">Yakında Güncellenecek</span></a>
-                    </div>
-                </div>
-
-                <!-- Defense Concepts Showcase -->
-                <div class="content-card">
-                    <div class="card-header">
-                        <h2 class="card-title"><i class="fas fa-shield-halved"></i> <span data-i18n="defense.title">Otonom Sistemler & Konsept Çalışmaları</span></h2>
-                    </div>
-                    <div class="skills-grid">
-                        <div class="skill-group" style="background: rgba(8, 26, 43, 0.9);">
-                            <img src="/asset/uska_showcase.png" alt="ÜSKA Concept" style="width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem;">
-                            <h3 style="color: #ffffff; font-size: 1.2rem; margin-bottom: 0.4rem;">ÜSKA (Üstün Kabiliyetli Muharebe Aracı)</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="defense.uska">
-                                Sarp arazilerde devriye ve otonom keşif yapabilen insansız kara/hava konsept mimarisi.
-                            </p>
-                        </div>
-                        <div class="skill-group" style="background: rgba(8, 26, 43, 0.9);">
-                            <img src="/asset/muhafiz_showcase.png" alt="MUHAFIZ Defense Concept" style="width: 100%; height: 160px; object-fit: cover; border-radius: 12px; margin-bottom: 1rem;">
-                            <h3 style="color: #ffffff; font-size: 1.2rem; margin-bottom: 0.4rem;">MUHAFIZ (Hava Savunma Konsepti)</h3>
-                            <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="defense.muhafiz">
-                                Mini İHA ve drone tehditlerine karşı hızlı önleme sağlayan savunma sistemi konsepti.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-
-        <!-- TAB 4: DENEYİM & PROGRAMLAR (EXPERIENCE & PROGRAMS) -->
-        <div id="experience" class="tab-pane" role="tabpanel">
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-briefcase"></i> <span data-i18n="exp.h">Katıldığı Programlar ve Görevler</span></h2>
-                </div>
-                <div class="timeline">
-                    
-                    <div class="timeline-item">
-                        <div class="timeline-date">11.2023 – Devam Ediyor</div>
-                        <div class="timeline-title" data-i18n="exp.firnas_t">Kurucu & R&D Lideri — Firnas Teknoloji</div>
-                        <div class="timeline-desc" data-i18n="exp.firnas_d">
-                            Firnas Teknoloji'nin Kurucusu olarak eğitim ve model İHA teknolojileri geliştirilmesi. FiCo projesinin mekanik tasarımı, gömülü devre lehimlemesi, Cloudflare web altyapısı (SysAdmin) yönetimi ve kurumsal vizyon.
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-date">2024 – Devam Ediyor</div>
-                        <div class="timeline-title" data-i18n="exp.feam_t">Topluluk Lideri — Firnas FEAM & Networking Events</div>
-                        <div class="timeline-desc" data-i18n="exp.feam_d">
-                            Atölye Üsküdar iş birliğiyle "Networking with FEAM" gibi fiziksel buluşmaları koordine ederek lise ve üniversite teknoloji meraklılarını mentörlerle buluşturan akademik ve sosyal topluluk liderliği.
-                        </div>
-                        <a href="https://tr.linkedin.com/posts/firnas-technoloji_firnas-feam-program%C4%B1-yeniden-ba%C5%9Flam%C4%B1yor-activity-7239569602496651265-wXVz" target="_blank" class="link-btn-small"><i class="fab fa-linkedin"></i> FEAM Program Gönderisi</a>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-date">2024 – Devam Ediyor (12 Ay)</div>
-                        <div class="timeline-title" data-i18n="exp.t3_burs_t">T3 Vakfı – Özdemir Bayraktar Milli Teknoloji Burs Programı</div>
-                        <div class="timeline-desc" data-i18n="exp.t3_burs_d">
-                            Eğitmen ve Mentor olarak seçilmiştir. Deneyap Teknoloji Atölyeleri'nde gençlere teknoloji üretimi, robotik, kodlama ve havacılık alanlarında rehberlik etmektedir.
-                        </div>
-                        <a href="https://tr.linkedin.com/posts/ens-bkkr_milliteknolojihamlesi-t3vakf%C4%B1-deneyap-activity-7288623034410672128-zGda" target="_blank" class="link-btn-small"><i class="fab fa-linkedin"></i> LinkedIn Gönderisini İncele</a>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-date">2023 – Devam Ediyor</div>
-                        <div class="timeline-title" data-i18n="exp.ecom_t">Girişimci — E-Ticaret & Lifestyle Ürün Markası</div>
-                        <div class="timeline-desc" data-i18n="exp.ecom_d">
-                            El örgüsü (crochet) özel tasarım çanta markasının üretim organizasyonu, stüdyo/lifestyle ürün fotoğrafçılığı, dijital pazarlama ve sosyal medya yönetimi.
-                        </div>
-                    </div>
-
-                    <div class="timeline-item">
-                        <div class="timeline-date">02.2025 – 06.2026</div>
-                        <div class="timeline-title" data-i18n="exp.atom_t">ATOM İl Başkanı — İstanbul Genç İHH</div>
-                        <div class="timeline-desc" data-i18n="exp.atom_d">
-                            Akademi ve Teknoloji Organizasyon Merkezi (ATOM) il sorumlusu olarak TEKNOFEST ve TÜBİTAK ekiplerine mentorluk ve mühendislik atölyeleri koordinasyonu.
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 5: ÖDÜLLER (AWARDS) -->
-        <div id="awards" class="tab-pane" role="tabpanel">
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-award"></i> <span data-i18n="awards.h">Kazanılan Ödüller ve Başarılar</span></h2>
-                </div>
-
-                <div class="awards-grid">
-                    
-                    <!-- Ödül 1: Türkiye Girişimci Buluşması -->
-                    <div class="award-card">
-                        <div class="award-icon-box"><i class="fas fa-crown"></i></div>
-                        <div class="award-year">2024</div>
-                        <h3 class="award-title" data-i18n="awards.tgb_t">Türkiye Girişimci Buluşması — Uluslararası Proje 1.'lik Ödülü</h3>
-                        <div class="award-org">Girişimci İşadamları Vakfı (GİV) • Cumhurbaşkanlığı Himayelerinde</div>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.tgb_d">
-                            FiCo projesi ile Uluslararası Proje Kategorisinde 1.'lik kazanılmıştır. Ödül, GİV Başkanı Ali Bakaner tarafından takdim edilmiş; törende Gençlik ve Spor Bakan Yardımcısı Dr. Enes Eminoğlu ve TÜGVA Genel Başkanı İbrahim Beşinci hazır bulunmuştur.
-                        </p>
-                        <a href="https://tr.linkedin.com/posts/ens-bkkr_ekibimiz-a%C3%A7%C4%B1s%C4%B1ndan-bu-ba%C5%9Far%C4%B1-sadece-bir-activity-7275947020052316160-Hwmt" target="_blank" class="link-btn-small"><i class="fab fa-linkedin"></i> Ödül Töreni Gönderisi</a>
-                    </div>
-
-                    <!-- Ödül 2: Üretken Esenler -->
-                    <div class="award-card">
-                        <div class="award-icon-box"><i class="fas fa-trophy"></i></div>
-                        <div class="award-year">2024 / 2025</div>
-                        <h3 class="award-title" data-i18n="awards.esenler_t">Üretken Esenler Proje Yarışması — İkincilik Ödülü</h3>
-                        <div class="award-org">Esenler Belediyesi & Üretken Akademi</div>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.esenler_d">
-                            FiCo Eğitim Dronu Ekosistemi ile 3 aylık eğitim ve hackathon sonucunda ikincilik kazanılmıştır. Törende Sanayi ve Teknoloji Bakanı Mehmet Fatih Kacır ve Esenler Belediye Başkanı Tevfik Göksu yer almıştır.
-                        </p>
-                        <a href="https://www.linkedin.com/posts/ens-bkkr_fico-projemizle-%C3%BCretken-esenler-proje-yar%C4%B1%C5%9Fmas%C4%B1-activity-7330529983628554242-QS2p" target="_blank" class="link-btn-small"><i class="fab fa-linkedin"></i> Bakan Kacır ile Fotoğraflı Gönderi</a>
-                    </div>
-
-                    <!-- Ödül 3: TEKNOFEST Savaşan İHA -->
-                    <div class="award-card">
-                        <div class="award-icon-box"><i class="fas fa-plane-submersible"></i></div>
-                        <div class="award-year">2024</div>
-                        <h3 class="award-title" data-i18n="awards.teknofest_t">TEKNOFEST Adana — Savaşan İHA Saha Liderliği</h3>
-                        <div class="award-org">T3 Vakfı & TEKNOFEST</div>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.teknofest_d">
-                            Savaşan İHA kategorisinde takım olarak üst düzey teknik yeterlilik ve saha liderliği sergilenmiş; otonom önleme algoritması sahadan başarıyla ayrılmıştır.
-                        </p>
-                    </div>
-
-                    <!-- Ödül 4: Imagine Tomorrow -->
-                    <div class="award-card">
-                        <div class="award-icon-box"><i class="fas fa-lightbulb"></i></div>
-                        <div class="award-year">2024</div>
-                        <h3 class="award-title" data-i18n="awards.imagine_t">Imagine Tomorrow İnovasyon Yarışması</h3>
-                        <div class="award-org">Uluslararası Girişimcilik Platformu</div>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.imagine_d">
-                            FiCo eğitim dronu ekosistemi ile inovatif fikir ve iş modeli vizyonu jüri önünde sergilenmiştir.
-                        </p>
-                    </div>
-
-                    <!-- Ödül 5: TOBB Projektör -->
-                    <div class="award-card">
-                        <div class="award-icon-box"><i class="fas fa-medal"></i></div>
-                        <div class="award-year">2024</div>
-                        <h3 class="award-title" data-i18n="awards.tobb_t">TOBB Projektör Lise — Finalist</h3>
-                        <div class="award-org">TOBB Türkiye Odalar ve Borsalar Birliği</div>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.tobb_d">
-                            1017 başvuran takım arasından ilk 60 finalist arasına girildi.
-                        </p>
-                    </div>
-
-                    <!-- Ödül 6: Üretken Sultanbeyli -->
-                    <div class="award-card">
-                        <div class="award-icon-box"><i class="fas fa-star"></i></div>
-                        <div class="award-year">2023</div>
-                        <h3 class="award-title" data-i18n="awards.sultan_t">Üretken Sultanbeyli Girişimcilik — 3.'lük Ödülü</h3>
-                        <div class="award-org">Sultanbeyli Belediyesi</div>
-                        <p style="color: var(--text-muted); font-size: 0.9rem;" data-i18n="awards.sultan_d">
-                            Girişimcilik ve teknoloji alanında üçüncülük elde edildi.
-                        </p>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 6: FOTO GALERİSİ & MEDYA (MEDIA & GALLERY) -->
-        <div id="media" class="tab-pane" role="tabpanel">
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-globe"></i> <span data-i18n="media.oic_h">Katıldığı Uluslararası Etkinlikler ve Konferanslar</span></h2>
-                </div>
-
-                <!-- OIC Youth Entrepreneurship Conference -->
-                <div class="media-quote-card" style="border-inline-start-color: #00b8d4; background: rgba(0, 184, 212, 0.04);">
-                    <div class="media-source">
-                        <span class="media-source-name" style="font-size: 1.1rem;"><i class="fas fa-landmark"></i> OIC Youth Entrepreneurship Conference 2026</span>
-                        <span class="media-date">İstanbul Finans Merkezi</span>
-                    </div>
-                    <p style="color: #e2e8f0; font-size: 0.95rem; margin-bottom: 0.75rem;" data-i18n="media.oic_d">
-                        İslam İşbirliği Gençlik Forumu (ICYF) tarafından resmi davetle bu uluslararası konferans ve zirvede Firnas Teknoloji olarak yer alınmıştır. Girişimcilik ekosistemi ve teknoloji üretimi üzerine sunumlar gerçekleştirilmiştir.
-                    </p>
-                    <p style="color: var(--accent-cyan); font-size: 0.88rem; font-weight: 600;" data-i18n="media.oic_guests">
-                        Stant Ziyaretçileri: Sanayi ve Teknoloji Bakan Yardımcısı Zekeriya Çoştu ve ICYF Başkanı Taha Ayhan Firnas Teknoloji standını ziyaret etmişlerdir.
-                    </p>
-                    <a href="https://tr.linkedin.com/company/firnas-technologies" target="_blank" class="link-btn-small" style="margin-top: 0.75rem;"><i class="fab fa-linkedin"></i> Konferans Albümü (Firnas LinkedIn)</a>
-                </div>
-
-                <div class="media-quote-card">
-                    <div class="media-source">
-                        <span class="media-source-name"><i class="fas fa-bullhorn"></i> İhlas Haber Ajansı (İHA) Röportajı</span>
-                        <span class="media-date">21 Eylül 2025</span>
-                    </div>
-                    <p style="font-style: italic; color: #e2e8f0;" data-i18n="media.iha_quote">
-                        "Esenler Belediyesi’nin düzenlediği Üretken Esenler proje yarışması kapsamında tasarladığımız eğitim drone’u projesiyle ikincilik ödülü almış olduk. İlkokul ve ortaokul öğrencilerine robotik kodlamayı eğlenerek öğretmeyi hedefliyoruz."
-                    </p>
-                </div>
-
-                <div class="media-quote-card">
-                    <div class="media-source">
-                        <span class="media-source-name"><i class="fas fa-school"></i> MEB / EBİAL Resmi Duyurusu</span>
-                        <span class="media-date">03 Haziran 2025</span>
-                    </div>
-                    <p style="font-style: italic; color: #e2e8f0;" data-i18n="media.meb_quote">
-                        "Geçen yıl mezun ettiğimiz şimdi Bilgisayar Mühendisliği bölümünde okuyan öğrencimiz Enes Bakkar başarılarıyla ve ödül alan ulusal ve uluslararası projeleri ile gerek okulumuzun ve ülkemizin gurur kaynağı olmuştur. Bakanlığımıza bildirdiğimiz bu öğrencimiz belgesele konu oldu."
-                    </p>
-                </div>
-            </div>
-
-            <!-- COMPREHENSIVE HIGH-RES PHOTO GALLERY -->
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-camera-retro"></i> <span data-i18n="media.gallery_h">Kapsamlı Etkinlik & Belgesel Fotoğraf Galerisi</span></h2>
-                </div>
-
-                <div class="gallery-grid">
-                    <!-- GİV TGB Award Stage -->
-                    <div class="gallery-item">
-                        <img src="/asset/tgb_sahne.jpg" alt="TGB Sahne Ödül Töreni">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">GİV TGB Uluslararası 1.'lik Ödülü</div>
-                            <div class="gallery-sub">GİV Başkanı Ali Bakaner & Bakan Yrd. Dr. Enes Eminoğlu ile</div>
-                        </div>
-                    </div>
-
-                    <!-- FEAM Program Banner -->
-                    <div class="gallery-item">
-                        <img src="/asset/feam_banner.png" alt="Firnas FEAM Programı Banner">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">Firnas FEAM Akademi Programı</div>
-                            <div class="gallery-sub">AVÇİM & Atölye Üsküdar İş Birliği</div>
-                        </div>
-                    </div>
-
-                    <!-- Boğaziçi 1 -->
-                    <div class="gallery-item">
-                        <img src="/asset/bogazici_program_01.jpg" alt="Boğaziçi Programı Fotoğrafı 1">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">Boğaziçi Üniversitesi Konuşması</div>
-                            <div class="gallery-sub">"Bugünden Yarını Tasarlamak"</div>
-                        </div>
-                    </div>
-
-                    <!-- Boğaziçi 2 -->
-                    <div class="gallery-item">
-                        <img src="/asset/bogazici_program_02.jpg" alt="Boğaziçi Programı Fotoğrafı 2">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">Boğaziçi Akademik Sunum</div>
-                            <div class="gallery-sub">Öğrenci Metodolojisi & STEM</div>
-                        </div>
-                    </div>
-
-                    <!-- Boğaziçi 3 -->
-                    <div class="gallery-item">
-                        <img src="/asset/bogazici_program_03.jpg" alt="Boğaziçi Programı Fotoğrafı 3">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">Boğaziçi Katılımcı Grubu</div>
-                            <div class="gallery-sub">Söyleşi ve Soru-Cevap</div>
-                        </div>
-                    </div>
-
-                    <!-- İl MEM Belgesel 1 -->
-                    <div class="gallery-item">
-                        <img src="/asset/mem_belgesel_01.jpg" alt="İl MEM Belgeseli Fotoğrafı 1">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">İstanbul İl MEM Belgeseli</div>
-                            <div class="gallery-sub">Çekim Sahnesi & Atölye</div>
-                        </div>
-                    </div>
-
-                    <!-- İl MEM Belgesel 2 -->
-                    <div class="gallery-item">
-                        <img src="/asset/mem_belgesel_02.jpg" alt="İl MEM Belgeseli Fotoğrafı 2">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">MEB Başarı Hikayeleri</div>
-                            <div class="gallery-sub">Lise Laboratuvar Çekimleri</div>
-                        </div>
-                    </div>
-
-                    <!-- İl MEM Belgesel 3 -->
-                    <div class="gallery-item">
-                        <img src="/asset/mem_belgesel_03.jpg" alt="Belgesel Çekim Görseli 3">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">Belgesel Gala & Gösterim Günü</div>
-                            <div class="gallery-sub">Mayıs 2026 Gösterimi</div>
-                        </div>
-                    </div>
-
-                    <!-- İl MEM Belgesel 4 -->
-                    <div class="gallery-item">
-                        <img src="/asset/mem_belgesel_04.jpg" alt="Belgesel Röportaj Sahnesi">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">Röportaj Sahnesi</div>
-                            <div class="gallery-sub">İHA ve Donanım Vizyonu</div>
-                        </div>
-                    </div>
-
-                    <!-- MEB Belgesel 01 -->
-                    <div class="gallery-item">
-                        <img src="/asset/meb_belgesel_01.jpg" alt="MEB Belgesel karesi 1">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">EBİAL Lise Yılları</div>
-                            <div class="gallery-sub">Robotik & Kodlama Atölyesi</div>
-                        </div>
-                    </div>
-
-                    <!-- MEB Belgesel 05 -->
-                    <div class="gallery-item">
-                        <img src="/asset/meb_belgesel_05.jpg" alt="MEB Belgesel karesi 5">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">Model İHA ve Protokol</div>
-                            <div class="gallery-sub">Saha Çalışmaları</div>
-                        </div>
-                    </div>
-
-                    <!-- X Post Gözyumma -->
-                    <div class="gallery-item">
-                        <img src="/asset/x_post_gozyumma.jpg" alt="İnsani Farkındalık Paylaşımı">
-                        <div class="gallery-overlay">
-                            <div class="gallery-caption">Toplumsal & İnsani Duyarlılık</div>
-                            <div class="gallery-sub">Sosyal Farkındalık Paylaşımı</div>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-        </div>
-
-        <!-- TAB 7: İLETİŞİM (CONTACT) -->
-        <div id="contact" class="tab-pane" role="tabpanel">
-            <div class="content-card">
-                <div class="card-header">
-                    <h2 class="card-title"><i class="fas fa-paper-plane"></i> <span data-i18n="contact.h">Doğrudan İletişim & Sosyal Medya Matrisi</span></h2>
-                </div>
-
-                <p style="color: var(--text-muted); margin-bottom: 1.5rem;" data-i18n="contact.sub">
-                    Proje iş birlikleri, eğitmenlik/mentorluk talepleri veya teknik görüşmeler için ulaşabilirsiniz.
-                </p>
-
-                <div class="social-matrix">
-                    <a href="https://www.linkedin.com/in/ens-bkkr/" target="_blank" class="social-btn">
-                        <i class="fab fa-linkedin"></i>
-                        <div class="social-btn-text">
-                            LinkedIn (Şahsi)
-                            <span>/in/ens-bkkr</span>
-                        </div>
-                    </a>
-                    <a href="https://tr.linkedin.com/company/firnas-technologies" target="_blank" class="social-btn">
-                        <i class="fab fa-linkedin-in"></i>
-                        <div class="social-btn-text">
-                            Firnas LinkedIn
-                            <span>/company/firnas-technologies</span>
-                        </div>
-                    </a>
-                    <a href="https://github.com/enesbakkar" target="_blank" class="social-btn">
-                        <i class="fab fa-github"></i>
-                        <div class="social-btn-text">
-                            GitHub Pro
-                            <span>@enesbakkar</span>
-                        </div>
-                    </a>
-                    <a href="https://x.com/ens_bkkr" target="_blank" class="social-btn">
-                        <i class="fab fa-x-twitter"></i>
-                        <div class="social-btn-text">
-                            X (Twitter)
-                            <span>@ens_bkkr</span>
-                        </div>
-                    </a>
-                    <a href="https://www.instagram.com/ens_bkkr/" target="_blank" class="social-btn">
-                        <i class="fab fa-instagram"></i>
-                        <div class="social-btn-text">
-                            Instagram
-                            <span>@ens_bkkr</span>
-                        </div>
-                    </a>
-                    <a href="https://youtube.com/@ens_bkkr" target="_blank" class="social-btn">
-                        <i class="fab fa-youtube"></i>
-                        <div class="social-btn-text">
-                            YouTube
-                            <span>@ens_bkkr</span>
-                        </div>
-                    </a>
-                    <a href="mailto:bakkarenes@gmail.com" class="social-btn">
-                        <i class="fas fa-envelope"></i>
-                        <div class="social-btn-text">
-                            E-posta
-                            <span>bakkarenes@gmail.com</span>
-                        </div>
-                    </a>
-                    <a href="https://linktr.ee/enesbakkar" target="_blank" class="social-btn">
-                        <i class="fas fa-link"></i>
-                        <div class="social-btn-text">
-                            Linktree
-                            <span>linktr.ee/enesbakkar</span>
-                        </div>
-                    </a>
-                </div>
-
-                <!-- DIRECT PDF & RESOURCES LINKS MATRIX (TEMPORARILY DEACTIVATED / UPDATING) -->
-                <div class="content-card" style="margin-top: 2rem; background: rgba(0,0,0,0.2);">
-                    <h3 style="color: var(--accent-cyan); margin-bottom: 1rem; font-size: 1.1rem;"><i class="fas fa-folder-open"></i> <span data-i18n="contact.drive_h">Drive & Resmi Belge Envanteri</span></h3>
-                    <div class="skills-grid">
-                        <a href="javascript:void(0)" onclick="noticeUpdating('Enes Bakkar CV')" class="link-btn-small" style="opacity: 0.85;"><i class="fas fa-file-pdf"></i> Enes Bakkar CV <span class="badge-updating" data-i18n="btn.updating">Yakında Güncellenecek</span></a>
-                        <a href="javascript:void(0)" onclick="noticeUpdating('Kapsamlı Portfolyo')" class="link-btn-small" style="opacity: 0.85;"><i class="fas fa-file-pdf"></i> Kapsamlı Portfolyo <span class="badge-updating" data-i18n="btn.updating">Yakında Güncellenecek</span></a>
-                        <a href="javascript:void(0)" onclick="noticeUpdating('FiCo Proje Sunumu')" class="link-btn-small" style="opacity: 0.85;"><i class="fas fa-file-powerpoint"></i> FiCo Proje Sunumu <span class="badge-updating" data-i18n="btn.updating">Yakında Güncellenecek</span></a>
-                    </div>
-                </div>
-
-                <div class="cta-buttons" style="margin-top: 2rem;">
-                    <a href="javascript:void(0)" onclick="noticeUpdating('Özgeçmiş (CV)')" class="btn-primary" style="opacity: 0.85;"><i class="fas fa-file-pdf"></i> <span data-i18n="btn.download_cv">Özgeçmiş (CV)</span> <span class="badge-updating" style="background: rgba(0,0,0,0.3); color:#fff; border-color:rgba(255,255,255,0.4);" data-i18n="btn.updating">Yakında Güncellenecek</span></a>
-                    <a href="javascript:void(0)" onclick="noticeUpdating('Kapsamlı Portfolyo')" class="btn-outline" style="opacity: 0.85;"><i class="fas fa-book-open"></i> <span data-i18n="btn.download_portfolio">Kapsamlı Portfolyo</span> <span class="badge-updating" data-i18n="btn.updating">Yakında Güncellenecek</span></a>
-                </div>
-            </div>
-        </div>
-
     </div>
 
-    <!-- SITE FOOTER -->
-    <footer class="site-footer">
-        <div class="container">
-            <p>© 2026 Enes Bakkar (@ans_bkkr) • Firnas Teknoloji Kurucusu</p>
+    <div class="profile-container">
+        <!-- Sol Bölüm: Sidebar -->
+        <div class="profile-sidebar">
+            <div class="profile-avatar-wrapper">
+                <img src="/asset/enes_bakkar.jpg" alt="Enes Bakkar" class="profile-avatar">
+            </div>
+            <div class="profile-title">
+                <h1 data-i18n="eb_name">Enes Bakkar</h1>
+                <p class="profile-role" data-i18n="team_1_role">Kurucu</p>
+                <p class="profile-company">
+                    <img src="/asset/firnas_logo.png" alt="Firnas" style="height: 24px;">
+                    <strong>Firnas Technologies</strong>
+                </p>
+            </div>
+            
+            <!-- Sosyal Medya Platformları Panel -->
+            <div class="social-panel">
+                <h3 class="panel-title"><i class="fas fa-network-wired"></i> <span data-i18n="profile_links">Bağlantılar</span></h3>
+                <div class="social-grid">
+                    <a href="https://www.linkedin.com/in/ens-bkkr/" target="_blank" rel="noopener noreferrer" class="btn-social btn-linkedin"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+                    <a href="https://www.instagram.com/ens_bkkr/" target="_blank" rel="noopener noreferrer" class="btn-social btn-instagram"><i class="fab fa-instagram"></i> Instagram</a>
+                    <a href="https://x.com/ens_bkkr" target="_blank" rel="noopener noreferrer" class="btn-social btn-x"><i class="fab fa-x-twitter"></i> X (Twitter)</a>
+                    <a href="https://nsosyal.com/ens_bkkr" target="_blank" rel="noopener noreferrer" class="btn-social btn-nsosyal"><i class="fas fa-circle-nodes"></i> N Sosyal</a>
+                </div>
+            </div>
         </div>
-    </footer>
 
-    <!-- MULTI-LANGUAGE (TR / EN / AR) DICTIONARY & LOGIC -->
-    <script>
-        const translations = {
-            tr: {
-                dir: 'ltr',
-                title: "Enes Bakkar (@ans_bkkr) | Firnas Teknoloji Kurucusu | Donanım Mimarı & Sistem Yöneticisi",
-                roles: [
-                    "Firnas Teknoloji Kurucusu & R&D Lideri",
-                    "Gömülü Sistemler & ESP32 Devre Mimarı",
-                    "SysAdmin (Cloudflare DNS & Bulut Altyapısı)",
-                    "FEAM Topluluk Lideri & E-Ticaret Girişimcisi"
-                ],
-                nav: { home: "Ana Sayfa", about_site: "Hakkımızda", products: "Ürünler", store: "Mağaza", contact_site: "İletişim" },
-                tabs: { overview: "Genel Bakış", about: "Hakkımda & Yetkinlikler", projects: "Projeler & Donanım AR-GE", experience: "Deneyim & Programlar", awards: "Ödüller & Başarılar", media: "Foto Galerisi & Medya", contact: "İletişim & Bağlantılar" },
-                hero: {
-                    name: "Enes Bakkar",
-                    snippet: "Donanım lehim/devre mimarisi, ESP32 gömülü sistemler, Cloudflare bulut altyapısı, FEAM topluluk liderliği ve e-ticaret girişimciliğiyle çok yönlü teknoloji üreticisi.",
-                    dob: "27 Nisan 2006", location: "İstanbul, Türkiye (Mekke Doğumlu)", edu: "İstanbul Aydın Üniversitesi", github_pro: "GitHub Student Developer Pro", langs: "Türkçe • Arapça • İngilizce"
-                },
-                stats: { giv: "Türkiye Girişimci Buluşması Uluslararası Proje 1.'si", esenler: "Üretken Esenler Proje Yarışması 2.'lik Ödülü", t3_burs: "T3 Vakfı Özdemir Bayraktar Burslu Eğitmeni", lang_cap: "Akıcı 3 Dilde İletişim Kabiliyeti" },
-                overview: {
-                    partners_title: "Paydaş Kurumlar ve Ortaklıklar",
-                    bio_title: "Profil & Biyografi Özeti",
-                    bio_p1: "Enes Bakkar (Anas Bakkar), 27 Nisan 2006 Mekke doğumlu ve Suriye kökenli olup teknoloji üretimi, gömülü sistemler donanım pratiği, sistem altyapı yönetimi, topluluk liderliği ve e-ticaret alanlarında aktif çalışan bir girişimci ve mühendislik öğrencisidir.",
-                    bio_p2: "Firnas Teknoloji Kurucusu olarak amiral gemisi projesi FiCo (Programlanabilir STEM Eğitim Dronu) ekosistemini geliştirmekte; sıfırdan ESP32 gömülü devre lehimleme, Deneyap Kart v2 entegrasyonu, 1S LiPo güç yönetimi ve karbon fiber şasi montajı gibi elleri kirleten donanım pratiğini bizzat yürütmektedir.",
-                    bio_p3: "Aynı zamanda firnastechnologies.com sistem altyapısının (Cloudflare DNS, SSL/HTTPS, sub-domain mimarileri) SysAdmin yönetimini üstlenmekte; Networking with FEAM topluluk etkinlikleriyle yüzlerce gencin teknoloji ağını koordine etmekte ve e-ticaret markası operasyonlarını yönetmektedir.",
-                    quote: '"İstanbul İl Millî Eğitim Müdürlüğü tarafından düzenlenen özel programda kısa belgeselimizin gösterimi gerçekleştirildi. Lakin şunu görüyorum ki: Yol uzun, vakit kısa ve bizler henüz seferin en başındayız."',
-                    quote_author: "— Enes Bakkar (Mayıs 2026, İstanbul İl MEM Belgesel Gösterimi)"
-                },
-                btn: { view_fico: "FiCo Projesini İncele", view_media: "Tüm Foto Galerisi & Medya", download_cv: "Özgeçmiş (CV)", download_portfolio: "Kapsamlı Portfolyo", updating: "Yakında Güncellenecek" },
-                about: {
-                    title: "Kişisel Bilgiler & Somut Mühendislik Pratikleri",
-                    p1: "27 Nisan 2006 Mekke doğumlu Enes Bakkar (Anas Bakkar), Suriye kökenlidir. Lise öğrenimini Borsa İstanbul Anadolu Lisesi'nde (EBİAL) dereceyle tamamlamıştır. 2024 yılı itibarıyla İstanbul Aydın Üniversitesi Bilgisayar Mühendisliği (İngilizce) lisans eğitimini sürdürmektedir. GitHub Student Developer Pro üyesidir.",
-                    prac_hw_h: "Donanım & Gömülü Sistem Pratiği",
-                    prac_hw_p: "Masa başında teorik çizimle sınırlı kalmayıp, açık kaynaklı ESP32 firmware kodlaması, Deneyap Kart v2 mikrodenetleyici entegrasyonu, 1S/2S LiPo (PH2.0) pil şarj devresi lehimleme, fırçasız motor ESC kalibrasyonu ve optik akış sensörü füzyonuyla sıfırdan çalışan quadcopter devreleri inşa etmektedir.",
-                    prac_sys_h: "Sistem Altyapısı & Bulut Yönetimi (SysAdmin)",
-                    prac_sys_p: "firnastechnologies.com bulut mimarisinin yönetimini üstlenmektedir. Cloudflare DNS yönlendirmeleri, SSL/HTTPS güvenlik sertifikaları, CDN optimizasyonu ve eğitim atölyeleri için özel alt alan adı (sub-domain) kurulumlarını bizzat yapılandırmaktadır.",
-                    prac_community_h: "Topluluk Liderliği & Etkinlik Yönetimi",
-                    prac_community_p: "Firnas FEAM (Eğitim ve Akademik Mentorluk) topluluğunun kurucu lideri olarak, Atölye Üsküdar'da düzenlenen Networking with FEAM gibi fiziksel buluşmaları koordine etmekte; lise ve üniversite öğrencilerini mühendis mentörlerle buluşturmaktadır.",
-                    prac_ecom_h: "Çok Yönlü E-Ticaret & Ürün Yönetimi",
-                    prac_ecom_p: "Teknoloji alanının yanı sıra, el örgüsü (crochet) özel tasarım çanta markasının üretim, lifestyle ürün fotoğrafçılığı, dijital pazarlama ve e-ticaret satış operasyonlarını bizzat yöneterek ticari vizyonunu sergilemektedir.",
-                    edu_h: "Eğitim Zaman Çizelgesi", edu_iau: "Bilgisayar Mühendisliği (İngilizce) — Lisans Öğrenimi", edu_ebial: "Lise Mezuniyeti & İl MEM Başarı Belgeseli Konusu", edu_t3: "Yerli Mikrodenetleyici & Gömülü Sistemler Geliştirici Eğitimi",
-                    tech_h: "Geliştirici Araçları & Yetkinlik Etiketleri"
-                },
-                fico: {
-                    badge: "Uluslararası Birincilik Ödüllü Proje", title: "FiCo — Programlanabilir Eğitim Dronu Ekosistemi",
-                    desc: "Cumhurbaşkanlığı himayelerinde düzenlenen Türkiye Girişimci Buluşması'nda Uluslararası Proje 1.'liği kazanan, bizzat lehimlenen ESP32 ve Deneyap Kart v2 gömülü devreleriyle STEM eğitimi sunan modüler İHA platformu.",
-                    spec1: "Çift Mikrodenetleyici: Deneyap Kart v2 + ESP32 lehimli entegrasyonu", spec2: "Pixhawk seyrüsefer ve GPS'siz laboratuvar hover (sensör füzyonu)", spec3: "1S LiPo (PH2.0) pil devresi, karbon fiber ve 3D baskılı modüler gövde", spec4: "Scratch blok kodlamadan metin tabanlı Python / C++ kodlamaya geçiş"
-                },
-                defense: { title: "Otonom Sistemler & Konsept Çalışmaları", uska: "Sarp arazilerde devriye ve otonom keşif yapabilen insansız kara/hava konsept mimarisi.", muhafiz: "Mini İHA ve drone tehditlerine karşı hızlı önleme sağlayan savunma sistemi konsepti." },
-                exp: {
-                    h: "Katıldığı Programlar ve Görevler",
-                    firnas_t: "Kurucu & R&D Lideri — Firnas Teknoloji",
-                    firnas_d: "Firnas Teknoloji'nin Kurucusu olarak eğitim ve model İHA teknolojileri geliştirilmesi. FiCo projesinin mekanik tasarımı, gömülü devre lehimlemesi, Cloudflare web altyapısı (SysAdmin) yönetimi ve kurumsal vizyon.",
-                    feam_t: "Topluluk Lideri — Firnas FEAM & Networking Events",
-                    feam_d: "Atölye Üsküdar iş birliğiyle Networking with FEAM gibi fiziksel buluşmaları koordine ederek lise ve üniversite teknoloji meraklılarını mentörlerle buluşturan akademik ve sosyal topluluk liderliği.",
-                    t3_burs_t: "T3 Vakfı – Özdemir Bayraktar Milli Teknoloji Burs Programı",
-                    t3_burs_d: "Eğitmen ve Mentor olarak seçilmiştir. Deneyap Teknoloji Atölyeleri'nde gençlere teknoloji üretimi, robotik, kodlama ve havacılık alanlarında rehberlik etmektedir.",
-                    ecom_t: "Girişimci — E-Ticaret & Lifestyle Ürün Markası",
-                    ecom_d: "El örgüsü (crochet) özel tasarım çanta markasının üretim organizasyonu, stüdyo/lifestyle ürün fotoğrafçılığı, dijital pazarlama ve sosyal medya yönetimi.",
-                    atom_t: "ATOM İl Başkanı — İstanbul Genç İHH",
-                    atom_d: "Akademi ve Teknoloji Organizasyon Merkezi (ATOM) il sorumlusu olarak TEKNOFEST ve TÜBİTAK ekiplerine mentorluk ve mühendislik atölyeleri koordinasyonu."
-                },
-                awards: {
-                    h: "Kazanılan Ödüller ve Başarılar",
-                    tgb_t: "Türkiye Girişimci Buluşması — Uluslararası Proje 1.'lik Ödülü",
-                    tgb_d: "FiCo projesi ile Uluslararası Proje Kategorisinde 1.'lik kazanılmıştır. Ödül, GİV Başkanı Ali Bakaner tarafından takdim edilmiş; törende Gençlik ve Spor Bakan Yardımcısı Dr. Enes Eminoğlu ve TÜGVA Genel Başkanı İbrahim Beşinci hazır bulunmuştur.",
-                    esenler_t: "Üretken Esenler Proje Yarışması — İkincilik Ödülü",
-                    esenler_d: "FiCo Eğitim Dronu Ekosistemi ile 3 aylık eğitim ve hackathon sonucunda ikincilik kazanılmıştır. Törende Sanayi ve Teknoloji Bakanı Mehmet Fatih Kacır ve Esenler Belediye Başkanı Tevfik Göksu yer almıştır.",
-                    teknofest_t: "TEKNOFEST Adana — Savaşan İHA Saha Liderliği",
-                    teknofest_d: "Savaşan İHA kategorisinde takım olarak üst düzey teknik yeterlilik ve saha liderliği sergilenmiş; otonom önleme algoritması sahadan başarıyla ayrılmıştır.",
-                    imagine_t: "Imagine Tomorrow İnovasyon Yarışması",
-                    imagine_d: "FiCo eğitim dronu ekosistemi ile inovatif fikir ve iş modeli vizyonu jüri önünde sergilenmiştir.",
-                    tobb_t: "TOBB Projektör Lise — Finalist",
-                    tobb_d: "1017 başvuran takım arasından ilk 60 finalist arasına girildi.",
-                    sultan_t: "Üretken Sultanbeyli Girişimcilik — 3.'lük Ödülü",
-                    sultan_d: "Girişimcilik ve teknoloji alanında üçüncülük elde edildi."
-                },
-                media: {
-                    h: "Uluslararası Etkinlikler & Medya Yansımaları",
-                    oic_h: "Katıldığı Uluslararası Etkinlikler ve Konferanslar",
-                    oic_d: "İslam İşbirliği Gençlik Forumu (ICYF) tarafından resmi davetle bu uluslararası konferans ve zirvede Firnas Teknoloji olarak yer alınmıştır. Girişimcilik ekosistemi ve teknoloji üretimi üzerine sunumlar gerçekleştirilmiştir.",
-                    oic_guests: "Stant Ziyaretçileri: Sanayi ve Teknoloji Bakan Yardımcısı Zekeriya Çoştu ve ICYF Başkanı Taha Ayhan Firnas Teknoloji standını ziyaret etmişlerdir.",
-                    iha_quote: '"Esenler Belediyesi’nin düzenlediği Üretken Esenler proje yarışması kapsamında tasarladığımız eğitim drone’u projesiyle ikincilik ödülü almış olduk. İlkokul ve ortaokul öğrencilerine robotik kodlamayı eğlenerek öğretmeyi hedefliyoruz."',
-                    meb_quote: '"Geçen yıl mezun ettiğimiz şimdi Bilgisayar Mühendisliği bölümünde okuyan öğrencimiz Enes Bakkar başarılarıyla ve ödül alan ulusal ve uluslararası projeleri ile gerek okulumuzun ve ülkemizin gurur kaynağı olmuştur. Bakanlığımıza bildirdiğimiz bu öğrencimiz belgesele konu oldu."',
-                    bogazici_quote: '"Boğaziçi Üniversitesi\'nde Bugünden Yarını Tasarlamak başlıklı programımızı tamamladık."',
-                    gallery_h: "Kapsamlı Etkinlik & Belgesel Fotoğraf Galerisi"
-                },
-                contact: { h: "Doğrudan İletişim & Sosyal Medya Matrisi", sub: "Proje iş birlikleri, eğitmenlik/mentorluk talepleri veya teknik görüşmeler için ulaşabilirsiniz.", drive_h: "Drive & Resmi Belge Envanteri" }
-            },
-            en: {
-                dir: 'ltr',
-                title: "Enes Bakkar (@ans_bkkr) | Founder at Firnas Technology | Systems Architect & SysAdmin",
-                roles: [
-                    "Founder & R&D Lead at Firnas Technology",
-                    "Embedded Systems & ESP32 Circuit Architect",
-                    "SysAdmin (Cloudflare DNS & Infrastructure)",
-                    "FEAM Community Leader & E-Commerce Entrepreneur"
-                ],
-                nav: { home: "Home", about_site: "About Us", products: "Products", store: "Store", contact_site: "Contact" },
-                tabs: { overview: "Overview", about: "About & Skills", projects: "Projects & Hardware R&D", experience: "Experience & Programs", awards: "Awards & Honors", media: "Photo Gallery & Media", contact: "Contact & Links" },
-                hero: {
-                    name: "Enes Bakkar",
-                    snippet: "Multi-faceted technology maker through hands-on circuit soldering, ESP32 embedded systems, Cloudflare cloud infrastructure, FEAM community leadership, and e-commerce entrepreneurship.",
-                    dob: "April 27, 2006", location: "Istanbul, Turkey (Born in Mecca)", edu: "Istanbul Aydin University", github_pro: "GitHub Student Developer Pro", langs: "Turkish • Arabic • English"
-                },
-                stats: { giv: "1st Place Award in Turkey Entrepreneurship Meeting", esenler: "2nd Place Award in Uretken Esenler Project Contest", t3_burs: "T3 Foundation Ozdemir Bayraktar Scholar Instructor", lang_cap: "Trilingual Communication Capability" },
-                overview: {
-                    partners_title: "Institutional Partners & Collaborations",
-                    bio_title: "Profile & Biographical Summary",
-                    bio_p1: "Enes Bakkar (Anas Bakkar), born April 27, 2006 in Mecca, is a multi-talented technology founder and computer engineering student active in embedded hardware engineering, SysAdmin cloud management, community leadership, and e-commerce.",
-                    bio_p2: "As the Founder of Firnas Technology, he leads the hands-on engineering of the flagship FiCo (Programmable STEM Drone) platform, soldering ESP32 custom circuits, configuring 1S LiPo power, and assembling carbon-fiber frames.",
-                    bio_p3: "He manages the cloud infrastructure (Cloudflare DNS, SSL, sub-domains) for firnastechnologies.com, leads Networking with FEAM events, and manages digital marketing for lifestyle e-commerce brands.",
-                    quote: '"Our short documentary was premiered at a special program hosted by the Istanbul Provincial Directorate of National Education. Yet I see that: The road is long, time is short, and we are just at the very beginning of our journey."',
-                    quote_author: "— Enes Bakkar (May 2026, Istanbul Provincial Directorate Documentary Screening)"
-                },
-                btn: { view_fico: "Explore FiCo Drone", view_media: "Full Photo Gallery & Media", download_cv: "Resume (CV)", download_portfolio: "Comprehensive Portfolio", updating: "Updating Soon" },
-                about: {
-                    title: "Personal Profile & Practical Engineering",
-                    p1: "Born on April 27, 2006 in Mecca, Enes Bakkar (Anas Bakkar) is of Syrian descent. He completed high school at Borsa Istanbul Anatolian High School (EBİAL) and is studying Computer Engineering (English) at Istanbul Aydin University. He is a GitHub Student Developer Pro member.",
-                    prac_hw_h: "Hardware & Embedded Systems Engineering",
-                    prac_hw_p: "Beyond theoretical design, he writes open-source ESP32 firmware, solders Deneyap Kart v2 circuits, configures 1S/2S LiPo (PH2.0) power management, calibrates ESC motors, and fuses optical flow sensors to build working quadcopters.",
-                    prac_sys_h: "System Infrastructure & Cloud (SysAdmin)",
-                    prac_sys_p: "Manages firnastechnologies.com cloud architecture: Cloudflare DNS routing, SSL/HTTPS security certificates, CDN optimization, and custom sub-domain setups for STEM training platforms.",
-                    prac_community_h: "Community Leadership & Event Coordination",
-                    prac_community_p: "Founder of Firnas FEAM community, hosting physical 'Networking with FEAM' events at Atolye Uskudar, connecting high school and university tech teams with engineering mentors.",
-                    prac_ecom_h: "Multi-Faceted E-Commerce & Product Management",
-                    prac_ecom_p: "Manages production, lifestyle product photography, digital marketing, and e-commerce sales operations for a handmade crochet bag brand.",
-                    edu_h: "Educational Timeline", edu_iau: "Computer Engineering (B.Sc. English)", edu_ebial: "High School Graduation & MoNE Documentary Subject", edu_t3: "Native Microcontroller & Embedded Systems Developer Program",
-                    tech_h: "Developer Tools & Skill Badges"
-                },
-                fico: {
-                    badge: "International 1st Place Award-Winning Project", title: "FiCo — Programmable Educational Drone Ecosystem",
-                    desc: "A modular UAV learning ecosystem winning 1st place in International Projects at the Turkey Entrepreneurship Meeting under Presidential auspices, powered by custom-soldered ESP32 and Deneyap Kart v2 circuits.",
-                    spec1: "Dual Microcontroller: Deneyap Kart v2 + ESP32 Soldered Integration", spec2: "Pixhawk autonomous navigation & indoor GPS-less optical flow hover", spec3: "1S LiPo (PH2.0) power management & carbon-fiber modular chassis", spec4: "Smooth transition from Scratch block coding to Python & C++"
-                },
-                defense: { title: "Autonomous Systems & Concepts", uska: "Unmanned ground/aerial vehicle concept architecture for patrol and autonomous reconnaissance.", muhafiz: "Air defense system concept for rapid interception against mini-UAV and drone threats." },
-                exp: {
-                    h: "Participated Programs & Roles",
-                    firnas_t: "Founder & R&D Lead — Firnas Technology",
-                    firnas_d: "Founder of Firnas Technology, leading FiCo mechanical design, embedded circuit soldering, Cloudflare SysAdmin management, and corporate vision.",
-                    feam_t: "Community Leader — Firnas FEAM & Networking Events",
-                    feam_d: "Coordinating physical 'Networking with FEAM' events in partnership with Atolye Uskudar, connecting youth teams with mentors.",
-                    t3_burs_t: "T3 Foundation – Ozdemir Bayraktar Scholarship Program",
-                    t3_burs_d: "Selected as Instructor and Mentor for 12 months, guiding students in robotics, coding, and aviation at Deneyap Workshops.",
-                    ecom_t: "Entrepreneur — E-Commerce & Lifestyle Brand",
-                    ecom_d: "Managing production, lifestyle product photography, digital marketing, and social media strategy for a handmade crochet bag brand.",
-                    atom_t: "President of ATOM — Istanbul Youth IHH",
-                    atom_d: "Mentoring TEKNOFEST & TUBITAK teams, organizing engineering workshops and aviation classes."
-                },
-                awards: {
-                    h: "Awards & Accomplishments",
-                    tgb_t: "Turkey Entrepreneurship Meeting — International Project 1st Place",
-                    tgb_d: "Won 1st place in International Projects. Presented by GIV President Ali Bakaner in presence of Deputy Minister Dr. Enes Eminoglu and TUGVA President Ibrahim Besinci.",
-                    esenler_t: "Uretken Esenler Project Competition — 2nd Place",
-                    esenler_d: "Won 2nd place among 150+ projects. Awarded in presence of Minister Mehmet Fatih Kacir and Mayor Tevfik Goksu.",
-                    teknofest_t: "TEKNOFEST Adana — Fighter UAV Field Leadership",
-                    teknofest_d: "Demonstrated high-level technical leadership in Fighter UAV category at TEKNOFEST Adana.",
-                    imagine_t: "Imagine Tomorrow Innovation Contest",
-                    imagine_d: "Exhibited innovative drone ecosystem and business model vision before international jury.",
-                    tobb_t: "TOBB Projektor High School — Finalist",
-                    tobb_d: "Qualified among top 60 finalists out of 1017 applicant teams.",
-                    sultan_t: "Uretken Sultanbeyli Entrepreneurship — 3rd Place",
-                    sultan_d: "Won 3rd place in entrepreneurship and technology category."
-                },
-                media: {
-                    h: "International Events & Media Coverage",
-                    oic_h: "Participated International Events & Conferences",
-                    oic_d: "Officially invited by OIC Youth Forum (ICYF) to participate in OIC Youth Entrepreneurship Conference 2026 at Istanbul Finance Center.",
-                    oic_guests: "Stand Visitors: Deputy Minister Zekeriya Costu and ICYF President Taha Ayhan visited the Firnas Technology stand.",
-                    iha_quote: '"We won second place in the Uretken Esenler competition with our educational drone. We aim to teach primary and secondary students robotics and coding through fun aerial experiences."',
-                    meb_quote: '"Our graduate Enes Bakkar, studying Computer Engineering, has become a source of pride with his national and international award-winning projects. He was featured in our ministry documentary."',
-                    bogazici_quote: '"Completed our program Designing Tomorrow Today at Bogazici University."',
-                    gallery_h: "Comprehensive Event & Documentary Photo Gallery"
-                },
-                contact: { h: "Direct Contact & Social Matrix", sub: "Feel free to reach out for project collaborations, speaking invitations, or technical inquiries.", drive_h: "Drive & Official Documents Inventory" }
-            },
-            ar: {
-                dir: 'rtl',
-                title: "أنس بكار (@ans_bkkr) | مؤسس شركة فيرناس للتكنولوجيا | مهندس أنظمة ومدير السيرفرات",
-                roles: [
-                    "مؤسس وقائد الأبحاث والتطوير في شركة فيرناس للتكنولوجيا",
-                    "مهندس الأنظمة المدمجة ودوائر ESP32",
-                    "مدير البنية التحتية للسيرفرات (Cloudflare DNS & SysAdmin)",
-                    "قائد مجتمع FEAM ورائد أعمال في التجارة الإلكترونية"
-                ],
-                nav: { home: "الرئيسية", about_site: "من نحن", products: "المنتجات", store: "المتجر", contact_site: "تواصل معنا" },
-                tabs: { overview: "نظرة عامة", about: "نبذة عني والخبرات", projects: "المشاريع والأبحاث", experience: "الخبرات والبرامج", awards: "الجوائز والإنجازات", media: "معرض الصور والإعلام", contact: "التواصل والروابط" },
-                hero: {
-                    name: "أنس بكار",
-                    snippet: "رائد أعمال وتكنولوجي شامل يعمل في لحيم دوائر ESP32، البنية التحتية للسيرفرات عبر Cloudflare، قيادة مجتمع FEAM وإدارة العلامات التجارية والتجارة الإلكترونية.",
-                    dob: "27 أبريل 2006", location: "إسطنبول، تركيا (مواليد مكة المكرمة)", edu: "جامعة إسطنبول أيدن", github_pro: "GitHub Student Developer Pro", langs: "التركية • العربية • الإنجليزية"
-                },
-                stats: { giv: "المركز الأول في ملتقى رواد الأعمال في تركيا (دولياً)", esenler: "المركز الثاني في مسابقة esenler للمشاريع", t3_burs: "مدرب بمنحة أوزديمير بايراكتار في وقف T3", lang_cap: "قدرات تواصل بثلاث لغات" },
-                overview: {
-                    partners_title: "المؤسسات الشريكة والتعاون",
-                    bio_title: "ملخص السيرة الذاتية والشخصية",
-                    bio_p1: "أنس بكار (Enes Bakkar)، من مواليد 27 أبريل 2006 في مكة المكرمة ومن أصل سوري، مؤسس ورائد أعمال وطالب هندسة حاسوب يعمل عملياً في هندسة العتاد المدمج وإدارة سيرفرات Cloudflare والتجارة الإلكترونية.",
-                    bio_p2: "بصفتي مؤسس شركة فيرناس للتكنولوجيا، أقود بنفسي التطبيق العملي للحيم دوائر ESP32 وتكامل Deneyap Kart v2 وإدارة بطاريات 1S LiPo وهياكل ألياف الكربون لطائرة FiCo التعليمية.",
-                    bio_p3: "كما أدير البنية التحتية السحابية لـ firnastechnologies.com (DNS / SSL / Sub-domains)، وأقود لقاءات Networking with FEAM التكنولوجية وأدير عمليات التسويق الإلكتروني.",
-                    quote: '"تم عرض الفيلم الوثائقي القصير الخاص بنا في برنامج خاص نظمته مديرية التربية والتعليم في إسطنبول. ولكنني أرى أن: الطريق طويل، والوقت قصير، ونحن ما زلنا في بداية الرحلة."',
-                    quote_author: "— أنس بكار (مايو 2026، عرض وثائقي مديرية التعليم بإسطنبول)"
-                },
-                btn: { view_fico: "استكشف طائرة FiCo", view_media: "المؤتمرات الدولية والإعلام", download_cv: "السيرة الذاتية (CV)", download_portfolio: "البورتفوليو الشامل", updating: "قريباً" },
-                about: {
-                    title: "الملف الشخصي والخبرات الهندسية العملية",
-                    p1: "ولد أنس بكار في 27 أبريل 2006 بمكة المكرمة وهو من أصل سوري. أتم دراسته الثانوية بتفوق، ويدرس حالياً هندسة الحاسوب (باللغة الإنجليزية) بجامعة إسطنبول أيدن. عضو في GitHub Student Developer Pro.",
-                    prac_hw_h: "الخبرة العملية في العتاد والأنظمة المدمجة",
-                    prac_hw_p: "لا يكتفي بالتصميم النظري، بل يقوم ببرمجة ESP32 ولحيم دوائر Deneyap Kart v2 وتصميم إدارة طاقة بطاريات 1S/2S LiPo ومعايرة المحركات واستشعارات التدفق البصري لبناء طائرات مسيرة تعمل عملياً من الصفر.",
-                    prac_sys_h: "إدارة البنية التحتية والسيرفرات (SysAdmin)",
-                    prac_sys_p: "يدير البنية التحتية لـ firnastechnologies.com: توجيه Cloudflare DNS، شهادات الأمان SSL/HTTPS، تحسين CDN، وإعداد النطاقات الفرعية (Sub-domains) للورش التعليمية.",
-                    prac_community_h: "قيادة المجتمع وتنظيم الفعاليات",
-                    prac_community_p: "مؤسس مجتمع Firnas FEAM لتنظيم لقاءات Networking with FEAM في Atolye Uskudar لتوصيل طلاب الثانوية والجامعة مع المهندسين والموجهين.",
-                    prac_ecom_h: "التجارة الإلكترونية وإدارة المنتجات",
-                    prac_ecom_p: "إدارة الإنتاج والتصوير الاحترافي والتسويق الرقمي لعلامة تجارية متخصصة في الحقائب المصنوعة يدوياً (Crochet).",
-                    edu_h: "الجدول الزمني للتعليم", edu_iau: "هندسة الحاسوب (بكالوريوس بالإنجليزية)", edu_ebial: "التخرج من الثانوية وموضوع فيلم وثائقي لوزارة التعليم", edu_t3: "أكاديمية Deneyap Kart للأنظمة المدمجة",
-                    tech_h: "أدوات التطوير ووسامات الخبرة"
-                },
-                fico: {
-                    badge: "المشروع الفائز بالجائزة الدولية الأولى", title: "FiCo — منظومة طائرة تعليمية مبرمجة",
-                    desc: "منظومة تعليمية متكاملة حائزة على المركز الأول في المشاريع الدولية بملتقى رواد الأعمال بتركيا، تعمل بدوائر ESP32 الملحومة عملا وبطاقات Deneyap Kart v2.",
-                    spec1: "معالج مزدوج: تكامل ESP32 الملحوم و Deneyap Kart v2", spec2: "متحكم Pixhawk للملاحة الذاتية واستشعار التدفق البصري", spec3: "إدارة طاقة 1S LiPo وهيكل ألياف كربون خفيف الوزن", spec4: "انتقال سلس من برمجة الكتل (Scratch) إلى لغة بايثون"
-                },
-                defense: { title: "الأنظمة ذاتية التحكم والمفاهيم", uska: "مركبة برية/جوية ذاتية التحكم للاستطلاع والدوريات في المناطق الوعرة.", muhafiz: "منظومة دفاعية للتصدي السريع للطائرات المسيرة الصغيرة." },
-                exp: {
-                    h: "البرامج والمهام المشارك بها",
-                    firnas_t: "المؤسس وقائد الأبحاث — Firnas Technology",
-                    firnas_d: "مؤسس الشركة، قيادة التصميم الميكانيكي، لحيم الدوائر المدمجة، إدارة سيرفرات Cloudflare والرؤية الاستراتيجية.",
-                    feam_t: "قائد المجتمع — Firnas FEAM & Networking Events",
-                    feam_d: "تنظيم لقاءات Networking with FEAM بالتعاون مع Atolye Uskudar لتوصيل الفرق الطلابية مع الموجهين.",
-                    t3_burs_t: "برنامج منحة أوزديمير بايراكتار — وقف T3",
-                    t3_burs_d: "تم اختياره كمدرب وموجه لمدة 12 شهراً لتدريب الشباب على الروبوتات والبرمجة والطيران في ورش Deneyap.",
-                    ecom_t: "رائد أعمال — العلامة التجارية والتجارة الإلكترونية",
-                    ecom_d: "إدارة الإنتاج، التصوير الاحترافي للمنتجات، والتسويق الرقمي لعلامة الحقائب اليدوية (Crochet).",
-                    atom_t: "رئيس مركز ATOM — شباب IHH إسطنبول",
-                    atom_d: "توجيه فرق تكنوفست وتوبيتاك وتنظيم ورش الهندسة ودروس الطيران."
-                },
-                awards: {
-                    h: "الجوائز والإنجازات",
-                    tgb_t: "ملتقى رواد الأعمال بتركيا — المركز الأول دولياً",
-                    tgb_d: "الفوز بالمركز الأول في فئة المشاريع الدولية وطرح الجائزة من قبل رئيس GİV علي باكانير بحضور نائب وزير الشباب والرياضة ورئيس TÜGVA.",
-                    esenler_t: "مسابقة esenler للمشاريع — المركز الثاني",
-                    esenler_d: "الفوز بالمركز الثاني بحضور وزير الصناعة والتكنولوجيا محمد فاتح كاجر ورئيس بلدية إسينلر توفيق جوكسو.",
-                    teknofest_t: "تكنوفست أضنة — قيادة فريق الطائرات المقاتلة المسيرة",
-                    teknofest_d: "إظهار كفاءة تقنية وقيادة ميدانية في فئة Savaşan İHA في تكنوفست أضنة.",
-                    imagine_t: "مسابقة Imagine Tomorrow للابتكار",
-                    imagine_d: "عرض منظومة الطائرة التعليمية ونموذج العمل أمام لجنة تحكيم دولية.",
-                    tobb_t: "مسابقة TOBB للمدارس — النهائي",
-                    tobb_d: "التأهل ضمن أفضل 60 فريقاً نهائياً من بين 1017 فريقاً.",
-                    sultan_t: "مسابقة سلطان بيلي — المركز الثالث",
-                    sultan_d: "الفوز بالمركز الثالث في الريادة والتكنولوجيا."
-                },
-                media: {
-                    h: "الفعاليات الدولية والإعلام",
-                    oic_h: "المؤتمرات والفعاليات الدولية",
-                    oic_d: "مشاركة رسمية بدعوة من منتدى شباب التعاون الإسلامي (ICYF) في مؤتمر OIC Youth Entrepreneurship Conference 2026 في مركز إسطنبول المالي.",
-                    oic_guests: "زوار الجناح: زار الجناح نائب وزير الصناعة والتكنولوجيا زكريا تشوشتو ورئيس ICYF طه أيهان.",
-                    iha_quote: '"حصلنا على المركز الثاني في مسابقة طائرة FiCo التعليمية ونهدف إلى تعليم الطلاب برمجة الروبوتات ومبادئ الطيران بطريقة ممتعة."',
-                    meb_quote: '"طالبنا أنس بكار الخريج من مدرستنا والحالي بهندسة الحاسوب أصبح مفخرة لنا بمشاريعه الدولية والمحلية وتم تصوير وثائقي عنه من قبل الوزارة."',
-                    bogazici_quote: '"إتمام برنامج تصميم الغد اليوم في جامعة بوغازيتشي."',
-                    gallery_h: "معرض الصور الكامل والوثائقي"
-                },
-                contact: { h: "التواصل المباشر والشبكات الاجتماعية", sub: "يسعدنا تواصلكم لبحث التعاون في المشاريع أو الاستشارات التقنية أو الدعوات.", drive_h: "سجل المستندات والوثائق" }
-            }
-        };
+        <!-- Sağ Bölüm: İçerik Alanı -->
+        <div class="profile-content-area">
+            <!-- Profil -->
+            <div class="content-section">
+                <h2><i class="fas fa-user"></i> <span data-i18n="eb_profile">Profil</span></h2>
+                <p data-i18n="eb_bio_p1">Enes Bakkar, Firnas Technologies bünyesinde Mekanik Tasarım, Donanım Mimarisi ve Araştırma-Geliştirme (AR-GE) faaliyetlerinden sorumlu lider mühendistir. Havacılık, insansız hava araçları (İHA/Drone) ve otonom sistemlerin mekanik yapısal entegrasyonu üzerine uzmanlaşmıştır.</p>
+                <p data-i18n="eb_bio_p2">Flagship projemiz olan programlanabilir eğitim dronu <strong>FiCo</strong>'nun karbon-fiber hafif kafes gövdesinin ve aerodinamik yapısının tamamen özgün olarak tasarlanmasında, mukavemet testlerinin yapılmasında dan donanım bileşenlerinin entegrasyonunda kritik rol oynamıştır. Küresel insani teknoloji ve ümmet kalkınması hedefleri doğrultusunda, yarının teknolojisini üreten genç nesilleri yetiştirmek için özgün ve kaliteli donanımlar tasarlamaya devam etmektedir.</p>
+            </div>
 
-        let currentLang = 'tr';
-        let roleIndex = 0;
-        let rotatorInterval = null;
+            <!-- Başarılar (Genişletilmiş Orta Sütun Kartı) -->
+            <div class="content-section">
+                <h2><i class="fas fa-trophy"></i> <span data-i18n="eb_achievements">Başarılar</span></h2>
+                <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.75; margin: 0;" data-i18n="eb_ach_desc">
+                    Uluslararası Proje Yarışması Birincilik Ödülü, TEKNOFEST Savaşan İHA Mühendislik Liderliği, Imagine Tomorrow Girişimcilik Derecesi ve Deneyap Teknoloji Mentorluğu.
+                </p>
+            </div>
 
-        function noticeUpdating(docName) {
-            const msgs = {
-                tr: docName + " belgesi şu anda güncellenmektedir. En kısa sürede yeni sürümü eklenecektir.",
-                en: "The " + docName + " document is currently being updated. The new version will be uploaded soon.",
-                ar: "وثيقة " + docName + " قيد التحديث حالياً. سيتم رفع النسخة الجديدة قريباً."
-            };
-            alert(msgs[currentLang] || msgs.tr);
-        }
+            <div class="close-btn-container">
+                <a href="/about/" class="btn-close"><i class="fas fa-arrow-left"></i> <span data-i18n="eb_close">Geri Dön / Kapat</span></a>
+            </div>
+        </div>
 
-        function updateRotator() {
-            const rotatorText = document.getElementById('rotatorText');
-            if (!rotatorText) return;
-            const rolesList = translations[currentLang].roles;
-            rotatorText.style.opacity = '0';
-            setTimeout(() => {
-                rotatorText.textContent = rolesList[roleIndex % rolesList.length];
-                rotatorText.style.opacity = '1';
-            }, 200);
-        }
+        <!-- Sağ Bölüm: Diğer Görevler & Ünvanlar & Uzmanlıklar (Far Right Column) -->
+        <div class="profile-right-sidebar" style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- Diğer Görevler & Ünvanlar -->
+            <div class="content-section">
+                <h2><i class="fas fa-briefcase"></i> <span data-i18n="eb_positions_title">Diğer Görevler & Ünvanlar</span></h2>
+                <div class="affiliations-list" style="display: flex; flex-direction: column; gap: 1.25rem; margin-top: 1rem;">
+                    <!-- Affiliation 1 -->
+                    <div style="display: flex; align-items: center; gap: 1.25rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 184, 212, 0.08); padding: 1rem 1.25rem; border-radius: 16px; transition: var(--transition);" class="affiliation-item">
+                        <img src="/asset/t3_logo.png" alt="T3 Vakfı" style="height: 48px; width: 48px; object-fit: contain; border-radius: 8px; background: rgba(255, 255, 255, 0.9); padding: 4px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 1.1rem; color: #ffffff;" data-i18n="eb_pos_1_title">T3 Vakfı (Türkiye Teknoloji Takımı)</h4>
+                            <p style="margin: 4px 0 0 0; font-size: 0.9rem; color: var(--accent); font-weight: 600;" data-i18n="eb_pos_1_role">Eğitmen Mentör</p>
+                        </div>
+                    </div>
+                    <!-- Affiliation 2 -->
+                    <div style="display: flex; align-items: center; gap: 1.25rem; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(0, 184, 212, 0.08); padding: 1rem 1.25rem; border-radius: 16px; transition: var(--transition);" class="affiliation-item">
+                        <img src="/asset/iau_logo.png" alt="İstanbul Aydın Üniversitesi" style="height: 48px; width: 48px; object-fit: contain; border-radius: 8px; background: rgba(255, 255, 255, 0.9); padding: 4px;">
+                        <div>
+                            <h4 style="margin: 0; font-size: 1.1rem; color: #ffffff;" data-i18n="eb_pos_2_title">İstanbul Aydın Üniversitesi</h4>
+                            <p style="margin: 4px 0 0 0; font-size: 0.9rem; color: var(--accent); font-weight: 600;" data-i18n="eb_pos_2_role">Bilgisayar Mühendisliği Öğrencisi</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
-        function startRotator() {
-            if (rotatorInterval) clearInterval(rotatorInterval);
-            updateRotator();
-            rotatorInterval = setInterval(() => {
-                roleIndex = (roleIndex + 1) % translations[currentLang].roles.length;
-                updateRotator();
-            }, 3200);
-        }
-
-        function changeLang(lang) {
-            if (!translations[lang]) return;
-            currentLang = lang;
-
-            // HTML direction & lang
-            document.documentElement.dir = translations[lang].dir;
-            document.documentElement.lang = lang;
-
-            // Page title
-            document.getElementById('pageTitle').textContent = translations[lang].title;
-
-            // Active lang button
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            const activeBtn = document.getElementById('btn-' + lang);
-            if (activeBtn) activeBtn.classList.add('active');
-
-            // Translate all data-i18n elements
-            document.querySelectorAll('[data-i18n]').forEach(el => {
-                const key = el.getAttribute('data-i18n');
-                const keys = key.split('.');
-                let val = translations[lang];
-                for (let k of keys) {
-                    if (val && val[k] !== undefined) {
-                        val = val[k];
-                    } else {
-                        val = null;
-                        break;
-                    }
-                }
-                if (val !== null) {
-                    el.textContent = val;
-                }
-            });
-
-            // Restart Rotator with new lang
-            roleIndex = 0;
-            startRotator();
-
-            // Save preference
-            localStorage.setItem('ansbkkr_lang', lang);
-        }
-
-        // TAB SWITCHING SYSTEM WITH URL HASH SUPPORT
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-btn').forEach(btn => {
-                if (btn.getAttribute('data-tab') === tabId) {
-                    btn.classList.add('active');
-                } else {
-                    btn.classList.remove('active');
-                }
-            });
-
-            document.querySelectorAll('.tab-pane').forEach(pane => {
-                if (pane.id === tabId) {
-                    pane.classList.add('active');
-                } else {
-                    pane.classList.remove('active');
-                }
-            });
-
-            if (history.pushState) {
-                history.pushState(null, null, '#' + tabId);
-            } else {
-                location.hash = '#' + tabId;
-            }
-
-            window.scrollTo({ top: 120, behavior: 'smooth' });
-        }
-
-        // Attach click listeners to Tab Buttons
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', function() {
-                const targetTab = this.getAttribute('data-tab');
-                switchTab(targetTab);
-            });
-        });
-
-        // Initialize Tab & Language on Page Load
-        window.addEventListener('load', function() {
-            const savedLang = localStorage.getItem('ansbkkr_lang') || 'tr';
-            changeLang(savedLang);
-
-            const hash = window.location.hash.replace('#', '');
-            if (hash && document.getElementById(hash)) {
-                switchTab(hash);
-            }
-        });
-    </script>
+            <!-- Uzmanlıklar (Kayıp Olmadan Far-Right Sütununda) -->
+            <div class="content-section">
+                <h2><i class="fas fa-bolt"></i> <span data-i18n="eb_skills">Uzmanlıklar</span></h2>
+                <div class="skills-list" style="margin-top: 1rem;">
+                    <span class="skill-tag" data-i18n="eb_skill_1">CAD/CAM Tasarım</span>
+                    <span class="skill-tag" data-i18n="eb_skill_2">Aerodinamik & Mukavemet</span>
+                    <span class="skill-tag" data-i18n="eb_skill_3">İHA / Drone Mimarisi</span>
+                    <span class="skill-tag" data-i18n="eb_skill_4">Karbon Fiber & 3D Üretim</span>
+                    <span class="skill-tag" data-i18n="eb_skill_5">Robotik Entegrasyon</span>
+                    <span class="skill-tag" data-i18n="eb_skill_6">Donanım Test & AR-GE</span>
+                    <span class="skill-tag" data-i18n="eb_skill_7">Otonom Sistemler</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/script.js"></script>
 </body>
 </html>
