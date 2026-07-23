@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Mahmud Bayerli | Firnas Technologies Elektronik & Gömülü Yazılım Sorumlusu</title>
+    <meta name="description" content="Mahmud Bayerli - Firnas Technologies Elektronik Birim Sorumlusu, Gömülü Sistemler ve PCB Tasarımcısı. Uçuş kontrol kartları ve sensör füzyon geliştiricisi.">
+    <meta name="keywords" content="Mahmud Bayerli, Firnas Technologies, elektronik, gömülü sistemler, sensör füzyonu, PCB tasarımı, ARM, uçuş kontrol kartı, drone elektroniği">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://firnastechnologies.com/mahmud-bayerli/">
+
+    <!-- Open Graph (Facebook, LinkedIn, WhatsApp) -->
+    <meta property="og:title" content="Mahmud Bayerli | Firnas Technologies Elektronik & Gömülü Sistemler Lideri">
+    <meta property="og:description" content="Elektronik Tasarım ve Uçuş Kontrol Sistemleri Sorumlusu. Çift işlemcili donanım mimarileri üzerine çalışıyor.">
+    <meta property="og:image" content="https://firnastechnologies.com/asset/bayerli_foto.png">
+    <meta property="og:url" content="https://firnastechnologies.com/mahmud-bayerli/">
+    <meta property="og:type" content="profile">
+    
+    <!-- Twitter Cards -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Mahmud Bayerli | Firnas Technologies Elektronik Lideri">
+    <meta name="twitter:description" content="Firnas Technologies uçuş kontrol ve gömülü sistemler elektronik birim sorumlusu Mahmud Bayerli'nin portfolyosu.">
+    <meta name="twitter:image" content="https://firnastechnologies.com/asset/bayerli_foto.png">
+
+    <!-- Google Structured Data (JSON-LD Person Schema) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Person",
+      "name": "Mahmud Bayerli",
+      "jobTitle": "Electronic Systems & Embedded Software Manager",
+      "worksFor": {
+        "@type": "Organization",
+        "name": "Firnas Technologies",
+        "url": "https://firnastechnologies.com/"
+      },
+      "url": "https://firnastechnologies.com/mahmud-bayerli/",
+      "image": "https://firnastechnologies.com/asset/bayerli_foto.png",
+      "sameAs": [
+        "https://www.linkedin.com/in/mahmut-bayerli/"
+      ]
+    }
+    </script>
+
+    <link rel="icon" type="image/png" href="/asset/firnas_logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        body {
+            background: #051421;
+            color: #ffffff;
+            font-family: var(--font-sans);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 4rem 2rem;
+            box-sizing: border-box;
+            background-image: radial-gradient(rgba(0, 184, 212, 0.05) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+        .profile-container {
+            max-width: 1550px;
+            width: 100%;
+            background: rgba(5, 20, 33, 0.75);
+            backdrop-filter: blur(24px) saturate(180%);
+            -webkit-backdrop-filter: blur(24px) saturate(180%);
+            border: 1px solid rgba(0, 184, 212, 0.18);
+            border-radius: 36px;
+            padding: 4rem;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4), inset 0 0 25px rgba(0, 184, 212, 0.05);
+            animation: fadeIn 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            display: grid;
+            grid-template-columns: 300px 1fr 460px;
+            gap: 3rem;
+            --hover-translate: 6px;
+        }
+        @keyframes fadeIn {
+            0% { opacity: 0; transform: translateY(20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .profile-sidebar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            border-inline-end: 1px solid rgba(0, 184, 212, 0.15);
+            padding-inline-end: 4rem;
+        }
+        .profile-avatar-wrapper {
+            position: relative;
+            margin-bottom: 2rem;
+        }
+        .profile-avatar {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .profile-avatar:hover {
+            transform: scale(1.05) rotate(3deg);
+            box-shadow: 0 0 45px var(--accent);
+        }
+        .profile-title h1 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            font-family: var(--font-display);
+            margin: 0 0 0.5rem 0;
+            background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(0, 184, 212, 0.1));
+        }
+        .profile-role {
+            font-size: 1.1rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin: 0 0 1rem 0;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+        }
+        .profile-company {
+            font-size: 1rem;
+            color: #cbd5e1;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        /* Premium Social Panel */
+        .social-panel {
+            width: 100%;
+            margin-top: 3rem;
+            text-align: start;
+        }
+        .panel-title {
+            font-size: 0.95rem;
+            color: #94a3b8;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-bottom: 1px solid rgba(0, 184, 212, 0.15);
+            padding-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-title i {
+            color: var(--accent);
+        }
+        .social-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            width: 100%;
+        }
+        .btn-social {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 0.85rem 1.25rem;
+            border-radius: 14px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #ffffff;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            border: none !important;
+            box-sizing: border-box;
+        }
+        .btn-social i {
+            font-size: 1.15rem;
+        }
+        .btn-linkedin {
+            background: linear-gradient(135deg, #0a66c2 0%, #00b8d4 100%);
+            box-shadow: 0 4px 15px rgba(10, 102, 194, 0.25);
+        }
+        .btn-linkedin:hover {
+            transform: translateY(-4px) scale(1.02);
+            box-shadow: 0 12px 25px rgba(10, 102, 194, 0.5);
+        }
+
+        /* Content Area styling */
+        .profile-content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+            justify-content: flex-start;
+        }
+        .content-section {
+            background: rgba(5, 20, 33, 0.4);
+            border: 1px solid rgba(0, 184, 212, 0.12);
+            border-radius: 24px;
+            padding: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        }
+        .content-section h2 {
+            font-size: 1.45rem;
+            font-weight: 800;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+            font-family: var(--font-display);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .content-section h2 i {
+            color: var(--accent);
+        }
+        .content-section p {
+            color: #cbd5e1;
+            font-size: 1.05rem;
+            line-height: 1.75;
+            margin: 0 0 1.25rem 0;
+        }
+        .content-section p:last-child {
+            margin-bottom: 0;
+        }
+        
+        .grid-sub-sections {
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 2rem;
+        }
+        .skill-tag {
+            display: inline-block;
+            background: rgba(0, 184, 212, 0.08);
+            border: 1px solid rgba(0, 184, 212, 0.25);
+            color: var(--accent);
+            padding: 0.5rem 1.125rem;
+            border-radius: 100px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-inline-end: 0.5rem;
+            margin-bottom: 0.75rem;
+            transition: all 0.3s ease;
+        }
+        .skill-tag:hover {
+            background: rgba(0, 184, 212, 0.18);
+            border-color: #00e5ff;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 184, 212, 0.2);
+        }
+
+        .affiliation-item:hover {
+            background: rgba(0, 184, 212, 0.08) !important;
+            border-color: rgba(0, 184, 212, 0.35) !important;
+            transform: translateX(var(--hover-translate));
+            box-shadow: 0 5px 15px rgba(0, 184, 212, 0.1);
+        }
+
+        .close-btn-container {
+            margin-top: 1.5rem;
+            text-align: end;
+        }
+        .btn-close {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.85rem 2.25rem;
+            background: linear-gradient(135deg, var(--accent) 0%, #00e5ff 100%);
+            border: none;
+            color: #051421;
+            border-radius: 14px;
+            font-weight: 900;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            box-shadow: 0 10px 25px rgba(0, 184, 212, 0.25);
+        }
+        .btn-close:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(0, 184, 212, 0.4);
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .profile-container {
+                grid-template-columns: 300px 1fr;
+                gap: 2.5rem;
+            }
+            .profile-right-sidebar {
+                grid-column: span 2;
+            }
+        }
+        @media (max-width: 992px) {
+            body {
+                padding: 2rem 1rem;
+            }
+            .profile-container {
+                grid-template-columns: 1fr;
+                padding: 2.5rem;
+                gap: 3rem;
+            }
+            .profile-sidebar {
+                border-inline-end: none;
+                padding-inline-end: 0;
+                border-bottom: 1px solid rgba(0, 184, 212, 0.15);
+                padding-bottom: 3rem;
+            }
+            .profile-right-sidebar {
+                grid-column: span 1;
+            }
+            .grid-sub-sections {
+                grid-template-columns: 1fr;
+            }
+            .close-btn-container {
+                text-align: center;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 1rem 0.5rem !important;
+            }
+            .profile-container {
+                padding: 1.5rem 1rem !important;
+                gap: 1.75rem !important;
+                border-radius: 24px !important;
+            }
+            .profile-sidebar {
+                padding-bottom: 2rem !important;
+                margin-top: 1rem !important;
+            }
+            .profile-avatar {
+                width: 150px !important;
+                height: 150px !important;
+            }
+            .profile-title h1 {
+                font-size: 1.75rem !important;
+            }
+            .content-section {
+                padding: 1.5rem !important;
+                border-radius: 18px !important;
+            }
+            .content-section h2 {
+                font-size: 1.25rem !important;
+                margin-bottom: 1rem !important;
+            }
+            .content-section p {
+                font-size: 0.95rem !important;
+                line-height: 1.6 !important;
+            }
+            .social-panel {
+                margin-top: 2rem !important;
+            }
+            .btn-social {
+                padding: 0.75rem 1rem !important;
+                font-size: 0.85rem !important;
+            }
+            .btn-close {
+                padding: 0.75rem 1.5rem !important;
+                font-size: 0.9rem !important;
+                width: 100% !important;
+                justify-content: center !important;
+            }
+            .profile-lang-selector {
+                top: 1rem !important;
+                right: 1rem !important;
+            }
+        }
+        
+        /* Sleek Floating Language Dropdown Styles */
+        .profile-lang-selector {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            z-index: 100;
+        }
+        .profile-lang-selector .lang-dropdown-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(0, 184, 212, 0.25);
+            color: #ffffff;
+            font-size: 0.9rem;
+            padding: 0.45rem 0.9rem;
+            border-radius: 12px;
+            box-shadow: 0 0 15px rgba(0, 184, 212, 0.05);
+        }
+        .profile-lang-selector .lang-dropdown-btn:hover {
+            border-color: var(--accent);
+            box-shadow: 0 0 15px var(--accent-glow);
+        }
+        .profile-lang-selector .lang-dropdown-menu {
+            background: rgba(5, 20, 33, 0.9);
+            border: 1px solid rgba(0, 184, 212, 0.25);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+            min-width: 110px;
+        }
+        .profile-lang-selector .lang-dropdown-menu li {
+            color: #ffffff;
+            padding: 8px 12px;
+            font-size: 0.85rem;
+        }
+        .profile-lang-selector .lang-dropdown-menu li:hover {
+            background: rgba(0, 184, 212, 0.1);
+            color: var(--accent);
+        }
+        @media (max-width: 992px) {
+            .profile-lang-selector {
+                top: 1.5rem;
+                right: 1.5rem;
+            }
+        }
+        
+        /* Dynamic RTL Symmetrical Hovers & Layout Overrides */
+        html[dir="rtl"] .profile-container {
+            --hover-translate: -6px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sleek Floating Language Selector at Viewport Level -->
+    <div class="profile-lang-selector">
+        <div class="lang-dropdown">
+            <button class="lang-dropdown-btn" id="lang-btn">
+                <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag" id="current-lang-flag">
+                <span id="current-lang-text">TR</span>
+                <i class="fas fa-chevron-down lang-arrow"></i>
+            </button>
+            <ul class="lang-dropdown-menu" id="lang-menu">
+                <li onclick="changeLanguage('tr')">
+                    <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag">
+                    <span>TR</span>
+                </li>
+                <li onclick="changeLanguage('en')">
+                    <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="lang-flag">
+                    <span>EN</span>
+                </li>
+                <li onclick="changeLanguage('ar')">
+                    <img src="https://flagcdn.com/w20/sy.png" alt="AR" class="lang-flag">
+                    <span>AR</span>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="profile-container">
+        <!-- Sol Bölüm: Sidebar -->
+        <div class="profile-sidebar">
+            <div class="profile-avatar-wrapper">
+                <img src="/asset/bayerli_foto.png" alt="Mahmud Bayerli" class="profile-avatar">
+            </div>
+            <div class="profile-title">
+                <h1 data-i18n="mb_name">Mahmud Bayerli</h1>
+                <p class="profile-role" data-i18n="team_2_role">Elektronik Birim Sorumlusu</p>
+                <p class="profile-company">
+                    <img src="/asset/firnas_logo.png" alt="Firnas" style="height: 24px;">
+                    <strong>Firnas Technologies</strong>
+                </p>
+            </div>
+            
+            <!-- Sosyal Medya Platformları Panel -->
+            <div class="social-panel">
+                <h3 class="panel-title"><i class="fas fa-network-wired"></i> <span data-i18n="profile_links">Bağlantılar</span></h3>
+                <div class="social-grid">
+                    <a href="https://www.linkedin.com/in/mahmut-bayerli/" target="_blank" rel="noopener noreferrer" class="btn-social btn-linkedin"><i class="fab fa-linkedin-in"></i> LinkedIn</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sağ Bölüm: İçerik Alanı -->
+        <div class="profile-content-area">
+            <!-- Profil -->
+            <div class="content-section">
+                <h2><i class="fas fa-user"></i> <span data-i18n="mb_profile">Profil</span></h2>
+                <p data-i18n="mb_bio_p1">Mahmud Bayerli, Firnas Technologies bünyesinde Elektronik Sistemler, Gömülü Yazılım ve Donanım Geliştirme süreçlerinden sorumlu kıdemli elektronik mühendisidir. Çift işlemcili uçuş kontrol kartlarının şematik tasarımı, PCB çizimi ve sensör fizyon entegrasyonu üzerine uzmanlaşmıştır.</p>
+                <p data-i18n="mb_bio_p2">Amiral gemimiz olan programlanabilir eğitim dronu <strong>FiCo</strong>'nun stabilite algoritmalarının, ultrasonik, kızılötesi ve optik akış sensörlerinin entegrasyonunun ve gömülü uçuş yazılımlarının geliştirilmesinde kritik rol oynamıştır. Küresel insani teknoloji ve ümmet kalkınması hedefleri doğrultusunda, otonom sistemlerde bağımsız elektronik altyapılar inşa etmeye devam etmektedir.</p>
+            </div>
+
+            <!-- Başarılar (Genişletilmiş Sütun Kartı) -->
+            <div class="content-section">
+                <h2><i class="fas fa-trophy"></i> <span data-i18n="mb_achievements">Başarılar</span></h2>
+                <p style="color: #cbd5e1; font-size: 1.05rem; line-height: 1.75; margin: 0;" data-i18n="mb_ach_desc">
+                    TEKNOFEST İnsansız Hava Araçları En Özgün Tasarım Ödülü, Uluslararası İHA Yarışması Birinciliği, Elektronik Tasarım İnovasyon Ödülü ve Deneyap Elektronik Eğitmenliği.
+                </p>
+            </div>
+
+            <div class="close-btn-container">
+                <a href="/about/" class="btn-close"><i class="fas fa-arrow-left"></i> <span data-i18n="mb_close">Geri Dön / Kapat</span></a>
+            </div>
+        </div>
+
+        <!-- Sağ Bölüm: Diğer Görevler & Ünvanlar & Uzmanlıklar (Far Right Column) -->
+        <div class="profile-right-sidebar" style="display: flex; flex-direction: column; gap: 2rem;">
+            <!-- Uzmanlıklar -->
+            <div class="content-section">
+                <h2><i class="fas fa-bolt"></i> <span data-i18n="mb_skills">Uzmanlıklar</span></h2>
+                <div class="skills-list" style="margin-top: 1rem;">
+                    <span class="skill-tag" data-i18n="mb_skill_1">Gömülü Sistemler (C/C++)</span>
+                    <span class="skill-tag" data-i18n="mb_skill_2">PCB & Şematik Tasarım</span>
+                    <span class="skill-tag" data-i18n="mb_skill_3">Sensör Füzyonu</span>
+                    <span class="skill-tag" data-i18n="mb_skill_4">Mikrodenetleyiciler (ARM)</span>
+                    <span class="skill-tag" data-i18n="mb_skill_5">Elektronik Test & AR-GE</span>
+                    <span class="skill-tag" data-i18n="mb_skill_6">Güç Yönetimi</span>
+                    <span class="skill-tag" data-i18n="mb_skill_7">İletişim Protokolleri</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/script.js"></script>
+</body>
+</html>

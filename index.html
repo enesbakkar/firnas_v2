@@ -3,451 +3,385 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Firnas Technologies: Havacılık, uzay ve yazılımın kesiştiği noktada otonom sistemler ve eğitim teknolojileri (FiCo) geliştiren mühendislik merkezi.">
-    <title>Firnas Technologies</title>
+    <title>Firnas Technologies | Bu Site Geçici Olarak Kullanım Dışı</title>
     <link rel="icon" type="image/png" href="/asset/firnas_logo.png">
     <link rel="shortcut icon" type="image/png" href="/asset/firnas_logo.png">
     <link rel="apple-touch-icon" href="/asset/firnas_logo.png">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #0f2e4a;
-            --primary-dark: #051421;
-            --accent: #00b8d4;
-            --accent-glow: rgba(0, 184, 212, 0.4);
-            --bg-white: #ffffff;
-            --bg-light: #f0f7fb;
-            --text-main: #1a202c;
-            --text-muted: #64748b;
-            --border-glass: rgba(255, 255, 255, 0.2);
-            --border-light: rgba(15, 46, 74, 0.1);
-            --font-sans: 'Inter', sans-serif;
-            --font-display: 'Outfit', sans-serif;
-        }
-        body {
-            font-family: var(--font-sans);
-            color: var(--text-main);
-            background-color: var(--bg-light);
-            background-image: radial-gradient(rgba(15, 46, 74, 0.04) 1.5px, transparent 1.5px);
-            background-size: 24px 24px;
-        }
-    </style>
-    <link rel="preload" href="styles.css?v=1.1" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="styles.css?v=1.1"></noscript>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
-        /* Typewriter Effect Container - Fixed Height to Prevent Shift */
-        .typewriter-container {
-            display: inline-block;
-            min-height: 1.2em;
-            vertical-align: top;
-            line-height: 1.2;
+        :root {
+            --bg-color: #030b13;
+            --card-bg: rgba(9, 27, 44, 0.75);
+            --card-border: rgba(0, 184, 212, 0.18);
+            --accent-cyan: #00b8d4;
+            --accent-cyan-bright: #00e5ff;
+            --accent-glow: rgba(0, 184, 212, 0.35);
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --font-display: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 15% 20%, rgba(0, 184, 212, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 85% 80%, rgba(0, 229, 255, 0.06) 0%, transparent 45%),
+                radial-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 28px 28px;
+            padding: 2rem 1rem;
+        }
+
+        .ambient-orb {
+            position: absolute;
+            width: 500px;
+            height: 500px;
+            border-radius: 50%;
+            background: radial-gradient(circle, var(--accent-glow) 0%, rgba(0,0,0,0) 70%);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 0;
+            pointer-events: none;
+            animation: pulse-orb 8s ease-in-out infinite alternate;
+        }
+
+        @keyframes pulse-orb {
+            0% { transform: translate(-50%, -50%) scale(0.85); opacity: 0.5; }
+            100% { transform: translate(-50%, -50%) scale(1.15); opacity: 0.8; }
+        }
+
+        .main-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 820px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .logo-wrapper {
+            margin-bottom: 2rem;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            padding: 10px 24px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 50px;
+            backdrop-filter: blur(12px);
+        }
+
+        .logo-img {
+            height: 48px;
+            width: auto;
+            filter: drop-shadow(0 0 10px rgba(0, 184, 212, 0.4));
+        }
+
+        .brand-name {
+            font-family: var(--font-display);
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #ffffff;
+            letter-spacing: -0.02em;
+        }
+
+        .status-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 18px;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 30px;
+            color: #fbbf24;
+            font-size: 0.85rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 1.5rem;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #fbbf24;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #fbbf24;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .headline {
+            font-family: var(--font-display);
+            font-size: 3rem;
+            font-weight: 900;
+            line-height: 1.15;
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+            background: linear-gradient(135deg, #ffffff 30%, var(--accent-cyan-bright) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .subtext {
+            font-size: 1.125rem;
+            color: var(--text-muted);
+            line-height: 1.65;
+            max-width: 660px;
+            margin: 0 auto 3rem auto;
+            font-weight: 400;
+        }
+
+        .active-services-title {
+            font-family: var(--font-display);
+            font-size: 0.95rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--accent-cyan);
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .active-services-title::before,
+        .active-services-title::after {
+            content: '';
+            height: 1px;
+            width: 40px;
+            background: linear-gradient(90deg, transparent, var(--accent-cyan));
+        }
+
+        .active-services-title::after {
+            background: linear-gradient(90deg, var(--accent-cyan), transparent);
+        }
+
+        .cards-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .service-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 2rem 1.75rem;
+            backdrop-filter: blur(20px);
+            text-align: left;
+            transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, var(--accent-cyan), var(--accent-cyan-bright));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .service-card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(0, 184, 212, 0.45);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(0, 184, 212, 0.15);
+        }
+
+        .service-card:hover::before {
+            opacity: 1;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.25rem;
+        }
+
+        .icon-box {
+            width: 52px;
+            height: 52px;
+            border-radius: 16px;
+            background: rgba(0, 184, 212, 0.1);
+            border: 1px solid rgba(0, 184, 212, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4rem;
+            color: var(--accent-cyan-bright);
+        }
+
+        .live-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            background: rgba(16, 185, 129, 0.12);
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            border-radius: 20px;
+            color: #34d399;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+
+        .live-dot {
+            width: 6px;
+            height: 6px;
+            background-color: #34d399;
+            border-radius: 50%;
+            box-shadow: 0 0 8px #34d399;
+        }
+
+        .card-title {
+            font-family: var(--font-display);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #ffffff;
+            margin-bottom: 0.5rem;
+        }
+
+        .card-desc {
+            font-size: 0.925rem;
+            color: var(--text-muted);
+            line-height: 1.55;
+            margin-bottom: 1.5rem;
+        }
+
+        .card-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--accent-cyan-bright);
+            transition: gap 0.2s ease;
+        }
+
+        .service-card:hover .card-btn {
+            gap: 12px;
+        }
+
+        .footer-text {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        @media (max-width: 640px) {
+            .headline {
+                font-size: 2.2rem;
+            }
+            .subtext {
+                font-size: 1rem;
+            }
+            .main-container {
+                padding: 0 0.5rem;
+            }
         }
     </style>
 </head>
 <body>
 
-    <!-- Futuristic Offline Overlay -->
-    <div id="app-offline-screen" class="offline-container hidden">
-        <div class="offline-glow"></div>
-        <div class="offline-content">
-            <div class="offline-icon-wrapper">
-                <i class="fas fa-wifi-slash offline-icon" aria-label="İnternet Bağlantısı Yok"></i>
-            </div>
-            <h2 class="offline-title">BAĞLANTI KESİLDİ</h2>
-            <p class="offline-subtitle">İnternet bağlantınızı kontrol edip lütfen tekrar deneyin.</p>
-            <button onclick="checkConnectionRetry()" class="btn btn-primary btn-retry">
-                <i class="fas fa-redo" style="margin-right: 8px;"></i> Tekrar Dene
-            </button>
-        </div>
-    </div>
+    <div class="ambient-orb"></div>
 
-    <nav class="navbar navbar-dark">
-        <div class="container nav-container">
-            <a href="/" class="logo-text">
-                <img src="asset/firnas_logo.png" alt="Firnas Logo" style="height: 58px; margin-right: 12px;">
-                Firnas Technologies
+    <main class="main-container">
+        <div class="logo-wrapper">
+            <img src="/asset/firnas_logo.png" alt="Firnas Technologies" class="logo-img">
+            <span class="brand-name">Firnas Technologies</span>
+        </div>
+
+        <div>
+            <span class="status-pill">
+                <span class="status-dot"></span> Bakım & Güncelleme Modu
+            </span>
+        </div>
+
+        <h1 class="headline">Bu Site Geçici Olarak Kullanım Dışı</h1>
+
+        <p class="subtext">
+            Firnas Technologies ana web sitesi ve ilgili sayfalar altyapı güncellemeleri nedeniyle geçici bir süre için erişime kapatılmıştır. 
+            <strong>Rutin</strong> ve <strong>Forms</strong> servislerimiz kesintisiz şekilde hizmet vermeye devam etmektedir.
+        </p>
+
+        <div class="active-services-title">Aktif Portallarımız</div>
+
+        <div class="cards-grid">
+            <a href="/rutin/" class="service-card">
+                <div>
+                    <div class="card-header">
+                        <div class="icon-box">
+                            <i class="fas fa-tasks"></i>
+                        </div>
+                        <span class="live-badge">
+                            <span class="live-dot"></span> Aktif Servis
+                        </span>
+                    </div>
+                    <h2 class="card-title">Firnas Rutin</h2>
+                    <p class="card-desc">Günlük takip, planlama ve rutin yönetim platformunuza güvenle erişin.</p>
+                </div>
+                <div class="card-btn">
+                    Sisteme Giriş Yap <i class="fas fa-arrow-right"></i>
+                </div>
             </a>
-            <ul class="nav-links">
-                <li><a href="/" class="active" data-i18n="nav_home">Ana Sayfa</a></li>
-                <li><a href="/about/" data-i18n="nav_about">Hakkımızda</a></li>
-                <li><a href="/products/" data-i18n="nav_projects">Ürünlerimiz</a></li>
-                <li><a href="/store/" data-i18n="nav_store">Mağaza</a></li>
-                <li><a href="/contact/" data-i18n="nav_contact">İletişim</a></li>
-                <li>
-                    <div class="lang-dropdown">
-                        <button class="lang-dropdown-btn" id="lang-btn">
-                            <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag" id="current-lang-flag">
-                            <span id="current-lang-text">TR</span>
-                            <i class="fas fa-chevron-down lang-arrow"></i>
-                        </button>
-                        <ul class="lang-dropdown-menu" id="lang-menu">
-                            <li onclick="changeLanguage('tr')">
-                                <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag">
-                                <span>TR</span>
-                            </li>
-                            <li onclick="changeLanguage('en')">
-                                <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="lang-flag">
-                                <span>EN</span>
-                            </li>
-                            <li onclick="changeLanguage('ar')">
-                                <img src="https://flagcdn.com/w20/sy.png" alt="AR" class="lang-flag">
-                                <span>AR</span>
-                            </li>
-                        </ul>
-                    </div>
-                </li>
-            </ul>
-            <button class="nav-toggle" aria-label="Toggle navigation">
-                <span class="hamburger"></span>
-            </button>
-        </div>
-    </nav>
 
-    <header class="hero">
-        <!-- Background Gradient Animation -->
-        <div class="grad-anim-container">
-            <svg class="hidden" style="display: none;">
-                <defs>
-                    <filter id="blurMe">
-                        <feGaussianBlur in="SourceGraphic" stdDeviation="10" result="blur" />
-                        <feColorMatrix in="blur" mode="matrix" values="1 0 0 0 0  0 1 0 0 0  0 0 1 0 0  0 0 0 18 -8" result="goo" />
-                        <feBlend in="SourceGraphic" in2="goo" />
-                    </filter>
-                </defs>
-            </svg>
-            <div class="gradients-wrapper">
-                <div class="g-circle g-first"></div>
-                <div class="g-circle g-second"></div>
-                <div class="g-circle g-third"></div>
-                <div class="g-circle g-fourth"></div>
-                <div class="g-circle g-fifth"></div>
-                <div class="g-circle g-interactive" id="g-interactive"></div>
-            </div>
-        </div>
-
-        <img src="asset/firnas_hero_bg_1777896373030.png" alt="HUD Background" class="hero-bg-centered">
-        <!-- Floating blurry background drones -->
-        <div class="hero-floating-drones">
-            <img src="asset/fic_v4.png" alt="Floating FiCo Drone Left" class="floating-drone drone-1">
-            <img src="asset/fic_v4.png" alt="Floating FiCo Drone Right" class="floating-drone drone-2">
-        </div>
-        <div class="container hero-container">
-            <div class="hero-content">
-                <h1 style="display: flex; flex-direction: column; align-items: center; text-align: center;">
-                    <span id="hero-prefix">Firnas Teknoloji;</span>
-                    <span class="typewriter-container">
-                        <span id="hero-sub-prefix"></span><span id="hero-typewriter" class="text-accent"></span><span id="hero-cursor" class="text-accent animate-blink">|</span>
-                    </span>
-                </h1>
-                <p data-i18n="hero_subtitle" style="text-align: center; max-width: 800px; margin: 0 auto 3rem;">Sadece uçan donanımlar değil, onları zeki kılan algoritmalar inşa ediyoruz. Havacılık, uzay ve yazılımın kesiştiği noktadayız.</p>
-                <a href="/products/" class="btn btn-primary" data-i18n="hero_btn_explore">Ekosistemi Keşfet</a>
-            </div>
-        </div>
-    </header>
-
-
-    <section class="section-padding services-section">
-        <div class="container">
-            <div class="section-header" style="text-align: center; margin-bottom: 5rem;">
-                <h2 data-i18n="services_title">Yazılım ve Teknoloji Altyapımız</h2>
-            </div>
-            <div class="services-grid">
-                <div class="service-img">
-                    <img src="asset/work_colored.png" alt="Software Work">
-                </div>
-                <div class="services-cards">
-                    <div class="service-card">
-                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
-                            <i class="fas fa-route" style="font-size: 2.5rem; color: var(--accent);"></i>
-                            <div>
-                                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="srv_1_title">Otonom Sistemler</h3>
-                                <p class="text-muted" data-i18n="srv_1_desc">İnsansız araçlar için rota planlama</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="service-card">
-                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
-                            <i class="fas fa-eye" style="font-size: 2.5rem; color: var(--accent);"></i>
-                            <div>
-                                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="srv_2_title">Görüntü İşleme</h3>
-                                <p class="text-muted" data-i18n="srv_2_desc">Endüstriyel gerçek zamanlı nesne takibi</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="service-card">
-                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
-                            <i class="fas fa-laptop-code" style="font-size: 2.5rem; color: var(--accent);"></i>
-                            <div>
-                                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="srv_3_title">Eğitim Teknolojileri</h3>
-                                <p class="text-muted" data-i18n="srv_3_desc">Kişiselleştirilebilir STEM simülasyonları</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- FiCo Interactive Showcase Section -->
-    <section class="section-padding fico-interactive-section">
-        <div class="container">
-            <div class="section-header" style="text-align: center; margin-bottom: 5rem;">
-                <h2 data-i18n="focus_title" style="color: #ffffff; background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; display: inline-block;">FiCo: Eğitimde STEM Devrimi</h2>
-                <p class="text-muted" style="max-width: 800px; margin: 1.5rem auto 0; color: #94a3b8;" data-i18n="focus_desc">Sıradan bir drone değil; tamamen yerli donanım, açık kaynak geliştirme altyapısı ve yapay zeka entegrasyonu ile donatılmış programlanabilir bir öğrenme ekosistemi.</p>
-            </div>
-            
-            <div class="fico-interactive-grid">
-                <!-- Sol: FiCo Hotspot Görseli -->
-                <div class="fico-hub-wrapper">
-                    <div class="fico-hotspots-container">
-                        <img src="asset/fic_v4.png" alt="FiCo Drone Platform" class="fico-hub-image">
-                        
-                        <!-- Hotspots -->
-                        <div class="hotspot active" id="hs-sensor" style="top: 65%; left: 35%;" onclick="activateHotspot('sensor')">
-                            <span class="hotspot-pulse"></span>
-                            <span class="hotspot-number">1</span>
-                        </div>
-                        <div class="hotspot" id="hs-frame" style="top: 40%; left: 80%;" onclick="activateHotspot('frame')">
-                            <span class="hotspot-pulse"></span>
-                            <span class="hotspot-number">2</span>
-                        </div>
-                        <div class="hotspot" id="hs-ai" style="top: 30%; left: 50%;" onclick="activateHotspot('ai')">
-                            <span class="hotspot-pulse"></span>
-                            <span class="hotspot-number">3</span>
-                        </div>
-                        <div class="hotspot" id="hs-fc" style="top: 55%; left: 62%;" onclick="activateHotspot('fc')">
-                            <span class="hotspot-pulse"></span>
-                            <span class="hotspot-number">4</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Premium Rainbow Glow Pre-Order Button -->
-                    <div class="fico-preorder-container">
-                        <a href="/store/" class="premium-glow-btn" data-i18n="fico_preorder">
-                            Ön Sipariş Ver
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Sağ: Detaylar & Simülatör -->
-                <div class="fico-details-deck">
-                    <div class="fico-spec-card glass-card dark-glass">
-                        <!-- Sensör Füzyonu Detay -->
-                        <div class="fico-spec-content active" id="spec-sensor">
-                            <i class="fas fa-eye spec-icon"></i>
-                            <h3 data-i18n="fico_hs_1_title">Sensör Füzyonu</h3>
-                            <p data-i18n="fico_hs_1_desc" class="lead text-muted">Yerleşik ultrasonik, kızılötesi ve optik akış sensörleri ile kapalı alanlarda ve GPS olmayan laboratuvarlarda milimetrik uçuş sabitleme sağlar.</p>
-                            <div class="spec-metrics">
-                                <div class="metric-row">
-                                    <span>Hassasiyet (Optik Akış):</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="--target-width: 95%;"></div></div>
-                                </div>
-                                <div class="metric-row">
-                                    <span>Engel Algılama:</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="--target-width: 90%;"></div></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Karbon Fiber Gövde Detay -->
-                        <div class="fico-spec-content" id="spec-frame">
-                            <i class="fas fa-shield-halved spec-icon"></i>
-                            <h3 data-i18n="fico_hs_2_title">Karbon-Fiber Gövde</h3>
-                            <p data-i18n="fico_hs_2_desc" class="lead text-muted">Çarpmalara karşı %100 dayanıklı, ultra hafif ve modüler karbon-fiber kafes gövdesi ile sınıf ortamında tamamen güvenli eğitim uçuşları sunar.</p>
-                            <div class="spec-metrics">
-                                <div class="metric-row">
-                                    <span>Darbe Dayanımı:</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="--target-width: 100%;"></div></div>
-                                </div>
-                                <div class="metric-row">
-                                    <span>Ağırlık Verimliliği:</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="--target-width: 85%;"></div></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Yapay Zeka İşlemci Detay -->
-                        <div class="fico-spec-content" id="spec-ai">
-                            <i class="fas fa-brain spec-icon"></i>
-                            <h3 data-i18n="fico_hs_3_title">Yapay Zeka İşlemci</h3>
-                            <p data-i18n="fico_hs_3_desc" class="lead text-muted">Üzerindeki yardımcı işlemci kartı sayesinde Python tabanlı görüntü işleme, gerçek zamanlı nesne tespiti ve makine öğrenimi modellerini havada çalıştırır.</p>
-                            <div class="spec-metrics">
-                                <div class="metric-row">
-                                    <span>AI İşlem Kapasitesi:</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="--target-width: 88%;"></div></div>
-                                </div>
-                                <div class="metric-row">
-                                    <span>Gerçek Zamanlı Takip:</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="--target-width: 92%;"></div></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Gelişmiş Otonom Kart Detay -->
-                        <div class="fico-spec-content" id="spec-fc">
-                            <i class="fas fa-microchip spec-icon"></i>
-                            <h3 data-i18n="fico_hs_4_title">Gelişmiş Otonom Kart</h3>
-                            <p data-i18n="fico_hs_4_desc" class="lead text-muted">Özgün mühendislikle geliştirilen stabilite algoritmaları ve çift işlemcili uçuş kontrolörü sayesinde üstün havada asılı kalma (hover) kararlılığı sunar.</p>
-                            <div class="spec-metrics">
-                                <div class="metric-row">
-                                    <span>Uçuş Kararlılığı:</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="--target-width: 98%;"></div></div>
-                                </div>
-                                <div class="metric-row">
-                                    <span>Çift İşlemci Gücü:</span>
-                                    <div class="metric-bar"><div class="metric-fill" style="--target-width: 90%;"></div></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Canlı Konsol Simülatörü -->
-                    <div class="fico-terminal-simulator glass-card dark-glass">
-                        <div class="terminal-header">
-                            <div class="terminal-dots">
-                                <span class="dot red"></span>
-                                <span class="dot yellow"></span>
-                                <span class="dot green"></span>
-                            </div>
-                            <span class="terminal-title">fico_control_console.py</span>
-                        </div>
-                        <div class="terminal-body" id="fico-terminal">
-                            <!-- Canlı simülasyon kodları script.js'den yazılacak -->
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <footer>
-        <div class="container">
-            <div class="footer-grid">
+            <a href="/form/" class="service-card">
                 <div>
-                    <a href="/" class="footer-logo">
-                        <img src="asset/firnas_logo.png" alt="Firnas Logo" style="height: 58px; filter: brightness(0) invert(1); margin-right: 12px;">
-                        Firnas Technologies
-                    </a>
-                </div>
-                <div>
-                    <h4 style="margin-bottom: 1.5rem; font-family: var(--font-sans);" data-i18n="footer_corp">Kurumsal</h4>
-                    <ul class="footer-links">
-                        <li><a href="/" data-i18n="nav_home">Ana Sayfa</a></li>
-                        <li><a href="/about/" data-i18n="nav_about">Hakkımızda</a></li>
-                        <li><a href="/products/" data-i18n="nav_projects">Ürünlerimiz</a></li>
-                        <li><a href="/store/" data-i18n="nav_store">Mağaza</a></li>
-                        <li><a href="/contact/" data-i18n="nav_contact">İletişim</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h4 style="margin-bottom: 1.5rem; font-family: var(--font-sans);" data-i18n="nav_contact">İletişim</h4>
-                    <ul class="footer-links">
-                        <li><a href="mailto:firnastechno@gmail.com"><i class="fas fa-envelope" style="margin-right: 8px;"></i> firnastechno@gmail.com</a></li>
-                    </ul>
-                    <div class="footer-socials" style="margin-top: 1.5rem; display: flex; gap: 1.25rem;">
-                        <a href="https://www.instagram.com/firnas_technologies/" target="_blank" class="social-icon-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-                        <a href="https://www.linkedin.com/company/firnas-technologies/" target="_blank" class="social-icon-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
-                        <a href="https://x.com/FirnasTech" target="_blank" class="social-icon-link" aria-label="X"><i class="fab fa-x-twitter"></i></a>
-                        <a href="https://www.youtube.com/@FirnasTechnologies" target="_blank" class="social-icon-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    <div class="card-header">
+                        <div class="icon-box">
+                            <i class="fas fa-file-signature"></i>
+                        </div>
+                        <span class="live-badge">
+                            <span class="live-dot"></span> Aktif Servis
+                        </span>
                     </div>
+                    <h2 class="card-title">Firnas Forms</h2>
+                    <p class="card-desc">Etkinlik kayıt, başvuru ve üye katılım portalına hemen ulaşın.</p>
                 </div>
-            </div>
-            <div class="footer-bottom">
-                <p data-i18n="footer_rights">&copy; 2026 Firnas Technologies. Tüm hakları saklıdır.</p>
-            </div>
+                <div class="card-btn">
+                    Form Portalı'na Git <i class="fas fa-arrow-right"></i>
+                </div>
+            </a>
         </div>
-    </footer>
-    <!-- Bulletproof Connection Manager -->
-    <script>
-        (function() {
-            // Connection Checker and Redirection
-            function checkConnectionAndRedirect() {
-                var isOnline = navigator.onLine;
-                var offlineScreen = document.getElementById('app-offline-screen');
-                
-                if (!isOnline) {
-                    if (offlineScreen) {
-                        offlineScreen.classList.remove('hidden');
-                        offlineScreen.style.display = 'flex';
-                    }
-                } else {
-                    if (offlineScreen) {
-                        offlineScreen.classList.add('hidden');
-                        offlineScreen.style.display = 'none';
-                    }
-                    
-                    // Redirect to live website if running locally in Capacitor WebView (unless dev mode is active)
-                    var isLocal = window.location.hostname === 'localhost' || 
-                                  window.location.hostname === '127.0.0.1' || 
-                                  window.location.protocol === 'file:';
-                                  
-                    // Allow bypassing redirect via query parameter (e.g. ?dev=true or ?no-redirect) or port (Vite dev server)
-                    var urlParams = new URLSearchParams(window.location.search);
-                    if (urlParams.has('dev') || urlParams.has('no-redirect')) {
-                        localStorage.setItem('disable_redirect', 'true');
-                    } else if (urlParams.has('enable-redirect')) {
-                        localStorage.removeItem('disable_redirect');
-                    }
-                    
-                    var isDevMode = localStorage.getItem('disable_redirect') === 'true' || 
-                                    (window.location.port && window.location.port !== '80' && window.location.port !== '443');
 
-                    // Check window.Capacitor asynchronously since it might load a bit later
-                    setTimeout(function() {
-                        if ((window.Capacitor || window.webkit || window.Android) && isLocal && !isDevMode) {
-                            window.location.href = "https://firnastechnologies.com/";
-                        }
-                    }, 100);
-                }
-            }
+        <footer class="footer-text">
+            &copy; 2026 Firnas Technologies. Tüm hakları saklıdır.
+        </footer>
+    </main>
 
-            // Run initial check
-            checkConnectionAndRedirect();
-
-            // Connect global retry handler
-            window.checkConnectionRetry = function() {
-                var btn = document.querySelector('.btn-retry');
-                if (btn) {
-                    var originalHTML = btn.innerHTML;
-                    btn.innerHTML = '<i class="fas fa-spinner fa-spin" style="margin-right: 8px;"></i> Bağlanıyor...';
-                    btn.disabled = true;
-                    
-                    setTimeout(function() {
-                        btn.disabled = false;
-                        if (navigator.onLine) {
-                            checkConnectionAndRedirect();
-                        } else {
-                            btn.innerHTML = originalHTML;
-                            btn.style.animation = 'none';
-                            void btn.offsetWidth; // Trigger reflow
-                            btn.style.animation = 'pulseRedBorder 0.5s ease';
-                        }
-                    }, 1200);
-                }
-            };
-
-            // Connection state change listeners
-            window.addEventListener('offline', function() {
-                var offlineScreen = document.getElementById('app-offline-screen');
-                if (offlineScreen) {
-                    offlineScreen.classList.remove('hidden');
-                    offlineScreen.style.display = 'flex';
-                }
-            });
-
-            window.addEventListener('online', function() {
-                var offlineScreen = document.getElementById('app-offline-screen');
-                if (offlineScreen) {
-                    offlineScreen.classList.add('hidden');
-                    offlineScreen.style.display = 'none';
-                }
-            });
-        })();
-    </script>
-
-    <script src="script.js?v=1.1"></script>
 </body>
 </html>
-<!-- cache-buster-01 -->

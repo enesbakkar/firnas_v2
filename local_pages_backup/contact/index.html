@@ -1,0 +1,568 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Firnas Technologies kurumsal hizmetleri, eğitim teknolojileri ve projeleri hakkında detaylı bilgi almak için bizimle iletişime geçin.">
+    <title>İletişim | Firnas Technologies</title>
+    <link class="favicon" rel="icon" type="image/png" href="/asset/firnas_logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f2e4a;
+            --primary-dark: #051421;
+            --accent: #00b8d4;
+            --accent-glow: rgba(0, 184, 212, 0.4);
+            --bg-white: #ffffff;
+            --bg-light: #f0f7fb;
+            --text-main: #1a202c;
+            --text-muted: #64748b;
+            --border-glass: rgba(255, 255, 255, 0.2);
+            --border-light: rgba(15, 46, 74, 0.1);
+            --font-sans: 'Inter', sans-serif;
+            --font-display: 'Outfit', sans-serif;
+        }
+        body {
+            font-family: var(--font-sans);
+            color: var(--text-main);
+            background-color: var(--bg-light);
+            background-image: radial-gradient(rgba(15, 46, 74, 0.04) 1.5px, transparent 1.5px);
+            background-size: 24px 24px;
+        }
+    </style>
+    <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* Success/Error Modal Overlay - Z-index Fixed */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(5, 20, 33, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-card {
+            background: rgba(5, 20, 33, 0.9);
+            border: 1px solid rgba(0, 184, 212, 0.3);
+            border-radius: 32px;
+            max-width: 500px;
+            width: 90%;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.5), 0 0 40px rgba(0, 184, 212, 0.15);
+            transform: scale(0.9);
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .modal-overlay.active .modal-card {
+            transform: scale(1);
+        }
+
+        .modal-icon {
+            font-size: 4.5rem;
+            margin-bottom: 1.5rem;
+            filter: drop-shadow(0 0 15px rgba(0, 184, 212, 0.4));
+            animation: pop-icon 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        @keyframes pop-icon {
+            0% { transform: scale(0); }
+            100% { transform: scale(1); }
+        }
+
+        .modal-card h3 {
+            font-family: var(--font-display);
+            font-size: 2rem;
+            font-weight: 900;
+            color: #ffffff;
+            margin-bottom: 1rem;
+        }
+
+        .modal-card p {
+            font-size: 1.1rem;
+            color: #cbd5e1;
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/" class="logo-text">
+                <img src="/asset/firnas_logo.png" alt="Firnas Logo" style="height: 58px; margin-right: 12px;">
+                Firnas Technologies
+            </a>
+            <ul class="nav-links">
+                <li><a href="/" data-i18n="nav_home">Ana Sayfa</a></li>
+                <li><a href="/about/" data-i18n="nav_about">Hakkımızda</a></li>
+                <li><a href="/products/" data-i18n="nav_projects">Ürünlerimiz</a></li>
+                <li><a href="/store/" data-i18n="nav_store">Mağaza</a></li>
+                <li><a href="/contact/" class="active" data-i18n="nav_contact">İletişim</a></li>
+                <li>
+                    <div class="lang-dropdown">
+                        <button class="lang-dropdown-btn" id="lang-btn" aria-label="Language selector">
+                            <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag" id="current-lang-flag">
+                            <span id="current-lang-text">TR</span>
+                            <i class="fas fa-chevron-down lang-arrow"></i>
+                        </button>
+                        <ul class="lang-dropdown-menu" id="lang-menu">
+                            <li onclick="changeLanguage('tr')">
+                                <img src="https://flagcdn.com/w20/tr.png" alt="TR" class="lang-flag">
+                                <span>TR</span>
+                            </li>
+                            <li onclick="changeLanguage('en')">
+                                <img src="https://flagcdn.com/w20/gb.png" alt="EN" class="lang-flag">
+                                <span>EN</span>
+                            </li>
+                            <li onclick="changeLanguage('ar')">
+                                <img src="https://flagcdn.com/w20/sy.png" alt="AR" class="lang-flag">
+                                <span>AR</span>
+                            </li>
+                        </ul>
+                    </div>
+                </li>
+            </ul>
+            <button class="nav-toggle" aria-label="Toggle navigation">
+                <span class="hamburger"></span>
+            </button>
+        </div>
+    </nav>
+
+    <section class="contact-hero" style="min-height: 100vh; display: flex; align-items: center;">
+        <div class="container contact-grid">
+            <div style="display: flex; flex-direction: column; justify-content: center;">
+                <h1 style="font-size: clamp(2.2rem, 8vw, 4rem); font-weight: 900; color: var(--primary); margin-bottom: 1.5rem;" data-i18n="contact_title">İletişim</h1>
+                <p style="font-size: 1.25rem; color: var(--text-muted); margin-bottom: 3rem;" data-i18n="contact_header_desc">Projelerimiz ve kurumsal hizmetlerimiz hakkında detaylı bilgi almak için bizimle iletişime geçin.</p>
+                <div style="display: flex; flex-direction: column; gap: 2rem;">
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div style="width: 60px; height: 60px; border-radius: 16px; background: var(--bg-white); box-shadow: var(--shadow-glass); display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                            <i class="fas fa-envelope" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.125rem; margin-bottom: 0.25rem;">E-Posta</h4>
+                            <p class="text-muted">firnastechno@gmail.com</p>
+                        </div>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 1.5rem;">
+                        <div style="width: 60px; height: 60px; border-radius: 16px; background: var(--bg-white); box-shadow: var(--shadow-glass); display: flex; align-items: center; justify-content: center; color: var(--accent);">
+                            <i class="fas fa-share-nodes" aria-hidden="true"></i>
+                        </div>
+                        <div>
+                            <h4 style="font-size: 1.125rem; margin-bottom: 0.5rem;" data-i18n="contact_socials">Sosyal Medya</h4>
+                            <div style="display: flex; gap: 1.25rem;">
+                                <a href="https://www.instagram.com/firnas_technologies/" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="Instagram" style="color: var(--primary); font-size: 1.25rem;"><i class="fab fa-instagram"></i></a>
+                                <a href="https://www.linkedin.com/company/firnas-technologies/" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="LinkedIn" style="color: var(--primary); font-size: 1.25rem;"><i class="fab fa-linkedin"></i></a>
+                                <a href="https://x.com/FirnasTech" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="X (Twitter)" style="color: var(--primary); font-size: 1.25rem;"><i class="fab fa-x-twitter"></i></a>
+                                <a href="https://www.youtube.com/@FirnasTechnologies" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="YouTube" style="color: var(--primary); font-size: 1.25rem;"><i class="fab fa-youtube"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Lokasyonlarımız Section -->
+                <div style="margin-top: 3.5rem; margin-bottom: 1rem;">
+                    <h4 style="font-size: 1.25rem; font-weight: 800; color: var(--primary); font-family: var(--font-display); letter-spacing: 0.05em; text-transform: uppercase;" data-i18n="contact_locations_title">Lokasyonlarımız</h4>
+                </div>
+                
+                <div style="display: flex; gap: 1.5rem; flex-wrap: wrap; margin-bottom: 2rem;">
+                    <!-- Office Card -->
+                    <div class="location-map-card" data-url="https://maps.app.goo.gl/3j9v6SBgUsWTbXsV7" onclick="toggleMapCard(this, 'https://maps.app.goo.gl/3j9v6SBgUsWTbXsV7')">
+                        <div class="location-map-inner">
+                            <div class="map-grid-pattern">
+                                <svg width="100%" height="100%" aria-hidden="true">
+                                    <defs>
+                                        <pattern id="grid-pattern-office" width="20" height="20" patternUnits="userSpaceOnUse">
+                                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0, 184, 212, 0.15)" stroke-width="0.5" />
+                                        </pattern>
+                                    </defs>
+                                    <rect width="100%" height="100%" fill="url(#grid-pattern-office)" />
+                                </svg>
+                            </div>
+                            <div class="expanded-map-overlay">
+                                <svg class="map-roads-svg" preserveAspectRatio="none" aria-hidden="true">
+                                    <line x1="0%" y1="35%" x2="100%" y2="35%" class="road-main" />
+                                    <line x1="0%" y1="65%" x2="100%" y2="65%" class="road-main" />
+                                    <line x1="30%" y1="0%" x2="30%" y2="100%" class="road-sec" />
+                                    <line x1="70%" y1="0%" x2="70%" y2="100%" class="road-sec" />
+                                    <line x1="0%" y1="20%" x2="100%" y2="20%" class="road-minor" />
+                                    <line x1="0%" y1="50%" x2="100%" y2="50%" class="road-minor" />
+                                    <line x1="0%" y1="80%" x2="100%" y2="80%" class="road-minor" />
+                                    <line x1="15%" y1="0%" x2="15%" y2="100%" class="road-minor" />
+                                    <line x1="45%" y1="0%" x2="45%" y2="100%" class="road-minor" />
+                                    <line x1="55%" y1="0%" x2="55%" y2="100%" class="road-minor" />
+                                    <line x1="85%" y1="0%" x2="85%" y2="100%" class="road-minor" />
+                                </svg>
+                                <div class="map-building b1"></div>
+                                <div class="map-building b2"></div>
+                                <div class="map-building b3"></div>
+                                <div class="map-building b4"></div>
+                                <div class="map-marker-pin" aria-hidden="true">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#00b8d4" />
+                                        <circle cx="12" cy="9" r="2.5" fill="#ffffff" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="map-card-content">
+                                <div class="map-top-bar">
+                                    <div class="map-icon-svg">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00b8d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                                            <line x1="9" x2="9" y1="3" y2="18" />
+                                            <line x1="15" x2="15" y1="6" y2="21" />
+                                        </svg>
+                                    </div>
+                                    <div class="map-live-tag">
+                                        <span class="live-dot"></span>
+                                        <span class="live-text" data-i18n="location_live">Live</span>
+                                    </div>
+                                </div>
+                                <div class="map-bottom-info">
+                                    <h3 class="map-title" data-i18n="location_office_title">Merkez Ofis</h3>
+                                    <p class="map-coordinates" data-i18n="location_office_coords">41.0343° N, 28.7909° E</p>
+                                    <div class="map-underline"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="map-click-hint" data-i18n="location_expand_hint">Genişletmek için tıklayın</p>
+                    </div>
+
+                    <!-- Workshop Card -->
+                    <div class="location-map-card" data-url="https://maps.app.goo.gl/YdM8nRiJ5ULty8gQ6" onclick="toggleMapCard(this, 'https://maps.app.goo.gl/YdM8nRiJ5ULty8gQ6')">
+                        <div class="location-map-inner">
+                            <div class="map-grid-pattern">
+                                <svg width="100%" height="100%" aria-hidden="true">
+                                    <defs>
+                                        <pattern id="grid-pattern-workshop" width="20" height="20" patternUnits="userSpaceOnUse">
+                                            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(0, 184, 212, 0.15)" stroke-width="0.5" />
+                                        </pattern>
+                                    </defs>
+                                    <rect width="100%" height="100%" fill="url(#grid-pattern-workshop)" />
+                                </svg>
+                            </div>
+                            <div class="expanded-map-overlay">
+                                <svg class="map-roads-svg" preserveAspectRatio="none" aria-hidden="true">
+                                    <line x1="0%" y1="35%" x2="100%" y2="35%" class="road-main" />
+                                    <line x1="0%" y1="65%" x2="100%" y2="65%" class="road-main" />
+                                    <line x1="30%" y1="0%" x2="30%" y2="100%" class="road-sec" />
+                                    <line x1="70%" y1="0%" x2="70%" y2="100%" class="road-sec" />
+                                    <line x1="0%" y1="20%" x2="100%" y2="20%" class="road-minor" />
+                                    <line x1="0%" y1="50%" x2="100%" y2="50%" class="road-minor" />
+                                    <line x1="0%" y1="80%" x2="100%" y2="80%" class="road-minor" />
+                                    <line x1="15%" y1="0%" x2="15%" y2="100%" class="road-minor" />
+                                    <line x1="45%" y1="0%" x2="45%" y2="100%" class="road-minor" />
+                                    <line x1="55%" y1="0%" x2="55%" y2="100%" class="road-minor" />
+                                    <line x1="85%" y1="0%" x2="85%" y2="100%" class="road-minor" />
+                                </svg>
+                                <div class="map-building b1"></div>
+                                <div class="map-building b2"></div>
+                                <div class="map-building b3"></div>
+                                <div class="map-building b4"></div>
+                                <div class="map-marker-pin" aria-hidden="true">
+                                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none">
+                                        <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#00b8d4" />
+                                        <circle cx="12" cy="9" r="2.5" fill="#ffffff" />
+                                    </svg>
+                                </div>
+                            </div>
+                            <div class="map-card-content">
+                                <div class="map-top-bar">
+                                    <div class="map-icon-svg">
+                                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00b8d4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                                            <polygon points="3 6 9 3 15 6 21 3 21 18 15 21 9 18 3 21" />
+                                            <line x1="9" x2="9" y1="3" y2="18" />
+                                            <line x1="15" x2="15" y1="6" y2="21" />
+                                        </svg>
+                                    </div>
+                                    <div class="map-live-tag">
+                                        <span class="live-dot"></span>
+                                        <span class="live-text" data-i18n="location_live">Live</span>
+                                    </div>
+                                </div>
+                                <div class="map-bottom-info">
+                                    <h3 class="map-title" data-i18n="location_workshop_title">Üretim Atölyesi</h3>
+                                    <p class="map-coordinates" data-i18n="location_workshop_coords">41.0267° N, 29.0142° E</p>
+                                    <div class="map-underline"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <p class="map-click-hint" data-i18n="location_expand_hint">Genişletmek için tıklayın</p>
+                    </div>
+                </div>
+            </div>
+            <div class="contact-form-wrapper">
+                <form id="contact-form" novalidate>
+                    <div class="form-group">
+                        <label for="contact-name" data-i18n="contact_label_name">Ad</label>
+                        <input type="text" id="contact-name" name="name" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-org" data-i18n="contact_label_org">Kurum Adı</label>
+                        <input type="text" id="contact-org" name="organization" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-email" data-i18n="contact_label_email">E-Posta</label>
+                        <input type="email" id="contact-email" name="email" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-subject" data-i18n="contact_label_subject">Konu</label>
+                        <select class="form-control" id="contact-subject" name="subject" required>
+                            <option data-i18n="contact_opt_1">Ürün Bilgisi (FiCo)</option>
+                            <option data-i18n="contact_opt_2">Kurumsal İşbirliği</option>
+                            <option data-i18n="contact_opt_3">Teknik Destek</option>
+                            <option data-i18n="contact_opt_4">Diğer</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="contact-message" data-i18n="contact_label_msg">Mesaj</label>
+                        <textarea id="contact-message" name="message" class="form-control" rows="4" required></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 1rem;" data-i18n="contact_btn_send">Gönder</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Success Modal Overlay -->
+    <div id="success-modal" class="modal-overlay" role="dialog" aria-labelledby="success-title">
+        <div class="modal-card glass-card">
+            <div class="modal-icon" style="color: #00b8d4;"><i class="fas fa-circle-check" aria-hidden="true"></i></div>
+            <h3 id="success-title" data-i18n="contact_success_title">Mesajınız Gönderildi!</h3>
+            <p data-i18n="contact_success_desc">Bizimle iletişime geçtiğiniz için teşekkür ederiz. En kısa sürede size geri dönüş yapacağız.</p>
+            <button class="btn btn-primary" onclick="closeModal('success-modal')" data-i18n="store_modal_close">Kapat</button>
+        </div>
+    </div>
+
+    <!-- Error Modal Overlay -->
+    <div id="error-modal" class="modal-overlay" role="dialog" aria-labelledby="error-title">
+        <div class="modal-card glass-card">
+            <div class="modal-icon" style="color: #ff5252;"><i class="fas fa-circle-xmark" aria-hidden="true"></i></div>
+            <h3 id="error-title" data-i18n="contact_error_title">Hata!</h3>
+            <p id="error-message" data-i18n="contact_error_desc">Mesajınız gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.</p>
+            <button class="btn btn-primary" onclick="closeModal('error-modal')" data-i18n="store_modal_close">Kapat</button>
+        </div>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-grid">
+                <div>
+                    <a href="/" class="footer-logo">
+                        <img src="/asset/firnas_logo.png" alt="Firnas Logo" style="height: 58px; filter: brightness(0) invert(1); margin-right: 12px;">
+                        Firnas Technologies
+                    </a>
+                </div>
+                 <div>
+                    <h4 style="margin-bottom: 1.5rem; font-family: var(--font-sans);" data-i18n="footer_corp">Kurumsal</h4>
+                    <ul class="footer-links">
+                        <li><a href="/" data-i18n="nav_home">Ana Sayfa</a></li>
+                        <li><a href="/about/" data-i18n="nav_about">Hakkımızda</a></li>
+                        <li><a href="/products/" data-i18n="nav_projects">Ürünlerimiz</a></li>
+                        <li><a href="/store/" data-i18n="nav_store">Mağaza</a></li>
+                        <li><a href="/contact/" data-i18n="nav_contact">İletişim</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 style="margin-bottom: 1.5rem; font-family: var(--font-sans);" data-i18n="nav_contact">İletişim</h4>
+                    <ul class="footer-links">
+                        <li><a href="mailto:firnastechno@gmail.com"><i class="fas fa-envelope" style="margin-right: 8px;" aria-hidden="true"></i> firnastechno@gmail.com</a></li>
+                    </ul>
+                    <div class="footer-socials" style="margin-top: 1.5rem; display: flex; gap: 1.25rem;">
+                        <a href="https://www.instagram.com/firnas_technologies/" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+                        <a href="https://www.linkedin.com/company/firnas-technologies/" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="LinkedIn"><i class="fab fa-linkedin"></i></a>
+                        <a href="https://x.com/FirnasTech" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="X (Twitter)"><i class="fab fa-x-twitter"></i></a>
+                        <a href="https://www.youtube.com/@FirnasTechnologies" target="_blank" rel="noopener noreferrer" class="social-icon-link" aria-label="YouTube"><i class="fab fa-youtube"></i></a>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-i18n="footer_rights">&copy; 2026 Firnas Technologies. Tüm hakları saklıdır.</p>
+            </div>
+        </div>
+    </footer>
+    <script src="/script.js"></script>
+    <script>
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function showModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.classList.add('active');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const contactForm = document.getElementById('contact-form');
+            if (contactForm) {
+                contactForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const submitBtn = contactForm.querySelector('button[type="submit"]');
+                    const originalBtnText = submitBtn.innerHTML;
+                    
+                    // Get current language for dynamic loading text
+                    const currentLang = localStorage.getItem('site_lang') || 'tr';
+                    
+                    // Custom Email Validation
+                    const emailInput = contactForm.querySelector('input[name="email"]');
+                    const emailValue = emailInput.value.trim();
+                    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+                    
+                    if (!emailRegex.test(emailValue)) {
+                        let emailError = 'Lütfen geçerli bir e-posta adresi giriniz.';
+                        if (currentLang === 'en') emailError = 'Please enter a valid email address.';
+                        if (currentLang === 'ar') emailError = 'يرجى إدخال عنوان بريد إلكتروني صالح.';
+                        
+                        emailInput.setCustomValidity(emailError);
+                        emailInput.reportValidity();
+                        
+                        // Reset custom validity on input change to allow resubmission
+                        emailInput.addEventListener('input', function resetValidity() {
+                            emailInput.setCustomValidity("");
+                            emailInput.removeEventListener('input', resetValidity);
+                        });
+                        return;
+                    } else {
+                        emailInput.setCustomValidity("");
+                    }
+
+                    let loadingText = 'Gönderiliyor...';
+                    let errorMessages = {
+                        'tr': 'Mesajınız gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.',
+                        'en': 'An error occurred while sending your message. Please try again later.',
+                        'ar': 'حدث خطأ أثناء إرسال رسالتك. يرجى المحاولة مرة أخرى في وقت lahak.' // It had 'lahak.' or 'لاحقًا'
+                    };
+                    
+                    if (currentLang === 'en') {
+                        loadingText = 'Sending...';
+                    } else if (currentLang === 'ar') {
+                        loadingText = 'جاري الإرسال...';
+                    }
+                    
+                    submitBtn.disabled = true;
+                    submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin" style="margin-right: 8px;" aria-hidden="true"></i> ${loadingText}`;
+
+                    const formData = new FormData();
+                    formData.append('name', contactForm.querySelector('input[name="name"]').value);
+                    formData.append('organization', contactForm.querySelector('input[name="organization"]').value);
+                    formData.append('email', contactForm.querySelector('input[name="email"]').value);
+                    formData.append('subject', document.getElementById('contact-subject').value);
+                    formData.append('message', contactForm.querySelector('textarea[name="message"]').value);
+
+                    // Use configured Google Apps Script Web App URL if set, otherwise fallback to Web3Forms
+                    const submissionUrl = (window.GOOGLE_SCRIPT_URL && window.GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL')
+                        ? window.GOOGLE_SCRIPT_URL
+                        : "https://api.web3forms.com/submit";
+
+                    // If we are using Web3Forms, append the access key
+                    if (submissionUrl.includes('web3forms.com')) {
+                        formData.append('access_key', '4321ee7e-b01e-4660-a90f-0064186a4cd2');
+                    }
+
+                    fetch(submissionUrl, {
+                        method: "POST",
+                        body: formData
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw response;
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        submitBtn.disabled = false;
+                        submitBtn.innerHTML = originalBtnText;
+                        
+                        if (data.success === "true" || data.success === true) {
+                            showModal('success-modal');
+                            contactForm.reset();
+                        } else {
+                            throw new Error('Response success field is false');
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Form submission error:', error);
+                        
+                        // Fallback: Submit using standard HTML form post
+                        try {
+                            const fallbackUrl = (window.GOOGLE_SCRIPT_URL && window.GOOGLE_SCRIPT_URL !== 'YOUR_GOOGLE_SCRIPT_URL')
+                                ? window.GOOGLE_SCRIPT_URL
+                                : "https://api.web3forms.com/submit";
+
+                            if (fallbackUrl.includes('web3forms.com')) {
+                                if (!contactForm.querySelector('input[name="access_key"]')) {
+                                    const keyInput = document.createElement('input');
+                                    keyInput.type = 'hidden';
+                                    keyInput.name = 'access_key';
+                                    keyInput.value = "4321ee7e-b01e-4660-a90f-0064186a4cd2";
+                                    contactForm.appendChild(keyInput);
+                                }
+                            }
+                            
+                            // Add redirect input to redirect back to this page after submission
+                            if (!contactForm.querySelector('input[name="redirect"]')) {
+                                const redirectInput = document.createElement('input');
+                                redirectInput.type = 'hidden';
+                                redirectInput.name = 'redirect';
+                                redirectInput.value = window.location.href;
+                                contactForm.appendChild(redirectInput);
+                            }
+                            
+                            contactForm.action = fallbackUrl;
+                            contactForm.method = "POST";
+                            // Remove dynamic submit handler and submit the form directly
+                            contactForm.removeAttribute('onsubmit');
+                            contactForm.submit();
+                        } catch (submitErr) {
+                            console.error('Fallback submission error:', submitErr);
+                            submitBtn.disabled = false;
+                            submitBtn.innerHTML = originalBtnText;
+                            
+                            let errorMsg = '';
+                            if (!navigator.onLine) {
+                                errorMsg = {
+                                    tr: "İnternet bağlantısı yok. Lütfen ağınızı kontrol edip tekrar deneyin.",
+                                    en: "No internet connection. Please check your network and try again.",
+                                    ar: "لا يوجد اتصال بالإنترنت. يرجى التحقق من الشبكة والمحاولة مرة أخرى."
+                                }[currentLang] || "İnternet bağlantısı yok. Lütfen ağınızı kontrol edip tekrar deneyin.";
+                            } else {
+                                errorMsg = {
+                                    tr: "Bağlantı hatası veya CORS engellemesi. Lütfen daha sonra tekrar deneyin.",
+                                    en: "Connection error or CORS issue. Please try again later.",
+                                    ar: "خطأ في الاتصال أو مشكلة CORS. يرجı المحاولة مرة أخرى لاحقاً."
+                                }[currentLang] || "Mesajınız gönderilirken bir sorun oluştu. Lütfen daha sonra tekrar deneyin.";
+                            }
+                            
+                            const errorDesc = document.getElementById('error-message');
+                            if (errorDesc) {
+                                errorDesc.textContent = errorMsg;
+                            }
+                            showModal('error-modal');
+                        }
+                    });
+                });
+            }
+        });
+    </script>
+</body>
+</html>
