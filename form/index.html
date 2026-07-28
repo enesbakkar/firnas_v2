@@ -48,7 +48,7 @@
                 Firnas Technologies <span class="subdomain-tag">Forms Portal</span>
             </a>
             <ul class="nav-links">
-                <li><button id="btn-show-all-forms" class="nav-link-btn" onclick="window.toggleStandaloneMode(false)"><i class="fas fa-grid-2"></i> Tüm Formlar / Portal</button></li>
+                <li><button id="btn-nav-back-to-portal" class="nav-link-btn" onclick="window.exitPreviewToCatalog()"><i class="fas fa-arrow-left"></i> Form Kataloğuna Dön</button></li>
                 <li><a href="/" class="nav-link-btn"><i class="fas fa-arrow-left"></i> Ana Sayfaya Dön</a></li>
                 <li>
                     <button id="admin-lock-btn" class="btn-logout-sm hidden">
@@ -76,7 +76,7 @@
                 <div class="portal-gallery-section" style="margin-bottom: 2rem;">
                     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
                         <h3 style="color:#ffffff; font-family:var(--font-display); font-size: 1.2rem; font-weight:800; margin:0;"><i class="fas fa-grid-2 text-accent"></i> Aktif Form Kataloğu</h3>
-                        <span class="small text-muted" style="color: #94a3b8 !important;">Doldurmak istediğiniz formu seçin</span>
+                        <span class="small text-muted" style="color: #94a3b8 !important;">Doldurmak veya önizlemek istediğiniz formu seçin</span>
                     </div>
                     <div class="dashboard-forms-grid" id="portal-dashboard-gallery">
                         <!-- Dynamic Google Forms style cards -->
@@ -95,6 +95,22 @@
                         </button>
                         <button class="switcher-pill" data-form-id="kurumsal-iletisim">
                             <i class="fas fa-headset"></i> Kurumsal İletişim & Destek
+                        </button>
+                    </div>
+                </div>
+
+                <!-- FORM PREVIEW TOP BAR -->
+                <div class="form-preview-top-bar" id="form-preview-bar" style="display: none;">
+                    <div class="preview-bar-info">
+                        <span class="preview-badge"><i class="fas fa-eye"></i> FORM ÖNİZLEME MODU</span>
+                        <span class="preview-title" id="preview-bar-form-name">Şu an "FEAM Networking 2026" formunu önizliyorsunuz.</span>
+                    </div>
+                    <div class="preview-bar-actions">
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-preview-edit-form">
+                            <i class="fas fa-pen-to-square text-accent"></i> Formu Düzenle
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-preview-back-catalog">
+                            <i class="fas fa-arrow-left"></i> Form Kataloğuna Dön
                         </button>
                     </div>
                 </div>

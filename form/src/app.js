@@ -31,10 +31,19 @@ document.addEventListener('DOMContentLoaded', () => {
         document.body.classList.remove('standalone-form-mode');
     }
 
-    // Global helper to toggle standalone mode
+    // Global helper to toggle standalone mode & exit preview
     window.toggleStandaloneMode = (enable) => {
         if (enable) document.body.classList.add('standalone-form-mode');
         else document.body.classList.remove('standalone-form-mode');
+    };
+
+    window.exitPreviewToCatalog = () => {
+        document.body.classList.remove('standalone-form-mode');
+        const previewBar = document.getElementById('form-preview-bar');
+        if (previewBar) previewBar.style.display = 'none';
+        appStore.setState({ activeTab: 'fill' });
+        const catalogSec = document.querySelector('.portal-gallery-section');
+        if (catalogSec) catalogSec.scrollIntoView({ behavior: 'smooth' });
     };
 
     // 3. Load Stored Data

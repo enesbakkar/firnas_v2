@@ -117,16 +117,37 @@ export function setupFormWizard(container, store) {
         galleryContainer.querySelectorAll('.btn-preview-form').forEach(btn => {
             btn.onclick = () => {
                 const fId = btn.dataset.formId;
-                if (fId && store.getState().formDefinitions[fId]) {
+                const f = store.getState().formDefinitions[fId];
+                if (f) {
                     errorsMap = {};
                     store.setState({
                         currentFormId: fId,
                         currentStep: 1,
                         formData: {}
                     });
-                    if (window.toggleStandaloneMode) {
-                        window.toggleStandaloneMode(true);
+
+                    // Show Form Preview Bar
+                    const previewBar = container.querySelector('#form-preview-bar');
+                    const previewName = container.querySelector('#preview-bar-form-name');
+                    if (previewBar) previewBar.style.display = 'flex';
+                    if (previewName) previewName.innerText = `Şu an "${f.title}" formunu önizliyorsunuz.`;
+
+                    // Bind Preview Bar Actions
+                    const backCatalogBtn = container.querySelector('#btn-preview-back-catalog');
+                    const editFormBtn = container.querySelector('#btn-preview-edit-form');
+
+                    if (backCatalogBtn) {
+                        backCatalogBtn.onclick = () => {
+                            if (window.exitPreviewToCatalog) window.exitPreviewToCatalog();
+                        };
                     }
+                    if (editFormBtn) {
+                        editFormBtn.onclick = () => {
+                            if (window.requestAuthTabSwitch) window.requestAuthTabSwitch('builder');
+                            else store.setState({ activeTab: 'builder' });
+                        };
+                    }
+
                     const wrapper = container.querySelector('#selected-form-wrapper');
                     if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth' });
                 }
