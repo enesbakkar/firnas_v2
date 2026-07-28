@@ -30,7 +30,7 @@ export class Store {
         this.notify();
     }
 
-    setFormData(fieldId, value) {
+    setFormData(fieldId, value, silent = true) {
         this.state = {
             ...this.state,
             formData: {
@@ -39,7 +39,9 @@ export class Store {
             },
             draftSavedTimestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
         };
-        this.notify();
+        if (!silent) {
+            this.notify();
+        }
     }
 
     subscribe(listener) {

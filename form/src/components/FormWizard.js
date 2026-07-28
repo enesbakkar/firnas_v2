@@ -10,7 +10,9 @@ import { generateRefCode } from '../utils/stringHelpers.js';
 
 export function setupFormWizard(container, store) {
     let lastRenderedFormId = null;
+    let lastRenderedStep = null;
     let errorsMap = {};
+    let saveDraftDebounceTimer = null;
 
     function render() {
         const state = store.getState();
@@ -23,17 +25,20 @@ export function setupFormWizard(container, store) {
         // Render Header & Banner if form switched
         if (lastRenderedFormId !== state.currentFormId) {
             lastRenderedFormId = state.currentFormId;
+            lastRenderedStep = null;
             renderFormHeader(formDef, state, store);
         }
 
-        // Render Step Panels
-        renderStepPanels(formDef, state, errorsMap);
+        // Render Step Panels ONLY if step or form changed or error map exists
+        const stepChanged = (lastRenderedStep !== state.currentStep);
+        if (stepChanged || Object.keys(errorsMap).length > 0) {
+            lastRenderedStep = state.currentStep;
+            renderStepPanels(formDef, state, errorsMap);
+            bindInputEvents(container, formDef, store);
+        }
 
         // Update Progress Bar UI
         renderProgressUI(formDef, state);
-
-        // Bind Input Auto-Save & Change Listeners
-        bindInputEvents(container, formDef, state, store);
     }
 
     function renderDashboardGallery(container, state, store) {
@@ -77,6 +82,7 @@ export function setupFormWizard(container, store) {
             btn.onclick = () => {
                 const fId = btn.dataset.formId;
                 if (fId && store.getState().formDefinitions[fId]) {
+                    errorsMap = {};
                     store.setState({
                         currentFormId: fId,
                         currentStep: 1,
@@ -120,10 +126,10 @@ export function setupFormWizard(container, store) {
                     <div class="form-group" style="margin-top: 1.5rem;">
                         <label>Başvuru Özeti İncelemesi</label>
                         <div class="summary-review-card">
-                            <div class="summary-item"><span class="s-label">Ad Soyad:</span><span class="s-val">${state.formData.fullName || '-'}</span></div>
-                            <div class="summary-item"><span class="s-label">İletişim:</span><span class="s-val">${state.formData.email || '-'} / ${state.formData.phone || '-'}</span></div>
-                            <div class="summary-item"><span class="s-label">Okul & Bölüm:</span><span class="s-val">${state.formData.university || '-'} - ${state.formData.department || '-'}</span></div>
-                            <div class="summary-item"><span class="s-label">Sınıf & İlçe:</span><span class="s-val">${state.formData.grade || '-'} | ${state.formData.district || '-'}</span></div>
+                            <div class="summary-item"><span class="s-label">Ad Soyad:</span><span class="s-val" id="sum-val-fullName">${state.formData.fullName || '-'}</span></div>
+                            <div class="summary-item"><span class="s-label">İletişim:</span><span class="s-val" id="sum-val-contact">${state.formData.email || '-'} / ${state.formData.phone || '-'}</span></div>
+                            <div class="summary-item"><span class="s-label">Okul & Bölüm:</span><span class="s-val" id="sum-val-school">${state.formData.university || '-'} - ${state.formData.department || '-'}</span></div>
+                            <div class="summary-item"><span class="s-label">Sınıf & İlçe:</span><span class="s-val" id="sum-val-grade">${state.formData.grade || '-'} | ${state.formData.district || '-'}</span></div>
                         </div>
                     </div>
                 `;
@@ -227,7 +233,8 @@ export function setupFormWizard(container, store) {
         }
     }
 
-    function bindInputEvents(container, formDef, state, store) {
+    function bindInputEvents(container, formDef, store) {
+        const state = store.getState();
         const currentStepDef = formDef.steps[state.currentStep - 1];
         if (!currentStepDef) return;
 
@@ -236,15 +243,15 @@ export function setupFormWizard(container, store) {
             if (field.type === 'radio_cards') {
                 container.querySelectorAll(`input[name="fill_${field.id}"]`).forEach(radio => {
                     radio.onchange = (e) => {
-                        store.setFormData(field.id, e.target.value);
-                        saveDraft(state.currentFormId, store.getState().formData);
+                        store.setFormData(field.id, e.target.value, true);
+                        triggerDebouncedAutoSave(store.getState());
                     };
                 });
             } else if (elem) {
                 if (field.type === 'kvkk_checkbox') {
                     elem.onchange = (e) => {
-                        store.setFormData(field.id, e.target.checked);
-                        saveDraft(state.currentFormId, store.getState().formData);
+                        store.setFormData(field.id, e.target.checked, true);
+                        triggerDebouncedAutoSave(store.getState());
                     };
                     const kvkkLink = container.querySelector('#open-kvkk-link');
                     if (kvkkLink) {
@@ -254,9 +261,15 @@ export function setupFormWizard(container, store) {
                         };
                     }
                 } else {
+                    // FAST NATIVE TYPING HANDLER (No DOM destruction!)
                     elem.oninput = (e) => {
-                        store.setFormData(field.id, e.target.value);
-                        saveDraft(state.currentFormId, store.getState().formData);
+                        const val = e.target.value;
+                        store.setFormData(field.id, val, true);
+                        triggerDebouncedAutoSave(store.getState());
+
+                        // Remove inline error state if typed
+                        const parent = elem.closest('.form-group');
+                        if (parent) parent.classList.remove('has-error');
                     };
                 }
             }
@@ -269,21 +282,25 @@ export function setupFormWizard(container, store) {
 
         if (prevBtn) {
             prevBtn.onclick = () => {
-                if (state.currentStep > 1) {
+                const curState = store.getState();
+                if (curState.currentStep > 1) {
                     errorsMap = {};
-                    store.setState({ currentStep: state.currentStep - 1 });
+                    store.setState({ currentStep: curState.currentStep - 1 });
                 }
             };
         }
 
         if (nextBtn) {
             nextBtn.onclick = () => {
-                const validation = validateStepFields(currentStepDef, state.formData);
+                const curState = store.getState();
+                const stepDef = formDef.steps[curState.currentStep - 1];
+                const validation = validateStepFields(stepDef, curState.formData);
                 if (validation.isValid) {
                     errorsMap = {};
-                    store.setState({ currentStep: state.currentStep + 1 });
+                    store.setState({ currentStep: curState.currentStep + 1 });
                 } else {
                     errorsMap = validation.errorsMap;
+                    lastRenderedStep = null; // force re-render with errors
                     render();
                 }
             };
@@ -292,9 +309,12 @@ export function setupFormWizard(container, store) {
         if (formElem) {
             formElem.onsubmit = async (e) => {
                 e.preventDefault();
-                const validation = validateStepFields(currentStepDef, state.formData);
+                const curState = store.getState();
+                const stepDef = formDef.steps[curState.currentStep - 1];
+                const validation = validateStepFields(stepDef, curState.formData);
                 if (!validation.isValid) {
                     errorsMap = validation.errorsMap;
+                    lastRenderedStep = null;
                     render();
                     return;
                 }
@@ -305,25 +325,25 @@ export function setupFormWizard(container, store) {
                     submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...`;
                 }
 
-                const refCode = generateRefCode(state.currentFormId);
+                const refCode = generateRefCode(curState.currentFormId);
                 const responsePayload = {
                     refCode: refCode,
-                    formSlug: state.currentFormId,
-                    fullName: state.formData.fullName || '',
-                    phone: state.formData.phone || '',
-                    email: state.formData.email || '',
-                    district: state.formData.district || '',
-                    university: state.formData.university || '',
-                    department: state.formData.department || '',
-                    grade: state.formData.grade || '',
-                    hearAbout: state.formData.hearAbout || 'Instagram',
-                    notes: state.formData.notes || '-',
+                    formSlug: curState.currentFormId,
+                    fullName: curState.formData.fullName || '',
+                    phone: curState.formData.phone || '',
+                    email: curState.formData.email || '',
+                    district: curState.formData.district || '',
+                    university: curState.formData.university || '',
+                    department: curState.formData.department || '',
+                    grade: curState.formData.grade || '',
+                    hearAbout: curState.formData.hearAbout || 'Instagram',
+                    notes: curState.formData.notes || '-',
                     date: new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
                 };
 
                 await postToGoogleSheets(responsePayload);
                 const updatedResponses = saveResponseToLocal(responsePayload);
-                clearDraft(state.currentFormId);
+                clearDraft(curState.currentFormId);
 
                 // Show Success Modal
                 const modalRef = document.getElementById('modal-ref-code');
@@ -336,6 +356,7 @@ export function setupFormWizard(container, store) {
 
                 // Reset Form State
                 errorsMap = {};
+                lastRenderedStep = null;
                 store.setState({
                     currentStep: 1,
                     formData: {},
@@ -349,6 +370,18 @@ export function setupFormWizard(container, store) {
                 }
             };
         }
+    }
+
+    function triggerDebouncedAutoSave(state) {
+        if (saveDraftDebounceTimer) clearTimeout(saveDraftDebounceTimer);
+        saveDraftDebounceTimer = setTimeout(() => {
+            saveDraft(state.currentFormId, state.formData);
+            const draftBadge = container.querySelector('#draft-saved-badge');
+            if (draftBadge && state.draftSavedTimestamp) {
+                draftBadge.innerHTML = `<i class="fas fa-cloud-arrow-up text-accent"></i> Taslak Otomatik Kaydedildi (${state.draftSavedTimestamp})`;
+                draftBadge.style.display = 'inline-flex';
+            }
+        }, 400);
     }
 
     store.subscribe(render);
