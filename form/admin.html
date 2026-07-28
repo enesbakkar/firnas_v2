@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yönetici Paneli | Firnas Form Suite</title>
+    <link class="favicon" rel="icon" type="image/png" href="/asset/firnas_logo.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+</head>
+<body>
+
+    <!-- ADMIN AUTHENTICATION MODAL OVERLAY -->
+    <div id="admin-lock-overlay" class="auth-modal-overlay active">
+        <div class="auth-card">
+            <div class="auth-shield-icon">
+                <i class="fas fa-user-shield"></i>
+            </div>
+            <span class="auth-badge">KORUMALI YÖNETİCİ ALANI</span>
+            <h2>Yönetici Girişi</h2>
+            <p>E-Tablo kayıtları, form oluşturucu ve Google Sheets entegrasyonuna erişmek için şifrenizi girin.</p>
+            
+            <form id="admin-auth-form" onsubmit="handleAdminAuthSubmit(event)">
+                <div class="form-group">
+                    <div class="input-icon-wrapper">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="admin-password-input" class="form-control" placeholder="Yönetici Şifresi" required autocomplete="current-password">
+                    </div>
+                    <span class="auth-error-msg" id="admin-auth-error-msg"><i class="fas fa-circle-exclamation"></i> Hatalı Şifre! Lütfen tekrar deneyin.</span>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                    <a href="/form/" class="btn btn-secondary full-width">Form Sayfası</a>
+                    <button type="submit" class="btn btn-primary full-width">
+                        <i class="fas fa-key"></i> Giriş Yap
+                    </button>
+                </div>
+            </form>
+            <p class="auth-footer-note"><i class="fas fa-info-circle"></i> Şifre: FORMS_fir_2023</p>
+        </div>
+    </div>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container nav-container">
+            <a href="/form/admin.html" class="logo-text">
+                <img src="/asset/firnas_logo.png" alt="Firnas Logo" style="height: 52px; margin-right: 12px;">
+                Firnas Technologies <span class="subdomain-tag">Admin Panel</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/form/" class="nav-link-btn" target="_blank"><i class="fas fa-external-link-alt"></i> Kamu Form Sayfası</a></li>
+                <li>
+                    <button id="admin-logout-btn" class="btn btn-logout-sm" onclick="lockAdminPanel()">
+                        <i class="fas fa-lock"></i> Oturumu Kapat
+                    </button>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Admin Container -->
+    <main class="form-page-wrapper">
+        <div class="container">
+            <!-- Header Section -->
+            <div class="form-header text-center">
+                <span class="form-badge"><i class="fas fa-shield-halved"></i> YÖNETİM MERKEZİ</span>
+                <h1 class="form-main-title">Form Yönetici Paneli</h1>
+                <p class="form-subtitle">Canlı E-Tablo Kayıtları, Google Sheets Entegrasyonu ve Form Tasarımcısı</p>
+                
+                <!-- View Mode Tabs -->
+                <div class="form-mode-tabs" role="tablist">
+                    <button class="tab-btn active" id="tab-responses-btn" onclick="switchAdminTab('responses')" role="tab">
+                        <i class="fas fa-table-cells"></i> E-Tablo Kayıtları <span class="badge-count" id="responses-counter">0</span>
+                    </button>
+                    <button class="tab-btn" id="tab-builder-btn" onclick="switchAdminTab('builder')" role="tab">
+                        <i class="fas fa-wand-magic-sparkles"></i> Form Tasarımcısı
+                    </button>
+                    <button class="tab-btn" id="tab-webhook-btn" onclick="switchAdminTab('webhook')" role="tab">
+                        <i class="fas fa-link"></i> Google Sheets Entegrasyonu
+                    </button>
+                </div>
+            </div>
+
+            <!-- TAB 1: E-TABLO KAYITLARI (RESPONSES DASHBOARD) -->
+            <div id="tab-responses" class="tab-content active">
+                <div class="responses-dashboard-card">
+                    <div class="responses-header">
+                        <div>
+                            <h2><i class="fas fa-file-excel text-accent"></i> FEAM Networking & Form Kayıtları</h2>
+                            <p class="text-muted">Google Sheets ve yerel veritabanı ile senkronize canlı katılımcı listesi.</p>
+                        </div>
+                        <div class="responses-actions">
+                            <button class="btn btn-success btn-sm" onclick="exportResponsesCSV()">
+                                <i class="fas fa-file-csv"></i> Excel / CSV İndir
+                            </button>
+                            <button class="btn btn-secondary btn-sm" onclick="exportResponsesJSON()">
+                                <i class="fas fa-download"></i> JSON İndir
+                            </button>
+                            <button class="btn btn-danger btn-sm" onclick="clearAllResponses()">
+                                <i class="fas fa-trash"></i> Kayıtları Temizle
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Stat Cards -->
+                    <div class="responses-stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-users"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value" id="stat-total-count">0</span>
+                                <span class="stat-label">Toplam Kayıtlı Katılımcı</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-calendar-check"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value">1 Ağustos 2026</span>
+                                <span class="stat-label">Etkinlik Tarihi</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon"><i class="fas fa-location-dot"></i></div>
+                            <div class="stat-info">
+                                <span class="stat-value">Atölye Üsküdar</span>
+                                <span class="stat-label">Etkinlik Konumu</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Table Wrapper -->
+                    <div class="table-responsive">
+                        <table class="responses-table" id="responses-data-table">
+                            <thead>
+                                <tr>
+                                    <th>Ref Kodu</th>
+                                    <th>Ad Soyad</th>
+                                    <th>İletişim (E-posta / Tel)</th>
+                                    <th>İlçe</th>
+                                    <th>Okul & Bölüm</th>
+                                    <th>Sınıf</th>
+                                    <th>Nereden Duymuş</th>
+                                    <th>Kayıt Tarihi</th>
+                                    <th>İşlem</th>
+                                </tr>
+                            </thead>
+                            <tbody id="responses-table-body">
+                                <tr>
+                                    <td colspan="9" class="text-center py-4 text-muted">Henüz kayıtlı katılımcı bulunmuyor.</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: FORM BUILDER -->
+            <div id="tab-builder" class="tab-content">
+                <div class="builder-layout-grid">
+                    <div class="builder-sidebar">
+                        <h3><i class="fas fa-toolbox"></i> Soru Türü Ekle</h3>
+                        <p class="text-muted small">Formunuza eklemek istediğiniz bileşeni seçin:</p>
+                        <div class="builder-tools">
+                            <button class="btn btn-secondary full-width btn-tool" onclick="addQuestionToBuilder('text')">
+                                <i class="fas fa-font"></i> Kısa Metin Girdisi
+                            </button>
+                            <button class="btn btn-secondary full-width btn-tool" onclick="addQuestionToBuilder('textarea')">
+                                <i class="fas fa-align-left"></i> Uzun Paragraf Metni
+                            </button>
+                            <button class="btn btn-secondary full-width btn-tool" onclick="addQuestionToBuilder('choice')">
+                                <i class="fas fa-list-check"></i> Çoktan Seçmeli (Radio)
+                            </button>
+                            <button class="btn btn-secondary full-width btn-tool" onclick="addQuestionToBuilder('dropdown')">
+                                <i class="fas fa-caret-down"></i> Açılır Liste (Dropdown)
+                            </button>
+                        </div>
+
+                        <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--form-border);">
+                        
+                        <h3><i class="fas fa-gear"></i> Form Ayarları</h3>
+                        <div class="form-group">
+                            <label>Form Başlığı</label>
+                            <input type="text" id="builder-form-title" class="form-control" value="FEAM Networking Kayıt Formu" oninput="updateBuilderTitle()">
+                        </div>
+                        <div class="form-group">
+                            <label>Form Açıklaması</label>
+                            <textarea id="builder-form-desc" class="form-control" rows="3" oninput="updateBuilderTitle()">Firnas TEAM Teknoloji Topluluğu Katılımcı Kayıt Formu</textarea>
+                        </div>
+                        <button class="btn btn-primary full-width" onclick="publishCustomForm()">
+                            <i class="fas fa-paper-plane"></i> Formu Yayınla / Kod Al
+                        </button>
+                        <button class="btn btn-danger full-width" onclick="resetBuilderForm()" style="margin-top: 8px;">
+                            <i class="fas fa-rotate-left"></i> Sıfırla
+                        </button>
+                    </div>
+
+                    <div class="builder-canvas">
+                        <div class="builder-preview-header">
+                            <span class="form-badge">CANLI ÖNİZLEME</span>
+                            <h2 id="preview-form-title">FEAM Networking Kayıt Formu</h2>
+                            <p id="preview-form-desc">Firnas TEAM Teknoloji Topluluğu Katılımcı Kayıt Formu</p>
+                        </div>
+
+                        <div id="builder-questions-list" class="builder-questions-list">
+                            <!-- Dynamic Questions Will Be Rendered Here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: GOOGLE SHEETS WEBHOOK INTEGRATION -->
+            <div id="tab-webhook" class="tab-content">
+                <div class="responses-dashboard-card">
+                    <div class="responses-header">
+                        <div>
+                            <h2><i class="fas fa-file-csv text-accent"></i> Google Sheets (E-Tablo) Canlı Entegrasyonu</h2>
+                            <p class="text-muted">Form verilerinin anında Google Sheet dosyanıza düşmesi için Webhook URL adresinizi tanımlayın.</p>
+                        </div>
+                    </div>
+
+                    <div style="background: #f8fafc; padding: 1.5rem; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 2rem;">
+                        <h4 style="color: #0f2e4a; margin-bottom: 0.5rem;"><i class="fas fa-link"></i> Webhook URL Yapılandırması</h4>
+                        <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">Google Apps Script'ten aldığınız Web App URL adresini buraya yapıştırın:</p>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="url" id="script-webhook-url-input" class="form-control" placeholder="https://script.google.com/macros/s/.../exec" style="flex: 1;">
+                            <button class="btn btn-primary" onclick="saveWebhookUrlSetting()">
+                                <i class="fas fa-save"></i> Kaydet
+                            </button>
+                        </div>
+                        <span id="webhook-saved-msg" style="display:none; color:#10b981; font-size:0.85rem; font-weight:700; margin-top:8px;"><i class="fas fa-check-circle"></i> Webhook URL başarıyla kaydedildi!</span>
+                    </div>
+
+                    <h4 style="color: #0f2e4a; margin-bottom: 1rem;"><i class="fas fa-code"></i> Google Sheets "Apps Script" Kod Şablonu (.gs)</h4>
+                    <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 1rem;">Google Sheet dosyanızda <strong>Uzantılar &gt; Apps Script</strong> bölümüne gidip aşağıdaki kodu yapıştırın ve <strong>Yayınla &gt; Web Uygulaması Olarak Dağıt</strong> seçeneğini kullanın:</p>
+                    
+                    <div style="position: relative;">
+                        <pre style="background: #051421; color: #38bdf8; padding: 1.5rem; border-radius: 16px; font-family: monospace; font-size: 0.88rem; overflow-x: auto; line-height: 1.6;"><code>function doPost(e) {
+  try {
+    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+    var data = JSON.parse(e.postData.contents);
+    
+    // E-Tabloya yeni satır olarak ekle
+    sheet.appendRow([
+      data.refCode || '',
+      data.fullName || '',
+      data.phone || '',
+      data.email || '',
+      data.district || '',
+      data.university || '',
+      data.department || '',
+      data.grade || '',
+      data.hearAbout || '',
+      data.notes || '',
+      data.date || new Date().toLocaleString("tr-TR")
+    ]);
+    
+    return ContentService.createTextOutput(JSON.stringify({"result": "success"}))
+                         .setMimeType(ContentService.MimeType.JSON);
+  } catch (error) {
+    return ContentService.createTextOutput(JSON.stringify({"result": "error", "error": error.toString()}))
+                         .setMimeType(ContentService.MimeType.JSON);
+  }
+}</code></pre>
+                        <button class="btn btn-secondary btn-sm" onclick="copyCodeSnippet()" style="position: absolute; top: 12px; right: 12px;">
+                            <i class="fas fa-copy"></i> Kodu Kopyala
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Response Detail Modal -->
+    <div id="response-detail-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px; text-align: left;">
+            <h3 style="margin-bottom: 1rem;"><i class="fas fa-user-gear text-accent"></i> Katılımcı Kayıt Detayı</h3>
+            <div id="modal-detail-body" class="summary-review-card" style="margin-bottom: 1.5rem;">
+                <!-- Dynamic Content -->
+            </div>
+            <button class="btn btn-secondary full-width" onclick="closeDetailModal()">Kapat</button>
+        </div>
+    </div>
+
+    <!-- EMBED / SHARE MODAL -->
+    <div id="embed-code-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 600px; text-align: left;">
+            <h3 style="margin-bottom: 1rem;"><i class="fas fa-code text-accent"></i> Formu Paylaş & İframe Paylaşım</h3>
+            
+            <div class="form-group">
+                <label>Doğrudan Bağlantı (URL)</label>
+                <div class="input-icon-wrapper">
+                    <input type="text" id="share-direct-url" class="form-control" readonly>
+                </div>
+                <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('share-direct-url')" style="margin-top: 6px;">
+                    <i class="fas fa-copy"></i> Bağlantıyı Kopyala
+                </button>
+            </div>
+
+            <div class="form-group" style="margin-top: 1rem;">
+                <label>Web Sitesine Göm (HTML iFrame Kodu)</label>
+                <textarea id="share-iframe-code" class="form-control" rows="3" readonly style="font-family: monospace; font-size: 0.85rem;"></textarea>
+                <button class="btn btn-secondary btn-sm" onclick="copyToClipboard('share-iframe-code')" style="margin-top: 6px;">
+                    <i class="fas fa-copy"></i> iFrame Kodunu Kopyala
+                </button>
+            </div>
+
+            <button class="btn btn-primary full-width" onclick="closeEmbedModal()" style="margin-top: 1.5rem;">Kapat</button>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>

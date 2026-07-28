@@ -1333,3 +1333,69 @@ select.form-control {
 .text-accent {
     color: var(--form-accent) !important;
 }
+
+/* ==========================================================================
+   KVKK CHECKBOX & MODAL STYLES
+   ========================================================================== */
+.kvkk-checkbox-group {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    padding: 1.1rem 1.25rem;
+    transition: var(--form-transition);
+}
+
+.kvkk-checkbox-group:hover {
+    border-color: #cbd5e1;
+    background: #ffffff;
+}
+
+.kvkk-container-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    cursor: pointer;
+    user-select: none;
+    margin: 0;
+    font-weight: 500 !important;
+}
+
+.kvkk-container-label input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    accent-color: var(--form-accent);
+    cursor: pointer;
+}
+
+.kvkk-text {
+    font-size: 0.9rem;
+    color: #334155;
+    line-height: 1.5;
+}
+
+.kvkk-text a {
+    color: var(--form-accent);
+    font-weight: 700;
+    text-decoration: underline;
+}
+
+.kvkk-text a:hover {
+    color: var(--form-primary);
+}
+
+.ref-code-display {
+    background: rgba(0, 184, 212, 0.1);
+    border: 2px dashed var(--form-accent);
+    color: var(--form-primary);
+    font-size: 1.85rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    padding: 14px 24px;
+    border-radius: 16px;
+    display: inline-block;
+    margin: 1.25rem 0;
+    font-family: monospace;
+    box-shadow: 0 4px 14px rgba(0, 184, 212, 0.15);
+}
+
