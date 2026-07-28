@@ -56,6 +56,11 @@ export function setupFormBuilder(container, store) {
     }
 
     function bindToolButtons(container) {
+        const backBtn = container.querySelector('#btn-back-from-builder');
+        if (backBtn) {
+            backBtn.onclick = () => store.setState({ activeTab: 'fill' });
+        }
+
         container.querySelectorAll('.btn-tool-add').forEach(btn => {
             btn.onclick = () => {
                 const type = btn.dataset.type || 'text';

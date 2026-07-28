@@ -18,6 +18,10 @@ export function setupResponseTable(container, store) {
         filterSlug = state.responseFilterFormId || 'all';
         searchQuery = (state.searchQuery || '').toLowerCase().trim();
 
+        // Active Form Details Header
+        const selectedFormDef = state.formDefinitions[filterSlug] || state.formDefinitions[state.selectedFormId];
+        renderResponseHeader(container, selectedFormDef, filterSlug, store);
+
         // 1. Filter by Form Slug
         let filtered = (filterSlug === 'all') 
             ? responses 
@@ -44,7 +48,7 @@ export function setupResponseTable(container, store) {
         const tbody = container.querySelector('#responses-table-body');
 
         if (counter) counter.innerText = responses.length;
-        if (statTotal) statTotal.innerText = responses.length;
+        if (statTotal) statTotal.innerText = filtered.length;
 
         if (!tbody) return;
 
@@ -97,6 +101,26 @@ export function setupResponseTable(container, store) {
         bindControlsEvents(container, store);
     }
 
+    function renderResponseHeader(container, formDef, filterSlug, store) {
+        const headerTitle = container.querySelector('#responses-header-title');
+        const headerSub = container.querySelector('#responses-header-sub');
+        const backBtn = container.querySelector('#btn-back-to-form-catalog');
+
+        if (backBtn) {
+            backBtn.onclick = () => store.setState({ activeTab: 'fill' });
+        }
+
+        if (headerTitle) {
+            if (filterSlug !== 'all' && formDef) {
+                headerTitle.innerHTML = `<i class="fas fa-file-excel text-accent"></i> "${escapeHtml(formDef.title)}" E-Tablo Kayıtları`;
+                if (headerSub) headerSub.innerText = `Google E-Tablolar uyumlu canlı başvuru listesi. (Form Kimliği: ${formDef.id})`;
+            } else {
+                headerTitle.innerHTML = `<i class="fas fa-file-excel text-accent"></i> Katılımcı Kayıt Listesi`;
+                if (headerSub) headerSub.innerText = `Google E-Tablolar (Sheets) uyumlu canlı kayıt listesi.`;
+            }
+        }
+    }
+
     function populateFilterDropdown(container, state, store) {
         const dropdown = container.querySelector('#responses-form-filter');
         if (!dropdown) return;
@@ -129,10 +153,10 @@ export function setupResponseTable(container, store) {
         const btnClear = container.querySelector('#btn-clear-all-responses');
 
         if (btnCsv) {
-            btnCsv.onclick = () => exportResponsesCSV(store.getState().responses);
+            btnCsv.onclick = () => exportResponsesCSV(store.getState().responses, filterSlug);
         }
         if (btnJson) {
-            btnJson.onclick = () => exportResponsesJSON(store.getState().responses);
+            btnJson.onclick = () => exportResponsesJSON(store.getState().responses, filterSlug);
         }
         if (btnClear) {
             btnClear.onclick = () => {
@@ -165,13 +189,14 @@ export function setupResponseTable(container, store) {
         if (modalElem) modalElem.classList.add('active');
     }
 
-    function exportResponsesCSV(responses) {
-        if (!responses || responses.length === 0) {
+    function exportResponsesCSV(responses, filterSlug) {
+        let list = (filterSlug === 'all') ? responses : responses.filter(r => r.formSlug === filterSlug);
+        if (!list || list.length === 0) {
             alert('İndirilecek kayıt bulunmuyor.');
             return;
         }
         let csvContent = "\uFEFFReferans Kodu,Form Kimligi,Ad Soyad,Telefon,E-posta,İlçe,Üniversite,Bölüm,Sınıf,Nereden Duydunuz,Ek Notlar,Kayıt Tarihi\n";
-        responses.forEach(r => {
+        list.forEach(r => {
             csvContent += `"${r.refCode}","${r.formSlug || 'feam-2026'}","${r.fullName}","${r.phone}","${r.email}","${r.district}","${r.university}","${r.department}","${r.grade}","${r.hearAbout}","${r.notes}","${r.date}"\n`;
         });
 
@@ -179,19 +204,20 @@ export function setupResponseTable(container, store) {
         const url = URL.createObjectURL(blob);
         const link = document.createElement('a');
         link.href = url;
-        link.download = `Firnas_Form_Yanitlar_${new Date().toISOString().slice(0, 10)}.csv`;
+        link.download = `Firnas_Form_Yanitlar_${filterSlug}_${new Date().toISOString().slice(0, 10)}.csv`;
         link.click();
     }
 
-    function exportResponsesJSON(responses) {
-        if (!responses || responses.length === 0) {
+    function exportResponsesJSON(responses, filterSlug) {
+        let list = (filterSlug === 'all') ? responses : responses.filter(r => r.formSlug === filterSlug);
+        if (!list || list.length === 0) {
             alert('İndirilecek kayıt bulunmuyor.');
             return;
         }
-        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(responses, null, 2));
+        const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(list, null, 2));
         const link = document.createElement('a');
         link.href = dataStr;
-        link.download = `Firnas_Form_Yanitlar_${new Date().toISOString().slice(0, 10)}.json`;
+        link.download = `Firnas_Form_Yanitlar_${filterSlug}_${new Date().toISOString().slice(0, 10)}.json`;
         link.click();
     }
 

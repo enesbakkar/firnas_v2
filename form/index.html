@@ -63,23 +63,10 @@
     <main class="form-page-wrapper">
         <div class="container">
             <!-- Header Section -->
-            <div class="form-header text-center">
+            <div class="form-header text-center" style="margin-bottom: 2rem;">
                 <span class="form-badge"><i class="fas fa-cubes"></i> FIRNAS FORM PORTALI</span>
                 <h1 class="form-main-title">Firnas Form Portalı</h1>
                 <p class="form-subtitle">Firnas Technologies Etkinlik, AR-GE Başvuru ve Kurumsal Formlar Merkezi</p>
-                
-                <!-- View Mode Tabs -->
-                <div class="form-mode-tabs" role="tablist">
-                    <button class="tab-btn active" id="tab-fill-btn" role="tab">
-                        <i class="fas fa-folder-open"></i> Form Portalı & Kayıt
-                    </button>
-                    <button class="tab-btn" id="tab-responses-btn" role="tab">
-                        <i class="fas fa-table-cells"></i> E-Tablo Kayıtları <span class="badge-count" id="responses-counter">0</span>
-                    </button>
-                    <button class="tab-btn" id="tab-builder-btn" role="tab">
-                        <i class="fas fa-wand-magic-sparkles"></i> Form Düzenleyici
-                    </button>
-                </div>
             </div>
 
             <!-- TAB 1: FORM PORTAL & DYNAMIC FORM WIZARD -->
@@ -169,11 +156,16 @@
 
             <!-- TAB 2: RESPONSES DASHBOARD (E-Tablo Kayıtları) -->
             <div id="tab-responses" class="tab-content">
+                <div style="margin-bottom: 1rem;">
+                    <button class="btn btn-secondary btn-sm" id="btn-back-to-form-catalog">
+                        <i class="fas fa-arrow-left"></i> Form Kataloğuna Dön
+                    </button>
+                </div>
                 <div class="responses-dashboard-card">
                     <div class="responses-header">
                         <div>
-                            <h2><i class="fas fa-file-excel text-accent"></i> Katılımcı Kayıt Listesi</h2>
-                            <p class="text-muted">Google E-Tablolar (Sheets) uyumlu canlı kayıt listesi.</p>
+                            <h2 id="responses-header-title"><i class="fas fa-file-excel text-accent"></i> Katılımcı Kayıt Listesi</h2>
+                            <p class="text-muted" id="responses-header-sub">Google E-Tablolar (Sheets) uyumlu canlı kayıt listesi.</p>
                         </div>
                         <div class="responses-actions">
                             <button class="btn btn-success btn-sm" id="btn-export-csv">
@@ -247,6 +239,11 @@
 
             <!-- TAB 3: FORM BUILDER -->
             <div id="tab-builder" class="tab-content">
+                <div style="margin-bottom: 1rem;">
+                    <button class="btn btn-secondary btn-sm" id="btn-back-from-builder">
+                        <i class="fas fa-arrow-left"></i> Form Kataloğuna Dön
+                    </button>
+                </div>
                 <div class="builder-layout-grid">
                     <div class="builder-sidebar">
                         <h3><i class="fas fa-toolbox"></i> Soru Türü Ekle</h3>

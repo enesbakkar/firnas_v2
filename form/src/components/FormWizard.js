@@ -1,6 +1,6 @@
 /* ==========================================================================
    FORM WIZARD & DASHBOARD COMPONENT (src/components/FormWizard.js)
-   Google Forms Gallery & Form Filling Engine
+   Form Cards Gallery & Form Filling Engine
    ========================================================================== */
 
 import { renderFormField } from './FormField.js';
@@ -47,7 +47,23 @@ export function setupFormWizard(container, store) {
 
         const allFormIds = Object.keys(state.formDefinitions);
 
-        galleryContainer.innerHTML = allFormIds.map(fId => {
+        let cardsHtml = `
+            <!-- NEW FORM CREATION CARD -->
+            <div class="dashboard-form-card new-form-create-card" id="btn-card-create-new-form">
+                <div class="create-card-inner">
+                    <div class="card-icon-box icon-cyan" style="width:54px; height:54px; font-size:1.5rem; background:rgba(0,184,212,0.15);">
+                        <i class="fas fa-plus"></i>
+                    </div>
+                    <h4>Yeni Form Oluştur</h4>
+                    <p class="card-desc">Soru tiplerini belirleyip özel başvuru veya kayıt formu tasarlayın.</p>
+                    <button class="btn btn-primary full-width" style="margin-top:auto;">
+                        <i class="fas fa-wand-magic-sparkles"></i> Form Düzenleyiciyi Aç
+                    </button>
+                </div>
+            </div>
+        `;
+
+        cardsHtml += allFormIds.map(fId => {
             const f = state.formDefinitions[fId];
             const isSelected = (fId === state.currentFormId);
             const responsesCount = (state.responses || []).filter(r => (r.formSlug === fId || (!r.formSlug && fId === 'feam-2026'))).length;
@@ -61,24 +77,44 @@ export function setupFormWizard(container, store) {
                         <span class="form-badge-tag tag-cyan">${f.category || 'FORM'}</span>
                     </div>
                     <h4>${f.title}</h4>
-                    <p class="card-desc">${f.description ? (f.description.substring(0, 95) + '...') : ''}</p>
+                    <p class="card-desc">${f.description ? (f.description.substring(0, 90) + '...') : ''}</p>
                     <div class="card-meta">
                         <span><i class="fas fa-users text-accent"></i> ${responsesCount} Katılımcı Kaydı</span>
                         <span><i class="fas fa-link"></i> ?f=${f.id}</span>
                     </div>
-                    <div class="card-actions-row" style="display:flex; gap:6px;">
-                        <button class="btn ${isSelected ? 'btn-primary' : 'btn-secondary'} btn-select-form" style="flex:1;" data-form-id="${f.id}">
-                            <i class="fas ${isSelected ? 'fa-pen-to-square' : 'fa-arrow-right'}"></i> ${isSelected ? 'Şu An Açık' : 'Formu Doldur'}
-                        </button>
-                        <button class="btn btn-secondary btn-share-form" data-form-id="${f.id}" title="Form Bağlantısını Kopyala & Paylaş">
-                            <i class="fas fa-share-nodes"></i> Paylaş
+                    <div class="card-actions-row" style="display:flex; flex-direction:column; gap:8px;">
+                        <div style="display:flex; gap:6px;">
+                            <button class="btn btn-primary btn-preview-form" style="flex:1;" data-form-id="${f.id}" title="Formu Önizle ve Test Et">
+                                <i class="fas fa-eye"></i> Önizle & Doldur
+                            </button>
+                            <button class="btn btn-secondary btn-share-form" data-form-id="${f.id}" title="Form Bağlantısını Paylaş">
+                                <i class="fas fa-share-nodes"></i>
+                            </button>
+                        </div>
+                        <button class="btn btn-secondary full-width btn-open-responses" data-form-id="${f.id}">
+                            <i class="fas fa-table-cells text-accent"></i> Yanıtlar & E-Tablo Detayları (${responsesCount})
                         </button>
                     </div>
                 </div>
             `;
         }).join('');
 
-        galleryContainer.querySelectorAll('.btn-select-form').forEach(btn => {
+        galleryContainer.innerHTML = cardsHtml;
+
+        // Bind New Form Creation Card
+        const newFormBtn = galleryContainer.querySelector('#btn-card-create-new-form');
+        if (newFormBtn) {
+            newFormBtn.onclick = () => {
+                if (window.requestAuthTabSwitch) {
+                    window.requestAuthTabSwitch('builder');
+                } else {
+                    store.setState({ activeTab: 'builder' });
+                }
+            };
+        }
+
+        // Bind Preview Button
+        galleryContainer.querySelectorAll('.btn-preview-form').forEach(btn => {
             btn.onclick = () => {
                 const fId = btn.dataset.formId;
                 if (fId && store.getState().formDefinitions[fId]) {
@@ -88,12 +124,29 @@ export function setupFormWizard(container, store) {
                         currentStep: 1,
                         formData: {}
                     });
+                    if (window.toggleStandaloneMode) {
+                        window.toggleStandaloneMode(true);
+                    }
                     const wrapper = container.querySelector('#selected-form-wrapper');
                     if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth' });
                 }
             };
         });
 
+        // Bind Open Responses & E-Tablo Details Button
+        galleryContainer.querySelectorAll('.btn-open-responses').forEach(btn => {
+            btn.onclick = () => {
+                const fId = btn.dataset.formId;
+                if (window.requestAuthTabSwitch) {
+                    store.setState({ responseFilterFormId: fId, selectedFormId: fId });
+                    window.requestAuthTabSwitch('responses');
+                } else {
+                    store.setState({ responseFilterFormId: fId, selectedFormId: fId, activeTab: 'responses' });
+                }
+            };
+        });
+
+        // Bind Share Button
         galleryContainer.querySelectorAll('.btn-share-form').forEach(btn => {
             btn.onclick = () => {
                 const fId = btn.dataset.formId;
@@ -261,13 +314,11 @@ export function setupFormWizard(container, store) {
                         };
                     }
                 } else {
-                    // FAST NATIVE TYPING HANDLER (No DOM destruction!)
                     elem.oninput = (e) => {
                         const val = e.target.value;
                         store.setFormData(field.id, val, true);
                         triggerDebouncedAutoSave(store.getState());
 
-                        // Remove inline error state if typed
                         const parent = elem.closest('.form-group');
                         if (parent) parent.classList.remove('has-error');
                     };
@@ -300,7 +351,7 @@ export function setupFormWizard(container, store) {
                     store.setState({ currentStep: curState.currentStep + 1 });
                 } else {
                     errorsMap = validation.errorsMap;
-                    lastRenderedStep = null; // force re-render with errors
+                    lastRenderedStep = null;
                     render();
                 }
             };

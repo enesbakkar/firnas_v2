@@ -6,7 +6,9 @@ export class Store {
     constructor(initialState = {}) {
         this.state = {
             currentFormId: 'feam-2026',
+            selectedFormId: 'feam-2026',
             currentStep: 1,
+            currentView: 'dashboard', // 'dashboard' | 'detail' | 'builder' | 'preview'
             formData: {},
             responses: [],
             customForms: [],

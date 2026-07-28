@@ -283,6 +283,29 @@ ul, ol {
     box-shadow: 0 0 0 4px var(--form-accent-glow), 0 18px 40px rgba(15, 46, 74, 0.12);
 }
 
+.new-form-create-card {
+    border: 2px dashed rgba(0, 184, 212, 0.4) !important;
+    background: rgba(5, 20, 33, 0.4) !important;
+    cursor: pointer;
+    text-align: center;
+}
+
+.new-form-create-card:hover {
+    border-color: var(--form-accent) !important;
+    background: rgba(0, 184, 212, 0.08) !important;
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(0, 184, 212, 0.15);
+}
+
+.create-card-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 220px;
+}
+
 .card-top-row {
     display: flex;
     justify-content: space-between;
