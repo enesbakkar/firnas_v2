@@ -94,51 +94,19 @@
             <!-- TAB 1: PORTAL ACTIVE FORMS & FILL ENGINE -->
             <div id="tab-fill" class="tab-content active">
                 
-                <!-- PORTAL ACTIVE FORMS CATALOG -->
-                <div class="portal-forms-catalog">
-                    <div class="catalog-header-bar">
-                        <div class="catalog-title-group">
-                            <h3><i class="fas fa-layer-group"></i> Yayınlanan Formlar</h3>
-                            <p>İşlem yapmak istediğiniz formu aşağıdan seçebilirsiniz:</p>
-                        </div>
-                    </div>
-                    
-                    <div class="catalog-cards-grid">
-                        <div class="form-select-card active" id="card-feam-2026" onclick="selectPortalForm('feam-2026')">
-                            <div class="card-icon-box icon-cyan">
-                                <i class="fas fa-users"></i>
-                            </div>
-                            <div class="card-info">
-                                <span class="form-type-tag">Etkinlik & Buluşma</span>
-                                <h4>FEAM Networking 2026</h4>
-                                <p>1 Ağustos 2026 &bull; Atölye Üsküdar</p>
-                            </div>
-                            <div class="card-active-indicator"><i class="fas fa-circle-check"></i> Aktif</div>
-                        </div>
-
-                        <div class="form-select-card" id="card-project-apply" onclick="selectPortalForm('project-apply')">
-                            <div class="card-icon-box icon-blue">
-                                <i class="fas fa-laptop-code"></i>
-                            </div>
-                            <div class="card-info">
-                                <span class="form-type-tag">Proje & AR-GE</span>
-                                <h4>Proje & AR-GE Başvurusu</h4>
-                                <p>Otonom Sistemler & STEM Projeleri</p>
-                            </div>
-                            <div class="card-active-indicator"><i class="fas fa-circle"></i> Seç</div>
-                        </div>
-
-                        <div class="form-select-card" id="card-general-contact" onclick="selectPortalForm('general-contact')">
-                            <div class="card-icon-box icon-gold">
-                                <i class="fas fa-headset"></i>
-                            </div>
-                            <div class="card-info">
-                                <span class="form-type-tag">İletişim & Destek</span>
-                                <h4>Kurumsal Destek & İletişim</h4>
-                                <p>7/24 Genel Talep ve Bilgi Formu</p>
-                            </div>
-                            <div class="card-active-indicator"><i class="fas fa-circle"></i> Seç</div>
-                        </div>
+                <!-- SLEEK FORM SWITCHER BAR -->
+                <div class="form-switcher-bar">
+                    <span class="switcher-label"><i class="fas fa-list-check"></i> Form Seçin:</span>
+                    <div class="switcher-pills">
+                        <button class="switcher-pill active" id="card-feam-2026" onclick="selectPortalForm('feam-2026')">
+                            <i class="fas fa-users"></i> FEAM Networking 2026
+                        </button>
+                        <button class="switcher-pill" id="card-project-apply" onclick="selectPortalForm('project-apply')">
+                            <i class="fas fa-laptop-code"></i> Proje & AR-GE Başvurusu
+                        </button>
+                        <button class="switcher-pill" id="card-general-contact" onclick="selectPortalForm('general-contact')">
+                            <i class="fas fa-headset"></i> Kurumsal İletişim & Destek
+                        </button>
                     </div>
                 </div>
 
