@@ -13,39 +13,32 @@
 </head>
 <body>
 
-    <!-- AUTHENTICATION MODAL OVERLAY (REQUIRED BEFORE INTERFACE LOADS) -->
+    <!-- AUTHENTICATION MODAL OVERLAY -->
     <div id="auth-lock-overlay" class="auth-modal-overlay active">
         <div class="auth-card">
-            <div class="auth-brand-header">
-                <img src="/asset/firnas_logo.png" alt="Firnas Technologies" class="auth-brand-logo">
+            <div class="auth-shield-icon">
+                <i class="fas fa-user-shield"></i>
             </div>
-            <span class="auth-badge"><i class="fas fa-shield-halved"></i> GÜVENLİ ERİŞİM PORTALI</span>
-            <h2 class="auth-title">Form Portalı Girişi</h2>
-            <p class="auth-subtitle">Firnas Technologies form sistemine erişmek için lütfen doğrulama şifrenizi giriniz.</p>
+            <span class="auth-badge">KORUMALI ALAN</span>
+            <h2>Giriş Şifresi</h2>
+            <p>Firnas Technologies Form Portalına erişmek için şifrenizi girin.</p>
             
-            <form id="auth-form" onsubmit="handleAuthSubmit(event)" novalidate>
-                <div class="form-group auth-input-group">
+            <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+                <div class="form-group">
                     <div class="input-icon-wrapper">
-                        <i class="fas fa-key input-main-icon"></i>
-                        <input type="password" id="auth-password-input" class="form-control auth-input" placeholder="Erişim Şifresi" required autocomplete="current-password">
-                        <button type="button" class="password-toggle-btn" onclick="togglePasswordVisibility('auth-password-input', this)" aria-label="Şifreyi Göster/Gizle">
-                            <i class="fas fa-eye"></i>
-                        </button>
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="auth-password-input" class="form-control" placeholder="Erişim Şifresi" required autocomplete="current-password">
                     </div>
-                    <span class="auth-error-msg" id="auth-error-msg"><i class="fas fa-circle-exclamation"></i> Girdiğiniz şifre geçersiz. Lütfen tekrar deneyin.</span>
+                    <span class="auth-error-msg" id="auth-error-msg"><i class="fas fa-circle-exclamation"></i> Hatalı Şifre! Lütfen tekrar deneyin.</span>
                 </div>
-                <div class="auth-actions-row">
-                    <button type="button" class="btn btn-secondary auth-btn-secondary" onclick="closeAuthModal()">
-                        <i class="fas fa-house"></i> Ana Sayfa
-                    </button>
-                    <button type="submit" class="btn btn-primary auth-btn-primary">
-                        <i class="fas fa-right-to-bracket"></i> Giriş Yap
+                <div style="display: flex; gap: 10px; margin-top: 1rem;">
+                    <button type="button" class="btn btn-secondary full-width" onclick="closeAuthModal()">Ana Sayfa</button>
+                    <button type="submit" class="btn btn-primary full-width">
+                        <i class="fas fa-key"></i> Giriş Yap
                     </button>
                 </div>
             </form>
-            <div class="auth-credentials-chip">
-                <i class="fas fa-lock"></i> Şifre: <code>FORMS_fir_2023</code>
-            </div>
+            <p class="auth-footer-note"><i class="fas fa-info-circle"></i> Şifre: FORMS_fir_2023</p>
         </div>
     </div>
     <script>
