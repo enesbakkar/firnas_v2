@@ -1,6 +1,6 @@
 /* ==========================================================================
    MAIN APP ENTRY POINT (src/app.js)
-   Form Sharing Engine & Multi-Form Manager
+   Form Sharing Engine, Standalone Participant View & Multi-Form Manager
    ========================================================================== */
 
 import { appStore } from './core/store.js';
@@ -16,13 +16,28 @@ import { setupAuthModal } from './components/AuthModal.js';
 document.addEventListener('DOMContentLoaded', () => {
     // 1. Detect URL Slug (?f=slug or #slug)
     const urlParams = new URLSearchParams(window.location.search);
+    const hasFormParam = urlParams.has('f') || urlParams.has('form') || (window.location.hash && window.location.hash.length > 1);
+    
     let initialSlug = urlParams.get('f') || urlParams.get('form');
     if (!initialSlug && window.location.hash) {
         initialSlug = window.location.hash.substring(1);
     }
     if (!initialSlug) initialSlug = 'feam-2026';
 
-    // 2. Load Stored Data
+    // 2. Set Standalone Participant View Mode if a specific form link was opened
+    if (hasFormParam) {
+        document.body.classList.add('standalone-form-mode');
+    } else {
+        document.body.classList.remove('standalone-form-mode');
+    }
+
+    // Global helper to toggle standalone mode
+    window.toggleStandaloneMode = (enable) => {
+        if (enable) document.body.classList.add('standalone-form-mode');
+        else document.body.classList.remove('standalone-form-mode');
+    };
+
+    // 3. Load Stored Data
     const storedResponses = getResponses();
     const storedCustomForms = getCustomForms();
     const isAuth = sessionStorage.getItem(STORAGE_KEYS.AUTH_STATE) === 'true';
@@ -37,10 +52,10 @@ document.addEventListener('DOMContentLoaded', () => {
         initialSlug = 'feam-2026';
     }
 
-    // 3. Load Draft for Initial Form
+    // 4. Load Draft for Initial Form
     const initialDraft = loadDraft(initialSlug);
 
-    // 4. Initialize Store State
+    // 5. Initialize Store State
     appStore.setState({
         currentFormId: initialSlug,
         currentStep: 1,
@@ -52,7 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
         activeTab: 'fill'
     });
 
-    // 5. Initialize Components & Sharing Engine
+    // 6. Initialize Components & Sharing Engine
     const rootContainer = document.body;
     setupAuthModal(rootContainer, appStore);
     setupFormWizard(rootContainer, appStore);
@@ -60,10 +75,10 @@ document.addEventListener('DOMContentLoaded', () => {
     setupFormBuilder(rootContainer, appStore);
     setupShareModal(rootContainer, appStore);
 
-    // 6. Bind Global Events & Switchers
+    // 7. Bind Global Events & Switchers
     bindGlobalEvents(rootContainer, appStore);
 
-    // 7. Subscribe Global UI Updates
+    // 8. Subscribe Global UI Updates
     appStore.subscribe(state => {
         updateTabVisibility(state);
         updateSwitcherPills(state);

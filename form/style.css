@@ -18,6 +18,19 @@
 }
 
 /* ==========================================================================
+   STANDALONE PARTICIPANT FORM FILLING MODE (PURE FORM VIEW)
+   ========================================================================== */
+body.standalone-form-mode .form-header,
+body.standalone-form-mode .portal-gallery-section,
+body.standalone-form-mode .form-switcher-bar {
+    display: none !important;
+}
+
+body.standalone-form-mode .form-page-wrapper {
+    padding-top: 1.5rem;
+}
+
+/* ==========================================================================
    GLOBAL RESET & BASE STYLES
    ========================================================================== */
 *, *::before, *::after {
