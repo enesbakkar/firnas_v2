@@ -580,3 +580,88 @@ function copyToClipboard(inputElemId) {
 
     alert('✅ Kod başarıyla panoya kopyalandı!');
 }
+
+/* -------------------------------------------------------------------------- */
+/* PORTAL FORM SELECTOR & SWITCHING                                            */
+/* -------------------------------------------------------------------------- */
+const PORTAL_FORMS = {
+    'feam-2026': {
+        title: 'FEAM Networking 2026',
+        banner: '/asset/feam_banner.png',
+        bannerVisible: true,
+        meta1: { icon: 'fa-calendar-day', text: '1 Ağustos 2026, 15:00' },
+        meta2: { icon: 'fa-location-dot', text: 'Atölye Üsküdar' },
+        meta3: { icon: 'fa-rocket', text: 'Firnas TEAM Buluşması' },
+        desc: '<i class="fas fa-circle-info info-icon"></i> Lise ve üniversite öğrencilerinin teknoloji ve inovasyon etrafında bir araya geldiği; proje sunumları, tanışma etkinliği, networking çalışmaları ve ortak üretim odaklı fikir alışverişi yapılan bu özel buluşmada yerinizi almak için aşağıdaki formu eksiksiz doldurun!'
+    },
+    'project-apply': {
+        title: 'Firnas Proje & AR-GE Başvurusu',
+        banner: null,
+        bannerVisible: false,
+        meta1: { icon: 'fa-microchip', text: 'AR-GE & Otonom Sistemler' },
+        meta2: { icon: 'fa-laptop-code', text: 'Yazılım, Donanım & STEM' },
+        meta3: { icon: 'fa-bolt', text: 'Proje Başvuruları Açık' },
+        desc: '<i class="fas fa-rocket info-icon"></i> Firnas Technologies bünyesinde yürütülen teknoloji, yazılım, robotik ve STEM projelerinde yer almak, kendi projenizle başvuru yapmak veya geliştirme ekibimize dahil olmak için aşağıdaki başvuru formunu doldurun.'
+    },
+    'general-contact': {
+        title: 'Kurumsal İletişim & Destek Formu',
+        banner: null,
+        bannerVisible: false,
+        meta1: { icon: 'fa-headset', text: '7/24 İletişim Merkezi' },
+        meta2: { icon: 'fa-building', text: 'Firnas Technologies HQ' },
+        meta3: { icon: 'fa-envelope-open-text', text: 'Kurumsal & Bireysel Talepler' },
+        desc: '<i class="fas fa-handshake info-icon"></i> Firnas Technologies ürünleri, eğitim kitlerimiz (FiCo) veya kurumsal iş birliği talepleriniz için doğrudan yönetim ve destek ekibimize mesajınızı iletebilirsiniz.'
+    }
+};
+
+let activePortalFormId = 'feam-2026';
+
+function selectPortalForm(formId) {
+    if (!PORTAL_FORMS[formId]) return;
+    activePortalFormId = formId;
+
+    // Update catalog cards active state
+    document.querySelectorAll('.form-select-card').forEach(card => {
+        card.classList.remove('active');
+        const indicator = card.querySelector('.card-active-indicator');
+        if (indicator) indicator.innerHTML = '<i class="fas fa-circle"></i> Seç';
+    });
+
+    const activeCard = document.getElementById(`card-${formId}`);
+    if (activeCard) {
+        activeCard.classList.add('active');
+        const indicator = activeCard.querySelector('.card-active-indicator');
+        if (indicator) indicator.innerHTML = '<i class="fas fa-circle-check"></i> Aktif';
+    }
+
+    const formData = PORTAL_FORMS[formId];
+
+    // Update Banner Container
+    const bannerContainer = document.getElementById('form-banner-container');
+    const bannerImg = document.getElementById('form-banner-img');
+    if (bannerContainer && bannerImg) {
+        if (formData.bannerVisible && formData.banner) {
+            bannerImg.src = formData.banner;
+            bannerContainer.style.display = 'flex';
+        } else {
+            bannerContainer.style.display = 'none';
+        }
+    }
+
+    // Update Metadata
+    const mText1 = document.getElementById('meta-text-1');
+    const mText2 = document.getElementById('meta-text-2');
+    const mText3 = document.getElementById('meta-text-3');
+
+    if (mText1 && formData.meta1) mText1.parentElement.innerHTML = `<i class="fas ${formData.meta1.icon}"></i> <span>${formData.meta1.text}</span>`;
+    if (mText2 && formData.meta2) mText2.parentElement.innerHTML = `<i class="fas ${formData.meta2.icon}"></i> <span>${formData.meta2.text}</span>`;
+    if (mText3 && formData.meta3) mText3.parentElement.innerHTML = `<i class="fas ${formData.meta3.icon}"></i> <span>${formData.meta3.text}</span>`;
+
+    // Update Description
+    const descText = document.getElementById('form-desc-text');
+    if (descText) descText.innerHTML = formData.desc;
+
+    // Smooth scroll to form card
+    const formWrapper = document.getElementById('selected-form-wrapper');
+    if (formWrapper) formWrapper.scrollIntoView({ behavior: 'smooth' });
+}
