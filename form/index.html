@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="FEAM Networking (Firnas TEAM Teknoloji Topluluğu Buluşması) Katılımcı Kayıt Formu - 1 Ağustos 2026 Atölye Üsküdar.">
-    <title>FEAM Networking Kayıt Formu | Firnas Technologies</title>
+    <meta name="description" content="Firnas Technologies Başvuru ve Kayıt Formu.">
+    <title>Başvuru Formu | Firnas Technologies</title>
     <link class="favicon" rel="icon" type="image/png" href="/asset/firnas_logo.png">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
@@ -30,28 +30,28 @@
         <div class="container">
             <!-- Header Section -->
             <div class="form-header text-center">
-                <span class="form-badge"><i class="fas fa-rocket"></i> FIRNAS TEAM BULUŞMASI</span>
-                <h1 class="form-main-title">FEAM Networking 2026</h1>
-                <p class="form-subtitle">Firnas TEAM Teknoloji Topluluğu Katılımcı Kayıt Portalı</p>
+                <span class="form-badge" id="public-form-category-badge"><i class="fas fa-rocket"></i> FIRNAS TEAM BULUŞMASI</span>
+                <h1 class="form-main-title" id="public-form-main-title">FEAM Networking 2026</h1>
+                <p class="form-subtitle">Firnas Technologies Katılımcı Kayıt Portalı</p>
             </div>
 
             <!-- PUBLIC FORM CARD -->
             <div class="form-card-wrapper event-form-card" id="selected-form-wrapper">
                 <!-- EVENT BANNER HEADER -->
-                <div class="event-banner-container">
-                    <img src="/asset/feam_banner.png" alt="FEAM Networking 2026 Banner" class="event-banner-img">
+                <div class="event-banner-container" id="public-form-banner-container">
+                    <img src="/asset/feam_banner.png" alt="FEAM Networking 2026 Banner" class="event-banner-img" id="public-form-banner-img">
                 </div>
 
                 <!-- Event Metadata Bar -->
                 <div class="event-meta-bar">
-                    <div class="meta-pill"><i class="fas fa-calendar-day"></i> <span>1 Ağustos 2026, 15:00</span></div>
-                    <div class="meta-pill"><i class="fas fa-location-dot"></i> <span>Atölye Üsküdar</span></div>
-                    <div class="meta-pill tag-pill"><i class="fas fa-users"></i> <span>Gençlik & Teknoloji Buluşması</span></div>
+                    <div class="meta-pill" id="meta-pill-1"><i class="fas fa-calendar-day"></i> <span id="meta-text-1">1 Ağustos 2026, 15:00</span></div>
+                    <div class="meta-pill" id="meta-pill-2"><i class="fas fa-location-dot"></i> <span id="meta-text-2">Atölye Üsküdar</span></div>
+                    <div class="meta-pill tag-pill" id="meta-pill-3"><i class="fas fa-users"></i> <span id="meta-text-3">Gençlik & Teknoloji Buluşması</span></div>
                 </div>
 
                 <!-- Event Description Box -->
                 <div class="event-info-box">
-                    <p><i class="fas fa-circle-info info-icon"></i> Lise ve üniversite öğrencilerinin teknoloji ve inovasyon etrafında bir araya geldiği; proje sunumları, tanışma etkinliği, networking çalışmaları ve ortak üretim odaklı fikir alışverişi yapılan bu özel buluşmada yerinizi almak için aşağıdaki formu eksiksiz doldurun!</p>
+                    <p id="public-form-desc-text"><i class="fas fa-circle-info info-icon"></i> Lise ve üniversite öğrencilerinin teknoloji ve inovasyon etrafında bir araya geldiği bu özel buluşmada yerinizi almak için aşağıdaki formu eksiksiz doldurun!</p>
                 </div>
 
                 <!-- Progress Tracker -->
@@ -269,11 +269,11 @@
             </div>
             <span class="auth-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981;">KAYIT BAŞARILI</span>
             <h2>Kayıt Başarıyla Alındı!</h2>
-            <p>FEAM Networking 2026 etkinliğimize başvurunuz başarıyla alınmıştır. Giriş ve yaka kartı doğrulama referans kodunuz:</p>
+            <p>Başvurunuz başarıyla alınmıştır. Giriş ve doğrulama referans kodunuz:</p>
             
             <div class="ref-code-display" id="modal-ref-code">FEAM-84920</div>
             
-            <p class="small text-muted" style="margin-bottom: 1.5rem;">Bu kodu kaydediniz. Etkinlik günü giriş esnasında kontrol edilecektir.</p>
+            <p class="small text-muted" style="margin-bottom: 1.5rem;">Bu kodu kaydediniz. Doğrulama esnasında kontrol edilecektir.</p>
             
             <div style="display: flex; gap: 10px;">
                 <button class="btn btn-secondary full-width" onclick="copyToClipboard('modal-ref-code-text')">
@@ -297,13 +297,13 @@
             
             <div class="kvkk-modal-scrollable-content" style="overflow-y: auto; padding-right: 8px; color: #cbd5e1; font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.5rem;">
                 <p><strong>Firnas Technologies Kişisel Verilerin Korunması ve İşlenmesi Aydınlatma Metni</strong></p>
-                <p>6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, Firnas Technologies olarak; FEAM Networking ve diğer etkinlik kayıt süreçlerinde siz değerli katılımcılarımızın kişisel verilerinin güvenliğine azami önem vermekteyiz.</p>
+                <p>6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, Firnas Technologies olarak; kayıt ve başvuru süreçlerinde siz değerli katılımcılarımızın kişisel verilerinin güvenliğine azami önem vermekteyiz.</p>
                 
                 <h5 style="color: #ffffff; margin-top: 1rem;">1. İşlenen Kişisel Verileriniz</h5>
                 <p>Form kapsamında topladığımız Ad Soyad, Telefon Numarası, E-posta Adresi, İkamet Edilen İlçe, Okul/Üniversite, Bölüm ve Sınıf bilgileriniz işlenmektedir.</p>
 
                 <h5 style="color: #ffffff; margin-top: 1rem;">2. Veri İşleme Amaçları</h5>
-                <p>Kişisel verileriniz; etkinlik yaka kartı ve organizasyon listelerinin oluşturulması, etkinlik erişim teyitlerinin sağlanması, bilgilendirme e-postaları ve iletişim süreçlerinin yürütülmesi amaçlarıyla sınırlı olarak işlenmektedir.</p>
+                <p>Kişisel verileriniz; organizasyon listelerinin oluşturulması, başvuru erişim teyitlerinin sağlanması ve bilgilendirme süreçlerinin yürütülmesi amaçlarıyla sınırlı olarak işlenmektedir.</p>
 
                 <h5 style="color: #ffffff; margin-top: 1rem;">3. Verilerin Aktarılması ve Güvenliği</h5>
                 <p>Kişisel verileriniz 3. şahıslarla reklam veya pazarlama amacıyla kesinlikle paylaşılmamaktadır. Verileriniz şifrelenmiş güvenli veritabanı altyapısında saklanmaktadır.</p>

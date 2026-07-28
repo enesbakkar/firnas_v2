@@ -1,25 +1,152 @@
 /* ==========================================================================
-   Firnas Form Suite - Public Participant Form Engine (script.js)
+   Firnas Form Suite - Dedicated Form Runner Engine (script.js)
+   Renders Dedicated Form View for URL slugs (?f=slug)
    ========================================================================== */
 
-// Configurable Google Apps Script Webhook Endpoint (Defaults to saved value or placeholder)
 let GOOGLE_APPS_SCRIPT_URL = localStorage.getItem('firnas_google_script_url') || 'https://script.google.com/macros/s/AKfycbx_EXAMPLE_WEBHOOK_URL/exec';
 
 let currentStep = 1;
 const totalSteps = 3;
-const DRAFT_STORAGE_KEY = 'firnas_form_draft';
+let activeFormSlug = 'feam-2026';
+let activeFormConfig = null;
+
+// Built-in system fallback forms
+const FALLBACK_SYSTEM_FORMS = {
+    'feam-2026': {
+        slug: 'feam-2026',
+        title: 'FEAM Networking 2026',
+        category: 'Etkinlik & Buluşma',
+        banner: '/asset/feam_banner.png',
+        meta1: { icon: 'fa-calendar-day', text: '1 Ağustos 2026, 15:00' },
+        meta2: { icon: 'fa-location-dot', text: 'Atölye Üsküdar' },
+        meta3: { icon: 'fa-users', text: 'Gençlik & Teknoloji Buluşması' },
+        desc: '<i class="fas fa-circle-info info-icon"></i> Lise ve üniversite öğrencilerinin teknoloji ve inovasyon etrafında bir araya geldiği bu özel buluşmada yerinizi almak için aşağıdaki formu eksiksiz doldurun!'
+    },
+    'proje-basvuru': {
+        slug: 'proje-basvuru',
+        title: 'Firnas Proje & AR-GE Başvurusu',
+        category: 'Proje & AR-GE',
+        banner: null,
+        meta1: { icon: 'fa-microchip', text: 'AR-GE & Otonom Sistemler' },
+        meta2: { icon: 'fa-laptop-code', text: 'Yazılım, Donanım & STEM' },
+        meta3: { icon: 'fa-bolt', text: 'Başvurular Açık' },
+        desc: '<i class="fas fa-rocket info-icon"></i> Firnas Technologies bünyesinde yürütülen teknoloji, yazılım, robotik ve STEM projelerinde yer almak veya kendi projenizle başvuru yapmak için formu doldurun.'
+    },
+    'kurumsal-iletisim': {
+        slug: 'kurumsal-iletisim',
+        title: 'Kurumsal İletişim & Destek Formu',
+        category: 'İletişim & Destek',
+        banner: null,
+        meta1: { icon: 'fa-headset', text: '7/24 İletişim Merkezi' },
+        meta2: { icon: 'fa-building', text: 'Firnas Technologies HQ' },
+        meta3: { icon: 'fa-envelope-open-text', text: 'Kurumsal & Bireysel Talepler' },
+        desc: '<i class="fas fa-handshake info-icon"></i> Firnas Technologies ürünleri, FiCo eğitim kitleri veya kurumsal iş birliği talepleriniz için doğrudan yönetim ve destek ekibimize mesajınızı iletin.'
+    }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
+    activeFormSlug = detectActiveFormSlug();
+    loadFormConfig(activeFormSlug);
     restoreFormDraft();
     updateProgressUI();
 });
 
 /* -------------------------------------------------------------------------- */
-/* DRAFT AUTO-SAVE (sessionStorage)                                           */
+/* DETECT & RENDER FORM CONFIGURATION FROM URL SLUG                            */
+/* -------------------------------------------------------------------------- */
+function detectActiveFormSlug() {
+    const urlParams = new URLSearchParams(window.location.search);
+    let slug = urlParams.get('f') || urlParams.get('form');
+    if (!slug && window.location.hash) {
+        slug = window.location.hash.substring(1);
+    }
+    return slug || 'feam-2026';
+}
+
+function loadFormConfig(slug) {
+    let allForms = [];
+    try {
+        const stored = localStorage.getItem('firnas_all_forms');
+        if (stored) allForms = JSON.parse(stored);
+    } catch (e) {}
+
+    const customObj = allForms.find(f => f.slug === slug);
+    const fallbackObj = FALLBACK_SYSTEM_FORMS[slug];
+
+    if (customObj) {
+        activeFormConfig = customObj;
+    } else if (fallbackObj) {
+        activeFormConfig = fallbackObj;
+    } else {
+        activeFormConfig = {
+            slug: slug,
+            title: capitalizeSlug(slug) + ' Formu',
+            category: 'Başvuru',
+            banner: null,
+            meta1: { icon: 'fa-link', text: `?f=${slug}` },
+            meta2: { icon: 'fa-check-circle', text: 'Aktif Form' },
+            meta3: { icon: 'fa-paper-plane', text: 'Canlı Başvuru' },
+            desc: '<i class="fas fa-info-circle info-icon"></i> Bu başvuru formunu tamamlamak için aşağıdaki adımları eksiksiz doldurunuz.'
+        };
+    }
+
+    renderActiveFormHeaderUI();
+}
+
+function renderActiveFormHeaderUI() {
+    if (!activeFormConfig) return;
+
+    // Document Title & Heading
+    document.title = `${activeFormConfig.title} | Firnas Technologies`;
+    const titleElem = document.getElementById('public-form-main-title');
+    const badgeElem = document.getElementById('public-form-category-badge');
+    const descElem = document.getElementById('public-form-desc-text');
+    const bannerContainer = document.getElementById('public-form-banner-container');
+    const bannerImg = document.getElementById('public-form-banner-img');
+
+    if (titleElem) titleElem.innerText = activeFormConfig.title;
+    if (badgeElem) badgeElem.innerText = (activeFormConfig.category || 'BAŞVURU FORM').toUpperCase();
+    if (descElem) descElem.innerHTML = activeFormConfig.desc || '<i class="fas fa-info-circle info-icon"></i> Lütfen formu eksiksiz doldurun.';
+
+    // Banner image visibility
+    if (bannerContainer && bannerImg) {
+        if (activeFormConfig.banner) {
+            bannerImg.src = activeFormConfig.banner;
+            bannerContainer.style.display = 'flex';
+        } else {
+            bannerContainer.style.display = 'none';
+        }
+    }
+
+    // Metadata pills
+    if (activeFormConfig.meta1) {
+        const m1 = document.getElementById('meta-text-1');
+        if (m1) m1.parentElement.innerHTML = `<i class="fas ${activeFormConfig.meta1.icon}"></i> <span>${activeFormConfig.meta1.text}</span>`;
+    }
+    if (activeFormConfig.meta2) {
+        const m2 = document.getElementById('meta-text-2');
+        if (m2) m2.parentElement.innerHTML = `<i class="fas ${activeFormConfig.meta2.icon}"></i> <span>${activeFormConfig.meta2.text}</span>`;
+    }
+    if (activeFormConfig.meta3) {
+        const m3 = document.getElementById('meta-text-3');
+        if (m3) m3.parentElement.innerHTML = `<i class="fas ${activeFormConfig.meta3.icon}"></i> <span>${activeFormConfig.meta3.text}</span>`;
+    }
+}
+
+function capitalizeSlug(slug) {
+    return slug.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
+}
+
+/* -------------------------------------------------------------------------- */
+/* DRAFT AUTO-SAVE (sessionStorage per slug)                                  */
 /* -------------------------------------------------------------------------- */
 function handleInputAutoSave(inputId) {
     clearInputError(inputId);
     saveFormDraft();
+}
+
+function getDraftKey() {
+    return `firnas_draft_${activeFormSlug}`;
 }
 
 function saveFormDraft() {
@@ -37,7 +164,7 @@ function saveFormDraft() {
             notes: document.getElementById('fill-notes')?.value || '',
             kvkkAccepted: document.getElementById('fill-kvkk')?.checked || false
         };
-        sessionStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(draftData));
+        sessionStorage.setItem(getDraftKey(), JSON.stringify(draftData));
     } catch (err) {
         console.warn('Auto-save warning:', err);
     }
@@ -45,7 +172,7 @@ function saveFormDraft() {
 
 function restoreFormDraft() {
     try {
-        const data = sessionStorage.getItem(DRAFT_STORAGE_KEY);
+        const data = sessionStorage.getItem(getDraftKey());
         if (!data) return;
 
         const draft = JSON.parse(data);
@@ -69,7 +196,7 @@ function restoreFormDraft() {
 }
 
 function clearFormDraft() {
-    sessionStorage.removeItem(DRAFT_STORAGE_KEY);
+    sessionStorage.removeItem(getDraftKey());
 }
 
 /* -------------------------------------------------------------------------- */
@@ -209,11 +336,13 @@ async function handleFormSubmission(e) {
         submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...`;
     }
 
-    const refCode = 'FEAM-' + Math.floor(10000 + Math.random() * 90000);
+    const prefix = activeFormSlug.toUpperCase().substring(0, 4);
+    const refCode = `${prefix}-${Math.floor(10000 + Math.random() * 90000)}`;
     const hearAboutChoice = document.querySelector('input[name="fill_hear_about"]:checked');
 
     const newResponse = {
         refCode: refCode,
+        formSlug: activeFormSlug,
         fullName: document.getElementById('fill-fullname').value.trim(),
         phone: document.getElementById('fill-phone').value.trim(),
         email: document.getElementById('fill-email').value.trim(),

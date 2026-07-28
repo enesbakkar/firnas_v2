@@ -1,28 +1,61 @@
 /* ==========================================================================
-   Firnas Form Suite - Standalone Admin Portal Script (admin.js)
+   Firnas Form Suite - Admin Portal Script (admin.js)
+   Multi-Form Custom URL Slug Generator & Responses Manager
    ========================================================================== */
 
 const ADMIN_CORRECT_PASSWORD = 'FORMS_fir_2023';
+const ALL_FORMS_KEY = 'firnas_all_forms';
+
+// Default system forms catalog
+const DEFAULT_SYSTEM_FORMS = [
+    {
+        slug: 'feam-2026',
+        title: 'FEAM Networking 2026',
+        category: 'Etkinlik & Buluşma',
+        desc: 'Lise ve üniversite öğrencilerinin teknoloji buluşması katılımcı başvuru formu.',
+        banner: '/asset/feam_banner.png',
+        createdDate: '01.08.2026'
+    },
+    {
+        slug: 'proje-basvuru',
+        title: 'Firnas Proje & AR-GE Başvurusu',
+        category: 'Proje & AR-GE',
+        desc: 'Otonom sistemler, yazılım ve STEM projeleri geliştirici ve ekip başvuruları.',
+        banner: null,
+        createdDate: '15.07.2026'
+    },
+    {
+        slug: 'kurumsal-iletisim',
+        title: 'Kurumsal İletişim & Destek',
+        category: 'İletişim & Destek',
+        desc: 'Firnas Technologies ürünleri, FiCo eğitim kitleri ve genel kurumsal destek talepleri.',
+        banner: null,
+        createdDate: '10.07.2026'
+    }
+];
+
 let customFormQuestions = [
     { id: 1, type: 'text', title: 'İsim Soyisim', required: true },
     { id: 2, type: 'text', title: 'Telefon Numarası', required: true },
     { id: 3, type: 'text', title: 'E-posta Adresi', required: true },
     { id: 4, type: 'text', title: 'İkamet Edilen İlçe', required: true },
-    { id: 5, type: 'text', title: 'Üniversite', required: true },
-    { id: 6, type: 'text', title: 'Bölüm', required: true },
-    { id: 7, type: 'dropdown', title: 'Sınıf (Hazırlık, 1, 2, 3, 4, YL, Mezun)', required: true },
-    { id: 8, type: 'choice', title: 'Etkinliği Nereden Duydunuz?', options: ['Instagram', 'LinkedIn', 'Arkadaş Tavsiyesi', 'WhatsApp', 'Diğer'], required: true }
+    { id: 5, type: 'text', title: 'Üniversite / Okul', required: true },
+    { id: 6, type: 'text', title: 'Bölüm', required: true }
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
     checkAdminPageAuth();
+    initFormsStorage();
+    renderAdminFormsCatalog();
+    populateFormFilterDropdown();
     loadAdminResponsesTable();
     renderBuilderQuestions();
     loadWebhookUrlSetting();
+    updateBuilderSlugPreview();
 });
 
 /* -------------------------------------------------------------------------- */
-/* ADMIN AUTHENTICATION                                                      */
+/* AUTHENTICATION                                                      */
 /* -------------------------------------------------------------------------- */
 function isAdminAuthenticated() {
     return sessionStorage.getItem('firnas_admin_authenticated') === 'true';
@@ -51,6 +84,7 @@ function handleAdminAuthSubmit(e) {
         if (errorMsg) errorMsg.style.display = 'none';
         document.getElementById('admin-lock-overlay').classList.remove('active');
         input.value = '';
+        renderAdminFormsCatalog();
         loadAdminResponsesTable();
     } else {
         if (errorMsg) errorMsg.style.display = 'block';
@@ -77,35 +111,147 @@ function switchAdminTab(tabName) {
         activeBtn.classList.add('active');
         activeTab.classList.add('active');
     }
+
+    if (tabName === 'forms-list') renderAdminFormsCatalog();
+    if (tabName === 'responses') loadAdminResponsesTable();
 }
 
 /* -------------------------------------------------------------------------- */
-/* RESPONSES DASHBOARD                                                         */
+/* FORMS CATALOG & DEDICATED CUSTOM LINKS MANAGER                              */
+/* -------------------------------------------------------------------------- */
+function initFormsStorage() {
+    if (!localStorage.getItem(ALL_FORMS_KEY)) {
+        localStorage.setItem(ALL_FORMS_KEY, JSON.stringify(DEFAULT_SYSTEM_FORMS));
+    }
+}
+
+function getAllForms() {
+    try {
+        const stored = localStorage.getItem(ALL_FORMS_KEY);
+        return stored ? JSON.parse(stored) : DEFAULT_SYSTEM_FORMS;
+    } catch (e) {
+        return DEFAULT_SYSTEM_FORMS;
+    }
+}
+
+function renderAdminFormsCatalog() {
+    const forms = getAllForms();
+    const grid = document.getElementById('admin-forms-catalog-grid');
+    if (!grid) return;
+
+    const origin = window.location.origin;
+
+    grid.innerHTML = forms.map(f => {
+        const dedicatedUrl = `${origin}/form/?f=${f.slug}`;
+        const responsesCount = getResponsesCountForForm(f.slug);
+
+        return `
+            <div class="dashboard-form-card">
+                <div class="card-top-row">
+                    <div class="card-icon-box icon-cyan">
+                        <i class="fas fa-file-signature"></i>
+                    </div>
+                    <span class="form-badge-tag tag-cyan">${escapeHtml(f.category || 'Genel')}</span>
+                </div>
+                <h4>${escapeHtml(f.title)}</h4>
+                <p class="card-desc">${escapeHtml(f.desc || '')}</p>
+                <div class="card-meta">
+                    <span><i class="fas fa-link"></i> <code style="color: var(--form-accent); font-weight:700;">?f=${escapeHtml(f.slug)}</code></span>
+                    <span><i class="fas fa-users"></i> ${responsesCount} Kayıt Yanıtı</span>
+                </div>
+                <div class="card-actions-row" style="flex-direction: column; gap: 8px;">
+                    <a href="${dedicatedUrl}" target="_blank" class="btn btn-primary full-width" style="text-decoration:none;">
+                        <i class="fas fa-external-link-alt"></i> Formu Doldur (Önizle)
+                    </a>
+                    <div style="display:flex; gap:6px;">
+                        <button class="btn btn-secondary full-width" onclick="copyFormDedicatedUrl('${f.slug}')">
+                            <i class="fas fa-copy"></i> Özel URL'yi Kopyala
+                        </button>
+                        <button class="btn btn-danger btn-icon-only" onclick="deleteFormBySlug('${f.slug}')" title="Formu Sil">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+function copyFormDedicatedUrl(slug) {
+    const dedicatedUrl = `${window.location.origin}/form/?f=${slug}`;
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(dedicatedUrl);
+    } else {
+        const dummy = document.createElement('input');
+        document.body.appendChild(dummy);
+        dummy.value = dedicatedUrl;
+        dummy.select();
+        document.execCommand('copy');
+        document.body.removeChild(dummy);
+    }
+    alert(`✅ "${slug}" formu özel URL bağlantısı panoya kopyalandı!\n\n${dedicatedUrl}`);
+}
+
+function deleteFormBySlug(slug) {
+    if (confirm(`"${slug}" özel URL'li form silinsin mi?`)) {
+        let forms = getAllForms();
+        forms = forms.filter(f => f.slug !== slug);
+        localStorage.setItem(ALL_FORMS_KEY, JSON.stringify(forms));
+        renderAdminFormsCatalog();
+        populateFormFilterDropdown();
+    }
+}
+
+/* -------------------------------------------------------------------------- */
+/* RESPONSES DASHBOARD & FILTERING                                            */
 /* -------------------------------------------------------------------------- */
 function getStoredResponses() {
     const data = localStorage.getItem('feam_networking_responses');
     return data ? JSON.parse(data) : [];
 }
 
-function loadAdminResponsesTable() {
+function getResponsesCountForForm(slug) {
+    const responses = getStoredResponses();
+    if (slug === 'all') return responses.length;
+    return responses.filter(r => (r.formSlug === slug || (!r.formSlug && slug === 'feam-2026'))).length;
+}
+
+function populateFormFilterDropdown() {
+    const dropdown = document.getElementById('admin-responses-form-filter');
+    if (!dropdown) return;
+
+    const forms = getAllForms();
+    dropdown.innerHTML = `
+        <option value="all">Tüm Formlar (Toplam Kayıtlar)</option>
+        ${forms.map(f => `<option value="${f.slug}">${escapeHtml(f.title)} (?f=${f.slug})</option>`).join('')}
+    `;
+}
+
+function filterResponsesByForm(selectedSlug) {
+    loadAdminResponsesTable(selectedSlug);
+}
+
+function loadAdminResponsesTable(selectedSlug = 'all') {
     const responses = getStoredResponses();
     const tbody = document.getElementById('responses-table-body');
     const counter = document.getElementById('responses-counter');
-    const statCounter = document.getElementById('stat-total-count');
+
+    const filtered = selectedSlug === 'all' 
+        ? responses 
+        : responses.filter(r => (r.formSlug === selectedSlug || (!r.formSlug && selectedSlug === 'feam-2026')));
 
     if (counter) counter.innerText = responses.length;
-    if (statCounter) statCounter.innerText = responses.length;
-
     if (!tbody) return;
 
-    if (responses.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted">Henüz kayıtlı katılımcı bulunmuyor.</td></tr>`;
+    if (filtered.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted">Seçilen form için henüz kayıtlı yanıt bulunmuyor.</td></tr>`;
         return;
     }
 
-    tbody.innerHTML = responses.map((r, index) => `
+    tbody.innerHTML = filtered.map((r, index) => `
         <tr>
             <td><strong style="color: var(--form-accent);">${r.refCode || 'FEAM-0000'}</strong></td>
+            <td><span class="badge-count" style="background:#e0f2fe; color:#0284c7;">?f=${escapeHtml(r.formSlug || 'feam-2026')}</span></td>
             <td><strong>${escapeHtml(r.fullName || '-')}</strong></td>
             <td>
                 <div><i class="fas fa-envelope text-muted"></i> ${escapeHtml(r.email || '-')}</div>
@@ -114,7 +260,6 @@ function loadAdminResponsesTable() {
             <td>${escapeHtml(r.district || '-')}</td>
             <td>${escapeHtml(r.university || '-')} <div class="small text-muted">${escapeHtml(r.department || '-')}</div></td>
             <td><span class="badge-count" style="background:#e2e8f0; color:#0f2e4a;">${escapeHtml(r.grade || '-')}</span></td>
-            <td><span class="badge-count">${escapeHtml(r.hearAbout || '-')}</span></td>
             <td class="small text-muted">${r.date || '-'}</td>
             <td>
                 <div style="display:flex; gap:6px;">
@@ -135,6 +280,7 @@ function viewResponseDetail(index) {
     if (modalBody) {
         modalBody.innerHTML = `
             <div class="summary-item"><span class="s-label">Referans Kodu:</span><span class="s-val">${item.refCode || '-'}</span></div>
+            <div class="summary-item"><span class="s-label">Form URL Kimliği:</span><span class="s-val">?f=${item.formSlug || 'feam-2026'}</span></div>
             <div class="summary-item"><span class="s-label">Ad Soyad:</span><span class="s-val">${escapeHtml(item.fullName || '-')}</span></div>
             <div class="summary-item"><span class="s-label">E-posta / Tel:</span><span class="s-val">${escapeHtml(item.email || '-')} / ${escapeHtml(item.phone || '-')}</span></div>
             <div class="summary-item"><span class="s-label">İkamet İlçe:</span><span class="s-val">${escapeHtml(item.district || '-')}</span></div>
@@ -162,7 +308,7 @@ function deleteResponse(index) {
 }
 
 function clearAllResponses() {
-    if (confirm('Tüm katılımcı kayıtlarını silmek istediğinize emin misiniz?')) {
+    if (confirm('Tüm katılımcı yanıtlarını silmek istediğinize emin misiniz?')) {
         localStorage.removeItem('feam_networking_responses');
         loadAdminResponsesTable();
     }
@@ -175,16 +321,16 @@ function exportResponsesCSV() {
         return;
     }
 
-    let csvContent = "\uFEFFReferans Kodu,Ad Soyad,Telefon,E-posta,İlçe,Üniversite,Bölüm,Sınıf,Nereden Duydunuz,Ek Notlar,Kayıt Tarihi\n";
+    let csvContent = "\uFEFFReferans Kodu,Form Slug,Ad Soyad,Telefon,E-posta,İlçe,Üniversite,Bölüm,Sınıf,Nereden Duydunuz,Ek Notlar,Kayıt Tarihi\n";
     responses.forEach(r => {
-        csvContent += `"${r.refCode}","${r.fullName}","${r.phone}","${r.email}","${r.district}","${r.university}","${r.department}","${r.grade}","${r.hearAbout}","${r.notes}","${r.date}"\n`;
+        csvContent += `"${r.refCode}","${r.formSlug || 'feam-2026'}","${r.fullName}","${r.phone}","${r.email}","${r.district}","${r.university}","${r.department}","${r.grade}","${r.hearAbout}","${r.notes}","${r.date}"\n`;
     });
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `FEAM_Networking_Katilimcilar_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.download = `Firnas_Form_Yanitlar_${new Date().toISOString().slice(0, 10)}.csv`;
     link.click();
 }
 
@@ -193,12 +339,12 @@ function exportResponsesJSON() {
     const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(responses, null, 2));
     const link = document.createElement('a');
     link.href = dataStr;
-    link.download = `FEAM_Networking_Katilimcilar_${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = `Firnas_Form_Yanitlar_${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
 }
 
 /* -------------------------------------------------------------------------- */
-/* WEBHOOK URL CONFIGURATION                                                  */
+/* WEBHOOK & APPS SCRIPT                                                      */
 /* -------------------------------------------------------------------------- */
 function loadWebhookUrlSetting() {
     const url = localStorage.getItem('firnas_google_script_url') || '';
@@ -224,9 +370,9 @@ function copyCodeSnippet() {
     var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
     var data = JSON.parse(e.postData.contents);
     
-    // E-Tabloya yeni satır olarak ekle
     sheet.appendRow([
       data.refCode || '',
+      data.formSlug || '',
       data.fullName || '',
       data.phone || '',
       data.email || '',
@@ -251,8 +397,102 @@ function copyCodeSnippet() {
 }
 
 /* -------------------------------------------------------------------------- */
-/* FORM BUILDER                                                               */
+/* FORM BUILDER & CUSTOM SLUG GENERATOR                                       */
 /* -------------------------------------------------------------------------- */
+function updateBuilderTitlePreview() {
+    const titleVal = document.getElementById('builder-form-title')?.value;
+    const descVal = document.getElementById('builder-form-desc')?.value;
+    const catVal = document.getElementById('builder-form-category')?.value;
+
+    if (document.getElementById('preview-form-title')) document.getElementById('preview-form-title').innerText = titleVal || 'Özel Form';
+    if (document.getElementById('preview-form-desc')) document.getElementById('preview-form-desc').innerText = descVal || '';
+    if (document.getElementById('preview-form-badge')) document.getElementById('preview-form-badge').innerText = (catVal || 'GENEL').toUpperCase();
+
+    // Auto-generate slug if slug field was not manually modified
+    const slugInput = document.getElementById('builder-form-slug');
+    if (slugInput && titleVal) {
+        const slugified = slugifyText(titleVal);
+        if (!slugInput.dataset.manual) {
+            slugInput.value = slugified;
+            updateBuilderSlugPreview();
+        }
+    }
+}
+
+function updateBuilderSlugPreview() {
+    const slugInput = document.getElementById('builder-form-slug');
+    const previewUrl = document.getElementById('builder-slug-preview-url');
+    const headerDisplay = document.getElementById('preview-form-url-display');
+
+    if (slugInput) {
+        slugInput.dataset.manual = "true";
+        const cleanSlug = slugifyText(slugInput.value);
+        const fullUrl = `${window.location.origin}/form/?f=${cleanSlug}`;
+
+        if (previewUrl) previewUrl.innerText = fullUrl;
+        if (headerDisplay) headerDisplay.innerText = fullUrl;
+    }
+}
+
+function slugifyText(str) {
+    if (!str) return 'form-' + Math.floor(1000 + Math.random() * 9000);
+    return str.toString()
+        .toLowerCase()
+        .trim()
+        .replace(/ğ/g, 'g')
+        .replace(/ü/g, 'u')
+        .replace(/ş/g, 's')
+        .replace(/ı/g, 'i')
+        .replace(/ö/g, 'o')
+        .replace(/ç/g, 'c')
+        .replace(/[^a-z0-9 -]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+}
+
+function saveAndPublishForm() {
+    const title = document.getElementById('builder-form-title')?.value.trim();
+    const slugInput = document.getElementById('builder-form-slug')?.value.trim();
+    const category = document.getElementById('builder-form-category')?.value.trim() || 'Etkinlik';
+    const desc = document.getElementById('builder-form-desc')?.value.trim() || '';
+
+    if (!title) {
+        alert('Lütfen form başlığını giriniz.');
+        return;
+    }
+
+    const slug = slugifyText(slugInput || title);
+    const newFormObj = {
+        slug: slug,
+        title: title,
+        category: category,
+        desc: desc,
+        banner: null,
+        createdDate: new Date().toLocaleDateString('tr-TR')
+    };
+
+    let forms = getAllForms();
+    // Overwrite if slug already exists or push new
+    const existingIndex = forms.findIndex(f => f.slug === slug);
+    if (existingIndex >= 0) {
+        forms[existingIndex] = newFormObj;
+    } else {
+        forms.push(newFormObj);
+    }
+
+    localStorage.setItem(ALL_FORMS_KEY, JSON.stringify(forms));
+
+    const directUrl = `${window.location.origin}/form/?f=${slug}`;
+    const iframeCode = `<iframe src="${directUrl}" width="100%" height="750px" frameborder="0" style="border:none; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1);"></iframe>`;
+
+    document.getElementById('share-direct-url').value = directUrl;
+    document.getElementById('share-iframe-code').value = iframeCode;
+    document.getElementById('embed-code-modal').classList.add('active');
+
+    renderAdminFormsCatalog();
+    populateFormFilterDropdown();
+}
+
 function addQuestionToBuilder(type) {
     const newId = Date.now();
     const defaultTitles = {
@@ -281,14 +521,6 @@ function deleteQuestionFromBuilder(id) {
 function updateQuestionTitle(id, val) {
     const q = customFormQuestions.find(item => item.id === id);
     if (q) q.title = val;
-}
-
-function updateBuilderTitle() {
-    const titleVal = document.getElementById('builder-form-title').value;
-    const descVal = document.getElementById('builder-form-desc').value;
-
-    document.getElementById('preview-form-title').innerText = titleVal || 'Özel Form';
-    document.getElementById('preview-form-desc').innerText = descVal || '';
 }
 
 function renderBuilderQuestions() {
@@ -337,17 +569,6 @@ function resetBuilderForm() {
     }
 }
 
-function publishCustomForm() {
-    const formId = 'feam-networking-' + Math.floor(1000 + Math.random() * 9000);
-    const directUrl = `${window.location.origin}/form/?form=${formId}`;
-    const iframeCode = `<iframe src="${directUrl}" width="100%" height="750px" frameborder="0" style="border:none; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1);"></iframe>`;
-
-    document.getElementById('share-direct-url').value = directUrl;
-    document.getElementById('share-iframe-code').value = iframeCode;
-
-    document.getElementById('embed-code-modal').classList.add('active');
-}
-
 function closeEmbedModal() {
     document.getElementById('embed-code-modal').classList.remove('active');
 }
@@ -360,7 +581,7 @@ function copyToClipboard(inputElemId) {
     elem.setSelectionRange(0, 99999);
     navigator.clipboard.writeText(elem.value);
 
-    alert('✅ Kod başarıyla panoya kopyalandı!');
+    alert('✅ Kod / Bağlantı başarıyla panoya kopyalandı!');
 }
 
 function escapeHtml(str) {
