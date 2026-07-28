@@ -162,7 +162,9 @@ export function setupFormBuilder(container, store) {
             formData: {}
         });
 
-        alert(`✅ "${title}" formu başarıyla yayınlandı!\n\nForm özel bağlantısı: ${window.location.origin}/form/?f=${formSlug}`);
+        if (window.openFormShareModal) {
+            window.openFormShareModal(formSlug);
+        }
     }
 
     store.subscribe(render);

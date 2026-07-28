@@ -354,6 +354,66 @@
         </div>
     </div>
 
+    <!-- FORM SHARE & EMBED MODAL -->
+    <div id="form-share-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 580px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
+                <h3 style="margin:0; font-size: 1.25rem;"><i class="fas fa-share-nodes text-accent"></i> Form Paylaşım & Erişim</h3>
+                <button type="button" class="password-toggle-btn" id="btn-close-share-modal"><i class="fas fa-times" style="font-size: 1.2rem;"></i></button>
+            </div>
+
+            <div style="margin-bottom: 1.25rem;">
+                <span class="auth-badge" id="share-modal-form-badge">FORM PAYLAŞIMI</span>
+                <h4 id="share-modal-form-title" style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: #ffffff; margin-top: 4px;">Form Başlığı</h4>
+                <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">Katılımcıların formu doldurması için aşağıdaki özel bağlantıyı kopyalayabilir veya doğrudan paylaşabilirsiniz.</p>
+            </div>
+
+            <!-- Direct URL Input with Copy Button -->
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label style="color: #cbd5e1;"><i class="fas fa-link text-accent"></i> Doğrudan Katılımcı Bağlantısı (URL)</label>
+                <div style="display: flex; gap: 8px; margin-top: 4px;">
+                    <div class="input-icon-wrapper" style="flex: 1;">
+                        <i class="fas fa-globe"></i>
+                        <input type="text" id="share-modal-direct-url" class="form-control" readonly style="font-weight: 700; color: var(--form-accent); background: rgba(5,20,33,0.8);">
+                    </div>
+                    <button class="btn btn-primary" id="btn-copy-share-url" style="white-space: nowrap;">
+                        <i class="fas fa-copy"></i> Kopyala
+                    </button>
+                </div>
+            </div>
+
+            <!-- Social Share Quick Buttons -->
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="color: #cbd5e1;"><i class="fas fa-paper-plane text-accent"></i> Hızlı Sosyal Medya Paylaşımı</label>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 6px;">
+                    <a id="btn-share-whatsapp" href="#" target="_blank" class="btn btn-secondary btn-sm" style="background: #25D366; color: #ffffff; font-weight: 700;">
+                        <i class="fab fa-whatsapp"></i> WhatsApp'ta Gönder
+                    </a>
+                    <a id="btn-share-linkedin" href="#" target="_blank" class="btn btn-secondary btn-sm" style="background: #0A66C2; color: #ffffff; font-weight: 700;">
+                        <i class="fab fa-linkedin"></i> LinkedIn
+                    </a>
+                    <a id="btn-share-email" href="#" class="btn btn-secondary btn-sm" style="background: #64748B; color: #ffffff; font-weight: 700;">
+                        <i class="fas fa-envelope"></i> E-posta
+                    </a>
+                </div>
+            </div>
+
+            <!-- iFrame Embed Code -->
+            <div class="form-group" style="margin-bottom: 1.5rem;">
+                <label style="color: #cbd5e1;"><i class="fas fa-code text-accent"></i> Web Sitesine Gömme Kodu (HTML iFrame)</label>
+                <textarea id="share-modal-iframe-code" class="form-control" rows="3" readonly style="font-family: monospace; font-size: 0.82rem; background: rgba(5,20,33,0.8); color: #38bdf8; margin-top: 4px;"></textarea>
+                <button class="btn btn-secondary btn-sm full-width" id="btn-copy-iframe-code" style="margin-top: 6px;">
+                    <i class="fas fa-copy"></i> iFrame Kodunu Kopyala
+                </button>
+            </div>
+
+            <button class="btn btn-secondary full-width" id="btn-done-share-modal">Tamam</button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container" style="position: fixed; top: 20px; right: 20px; z-index: 10000; display: flex; flex-direction: column; gap: 8px; pointer-events: none;"></div>
+
     <!-- MODULE ENTRY POINT -->
     <script type="module" src="src/app.js"></script>
 </body>

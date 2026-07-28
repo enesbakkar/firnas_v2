@@ -61,9 +61,12 @@ export function setupFormWizard(container, store) {
                         <span><i class="fas fa-users text-accent"></i> ${responsesCount} Katılımcı Kaydı</span>
                         <span><i class="fas fa-link"></i> ?f=${f.id}</span>
                     </div>
-                    <div class="card-actions-row">
-                        <button class="btn ${isSelected ? 'btn-primary' : 'btn-secondary'} full-width btn-select-form" data-form-id="${f.id}">
-                            <i class="fas ${isSelected ? 'fa-pen-to-square' : 'fa-arrow-right'}"></i> ${isSelected ? 'Şu An Açık' : 'Formu Aç & Doldur'}
+                    <div class="card-actions-row" style="display:flex; gap:6px;">
+                        <button class="btn ${isSelected ? 'btn-primary' : 'btn-secondary'} btn-select-form" style="flex:1;" data-form-id="${f.id}">
+                            <i class="fas ${isSelected ? 'fa-pen-to-square' : 'fa-arrow-right'}"></i> ${isSelected ? 'Şu An Açık' : 'Formu Doldur'}
+                        </button>
+                        <button class="btn btn-secondary btn-share-form" data-form-id="${f.id}" title="Form Bağlantısını Kopyala & Paylaş">
+                            <i class="fas fa-share-nodes"></i> Paylaş
                         </button>
                     </div>
                 </div>
@@ -81,6 +84,15 @@ export function setupFormWizard(container, store) {
                     });
                     const wrapper = container.querySelector('#selected-form-wrapper');
                     if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+        });
+
+        galleryContainer.querySelectorAll('.btn-share-form').forEach(btn => {
+            btn.onclick = () => {
+                const fId = btn.dataset.formId;
+                if (window.openFormShareModal) {
+                    window.openFormShareModal(fId);
                 }
             };
         });

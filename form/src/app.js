@@ -1,11 +1,13 @@
 /* ==========================================================================
    MAIN APP ENTRY POINT (src/app.js)
+   Form Sharing Engine & Multi-Form Manager
    ========================================================================== */
 
 import { appStore } from './core/store.js';
 import { BUILTIN_FORM_DEFINITIONS } from './config/formDefinitions.js';
 import { STORAGE_KEYS } from './config/appConstants.js';
 import { getResponses, getCustomForms, loadDraft } from './core/apiService.js';
+import { copyTextToClipboard } from './utils/stringHelpers.js';
 import { setupFormWizard } from './components/FormWizard.js';
 import { setupResponseTable } from './components/ResponseTable.js';
 import { setupFormBuilder } from './components/Builder.js';
@@ -50,17 +52,18 @@ document.addEventListener('DOMContentLoaded', () => {
         activeTab: 'fill'
     });
 
-    // 5. Initialize Components
+    // 5. Initialize Components & Sharing Engine
     const rootContainer = document.body;
     setupAuthModal(rootContainer, appStore);
     setupFormWizard(rootContainer, appStore);
     setupResponseTable(rootContainer, appStore);
     setupFormBuilder(rootContainer, appStore);
+    setupShareModal(rootContainer, appStore);
 
-    // 6. Bind Tab Switching & Form Switcher Bar
+    // 6. Bind Global Events & Switchers
     bindGlobalEvents(rootContainer, appStore);
 
-    // 7. Subscribe Global UI Updates (Tabs & Modal visibility)
+    // 7. Subscribe Global UI Updates
     appStore.subscribe(state => {
         updateTabVisibility(state);
         updateSwitcherPills(state);
@@ -69,6 +72,61 @@ document.addEventListener('DOMContentLoaded', () => {
     updateTabVisibility(appStore.getState());
     updateSwitcherPills(appStore.getState());
 });
+
+function setupShareModal(container, store) {
+    const shareModal = container.querySelector('#form-share-modal');
+    if (!shareModal) return;
+
+    window.openFormShareModal = (formId) => {
+        const state = store.getState();
+        const f = state.formDefinitions[formId] || state.formDefinitions['feam-2026'];
+        if (!f) return;
+
+        const directUrl = `${window.location.origin}/form/?f=${f.id}`;
+        const iframeCode = `<iframe src="${directUrl}" width="100%" height="750px" frameborder="0" style="border:none; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1);"></iframe>`;
+
+        const titleElem = shareModal.querySelector('#share-modal-form-title');
+        const badgeElem = shareModal.querySelector('#share-modal-form-badge');
+        const urlInput = shareModal.querySelector('#share-modal-direct-url');
+        const iframeInput = shareModal.querySelector('#share-modal-iframe-code');
+
+        if (titleElem) titleElem.innerText = f.title;
+        if (badgeElem) badgeElem.innerText = (f.category || 'FORM').toUpperCase();
+        if (urlInput) urlInput.value = directUrl;
+        if (iframeInput) iframeInput.value = iframeCode;
+
+        // Social Share Links
+        const btnWa = shareModal.querySelector('#btn-share-whatsapp');
+        const btnLi = shareModal.querySelector('#btn-share-linkedin');
+        const btnMail = shareModal.querySelector('#btn-share-email');
+
+        const shareMessage = `${f.title} - Kayıt Formu: ${directUrl}`;
+
+        if (btnWa) btnWa.href = `https://api.whatsapp.com/send?text=${encodeURIComponent(shareMessage)}`;
+        if (btnLi) btnLi.href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(directUrl)}`;
+        if (btnMail) btnMail.href = `mailto:?subject=${encodeURIComponent(f.title + ' Kayıt Formu')}&body=${encodeURIComponent(shareMessage)}`;
+
+        // Copy Buttons
+        const copyUrlBtn = shareModal.querySelector('#btn-copy-share-url');
+        const copyIframeBtn = shareModal.querySelector('#btn-copy-iframe-code');
+
+        if (copyUrlBtn) {
+            copyUrlBtn.onclick = () => copyTextToClipboard(directUrl, '✅ Form özel bağlantısı panoya kopyalandı!');
+        }
+        if (copyIframeBtn) {
+            copyIframeBtn.onclick = () => copyTextToClipboard(iframeCode, '✅ HTML iFrame gömme kodu panoya kopyalandı!');
+        }
+
+        shareModal.classList.add('active');
+    };
+
+    // Close Actions
+    const closeBtn = shareModal.querySelector('#btn-close-share-modal');
+    const doneBtn = shareModal.querySelector('#btn-done-share-modal');
+
+    if (closeBtn) closeBtn.onclick = () => shareModal.classList.remove('active');
+    if (doneBtn) doneBtn.onclick = () => shareModal.classList.remove('active');
+}
 
 function bindGlobalEvents(container, store) {
     // Tab Buttons
@@ -110,7 +168,6 @@ function bindGlobalEvents(container, store) {
     }
     if (acceptKvkk && kvkkModal) {
         acceptKvkk.onclick = () => {
-            const state = store.getState();
             store.setFormData('kvkk', true);
             kvkkModal.classList.remove('active');
         };
