@@ -665,3 +665,32 @@ function selectPortalForm(formId) {
     const formWrapper = document.getElementById('selected-form-wrapper');
     if (formWrapper) formWrapper.scrollIntoView({ behavior: 'smooth' });
 }
+
+function openFormViewer(formId) {
+    selectPortalForm(formId);
+
+    const dashboardView = document.getElementById('portal-dashboard-view');
+    const viewerView = document.getElementById('portal-form-viewer-view');
+    const badge = document.getElementById('viewer-form-title-badge');
+
+    if (dashboardView && viewerView) {
+        dashboardView.classList.add('hidden');
+        viewerView.classList.remove('hidden');
+        if (badge && PORTAL_FORMS[formId]) {
+            badge.innerText = PORTAL_FORMS[formId].title;
+        }
+
+        viewerView.scrollIntoView({ behavior: 'smooth' });
+    }
+}
+
+function closeFormViewer() {
+    const dashboardView = document.getElementById('portal-dashboard-view');
+    const viewerView = document.getElementById('portal-form-viewer-view');
+
+    if (dashboardView && viewerView) {
+        viewerView.classList.add('hidden');
+        dashboardView.classList.remove('hidden');
+        dashboardView.scrollIntoView({ behavior: 'smooth' });
+    }
+}

@@ -74,60 +74,140 @@
             <!-- Header Section -->
             <div class="form-header text-center">
                 <span class="form-badge"><i class="fas fa-cubes"></i> FIRNAS FORM PORTALI</span>
-                <h1 class="form-main-title">Firnas Form Portalı</h1>
-                <p class="form-subtitle">Firnas Technologies Etkinlik, AR-GE Başvuru ve Kurumsal Formlar Merkezi</p>
+                <h1 class="form-main-title">Form Yönetim Portalı</h1>
+                <p class="form-subtitle">Firnas Technologies Form Yönetimi, Kayıt Listeleri ve Form Oluşturma Merkezi</p>
                 
                 <!-- View Mode Tabs -->
                 <div class="form-mode-tabs" role="tablist">
                     <button class="tab-btn active" id="tab-fill-btn" onclick="switchFormTab('fill')" role="tab">
-                        <i class="fas fa-folder-open"></i> Aktif Formlar & Kayıt
+                        <i class="fas fa-grid-2"></i> Form Portalı
                     </button>
                     <button class="tab-btn" id="tab-responses-btn" onclick="switchFormTab('responses')" role="tab">
                         <i class="fas fa-table-cells"></i> E-Tablo Kayıtları <span class="badge-count" id="responses-counter">0</span>
                     </button>
                     <button class="tab-btn" id="tab-builder-btn" onclick="switchFormTab('builder')" role="tab">
-                        <i class="fas fa-wand-magic-sparkles"></i> Form Düzenleyici
+                        <i class="fas fa-wand-magic-sparkles"></i> Yeni Form Tasarla
                     </button>
                 </div>
             </div>
 
-            <!-- TAB 1: PORTAL ACTIVE FORMS & FILL ENGINE -->
+            <!-- TAB 1: FORM PORTAL DASHBOARD & FORM VIEWER -->
             <div id="tab-fill" class="tab-content active">
                 
-                <!-- SLEEK FORM SWITCHER BAR -->
-                <div class="form-switcher-bar">
-                    <span class="switcher-label"><i class="fas fa-list-check"></i> Form Seçin:</span>
-                    <div class="switcher-pills">
-                        <button class="switcher-pill active" id="card-feam-2026" onclick="selectPortalForm('feam-2026')">
-                            <i class="fas fa-users"></i> FEAM Networking 2026
+                <!-- DASHBOARD VIEW: FORMS GALLERY -->
+                <div id="portal-dashboard-view">
+                    <div class="dashboard-top-bar">
+                        <div class="dashboard-title">
+                            <h3><i class="fas fa-folder-tree"></i> Oluşturulan Formlar</h3>
+                            <p>Yayınlanan formları yönetin, doldurun veya kayıtlarını inceleyin</p>
+                        </div>
+                        <button class="btn btn-primary btn-sm" onclick="switchFormTab('builder')">
+                            <i class="fas fa-plus"></i> Yeni Form Oluştur
                         </button>
-                        <button class="switcher-pill" id="card-project-apply" onclick="selectPortalForm('project-apply')">
-                            <i class="fas fa-laptop-code"></i> Proje & AR-GE Başvurusu
-                        </button>
-                        <button class="switcher-pill" id="card-general-contact" onclick="selectPortalForm('general-contact')">
-                            <i class="fas fa-headset"></i> Kurumsal İletişim & Destek
-                        </button>
+                    </div>
+
+                    <div class="dashboard-forms-grid">
+                        <!-- FORM CARD 1 -->
+                        <div class="dashboard-form-card">
+                            <div class="card-top-row">
+                                <div class="card-icon-box icon-cyan">
+                                    <i class="fas fa-users"></i>
+                                </div>
+                                <span class="form-badge-tag tag-cyan">Etkinlik & Buluşma</span>
+                            </div>
+                            <h4>FEAM Networking 2026</h4>
+                            <p class="card-desc">Lise ve üniversite öğrencilerinin teknoloji buluşması katılımcı başvuru formu.</p>
+                            <div class="card-meta">
+                                <span><i class="fas fa-calendar-day"></i> 1 Ağustos 2026</span>
+                                <span><i class="fas fa-location-dot"></i> Atölye Üsküdar</span>
+                            </div>
+                            <div class="card-actions-row">
+                                <button class="btn btn-primary full-width" onclick="openFormViewer('feam-2026')">
+                                    <i class="fas fa-pen-to-square"></i> Formu Aç & Doldur
+                                </button>
+                                <button class="btn btn-secondary btn-icon-only" onclick="switchFormTab('responses')" title="E-Tablo Kayıtları">
+                                    <i class="fas fa-table"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- FORM CARD 2 -->
+                        <div class="dashboard-form-card">
+                            <div class="card-top-row">
+                                <div class="card-icon-box icon-blue">
+                                    <i class="fas fa-laptop-code"></i>
+                                </div>
+                                <span class="form-badge-tag tag-blue">Proje & AR-GE</span>
+                            </div>
+                            <h4>Firnas Proje & AR-GE Başvurusu</h4>
+                            <p class="card-desc">Otonom sistemler, yazılım ve STEM projeleri geliştirici ve ekip başvuruları.</p>
+                            <div class="card-meta">
+                                <span><i class="fas fa-microchip"></i> AR-GE Geliştirme</span>
+                                <span><i class="fas fa-bolt"></i> Başvurular Açık</span>
+                            </div>
+                            <div class="card-actions-row">
+                                <button class="btn btn-primary full-width" onclick="openFormViewer('project-apply')">
+                                    <i class="fas fa-pen-to-square"></i> Formu Aç & Doldur
+                                </button>
+                                <button class="btn btn-secondary btn-icon-only" onclick="switchFormTab('responses')" title="E-Tablo Kayıtları">
+                                    <i class="fas fa-table"></i>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- FORM CARD 3 -->
+                        <div class="dashboard-form-card">
+                            <div class="card-top-row">
+                                <div class="card-icon-box icon-gold">
+                                    <i class="fas fa-headset"></i>
+                                </div>
+                                <span class="form-badge-tag tag-gold">İletişim & Destek</span>
+                            </div>
+                            <h4>Kurumsal İletişim & Destek</h4>
+                            <p class="card-desc">Firnas Technologies ürünleri, FiCo eğitim kitleri ve genel kurumsal destek talepleri.</p>
+                            <div class="card-meta">
+                                <span><i class="fas fa-headset"></i> 7/24 İletişim Merkezi</span>
+                                <span><i class="fas fa-building"></i> Destek Hattı</span>
+                            </div>
+                            <div class="card-actions-row">
+                                <button class="btn btn-primary full-width" onclick="openFormViewer('general-contact')">
+                                    <i class="fas fa-pen-to-square"></i> Formu Aç & Doldur
+                                </button>
+                                <button class="btn btn-secondary btn-icon-only" onclick="switchFormTab('responses')" title="E-Tablo Kayıtları">
+                                    <i class="fas fa-table"></i>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
-                <!-- SELECTED FORM CONTAINER -->
-                <div class="form-card-wrapper event-form-card" id="selected-form-wrapper">
-                    <!-- EVENT BANNER HEADER -->
-                    <div class="event-banner-container" id="form-banner-container">
-                        <img src="/asset/feam_banner.png" alt="FEAM Networking 2026 Banner" class="event-banner-img" id="form-banner-img">
+                <!-- FORM VIEWER VIEW (OPENED WHEN A FORM IS CLICKED) -->
+                <div id="portal-form-viewer-view" class="hidden">
+                    <div class="viewer-nav-bar">
+                        <button class="btn btn-secondary btn-sm" onclick="closeFormViewer()">
+                            <i class="fas fa-arrow-left"></i> Form Portalına Dön
+                        </button>
+                        <span class="active-form-title-badge" id="viewer-form-title-badge">FEAM Networking 2026</span>
                     </div>
 
-                    <!-- Event Metadata Bar -->
-                    <div class="event-meta-bar" id="form-meta-bar">
-                        <div class="meta-pill" id="meta-pill-1"><i class="fas fa-calendar-day"></i> <span id="meta-text-1">1 Ağustos 2026, 15:00</span></div>
-                        <div class="meta-pill" id="meta-pill-2"><i class="fas fa-location-dot"></i> <span id="meta-text-2">Atölye Üsküdar</span></div>
-                        <div class="meta-pill tag-pill" id="meta-pill-3"><i class="fas fa-rocket"></i> <span id="meta-text-3">Firnas TEAM Buluşması</span></div>
-                    </div>
+                    <!-- SELECTED FORM CONTAINER -->
+                    <div class="form-card-wrapper event-form-card" id="selected-form-wrapper">
+                        <!-- EVENT BANNER HEADER -->
+                        <div class="event-banner-container" id="form-banner-container">
+                            <img src="/asset/feam_banner.png" alt="FEAM Networking 2026 Banner" class="event-banner-img" id="form-banner-img">
+                        </div>
 
-                    <!-- Event Description Box -->
-                    <div class="event-info-box" id="form-info-box">
-                        <p id="form-desc-text"><i class="fas fa-circle-info info-icon"></i> Lise ve üniversite öğrencilerinin teknoloji ve inovasyon etrafında bir araya geldiği; proje sunumları, tanışma etkinliği, networking çalışmaları ve ortak üretim odaklı fikir alışverişi yapılan bu özel buluşmada yerinizi almak için aşağıdaki formu eksiksiz doldurun!</p>
-                    </div>
+                        <!-- Event Metadata Bar -->
+                        <div class="event-meta-bar" id="form-meta-bar">
+                            <div class="meta-pill" id="meta-pill-1"><i class="fas fa-calendar-day"></i> <span id="meta-text-1">1 Ağustos 2026, 15:00</span></div>
+                            <div class="meta-pill" id="meta-pill-2"><i class="fas fa-location-dot"></i> <span id="meta-text-2">Atölye Üsküdar</span></div>
+                            <div class="meta-pill tag-pill" id="meta-pill-3"><i class="fas fa-rocket"></i> <span id="meta-text-3">Firnas TEAM Buluşması</span></div>
+                        </div>
+
+                        <!-- Event Description Box -->
+                        <div class="event-info-box" id="form-info-box">
+                            <p id="form-desc-text"><i class="fas fa-circle-info info-icon"></i> Lise ve üniversite öğrencilerinin teknoloji ve inovasyon etrafında bir araya geldiği bu özel buluşmada yerinizi almak için aşağıdaki formu eksiksiz doldurun!</p>
+                        </div>
 
                     <!-- Progress Header -->
                     <div class="form-progress-bar-container">
@@ -320,8 +400,9 @@
                     </form>
                 </div>
             </div>
+        </div>
 
-            <!-- TAB 2: RESPONSES DASHBOARD (FEAM Networking - Katılımcı Kayıtları) -->
+        <!-- TAB 2: RESPONSES DASHBOARD (FEAM Networking - Katılımcı Kayıtları) -->
             <div id="tab-responses" class="tab-content">
                 <div class="responses-dashboard-card">
                     <div class="responses-header">
