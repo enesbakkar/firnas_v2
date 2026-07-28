@@ -1,5 +1,6 @@
 /* ==========================================================================
-   FORM WIZARD COMPONENT (src/components/FormWizard.js)
+   FORM WIZARD & DASHBOARD COMPONENT (src/components/FormWizard.js)
+   Google Forms Gallery & Form Filling Engine
    ========================================================================== */
 
 import { renderFormField } from './FormField.js';
@@ -16,7 +17,10 @@ export function setupFormWizard(container, store) {
         const formDef = state.formDefinitions[state.currentFormId];
         if (!formDef) return;
 
-        // Render header & banner if form switched
+        // Render Dashboard Gallery Cards
+        renderDashboardGallery(container, state, store);
+
+        // Render Header & Banner if form switched
         if (lastRenderedFormId !== state.currentFormId) {
             lastRenderedFormId = state.currentFormId;
             renderFormHeader(formDef, state, store);
@@ -30,6 +34,56 @@ export function setupFormWizard(container, store) {
 
         // Bind Input Auto-Save & Change Listeners
         bindInputEvents(container, formDef, state, store);
+    }
+
+    function renderDashboardGallery(container, state, store) {
+        const galleryContainer = container.querySelector('#portal-dashboard-gallery');
+        if (!galleryContainer) return;
+
+        const allFormIds = Object.keys(state.formDefinitions);
+
+        galleryContainer.innerHTML = allFormIds.map(fId => {
+            const f = state.formDefinitions[fId];
+            const isSelected = (fId === state.currentFormId);
+            const responsesCount = (state.responses || []).filter(r => (r.formSlug === fId || (!r.formSlug && fId === 'feam-2026'))).length;
+
+            return `
+                <div class="dashboard-form-card ${isSelected ? 'selected' : ''}">
+                    <div class="card-top-row">
+                        <div class="card-icon-box icon-cyan">
+                            <i class="fas ${f.banner ? 'fa-image' : 'fa-file-signature'}"></i>
+                        </div>
+                        <span class="form-badge-tag tag-cyan">${f.category || 'FORM'}</span>
+                    </div>
+                    <h4>${f.title}</h4>
+                    <p class="card-desc">${f.description ? (f.description.substring(0, 95) + '...') : ''}</p>
+                    <div class="card-meta">
+                        <span><i class="fas fa-users text-accent"></i> ${responsesCount} Katılımcı Kaydı</span>
+                        <span><i class="fas fa-link"></i> ?f=${f.id}</span>
+                    </div>
+                    <div class="card-actions-row">
+                        <button class="btn ${isSelected ? 'btn-primary' : 'btn-secondary'} full-width btn-select-form" data-form-id="${f.id}">
+                            <i class="fas ${isSelected ? 'fa-pen-to-square' : 'fa-arrow-right'}"></i> ${isSelected ? 'Şu An Açık' : 'Formu Aç & Doldur'}
+                        </button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+
+        galleryContainer.querySelectorAll('.btn-select-form').forEach(btn => {
+            btn.onclick = () => {
+                const fId = btn.dataset.formId;
+                if (fId && store.getState().formDefinitions[fId]) {
+                    store.setState({
+                        currentFormId: fId,
+                        currentStep: 1,
+                        formData: {}
+                    });
+                    const wrapper = container.querySelector('#selected-form-wrapper');
+                    if (wrapper) wrapper.scrollIntoView({ behavior: 'smooth' });
+                }
+            };
+        });
     }
 
     function renderStepPanels(formDef, state, errors) {
@@ -47,7 +101,7 @@ export function setupFormWizard(container, store) {
                 return renderFormField(field, val, err);
             }).join('');
 
-            // If step 3 (last step), include summary review box
+            // Summary review on final step
             let summaryHtml = '';
             if (idx === totalSteps - 1) {
                 summaryHtml = `
@@ -99,7 +153,7 @@ export function setupFormWizard(container, store) {
         const descElem = container.querySelector('#form-desc-text');
         if (descElem) descElem.innerHTML = formDef.description || '';
 
-        // Switcher Pills Active state
+        // Switcher Pills
         container.querySelectorAll('.switcher-pill').forEach(pill => {
             pill.classList.remove('active');
             if (pill.dataset.formId === state.currentFormId) pill.classList.add('active');
@@ -116,10 +170,20 @@ export function setupFormWizard(container, store) {
         const percentDisplay = container.querySelector('#progress-percent-display');
         const fillBar = container.querySelector('#progress-fill-bar');
         const dotsContainer = container.querySelector('.step-indicators');
+        const draftBadge = container.querySelector('#draft-saved-badge');
 
         if (titleDisplay && currentStepDef) titleDisplay.innerText = `Adım ${currentStep}: ${currentStepDef.title}`;
         if (percentDisplay) percentDisplay.innerText = `%${percent} Tamamlandı`;
         if (fillBar) fillBar.style.width = `${percent}%`;
+
+        if (draftBadge) {
+            if (state.draftSavedTimestamp) {
+                draftBadge.innerHTML = `<i class="fas fa-cloud-arrow-up text-accent"></i> Taslak Otomatik Kaydedildi (${state.draftSavedTimestamp})`;
+                draftBadge.style.display = 'inline-flex';
+            } else {
+                draftBadge.style.display = 'none';
+            }
+        }
 
         if (dotsContainer) {
             dotsContainer.innerHTML = formDef.steps.map((step, idx) => {
@@ -263,7 +327,8 @@ export function setupFormWizard(container, store) {
                 store.setState({
                     currentStep: 1,
                     formData: {},
-                    responses: updatedResponses
+                    responses: updatedResponses,
+                    draftSavedTimestamp: null
                 });
 
                 if (submitBtn) {

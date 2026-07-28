@@ -1,21 +1,42 @@
 /* ==========================================================================
    RESPONSE TABLE COMPONENT (src/components/ResponseTable.js)
+   Real-Time Search & Form-Filtered Responses Dashboard
    ========================================================================== */
 
 import { escapeHtml } from '../utils/stringHelpers.js';
 import { deleteResponse, clearAllResponses } from '../core/apiService.js';
 
 export function setupResponseTable(container, store) {
-    let currentFilterSlug = 'all';
+    let filterSlug = 'all';
+    let searchQuery = '';
 
     function render() {
         const state = store.getState();
         if (state.activeTab !== 'responses') return;
 
         const responses = state.responses || [];
-        const filtered = (currentFilterSlug === 'all') 
+        filterSlug = state.responseFilterFormId || 'all';
+        searchQuery = (state.searchQuery || '').toLowerCase().trim();
+
+        // 1. Filter by Form Slug
+        let filtered = (filterSlug === 'all') 
             ? responses 
-            : responses.filter(r => (r.formSlug === currentFilterSlug || (!r.formSlug && currentFilterSlug === 'feam-2026')));
+            : responses.filter(r => (r.formSlug === filterSlug || (!r.formSlug && filterSlug === 'feam-2026')));
+
+        // 2. Filter by Search Query
+        if (searchQuery) {
+            filtered = filtered.filter(r => {
+                const nameMatch = (r.fullName || '').toLowerCase().includes(searchQuery);
+                const emailMatch = (r.email || '').toLowerCase().includes(searchQuery);
+                const phoneMatch = (r.phone || '').toLowerCase().includes(searchQuery);
+                const refMatch = (r.refCode || '').toLowerCase().includes(searchQuery);
+                const distMatch = (r.district || '').toLowerCase().includes(searchQuery);
+                return nameMatch || emailMatch || phoneMatch || refMatch || distMatch;
+            });
+        }
+
+        // Render Filter Select Options
+        populateFilterDropdown(container, state, store);
 
         // Counter Badges & Stats
         const counter = container.querySelector('#responses-counter');
@@ -28,7 +49,7 @@ export function setupResponseTable(container, store) {
         if (!tbody) return;
 
         if (filtered.length === 0) {
-            tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted">Henüz kayıtlı yanıt bulunmuyor.</td></tr>`;
+            tbody.innerHTML = `<tr><td colspan="9" class="text-center py-4 text-muted">Arama kriterlerine uygun kayıt bulunamadı.</td></tr>`;
             return;
         }
 
@@ -54,7 +75,7 @@ export function setupResponseTable(container, store) {
             </tr>
         `).join('');
 
-        // Bind Detail & Delete Row Actions
+        // Bind Row Detail & Delete Buttons
         tbody.querySelectorAll('.btn-detail-view').forEach(btn => {
             btn.onclick = () => {
                 const idx = parseInt(btn.dataset.index);
@@ -72,11 +93,37 @@ export function setupResponseTable(container, store) {
             };
         });
 
-        // Bind Top Export Buttons
-        bindExportActions(container, store);
+        // Bind Export & Search Events
+        bindControlsEvents(container, store);
     }
 
-    function bindExportActions(container, store) {
+    function populateFilterDropdown(container, state, store) {
+        const dropdown = container.querySelector('#responses-form-filter');
+        if (!dropdown) return;
+
+        const allFormIds = Object.keys(state.formDefinitions);
+        const optionsHtml = `
+            <option value="all" ${state.responseFilterFormId === 'all' ? 'selected' : ''}>Tüm Formlar (${state.responses.length} Kayıt)</option>
+            ${allFormIds.map(fId => {
+                const title = state.formDefinitions[fId]?.title || fId;
+                const count = (state.responses || []).filter(r => (r.formSlug === fId || (!r.formSlug && fId === 'feam-2026'))).length;
+                return `<option value="${fId}" ${state.responseFilterFormId === fId ? 'selected' : ''}>${title} (${count} Kayıt)</option>`;
+            }).join('')}
+        `;
+        dropdown.innerHTML = optionsHtml;
+        dropdown.onchange = (e) => {
+            store.setState({ responseFilterFormId: e.target.value });
+        };
+    }
+
+    function bindControlsEvents(container, store) {
+        const searchInput = container.querySelector('#responses-search-input');
+        if (searchInput) {
+            searchInput.oninput = (e) => {
+                store.setState({ searchQuery: e.target.value });
+            };
+        }
+
         const btnCsv = container.querySelector('#btn-export-csv');
         const btnJson = container.querySelector('#btn-export-json');
         const btnClear = container.querySelector('#btn-clear-all-responses');
@@ -89,7 +136,7 @@ export function setupResponseTable(container, store) {
         }
         if (btnClear) {
             btnClear.onclick = () => {
-                if (confirm('Tüm katılımcı kayıtlarını silmek istediğinize emin misiniz?')) {
+                if (confirm('Tüm kayıtları silmek istediğinize emin misiniz?')) {
                     const emptyResponses = clearAllResponses();
                     store.setState({ responses: emptyResponses });
                 }

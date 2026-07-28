@@ -239,8 +239,111 @@ ul, ol {
 }
 
 /* ==========================================================================
-   FORM SWITCHER BAR
+   GOOGLE FORMS DASHBOARD CARDS & AUTO-SAVE BADGE
    ========================================================================== */
+.dashboard-forms-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.25rem;
+}
+
+.dashboard-form-card {
+    background: #ffffff;
+    border: 1px solid rgba(15, 46, 74, 0.12);
+    border-radius: 20px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: 0 10px 30px rgba(15, 46, 74, 0.05);
+    transition: var(--form-transition);
+    display: flex;
+    flex-direction: column;
+}
+
+.dashboard-form-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 18px 40px rgba(15, 46, 74, 0.12);
+    border-color: var(--form-accent);
+}
+
+.dashboard-form-card.selected {
+    border: 2px solid var(--form-accent);
+    box-shadow: 0 0 0 4px var(--form-accent-glow), 0 18px 40px rgba(15, 46, 74, 0.12);
+}
+
+.card-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.85rem;
+}
+
+.card-icon-box {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+}
+
+.icon-cyan { background: rgba(0, 184, 212, 0.12); color: var(--form-accent); }
+
+.form-badge-tag {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    padding: 4px 10px;
+    border-radius: 12px;
+    text-transform: uppercase;
+}
+
+.tag-cyan { background: rgba(0, 184, 212, 0.1); color: var(--form-accent); }
+
+.dashboard-form-card h4 {
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--form-primary);
+    margin: 0 0 0.4rem 0;
+}
+
+.card-desc {
+    font-size: 0.85rem;
+    color: #64748b;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748b;
+    margin-bottom: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed #e2e8f0;
+}
+
+.card-meta span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.draft-badge {
+    background: rgba(0, 184, 212, 0.12);
+    border: 1px solid rgba(0, 184, 212, 0.3);
+    color: var(--form-primary);
+    font-size: 0.76rem;
+    font-weight: 700;
+    padding: 3px 10px;
+    border-radius: 20px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
 .form-switcher-bar {
     background: rgba(255, 255, 255, 0.92);
     backdrop-filter: blur(12px);

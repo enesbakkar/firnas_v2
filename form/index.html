@@ -84,6 +84,17 @@
             <!-- TAB 1: FORM PORTAL & DYNAMIC FORM WIZARD -->
             <div id="tab-fill" class="tab-content active">
                 
+                <!-- GOOGLE FORMS STYLE DASHBOARD GALLERY -->
+                <div class="portal-gallery-section" style="margin-bottom: 2rem;">
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 1rem;">
+                        <h3 style="color:#ffffff; font-family:var(--font-display); font-size: 1.2rem; font-weight:800; margin:0;"><i class="fas fa-grid-2 text-accent"></i> Aktif Form Kataloğu</h3>
+                        <span class="small text-muted" style="color: #94a3b8 !important;">Doldurmak istediğiniz formu seçin</span>
+                    </div>
+                    <div class="dashboard-forms-grid" id="portal-dashboard-gallery">
+                        <!-- Dynamic Google Forms style cards -->
+                    </div>
+                </div>
+
                 <!-- FORM SWITCHER BAR -->
                 <div class="form-switcher-bar">
                     <span class="switcher-label"><i class="fas fa-list-check"></i> Form Seçin:</span>
@@ -117,11 +128,14 @@
                         <p id="form-desc-text"><!-- Dynamic description --></p>
                     </div>
 
-                    <!-- Progress Header -->
+                    <!-- Progress Header & Draft Status -->
                     <div class="form-progress-bar-container">
                         <div class="progress-info">
                             <span id="step-title-display">Adım 1: Kişisel Bilgiler</span>
-                            <span id="progress-percent-display">%33 Tamamlandı</span>
+                            <div style="display:flex; align-items:center; gap: 10px;">
+                                <span id="draft-saved-badge" class="draft-badge" style="display:none;"><i class="fas fa-cloud-arrow-up text-accent"></i> Taslak Otomatik Kaydedildi</span>
+                                <span id="progress-percent-display">%33 Tamamlandı</span>
+                            </div>
                         </div>
                         <div class="progress-track">
                             <div class="progress-fill" id="progress-fill-bar" style="width: 33.33%;"></div>
@@ -170,6 +184,19 @@
                             <button class="btn btn-danger btn-sm" id="btn-clear-all-responses">
                                 <i class="fas fa-trash"></i> Tümünü Sil
                             </button>
+                        </div>
+                    </div>
+
+                    <!-- Search & Filter Controls -->
+                    <div style="background: #f8fafc; padding: 1rem 1.25rem; border-radius: 16px; border: 1px solid #e2e8f0; margin-bottom: 1.5rem; display: flex; gap: 12px; flex-wrap: wrap;">
+                        <div style="flex: 1; min-width: 240px;" class="input-icon-wrapper">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="responses-search-input" class="form-control" placeholder="Ad Soyad, E-posta, Tel veya Ref Kodu ile arayın...">
+                        </div>
+                        <div style="min-width: 220px;">
+                            <select id="responses-form-filter" class="form-control">
+                                <option value="all">Tüm Formlar (Toplam Kayıtlar)</option>
+                            </select>
                         </div>
                     </div>
 
@@ -286,7 +313,7 @@
             
             <div style="display: flex; gap: 10px;">
                 <button class="btn btn-primary full-width" id="btn-close-success-modal">
-                    <i class="fas fa-check"></i> Tamam
+                    <i class="fas fa-check"></i> Tamam (Başka Bir Yanıt Gönder)
                 </button>
             </div>
             <input type="hidden" id="modal-ref-code-text" value="">
@@ -309,7 +336,7 @@
                 <h5 style="color: #ffffff; margin-top: 1rem;">2. Veri İşleme Amaçları</h5>
                 <p>Kişisel verileriniz; organizasyon listelerinin oluşturulması, başvuru erişim teyitlerinin sağlanması ve bilgilendirme süreçlerinin yürütülmesi amaçlarıyla sınırlı olarak işlenmektedir.</p>
                 <h5 style="color: #ffffff; margin-top: 1rem;">3. Verilerin Aktarılması ve Güvenliği</h5>
-                <p>Kişisel verileriniz 3. şahıslarla reklam veya pazarlama amacıyla kesinlikle paylaşılmamaktadır. Verileriniz şifrelenmiş güvenli veritabanı altyapısında saklanmaktadır.</p>
+                <p>Kişisel verileriniz 3. şahıslarla reklam veya pazarlamacılığı amacıyla kesinlikle paylaşılmamaktadır.</p>
             </div>
 
             <button type="button" class="btn btn-primary full-width" id="btn-accept-kvkk-modal">

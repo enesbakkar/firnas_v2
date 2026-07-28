@@ -13,6 +13,9 @@ export class Store {
             formDefinitions: {},
             isAuthenticated: false,
             activeTab: 'fill',
+            searchQuery: '',
+            responseFilterFormId: 'all',
+            draftSavedTimestamp: null,
             ...initialState
         };
         this.listeners = [];
@@ -33,7 +36,8 @@ export class Store {
             formData: {
                 ...this.state.formData,
                 [fieldId]: value
-            }
+            },
+            draftSavedTimestamp: new Date().toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit', second: '2-digit' })
         };
         this.notify();
     }
