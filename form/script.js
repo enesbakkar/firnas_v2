@@ -22,6 +22,7 @@ let customFormQuestions = [
 ];
 
 document.addEventListener('DOMContentLoaded', () => {
+    checkInitialPageAuth();
     updateAdminLockBtnState();
     updateProgressUI();
     loadResponsesTable();
@@ -34,6 +35,18 @@ document.addEventListener('DOMContentLoaded', () => {
 /* -------------------------------------------------------------------------- */
 function isUserAuthenticated() {
     return sessionStorage.getItem('firnas_form_authenticated') === 'true';
+}
+
+function checkInitialPageAuth() {
+    const overlay = document.getElementById('auth-lock-overlay');
+    if (!overlay) return;
+    if (isUserAuthenticated()) {
+        overlay.classList.remove('active');
+    } else {
+        overlay.classList.add('active');
+        const input = document.getElementById('auth-password-input');
+        if (input) setTimeout(() => input.focus(), 100);
+    }
 }
 
 function updateAdminLockBtnState() {
@@ -74,14 +87,18 @@ function handleAuthSubmit(e) {
 }
 
 function closeAuthModal() {
-    document.getElementById('auth-lock-overlay').classList.remove('active');
-    pendingTabTarget = null;
+    if (!isUserAuthenticated()) {
+        window.location.href = '/';
+    } else {
+        document.getElementById('auth-lock-overlay').classList.remove('active');
+        pendingTabTarget = null;
+    }
 }
 
 function lockAdminPanel() {
     sessionStorage.removeItem('firnas_form_authenticated');
     updateAdminLockBtnState();
-    switchFormTab('fill');
+    checkInitialPageAuth();
 }
 
 /* -------------------------------------------------------------------------- */

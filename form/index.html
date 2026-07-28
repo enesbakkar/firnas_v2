@@ -13,26 +13,26 @@
 </head>
 <body>
 
-    <!-- ADMIN PASSWORD AUTHENTICATION MODAL OVERLAY (FOR BUILDER & RESPONSES) -->
-    <div id="auth-lock-overlay" class="auth-modal-overlay">
+    <!-- AUTHENTICATION MODAL OVERLAY (REQUIRED BEFORE INTERFACE LOADS) -->
+    <div id="auth-lock-overlay" class="auth-modal-overlay active">
         <div class="auth-card">
             <div class="auth-shield-icon">
                 <i class="fas fa-user-shield"></i>
             </div>
-            <span class="auth-badge">YÖNETİCİ KORUMALI ALAN</span>
-            <h2>Yönetici Şifre Girişi</h2>
-            <p>Form düzenleme ve E-Tablo katılımcı kayıtlarına erişmek için şifrenizi girin.</p>
+            <span class="auth-badge">KORUMALI ALAN</span>
+            <h2>Giriş Şifresi</h2>
+            <p>Firnas Technologies Form Portalına erişmek için şifrenizi girin.</p>
             
             <form id="auth-form" onsubmit="handleAuthSubmit(event)">
                 <div class="form-group">
                     <div class="input-icon-wrapper">
                         <i class="fas fa-lock"></i>
-                        <input type="password" id="auth-password-input" class="form-control" placeholder="Yönetici Şifresi" required autocomplete="current-password">
+                        <input type="password" id="auth-password-input" class="form-control" placeholder="Erişim Şifresi" required autocomplete="current-password">
                     </div>
                     <span class="auth-error-msg" id="auth-error-msg"><i class="fas fa-circle-exclamation"></i> Hatalı Şifre! Lütfen tekrar deneyin.</span>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 1rem;">
-                    <button type="button" class="btn btn-secondary full-width" onclick="closeAuthModal()">İptal</button>
+                    <button type="button" class="btn btn-secondary full-width" onclick="closeAuthModal()">Ana Sayfa</button>
                     <button type="submit" class="btn btn-primary full-width">
                         <i class="fas fa-key"></i> Giriş Yap
                     </button>
@@ -41,6 +41,11 @@
             <p class="auth-footer-note"><i class="fas fa-info-circle"></i> Şifre: FORMS_fir_2023</p>
         </div>
     </div>
+    <script>
+        if (sessionStorage.getItem('firnas_form_authenticated') === 'true') {
+            document.getElementById('auth-lock-overlay').classList.remove('active');
+        }
+    </script>
 
     <!-- Navigation -->
     <nav class="navbar">
