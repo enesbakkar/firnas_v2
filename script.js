@@ -1,3 +1,7 @@
+// Form submission backend configuration
+// Set your Google Apps Script Web App URL here, or leave as-is to use Web3Forms fallback
+window.GOOGLE_SCRIPT_URL = 'YOUR_GOOGLE_SCRIPT_URL';
+
 const translations = {
     "tr": {
         "nav_home": "Ana Sayfa",
