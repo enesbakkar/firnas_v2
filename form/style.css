@@ -22,7 +22,8 @@
    ========================================================================== */
 body.standalone-form-mode .form-header,
 body.standalone-form-mode .portal-gallery-section,
-body.standalone-form-mode .form-switcher-bar {
+body.standalone-form-mode .form-switcher-bar,
+body.standalone-form-mode #btn-show-all-forms {
     display: none !important;
 }
 
