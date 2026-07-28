@@ -22,7 +22,7 @@
             <h2>Yönetici Girişi</h2>
             <p>E-Tablo kayıtlarına ve Form Düzenleyiciye erişmek için şifrenizi girin.</p>
             
-            <form id="auth-form" onsubmit="handleAuthSubmit(event)">
+            <form id="auth-form">
                 <div class="form-group">
                     <div class="input-icon-wrapper">
                         <i class="fas fa-lock"></i>
@@ -31,7 +31,7 @@
                     <span class="auth-error-msg" id="auth-error-msg"><i class="fas fa-circle-exclamation"></i> Hatalı Şifre! Lütfen tekrar deneyin.</span>
                 </div>
                 <div style="display: flex; gap: 10px; margin-top: 1rem;">
-                    <button type="button" class="btn btn-secondary full-width" onclick="closeAuthOverlay()">İptal</button>
+                    <button type="button" class="btn btn-secondary full-width" id="btn-cancel-auth">İptal</button>
                     <button type="submit" class="btn btn-primary full-width">
                         <i class="fas fa-key"></i> Giriş Yap
                     </button>
@@ -44,13 +44,13 @@
     <nav class="navbar">
         <div class="container nav-container">
             <a href="/form/" class="logo-text">
-                <img src="/asset/firnas_logo.png" alt="Firnas Logo" style="height: 52px; margin-right: 12px;">
+                <img src="/asset/firnas_logo.png" alt="Firnas Logo">
                 Firnas Technologies <span class="subdomain-tag">Forms Portal</span>
             </a>
             <ul class="nav-links">
                 <li><a href="/" class="nav-link-btn"><i class="fas fa-arrow-left"></i> Ana Sayfaya Dön</a></li>
                 <li>
-                    <button id="admin-lock-btn" class="btn btn-logout-sm hidden" onclick="lockAdminSession()">
+                    <button id="admin-lock-btn" class="btn-logout-sm hidden">
                         <i class="fas fa-lock"></i> Oturumu Kapat
                     </button>
                 </li>
@@ -69,32 +69,32 @@
                 
                 <!-- View Mode Tabs -->
                 <div class="form-mode-tabs" role="tablist">
-                    <button class="tab-btn active" id="tab-fill-btn" onclick="switchFormTab('fill')" role="tab">
+                    <button class="tab-btn active" id="tab-fill-btn" role="tab">
                         <i class="fas fa-folder-open"></i> Form Portalı & Kayıt
                     </button>
-                    <button class="tab-btn" id="tab-responses-btn" onclick="switchFormTab('responses')" role="tab">
+                    <button class="tab-btn" id="tab-responses-btn" role="tab">
                         <i class="fas fa-table-cells"></i> E-Tablo Kayıtları <span class="badge-count" id="responses-counter">0</span>
                     </button>
-                    <button class="tab-btn" id="tab-builder-btn" onclick="switchFormTab('builder')" role="tab">
+                    <button class="tab-btn" id="tab-builder-btn" role="tab">
                         <i class="fas fa-wand-magic-sparkles"></i> Form Düzenleyici
                     </button>
                 </div>
             </div>
 
-            <!-- TAB 1: FORM PORTAL & INTERACTIVE FILL ENGINE -->
+            <!-- TAB 1: FORM PORTAL & DYNAMIC FORM WIZARD -->
             <div id="tab-fill" class="tab-content active">
                 
                 <!-- FORM SWITCHER BAR -->
                 <div class="form-switcher-bar">
                     <span class="switcher-label"><i class="fas fa-list-check"></i> Form Seçin:</span>
                     <div class="switcher-pills">
-                        <button class="switcher-pill active" id="card-feam-2026" onclick="selectPortalForm('feam-2026')">
+                        <button class="switcher-pill active" data-form-id="feam-2026">
                             <i class="fas fa-users"></i> FEAM Networking 2026
                         </button>
-                        <button class="switcher-pill" id="card-proje-basvuru" onclick="selectPortalForm('proje-basvuru')">
+                        <button class="switcher-pill" data-form-id="proje-basvuru">
                             <i class="fas fa-laptop-code"></i> Proje & AR-GE Başvurusu
                         </button>
-                        <button class="switcher-pill" id="card-kurumsal-iletisim" onclick="selectPortalForm('kurumsal-iletisim')">
+                        <button class="switcher-pill" data-form-id="kurumsal-iletisim">
                             <i class="fas fa-headset"></i> Kurumsal İletişim & Destek
                         </button>
                     </div>
@@ -104,19 +104,17 @@
                 <div class="form-card-wrapper event-form-card" id="selected-form-wrapper">
                     <!-- EVENT BANNER HEADER -->
                     <div class="event-banner-container" id="form-banner-container">
-                        <img src="/asset/feam_banner.png" alt="FEAM Networking 2026 Banner" class="event-banner-img" id="form-banner-img">
+                        <img src="/asset/feam_banner.png" alt="Form Banner" class="event-banner-img" id="form-banner-img">
                     </div>
 
                     <!-- Event Metadata Bar -->
                     <div class="event-meta-bar" id="form-meta-bar">
-                        <div class="meta-pill" id="meta-pill-1"><i class="fas fa-calendar-day"></i> <span id="meta-text-1">1 Ağustos 2026, 15:00</span></div>
-                        <div class="meta-pill" id="meta-pill-2"><i class="fas fa-location-dot"></i> <span id="meta-text-2">Atölye Üsküdar</span></div>
-                        <div class="meta-pill tag-pill" id="meta-pill-3"><i class="fas fa-rocket"></i> <span id="meta-text-3">Firnas TEAM Buluşması</span></div>
+                        <!-- Dynamic metadata pills -->
                     </div>
 
                     <!-- Event Description Box -->
-                    <div class="event-info-box" id="form-info-box">
-                        <p id="form-desc-text"><i class="fas fa-circle-info info-icon"></i> Lise ve üniversite öğrencilerinin teknoloji ve inovasyon etrafında bir araya geldiği bu özel buluşmada yerinizi almak için aşağıdaki formu eksiksiz doldurun!</p>
+                    <div class="event-info-box">
+                        <p id="form-desc-text"><!-- Dynamic description --></p>
                     </div>
 
                     <!-- Progress Header -->
@@ -129,187 +127,21 @@
                             <div class="progress-fill" id="progress-fill-bar" style="width: 33.33%;"></div>
                         </div>
                         <div class="step-indicators">
-                            <div class="step-dot active" data-step="1"><span>1</span><label>Kişisel</label></div>
-                            <div class="step-dot" data-step="2"><span>2</span><label>Eğitim</label></div>
-                            <div class="step-dot" data-step="3"><span>3</span><label>Detaylar & KVKK</label></div>
+                            <!-- Dynamic step dots -->
                         </div>
                     </div>
 
-                    <!-- Dynamic Form Content -->
-                    <form id="interactive-main-form" onsubmit="handleFormSubmission(event)" novalidate>
-                        <!-- STEP 1: Kişisel İletişim Bilgileri -->
-                        <div class="form-step-panel active" data-panel="1">
-                            <h2 class="step-heading"><i class="fas fa-user"></i> Kişisel Bilgiler</h2>
-                            <p class="step-desc">İletişim ve doğrulama bilgilendirmeleri için gereklidir.</p>
-                            
-                            <div class="form-grid-2">
-                                <div class="form-group" id="group-fullname">
-                                    <label for="fill-fullname">İsim Soyisim <span class="required">*</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-user"></i>
-                                        <input type="text" id="fill-fullname" class="form-control" placeholder="Ad Soyad giriniz" oninput="handleInputAutoSave('fill-fullname')" required>
-                                    </div>
-                                    <span class="error-msg" id="err-fullname">Lütfen isim soyisim alanını doldurun.</span>
-                                </div>
-                                <div class="form-group" id="group-phone">
-                                    <label for="fill-phone">Telefon Numarası <span class="required">*</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-phone"></i>
-                                        <input type="tel" id="fill-phone" class="form-control" placeholder="Örn: 0555 123 45 67" oninput="handleInputAutoSave('fill-phone')" required>
-                                    </div>
-                                    <span class="error-msg" id="err-phone">Lütfen telefon numaranızı girin.</span>
-                                </div>
-                            </div>
-
-                            <div class="form-grid-2">
-                                <div class="form-group" id="group-email">
-                                    <label for="fill-email">E-posta Adresi <span class="required">*</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-envelope"></i>
-                                        <input type="email" id="fill-email" class="form-control" placeholder="ornek@domain.com" oninput="handleInputAutoSave('fill-email')" required>
-                                    </div>
-                                    <span class="error-msg" id="err-email">Geçerli bir e-posta adresi yazın.</span>
-                                </div>
-                                <div class="form-group" id="group-district">
-                                    <label for="fill-district">İkamet Edilen İlçe <span class="required">*</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-map-pin"></i>
-                                        <input type="text" id="fill-district" class="form-control" placeholder="Örn: Üsküdar / Kadıköy" oninput="handleInputAutoSave('fill-district')" required>
-                                    </div>
-                                    <span class="error-msg" id="err-district">İkamet ettiğiniz ilçeyi belirtin.</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- STEP 2: Eğitim & Profil Bilgileri -->
-                        <div class="form-step-panel" data-panel="2">
-                            <h2 class="step-heading"><i class="fas fa-graduation-cap"></i> Eğitim Bilgileri</h2>
-                            <p class="step-desc">Profil gruplaması ve akademik değerlendirme için istenmektedir.</p>
-
-                            <div class="form-grid-2">
-                                <div class="form-group" id="group-university">
-                                    <label for="fill-university">Üniversite / Okul <span class="required">*</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-building-columns"></i>
-                                        <input type="text" id="fill-university" class="form-control" placeholder="Örn: İTÜ / Yıldız Teknik / Lise" oninput="handleInputAutoSave('fill-university')" required>
-                                    </div>
-                                    <span class="error-msg" id="err-university">Üniversite / Okul adını girin.</span>
-                                </div>
-                                <div class="form-group" id="group-department">
-                                    <label for="fill-department">Bölüm <span class="required">*</span></label>
-                                    <div class="input-icon-wrapper">
-                                        <i class="fas fa-microchip"></i>
-                                        <input type="text" id="fill-department" class="form-control" placeholder="Örn: Bilgisayar Mühendisliği" oninput="handleInputAutoSave('fill-department')" required>
-                                    </div>
-                                    <span class="error-msg" id="err-department">Bölüm bilgisini girin.</span>
-                                </div>
-                            </div>
-
-                            <div class="form-group" id="group-grade" style="margin-top: 1rem;">
-                                <label for="fill-grade">Sınıf <span class="required">*</span></label>
-                                <div class="input-icon-wrapper">
-                                    <i class="fas fa-layer-group"></i>
-                                    <select id="fill-grade" class="form-control" onchange="handleInputAutoSave('fill-grade')" required>
-                                        <option value="">Lütfen sınıfınızı seçiniz...</option>
-                                        <option value="Hazırlık">Hazırlık</option>
-                                        <option value="1. Sınıf">1. Sınıf</option>
-                                        <option value="2. Sınıf">2. Sınıf</option>
-                                        <option value="3. Sınıf">3. Sınıf</option>
-                                        <option value="4. Sınıf">4. Sınıf</option>
-                                        <option value="Yüksek Lisans">Yüksek Lisans</option>
-                                        <option value="Mezun">Mezun</option>
-                                    </select>
-                                </div>
-                                <span class="error-msg" id="err-grade">Lütfen sınıf seçimi yapın.</span>
-                            </div>
-                        </div>
-
-                        <!-- STEP 3: Detaylar, Nereden Duydunuz & KVKK -->
-                        <div class="form-step-panel" data-panel="3">
-                            <h2 class="step-heading"><i class="fas fa-bullhorn"></i> Detaylar & KVKK Onayı</h2>
-                            <p class="step-desc">Son birkaç detay soru ile kaydınızı tamamlayın.</p>
-
-                            <div class="form-group">
-                                <label>Formu Nereden Duydunuz? <span class="required">*</span></label>
-                                <div class="category-cards-grid">
-                                    <label class="category-card">
-                                        <input type="radio" name="fill_hear_about" value="Instagram" checked onchange="handleInputAutoSave('fill_hear_about')">
-                                        <div class="card-content">
-                                            <i class="fab fa-instagram"></i>
-                                            <h4>Instagram</h4>
-                                        </div>
-                                    </label>
-                                    <label class="category-card">
-                                        <input type="radio" name="fill_hear_about" value="LinkedIn" onchange="handleInputAutoSave('fill_hear_about')">
-                                        <div class="card-content">
-                                            <i class="fab fa-linkedin"></i>
-                                            <h4>LinkedIn</h4>
-                                        </div>
-                                    </label>
-                                    <label class="category-card">
-                                        <input type="radio" name="fill_hear_about" value="Arkadaş Tavsiyesi" onchange="handleInputAutoSave('fill_hear_about')">
-                                        <div class="card-content">
-                                            <i class="fas fa-user-group"></i>
-                                            <h4>Arkadaş Tavsiyesi</h4>
-                                        </div>
-                                    </label>
-                                    <label class="category-card">
-                                        <input type="radio" name="fill_hear_about" value="WhatsApp Grupları" onchange="handleInputAutoSave('fill_hear_about')">
-                                        <div class="card-content">
-                                            <i class="fab fa-whatsapp"></i>
-                                            <h4>WhatsApp Grupları</h4>
-                                        </div>
-                                    </label>
-                                </div>
-                            </div>
-
-                            <div class="form-group" style="margin-top: 1.5rem;">
-                                <label for="fill-notes">Eklemek İstedikleriniz (İsteğe bağlı)</label>
-                                <textarea id="fill-notes" class="form-control" rows="3" placeholder="Ekibinize veya geliştiricilere iletmek istediğiniz not..." oninput="handleInputAutoSave('fill-notes')"></textarea>
-                            </div>
-
-                            <!-- Summary Review Box -->
-                            <div class="form-group" style="margin-top: 1.5rem;">
-                                <label>Başvuru Özeti İncelemesi</label>
-                                <div class="summary-review-card">
-                                    <div class="summary-item">
-                                        <span class="s-label">Ad Soyad:</span>
-                                        <span class="s-val" id="sum-fullname">-</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="s-label">İletişim:</span>
-                                        <span class="s-val" id="sum-contact">-</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="s-label">Okul & Bölüm:</span>
-                                        <span class="s-val" id="sum-school">-</span>
-                                    </div>
-                                    <div class="summary-item">
-                                        <span class="s-label">Sınıf & İlçe:</span>
-                                        <span class="s-val" id="sum-grade-dist">-</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <!-- MANDATORY KVKK CHECKBOX -->
-                            <div class="form-group kvkk-checkbox-group" id="group-kvkk" style="margin-top: 1.75rem;">
-                                <label class="kvkk-container-label">
-                                    <input type="checkbox" id="fill-kvkk" onchange="clearInputError('fill-kvkk')" required>
-                                    <span class="checkmark"></span>
-                                    <span class="kvkk-text">
-                                        <a href="#" onclick="openKvkkModal(event)">KVKK Aydınlatma Metni</a>'ni okudum, anladım ve kişisel verilerimin işlenmesini onaylıyorum. <span class="required">*</span>
-                                    </span>
-                                </label>
-                                <span class="error-msg" id="err-kvkk">Formu göndermek için KVKK Aydınlatma Metni'ni onaylamalısınız.</span>
-                            </div>
-                        </div>
+                    <!-- Dynamic Multi-Step Form -->
+                    <form id="interactive-main-form" novalidate>
+                        <!-- Dynamic Step Panels rendered by FormWizard component -->
+                        <div id="wizard-step-panels-container"></div>
 
                         <!-- Step Navigation Buttons -->
                         <div class="form-actions-footer">
-                            <button type="button" class="btn btn-secondary" id="btn-prev-step" onclick="changeStep(-1)" disabled>
+                            <button type="button" class="btn btn-secondary" id="btn-prev-step" disabled>
                                 <i class="fas fa-arrow-left"></i> Geri
                             </button>
-                            <button type="button" class="btn btn-primary" id="btn-next-step" onclick="changeStep(1)">
+                            <button type="button" class="btn btn-primary" id="btn-next-step">
                                 İleri <i class="fas fa-arrow-right"></i>
                             </button>
                             <button type="submit" class="btn btn-success hidden" id="btn-submit-form">
@@ -329,13 +161,13 @@
                             <p class="text-muted">Google E-Tablolar (Sheets) uyumlu canlı kayıt listesi.</p>
                         </div>
                         <div class="responses-actions">
-                            <button class="btn btn-success btn-sm" onclick="exportResponsesCSV()">
+                            <button class="btn btn-success btn-sm" id="btn-export-csv">
                                 <i class="fas fa-file-csv"></i> Excel / CSV İndir
                             </button>
-                            <button class="btn btn-secondary btn-sm" onclick="exportResponsesJSON()">
+                            <button class="btn btn-secondary btn-sm" id="btn-export-json">
                                 <i class="fas fa-download"></i> JSON İndir
                             </button>
-                            <button class="btn btn-danger btn-sm" onclick="clearAllResponses()">
+                            <button class="btn btn-danger btn-sm" id="btn-clear-all-responses">
                                 <i class="fas fa-trash"></i> Tümünü Sil
                             </button>
                         </div>
@@ -353,7 +185,7 @@
                         <div class="stat-card">
                             <div class="stat-icon"><i class="fas fa-check-circle"></i></div>
                             <div class="stat-info">
-                                <span class="stat-value">Aktif</span>
+                                <span class="stat-value">Canlı</span>
                                 <span class="stat-label">Portal Durumu</span>
                             </div>
                         </div>
@@ -385,22 +217,22 @@
                 </div>
             </div>
 
-            <!-- TAB 3: FORM DÜZENLEYİCİ (BUILDER) -->
+            <!-- TAB 3: FORM BUILDER -->
             <div id="tab-builder" class="tab-content">
                 <div class="builder-layout-grid">
                     <div class="builder-sidebar">
                         <h3><i class="fas fa-toolbox"></i> Soru Türü Ekle</h3>
                         <div class="builder-tools">
-                            <button class="btn btn-secondary full-width btn-tool" onclick="addQuestionToBuilder('text')">
+                            <button class="btn btn-secondary full-width btn-tool btn-tool-add" data-type="text">
                                 <i class="fas fa-font"></i> Kısa Metin Girdisi
                             </button>
-                            <button class="btn btn-secondary full-width btn-tool" onclick="addQuestionToBuilder('textarea')">
+                            <button class="btn btn-secondary full-width btn-tool btn-tool-add" data-type="textarea">
                                 <i class="fas fa-align-left"></i> Uzun Paragraf Metni
                             </button>
-                            <button class="btn btn-secondary full-width btn-tool" onclick="addQuestionToBuilder('choice')">
+                            <button class="btn btn-secondary full-width btn-tool btn-tool-add" data-type="choice">
                                 <i class="fas fa-list-check"></i> Çoktan Seçmeli (Radio)
                             </button>
-                            <button class="btn btn-secondary full-width btn-tool" onclick="addQuestionToBuilder('dropdown')">
+                            <button class="btn btn-secondary full-width btn-tool btn-tool-add" data-type="dropdown">
                                 <i class="fas fa-caret-down"></i> Açılır Liste (Dropdown)
                             </button>
                         </div>
@@ -410,14 +242,14 @@
                         <h3><i class="fas fa-gear"></i> Form Ayarları</h3>
                         <div class="form-group">
                             <label>Form Başlığı</label>
-                            <input type="text" id="builder-form-title" class="form-control" value="Özel Kayıt Formu" oninput="updateBuilderTitle()">
+                            <input type="text" id="builder-form-title" class="form-control" value="Özel Kayıt Formu">
                         </div>
                         <div class="form-group">
                             <label>Form Açıklaması</label>
-                            <textarea id="builder-form-desc" class="form-control" rows="3" oninput="updateBuilderTitle()">Firnas TEAM Katılımcı Kayıt Formu</textarea>
+                            <textarea id="builder-form-desc" class="form-control" rows="3">Firnas TEAM Katılımcı Kayıt Formu</textarea>
                         </div>
-                        <button class="btn btn-primary full-width" onclick="publishCustomForm()">
-                            <i class="fas fa-paper-plane"></i> Formu Yayınla / Bağlantı Al
+                        <button class="btn btn-primary full-width" id="btn-publish-builder-form">
+                            <i class="fas fa-paper-plane"></i> Formu Yayınla & Listeye Ekle
                         </button>
                     </div>
 
@@ -453,10 +285,7 @@
             <p class="small text-muted" style="margin-bottom: 1.5rem;">Bu kodu kaydediniz. Doğrulama esnasında kontrol edilecektir.</p>
             
             <div style="display: flex; gap: 10px;">
-                <button class="btn btn-secondary full-width" onclick="copyToClipboard('modal-ref-code-text')">
-                    <i class="fas fa-copy"></i> Kodu Kopyala
-                </button>
-                <button class="btn btn-primary full-width" onclick="closeSuccessModal()">
+                <button class="btn btn-primary full-width" id="btn-close-success-modal">
                     <i class="fas fa-check"></i> Tamam
                 </button>
             </div>
@@ -469,24 +298,21 @@
         <div class="modal-card" style="max-width: 650px; text-align: left; max-height: 85vh; display: flex; flex-direction: column;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
                 <h3 style="margin:0; font-size: 1.3rem;"><i class="fas fa-file-contract text-accent"></i> KVKK Aydınlatma Metni</h3>
-                <button type="button" class="password-toggle-btn" onclick="closeKvkkModal()"><i class="fas fa-times" style="font-size: 1.2rem;"></i></button>
+                <button type="button" class="password-toggle-btn" id="btn-close-kvkk-modal"><i class="fas fa-times" style="font-size: 1.2rem;"></i></button>
             </div>
             
             <div class="kvkk-modal-scrollable-content" style="overflow-y: auto; padding-right: 8px; color: #cbd5e1; font-size: 0.88rem; line-height: 1.6; margin-bottom: 1.5rem;">
                 <p><strong>Firnas Technologies Kişisel Verilerin Korunması ve İşlenmesi Aydınlatma Metni</strong></p>
-                <p>6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, Firnas Technologies olarak; kayıt ve başvuru süreçlerinde siz değerli katılımcılarımızın kişisel verilerinin güvenliğine azami önem vermekteyiz.</p>
-                
+                <p>6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") uyarınca, Firnas Technologies olarak; kayıt ve başvuru süreçlerinde siz değerli katılımcılarımızın kişisel verilerinin güvenliğine azami önem vermekteyiz.</p>                
                 <h5 style="color: #ffffff; margin-top: 1rem;">1. İşlenen Kişisel Verileriniz</h5>
                 <p>Form kapsamında topladığımız Ad Soyad, Telefon Numarası, E-posta Adresi, İkamet Edilen İlçe, Okul/Üniversite, Bölüm ve Sınıf bilgileriniz işlenmektedir.</p>
-
                 <h5 style="color: #ffffff; margin-top: 1rem;">2. Veri İşleme Amaçları</h5>
                 <p>Kişisel verileriniz; organizasyon listelerinin oluşturulması, başvuru erişim teyitlerinin sağlanması ve bilgilendirme süreçlerinin yürütülmesi amaçlarıyla sınırlı olarak işlenmektedir.</p>
-
                 <h5 style="color: #ffffff; margin-top: 1rem;">3. Verilerin Aktarılması ve Güvenliği</h5>
                 <p>Kişisel verileriniz 3. şahıslarla reklam veya pazarlama amacıyla kesinlikle paylaşılmamaktadır. Verileriniz şifrelenmiş güvenli veritabanı altyapısında saklanmaktadır.</p>
             </div>
 
-            <button type="button" class="btn btn-primary full-width" onclick="acceptKvkkModal()">
+            <button type="button" class="btn btn-primary full-width" id="btn-accept-kvkk-modal">
                 <i class="fas fa-check"></i> Okudum, Anladım & Kabul Ediyorum
             </button>
         </div>
@@ -497,10 +323,11 @@
         <div class="modal-card" style="max-width: 600px; text-align: left;">
             <h3 style="margin-bottom: 1rem;"><i class="fas fa-user-gear text-accent"></i> Katılımcı Kayıt Detayı</h3>
             <div id="modal-detail-body" class="summary-review-card" style="margin-bottom: 1.5rem;"></div>
-            <button class="btn btn-secondary full-width" onclick="closeDetailModal()">Kapat</button>
+            <button class="btn btn-secondary full-width" id="btn-close-detail-modal">Kapat</button>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <!-- MODULE ENTRY POINT -->
+    <script type="module" src="src/app.js"></script>
 </body>
 </html>
