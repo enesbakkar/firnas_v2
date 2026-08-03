@@ -440,6 +440,77 @@ ul, ol {
     border-color: var(--form-accent);
 }
 
+/* Card Footer & Sleek Action Buttons */
+.card-footer-bar {
+    padding: 0.85rem 1rem 1rem 1rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: auto;
+}
+
+.btn-card-edit {
+    width: 100%;
+    background: var(--form-accent);
+    color: #051421 !important;
+    font-weight: 800;
+    font-size: 0.88rem;
+    padding: 9px 14px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: var(--form-transition);
+}
+
+.btn-card-edit:hover {
+    background: var(--form-accent-hover);
+    box-shadow: 0 4px 15px var(--form-accent-glow);
+    transform: translateY(-1px);
+}
+
+.card-actions-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    width: 100%;
+}
+
+.btn-card-sub-pill {
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    color: #cbd5e1 !important;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 6px 8px;
+    border-radius: 10px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    transition: var(--form-transition);
+    white-space: nowrap;
+}
+
+.btn-card-sub-pill:hover {
+    background: rgba(0, 184, 212, 0.15);
+    border-color: rgba(0, 184, 212, 0.4);
+    color: #ffffff !important;
+}
+
+.btn-card-sub-icon {
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    flex-shrink: 0;
+}
+
+
 .dashboard-form-card.selected {
     border: 2px solid var(--form-accent);
     box-shadow: 0 0 0 4px var(--form-accent-glow), 0 18px 40px rgba(15, 46, 74, 0.12);

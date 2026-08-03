@@ -83,18 +83,18 @@ export function setupFormWizard(container, store) {
                         <p class="card-desc">${escapeHtml(f.description ? (f.description.substring(0, 85) + '...') : '')}</p>
                     </div>
                     
-                    <div class="card-footer-bar" style="margin-top:auto; padding-top: 0.85rem; border-top: 1px dashed rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:8px;">
-                        <button class="btn btn-primary full-width btn-edit-form-card" data-form-id="${f.id}" title="Formu Google Forms mantığında düzenleyin">
+                    <div class="card-footer-bar">
+                        <button type="button" class="btn-card-edit btn-edit-form-card" data-form-id="${f.id}" title="Formu Google Forms mantığında düzenleyin">
                             <i class="fas fa-pen-to-square"></i> Formu Düzenle
                         </button>
-                        <div style="display:flex; gap:6px; justify-content:space-between; align-items:center;">
-                            <button type="button" class="btn btn-secondary btn-sm btn-preview-form" data-form-id="${f.id}" title="Formu Doldur / Önizle" style="flex:1;">
+                        <div class="card-actions-row">
+                            <button type="button" class="btn-card-sub-pill btn-preview-form" data-form-id="${f.id}" title="Formu Doldur / Önizle" style="flex:1;">
                                 <i class="fas fa-eye text-accent"></i> Doldur
                             </button>
-                            <button type="button" class="btn btn-secondary btn-sm btn-open-responses" data-form-id="${f.id}" title="E-Tablo Yanıtlarını İncele" style="flex:1;">
+                            <button type="button" class="btn-card-sub-pill btn-open-responses" data-form-id="${f.id}" title="E-Tablo Yanıtlarını İncele" style="flex:1;">
                                 <i class="fas fa-table-cells text-accent"></i> <strong>${responsesCount}</strong> Yanıt
                             </button>
-                            <button type="button" class="btn btn-secondary btn-sm btn-share-form" data-form-id="${f.id}" title="Form Bağlantısını Paylaş">
+                            <button type="button" class="btn-card-sub-pill btn-card-sub-icon btn-share-form" data-form-id="${f.id}" title="Form Bağlantısını Paylaş">
                                 <i class="fas fa-share-nodes text-accent"></i>
                             </button>
                         </div>
@@ -102,6 +102,7 @@ export function setupFormWizard(container, store) {
                 </div>
             `;
         }).join('');
+
 
         galleryContainer.innerHTML = cardsHtml;
 
