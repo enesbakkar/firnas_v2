@@ -390,60 +390,75 @@
 
     <!-- FORM SHARE & EMBED MODAL -->
     <div id="form-share-modal" class="modal-overlay">
-        <div class="modal-card" style="max-width: 580px; text-align: left;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
-                <h3 style="margin:0; font-size: 1.25rem;"><i class="fas fa-share-nodes text-accent"></i> Form Paylaşım & Erişim</h3>
-                <button type="button" class="password-toggle-btn" id="btn-close-share-modal"><i class="fas fa-times" style="font-size: 1.2rem;"></i></button>
+        <div class="modal-card share-modal-card" style="max-width: 540px; text-align: left; padding: 1.75rem;">
+            <!-- Modal Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.85rem;">
+                <h3 style="margin:0; font-size: 1.2rem; font-weight:800; color:#ffffff; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-share-nodes text-accent"></i> Form Paylaşım & Erişim
+                </h3>
+                <button type="button" class="modal-close-btn" id="btn-close-share-modal" title="Kapat">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
-            <div style="margin-bottom: 1.25rem;">
-                <span class="auth-badge" id="share-modal-form-badge">FORM PAYLAŞIMI</span>
-                <h4 id="share-modal-form-title" style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 800; color: #ffffff; margin-top: 4px;">Form Başlığı</h4>
-                <p style="font-size: 0.85rem; color: #94a3b8; margin: 0;">Katılımcıların formu doldurması için aşağıdaki özel bağlantıyı kopyalayabilir veya doğrudan paylaşabilirsiniz.</p>
+            <!-- Form Title Banner Info Card -->
+            <div class="share-info-card">
+                <span class="form-badge-tag tag-cyan" id="share-modal-form-badge">FORM PAYLAŞIMI</span>
+                <h4 id="share-modal-form-title">Form Başlığı</h4>
+                <p>Katılımcıların formu doldurması için aşağıdaki özel bağlantıyı kopyalayabilir veya paylaşabilirsiniz.</p>
             </div>
 
             <!-- Direct URL Input with Copy Button -->
             <div class="form-group" style="margin-bottom: 1.25rem;">
-                <label style="color: #cbd5e1;"><i class="fas fa-link text-accent"></i> Doğrudan Katılımcı Bağlantısı (URL)</label>
-                <div style="display: flex; gap: 8px; margin-top: 4px;">
+                <label style="color: #cbd5e1; font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                    <i class="fa-solid fa-link text-accent"></i> Doğrudan Katılımcı Bağlantısı (URL)
+                </label>
+                <div style="display: flex; gap: 8px;">
                     <div class="input-icon-wrapper" style="flex: 1;">
-                        <i class="fas fa-globe"></i>
-                        <input type="text" id="share-modal-direct-url" class="form-control" readonly style="font-weight: 700; color: var(--form-accent); background: rgba(5,20,33,0.8);">
+                        <i class="fa-solid fa-globe"></i>
+                        <input type="text" id="share-modal-direct-url" class="form-control" readonly style="font-weight: 700; color: var(--form-accent); background: rgba(5,20,33,0.9); border-color: rgba(0,184,212,0.3);">
                     </div>
-                    <button class="btn btn-primary" id="btn-copy-share-url" style="white-space: nowrap;">
-                        <i class="fas fa-copy"></i> Kopyala
+                    <button type="button" class="btn btn-primary" id="btn-copy-share-url" style="white-space: nowrap; padding: 0 16px;">
+                        <i class="fa-solid fa-copy"></i> Kopyala
                     </button>
                 </div>
             </div>
 
             <!-- Social Share Quick Buttons -->
-            <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label style="color: #cbd5e1;"><i class="fas fa-paper-plane text-accent"></i> Hızlı Sosyal Medya Paylaşımı</label>
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 8px; margin-top: 6px;">
-                    <a id="btn-share-whatsapp" href="#" target="_blank" class="btn btn-secondary btn-sm" style="background: #25D366; color: #ffffff; font-weight: 700;">
-                        <i class="fab fa-whatsapp"></i> WhatsApp'ta Gönder
+            <div class="form-group" style="margin-bottom: 1.25rem;">
+                <label style="color: #cbd5e1; font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                    <i class="fa-solid fa-paper-plane text-accent"></i> Hızlı Sosyal Medya Paylaşımı
+                </label>
+                <div class="social-buttons-grid">
+                    <a id="btn-share-whatsapp" href="#" target="_blank" class="btn-social btn-wa">
+                        <i class="fa-brands fa-whatsapp"></i> WhatsApp
                     </a>
-                    <a id="btn-share-linkedin" href="#" target="_blank" class="btn btn-secondary btn-sm" style="background: #0A66C2; color: #ffffff; font-weight: 700;">
-                        <i class="fab fa-linkedin"></i> LinkedIn
+                    <a id="btn-share-linkedin" href="#" target="_blank" class="btn-social btn-li">
+                        <i class="fa-brands fa-linkedin"></i> LinkedIn
                     </a>
-                    <a id="btn-share-email" href="#" class="btn btn-secondary btn-sm" style="background: #64748B; color: #ffffff; font-weight: 700;">
-                        <i class="fas fa-envelope"></i> E-posta
+                    <a id="btn-share-email" href="#" class="btn-social btn-mail">
+                        <i class="fa-solid fa-envelope"></i> E-posta
                     </a>
                 </div>
             </div>
 
             <!-- iFrame Embed Code -->
             <div class="form-group" style="margin-bottom: 1.5rem;">
-                <label style="color: #cbd5e1;"><i class="fas fa-code text-accent"></i> Web Sitesine Gömme Kodu (HTML iFrame)</label>
-                <textarea id="share-modal-iframe-code" class="form-control" rows="3" readonly style="font-family: monospace; font-size: 0.82rem; background: rgba(5,20,33,0.8); color: #38bdf8; margin-top: 4px;"></textarea>
-                <button class="btn btn-secondary btn-sm full-width" id="btn-copy-iframe-code" style="margin-top: 6px;">
-                    <i class="fas fa-copy"></i> iFrame Kodunu Kopyala
+                <label style="color: #cbd5e1; font-weight:700; font-size:0.85rem; display:flex; align-items:center; gap:6px; margin-bottom:6px;">
+                    <i class="fa-solid fa-code text-accent"></i> Web Sitesine Gömme Kodu (HTML iFrame)
+                </label>
+                <textarea id="share-modal-iframe-code" class="share-code-textarea" rows="2" readonly></textarea>
+                <button type="button" class="btn-card-sub-pill full-width" id="btn-copy-iframe-code" style="margin-top: 8px; padding: 10px 14px; font-size:0.85rem;">
+                    <i class="fa-solid fa-code text-accent"></i> iFrame Kodunu Kopyala
                 </button>
             </div>
 
-            <button class="btn btn-secondary full-width" id="btn-done-share-modal">Tamam</button>
+            <button type="button" class="btn btn-primary full-width" id="btn-done-share-modal" style="padding: 12px; font-weight:800;">
+                <i class="fa-solid fa-check"></i> Tamam
+            </button>
         </div>
     </div>
+
 
     <!-- THEME CUSTOMIZER MODAL -->
     <div id="form-theme-modal" class="modal-overlay">
