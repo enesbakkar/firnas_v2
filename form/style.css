@@ -1713,6 +1713,24 @@ select.form-control {
     z-index: 10;
 }
 
+.gform-subtab-btn {
+    border-radius: 8px !important;
+    padding: 6px 14px !important;
+    transition: var(--form-transition);
+}
+
+.gform-subtab-btn:hover {
+    background: rgba(0, 184, 212, 0.15) !important;
+    color: var(--form-accent) !important;
+}
+
+.gform-subtab-btn.active {
+    background: rgba(0, 184, 212, 0.25) !important;
+    color: #ffffff !important;
+    border: 1px solid rgba(0, 184, 212, 0.4) !important;
+}
+
+
 /* ==========================================================================
    MEDIA QUERIES (RESPONSIVE DEVICING)
    ========================================================================== */

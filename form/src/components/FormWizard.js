@@ -68,6 +68,7 @@ export function setupFormWizard(container, store) {
             const f = state.formDefinitions[fId];
             const isSelected = (fId === state.currentFormId);
             const responsesCount = (state.responses || []).filter(r => (r.formSlug === fId || (!r.formSlug && fId === 'feam-2026'))).length;
+            const isCustom = (state.customForms || []).some(cf => cf.id === fId);
 
             const hasBanner = !!f.banner;
             const coverHtml = hasBanner 
@@ -79,19 +80,22 @@ export function setupFormWizard(container, store) {
                     ${coverHtml}
                     <div class="card-body-content">
                         <h4>${escapeHtml(f.title)}</h4>
-                        <p class="card-desc">${escapeHtml(f.description ? (f.description.substring(0, 80) + '...') : '')}</p>
+                        <p class="card-desc">${escapeHtml(f.description ? (f.description.substring(0, 85) + '...') : '')}</p>
                     </div>
                     
-                    <div class="card-footer-bar" style="margin-top:auto; padding-top: 0.85rem; border-top: 1px dashed rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:10px;">
-                        <button class="btn btn-primary full-width btn-preview-form" data-form-id="${f.id}">
-                            <i class="fas fa-paper-plane"></i> Formu Doldur
+                    <div class="card-footer-bar" style="margin-top:auto; padding-top: 0.85rem; border-top: 1px dashed rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:8px;">
+                        <button class="btn btn-primary full-width btn-edit-form-card" data-form-id="${f.id}" title="Formu Google Forms mantığında düzenleyin">
+                            <i class="fas fa-pen-to-square"></i> Formu Düzenle
                         </button>
-                        <div style="display:flex; justify-content:space-between; align-items:center;">
-                            <button type="button" class="btn-card-sub-action btn-open-responses" data-form-id="${f.id}" title="E-Tablo Yanıtlarını İncele">
+                        <div style="display:flex; gap:6px; justify-content:space-between; align-items:center;">
+                            <button type="button" class="btn btn-secondary btn-sm btn-preview-form" data-form-id="${f.id}" title="Formu Doldur / Önizle" style="flex:1;">
+                                <i class="fas fa-eye text-accent"></i> Doldur
+                            </button>
+                            <button type="button" class="btn btn-secondary btn-sm btn-open-responses" data-form-id="${f.id}" title="E-Tablo Yanıtlarını İncele" style="flex:1;">
                                 <i class="fas fa-table-cells text-accent"></i> <strong>${responsesCount}</strong> Yanıt
                             </button>
-                            <button type="button" class="btn-card-sub-action btn-share-form" data-form-id="${f.id}" title="Formu Paylaş">
-                                <i class="fas fa-share-nodes text-accent"></i> Paylaş
+                            <button type="button" class="btn btn-secondary btn-sm btn-share-form" data-form-id="${f.id}" title="Form Bağlantısını Paylaş">
+                                <i class="fas fa-share-nodes text-accent"></i>
                             </button>
                         </div>
                     </div>
@@ -105,6 +109,7 @@ export function setupFormWizard(container, store) {
         const newFormBtn = galleryContainer.querySelector('#btn-card-create-new-form');
         if (newFormBtn) {
             newFormBtn.onclick = () => {
+                if (window.editFormInBuilder) window.editFormInBuilder(null); // Blank new form
                 if (window.requestAuthTabSwitch) {
                     window.requestAuthTabSwitch('builder');
                 } else {
@@ -112,6 +117,20 @@ export function setupFormWizard(container, store) {
                 }
             };
         }
+
+        // Bind Edit Form Button (Google Forms Mode)
+        galleryContainer.querySelectorAll('.btn-edit-form-card').forEach(btn => {
+            btn.onclick = () => {
+                const fId = btn.dataset.formId;
+                if (window.editFormInBuilder) {
+                    window.editFormInBuilder(fId);
+                } else if (window.requestAuthTabSwitch) {
+                    window.requestAuthTabSwitch('builder');
+                } else {
+                    store.setState({ activeTab: 'builder' });
+                }
+            };
+        });
 
         // Bind Preview Button
         galleryContainer.querySelectorAll('.btn-preview-form').forEach(btn => {
@@ -146,7 +165,7 @@ export function setupFormWizard(container, store) {
                     }
                     if (editFormBtn) {
                         editFormBtn.onclick = () => {
-                            if (window.requestAuthTabSwitch) window.requestAuthTabSwitch('builder');
+                            if (window.editFormInBuilder) window.editFormInBuilder(fId);
                             else store.setState({ activeTab: 'builder' });
                         };
                     }

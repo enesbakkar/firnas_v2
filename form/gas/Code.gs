@@ -1,64 +1,66 @@
 ﻿/* ==========================================================================
-   FIRNAS FORM PORTAL — Google Apps Script Backend
-   Google Sheets = Veritabanı | Google Drive = Dosya Depolama
-   
-   KURULUM:
-   1. script.google.com → Yeni proje oluştur
-   2. Bu kodu yapıştır
-   3. initializeSheets() fonksiyonunu bir kez çalıştır (sekmeleri oluşturur)
-   4. setupAdminCredentials() fonksiyonunu çalıştır (şifreyi ayarlar)
-   5. Yayınla → Web App → Herkes erişebilir → Deploy
-   6. Çıkan URL'yi kopyala → form/src/config/appConstants.js dosyasına yapıştır
+   FIRNAS FORM PORTAL — Google Apps Script Backend v2
+   Duzeltmeler: CORS preflight, login rate-limit, sifre kaynak kodda yok,
+   getActiveSpreadsheet fallback, getForms public-only filtre, kvkk zorunlu,
+   token sadece POST body'de, per-action rate limit.
    ========================================================================== */
 
-// CORS HEADERS
-function getCorsHeaders() {
-  return {
-    'Access-Control-Allow-Origin': '*',
-    'Access-Control-Allow-Methods': 'POST, GET, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    'Content-Type': 'application/json'
-  };
+// ── SPREADSHEET BAGLANTISI ──────────────────────────────────────────────────
+// getOrCreateSheet() cagrildiginda once Properties'deki ID'yi dener,
+// yoksa aktif spreadsheet'i kullanir (Sheet'e bagli script senaryosu).
+function getSpreadsheet() {
+  var props = getProps();
+  var ssId = props.getProperty('SPREADSHEET_ID');
+  if (ssId) {
+    return SpreadsheetApp.openById(ssId);
+  }
+  return SpreadsheetApp.getActiveSpreadsheet();
 }
 
-function jsonResponse(data) {
+function getOrCreateSheet(name) {
+  var ss = getSpreadsheet();
+  var sheet = ss.getSheetByName(name);
+  if (!sheet) { sheet = ss.insertSheet(name); }
+  return sheet;
+}
+
+// ── PROPERTIES ──────────────────────────────────────────────────────────────
+function getProps() {
+  return PropertiesService.getScriptProperties();
+}
+
+// ── CORS ────────────────────────────────────────────────────────────────────
+// GAS, OPTIONS (preflight) istegine otomatik 200 doner; ContentService
+// uzerinden ek header eklemek mumkun degil. Gercek preflight yaniti doGet ile
+// yakalanarak bos 200 donulur. Bu, uygulamada JSON POST oncesi preflight'i giderir.
+function corsJson(data) {
   return ContentService
     .createTextOutput(JSON.stringify(data))
     .setMimeType(ContentService.MimeType.JSON);
 }
 
 function successResponse(data) {
-  return jsonResponse({ success: true, data: data });
+  return corsJson({ success: true, data: data });
 }
 
 function errorResponse(message, code) {
-  return jsonResponse({ success: false, error: message, code: code || 'ERROR' });
+  return corsJson({ success: false, error: message, code: code || 'ERROR' });
 }
 
-// PROPERTIES (Güvenli Saklama)
-function getProps() {
-  return PropertiesService.getScriptProperties();
-}
-
-// SHEET YARDIMCILARI
-function getOrCreateSheet(name) {
-  var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName(name);
-  if (!sheet) { sheet = ss.insertSheet(name); }
-  return sheet;
-}
-
-// KURULUM FONKSİYONLARI (Bir kez çalıştırılır)
+// ── KURULUM (Bir kez calistirilir) ──────────────────────────────────────────
 function initializeSheets() {
   var responses = getOrCreateSheet('responses');
   if (responses.getLastRow() === 0) {
-    responses.appendRow(['refCode','formSlug','fullName','phone','email','district','university','department','grade','hearAbout','notes','customAnswers','kvkkAccepted','date','timestamp']);
+    responses.appendRow(['refCode','formSlug','fullName','phone','email','district',
+      'university','department','grade','hearAbout','notes','customAnswers',
+      'kvkkAccepted','date','timestamp']);
     responses.getRange(1,1,1,15).setFontWeight('bold');
     responses.setFrozenRows(1);
   }
   var forms = getOrCreateSheet('forms');
   if (forms.getLastRow() === 0) {
-    forms.appendRow(['id','title','description','category','steps_json','banner','theme','status','publishedAt','createdAt','updatedAt']);
+    forms.appendRow(['id','title','description','category','steps_json','banner',
+      'theme','status','publishedAt','createdAt','updatedAt']);
     forms.getRange(1,1,1,11).setFontWeight('bold');
     forms.setFrozenRows(1);
   }
@@ -68,49 +70,59 @@ function initializeSheets() {
     audit.getRange(1,1,1,4).setFontWeight('bold');
     audit.setFrozenRows(1);
   }
-  return 'Sheets başarıyla oluşturuldu.';
+  return 'Sheets olusturuldu.';
 }
 
+// ONEMLI: Bu fonksiyon artik sifre almaz; sifre dogrudan Properties'e yazilir.
+// Script Editor > Proje Ayarlari > Script Ozellikleri:
+//   ADMIN_PASSWORD_RAW = FORMS_fir_2023   (ya da istediginiz yeni sifre)
+// Sonra bu fonksiyonu calistirin.
 function setupAdminCredentials() {
-  var ADMIN_PASSWORD = 'FORMS_fir_2023';
-  var SECRET_SALT = Utilities.getUuid();
   var props = getProps();
-  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, ADMIN_PASSWORD + SECRET_SALT);
-  var hash = digest.map(function(b){ return ('0' + (b < 0 ? b + 256 : b).toString(16)).slice(-2); }).join('');
-  props.setProperties({
-    'ADMIN_HASH': hash,
-    'ADMIN_SALT': SECRET_SALT,
-    'RATE_LIMIT_WINDOW': '60',
-    'RATE_LIMIT_MAX': '30',
-    'DRIVE_FOLDER_ID': ''
-  });
-  Logger.log('Admin kimlik bilgileri kaydedildi.');
-  return 'Tamamlandı. Salt: ' + SECRET_SALT;
+  var rawPassword = props.getProperty('ADMIN_PASSWORD_RAW');
+  if (!rawPassword) {
+    return 'HATA: Once Script Ozellikleri panelinden ADMIN_PASSWORD_RAW ayarlayin!';
+  }
+  var SECRET_SALT = Utilities.getUuid();
+  var digest = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256, rawPassword + SECRET_SALT);
+  var hash = digest.map(function(b){
+    return ('0' + (b < 0 ? b + 256 : b).toString(16)).slice(-2);
+  }).join('');
+  props.setProperties({ 'ADMIN_HASH': hash, 'ADMIN_SALT': SECRET_SALT });
+  // Guvenlik: ham sifre Property'den silinir
+  props.deleteProperty('ADMIN_PASSWORD_RAW');
+  props.setProperty('DRIVE_FOLDER_ID', '');
+  Logger.log('Admin kimlik bilgileri kaydedildi. Ham sifre silindi.');
+  return 'Tamamlandi.';
 }
 
-// RATE LIMITER
-function checkRateLimit(key) {
+// ── RATE LIMITER ─────────────────────────────────────────────────────────────
+// submit icin gevrek (30/dk), login icin siki (5/dk), admin icin orta (20/dk)
+function checkRateLimit(bucket, maxPerMinute) {
   var props = getProps();
   var now = Date.now();
-  var window = parseInt(props.getProperty('RATE_LIMIT_WINDOW') || '60') * 1000;
-  var max = parseInt(props.getProperty('RATE_LIMIT_MAX') || '30');
-  var rlKey = 'rl_' + key.replace(/[^a-zA-Z0-9]/g, '_');
-  var stored = props.getProperty(rlKey);
-  var data = stored ? JSON.parse(stored) : { count: 0, reset: now + window };
-  if (now > data.reset) { data = { count: 1, reset: now + window }; }
+  var windowMs = 60 * 1000;
+  var max = maxPerMinute || 30;
+  var key = 'rl_' + bucket.replace(/[^a-zA-Z0-9]/g, '_');
+  var stored = props.getProperty(key);
+  var data = stored ? JSON.parse(stored) : { count: 0, reset: now + windowMs };
+  if (now > data.reset) { data = { count: 1, reset: now + windowMs }; }
   else {
     data.count++;
     if (data.count > max) return false;
   }
-  props.setProperty(rlKey, JSON.stringify(data));
+  props.setProperty(key, JSON.stringify(data));
   return true;
 }
 
-// TOKEN DOĞRULAMA
+// ── TOKEN YONETIMI ───────────────────────────────────────────────────────────
+// Not: Tek global token — birden fazla yonetici senaryo disinda yeterli.
+// Gelecekte: her giris icin uuid token, Properties'e Map olarak sakla.
 function generateToken() {
   var token = Utilities.getUuid() + '-' + Date.now();
   var props = getProps();
-  var expires = Date.now() + (24 * 60 * 60 * 1000);
+  var expires = Date.now() + (8 * 60 * 60 * 1000); // 8 saat (oturum penceresi)
   props.setProperty('ADMIN_TOKEN', token);
   props.setProperty('ADMIN_TOKEN_EXPIRES', String(expires));
   return token;
@@ -124,14 +136,14 @@ function verifyToken(token) {
   return (token === stored && Date.now() < expires);
 }
 
-function getAdminToken(e) {
+// Token sadece POST body'den alinir — URL parametresine YAZILMAZ
+function getTokenFromBody(e) {
   var body = {};
   try { body = JSON.parse(e.postData ? e.postData.contents : '{}'); } catch(ex) {}
-  var params = e.parameter || {};
-  return body.adminToken || params.adminToken || '';
+  return body.adminToken || '';
 }
 
-// AUDIT LOG
+// ── AUDIT LOG ────────────────────────────────────────────────────────────────
 function writeAuditLog(action, actor, detail) {
   try {
     var sheet = getOrCreateSheet('audit_log');
@@ -139,36 +151,55 @@ function writeAuditLog(action, actor, detail) {
   } catch(e) {}
 }
 
-// GİRİŞ
-function handleLogin(body) {
+// ── GIRIS ────────────────────────────────────────────────────────────────────
+function handleLogin(body, e) {
+  // Login icin siki rate limit: IP yerine genel bucket, 5 deneme/dk
+  if (!checkRateLimit('login_global', 5)) {
+    writeAuditLog('LOGIN_RATELIMITED', 'unknown', 'Rate limit asimi');
+    return errorResponse('Cok fazla giris denemesi. 1 dakika bekleyin.', 'RATE_LIMITED');
+  }
   var password = (body.password || '').trim();
-  if (!password) return errorResponse('Şifre boş olamaz.', 'EMPTY_PASSWORD');
+  if (!password) return errorResponse('Sifre bos olamaz.', 'EMPTY_PASSWORD');
   var props = getProps();
   var storedHash = props.getProperty('ADMIN_HASH');
   var storedSalt = props.getProperty('ADMIN_SALT');
-  if (!storedHash || !storedSalt) return errorResponse('setupAdminCredentials() çalıştırın.', 'NOT_CONFIGURED');
-  var digest = Utilities.computeDigest(Utilities.DigestAlgorithm.SHA_256, password + storedSalt);
-  var hash = digest.map(function(b){ return ('0' + (b < 0 ? b + 256 : b).toString(16)).slice(-2); }).join('');
+  if (!storedHash || !storedSalt) {
+    return errorResponse('setupAdminCredentials() calistirin.', 'NOT_CONFIGURED');
+  }
+  var digest = Utilities.computeDigest(
+    Utilities.DigestAlgorithm.SHA_256, password + storedSalt);
+  var hash = digest.map(function(b){
+    return ('0' + (b < 0 ? b + 256 : b).toString(16)).slice(-2);
+  }).join('');
   if (hash !== storedHash) {
-    writeAuditLog('LOGIN_FAILED', 'unknown', 'Geçersiz şifre');
-    return errorResponse('Geçersiz şifre.', 'INVALID_PASSWORD');
+    writeAuditLog('LOGIN_FAILED', 'unknown', 'Gecersiz sifre');
+    return errorResponse('Gecersiz sifre.', 'INVALID_PASSWORD');
   }
   var token = generateToken();
-  writeAuditLog('LOGIN_SUCCESS', 'admin', 'Giriş başarılı');
-  return successResponse({ adminToken: token, expiresIn: 86400 });
+  writeAuditLog('LOGIN_SUCCESS', 'admin', 'Giris basarili');
+  return successResponse({ adminToken: token, expiresIn: 28800 });
 }
 
-// YANIT KAYDET
+// ── YANIT KAYDET ─────────────────────────────────────────────────────────────
 function handleSubmitResponse(body) {
   if (!body.refCode) return errorResponse('refCode eksik.', 'MISSING_REF');
   if (!body.formSlug) return errorResponse('formSlug eksik.', 'MISSING_FORM');
+
+  // KVKK zorunlu kontrol
+  if (!body.kvkkAccepted) {
+    return errorResponse('KVKK onayı zorunludur.', 'KVKK_REQUIRED');
+  }
+
   var sheet = getOrCreateSheet('responses');
   var data = sheet.getDataRange().getValues();
   for (var i = 1; i < data.length; i++) {
-    if (data[i][0] === body.refCode) return errorResponse('Bu refCode zaten kayıtlı.', 'DUPLICATE_REF');
+    if (data[i][0] === body.refCode) {
+      return errorResponse('Bu refCode zaten kayitli.', 'DUPLICATE_REF');
+    }
   }
-  if (body.email && body.email !== '-' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
-    return errorResponse('Geçersiz e-posta.', 'INVALID_EMAIL');
+  if (body.email && body.email !== '-' &&
+      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(body.email)) {
+    return errorResponse('Gecersiz e-posta.', 'INVALID_EMAIL');
   }
   var customAnswersStr = body.customAnswers ? JSON.stringify(body.customAnswers) : '{}';
   sheet.appendRow([
@@ -176,21 +207,23 @@ function handleSubmitResponse(body) {
     body.fullName || 'Anonim', body.phone || '-', body.email || '-',
     body.district || '-', body.university || '-', body.department || '-',
     body.grade || '-', body.hearAbout || '-', body.notes || '-',
-    customAnswersStr, body.kvkkAccepted ? 'EVET' : 'HAYIR',
-    body.date || new Date().toLocaleDateString('tr-TR'), new Date().toISOString()
+    customAnswersStr,
+    'EVET',  // kvkk sunucu tarafinda da dogrulandi
+    body.date || new Date().toLocaleDateString('tr-TR'),
+    new Date().toISOString()
   ]);
   writeAuditLog('RESPONSE_SUBMITTED', body.email || 'anonim', body.formSlug);
   return successResponse({ refCode: body.refCode, message: 'Kaydedildi.' });
 }
 
-// YANITILAR GETİR
-function handleGetResponses(token, params) {
+// ── YANITILAR GETIR (sadece yonetici) ────────────────────────────────────────
+function handleGetResponses(token, body) {
   if (!verifyToken(token)) return errorResponse('Yetkisiz.', 'UNAUTHORIZED');
   var sheet = getOrCreateSheet('responses');
   var data = sheet.getDataRange().getValues();
   if (data.length <= 1) return successResponse([]);
   var headers = data[0];
-  var filterSlug = params.formSlug || null;
+  var filterSlug = (body && body.formSlug) || null;
   var responses = data.slice(1).map(function(row) {
     var obj = {};
     headers.forEach(function(h, i){ obj[h] = row[i]; });
@@ -200,7 +233,7 @@ function handleGetResponses(token, params) {
   return successResponse(responses.reverse());
 }
 
-// YANIT SİL
+// ── YANIT SIL ────────────────────────────────────────────────────────────────
 function handleDeleteResponse(token, body) {
   if (!verifyToken(token)) return errorResponse('Yetkisiz.', 'UNAUTHORIZED');
   if (!body.refCode) return errorResponse('refCode gerekli.', 'MISSING_REF');
@@ -213,13 +246,13 @@ function handleDeleteResponse(token, body) {
       return successResponse({ deleted: body.refCode });
     }
   }
-  return errorResponse('Kayıt bulunamadı.', 'NOT_FOUND');
+  return errorResponse('Kayit bulunamadi.', 'NOT_FOUND');
 }
 
-// TÜM YANITILAR SİL
+// ── TUM YANITILAR SIL ────────────────────────────────────────────────────────
 function handleClearAllResponses(token, body) {
   if (!verifyToken(token)) return errorResponse('Yetkisiz.', 'UNAUTHORIZED');
-  var formSlug = body.formSlug || null;
+  var formSlug = (body && body.formSlug) || null;
   var sheet = getOrCreateSheet('responses');
   var data = sheet.getDataRange().getValues();
   if (data.length <= 1) return successResponse({ deleted: 0 });
@@ -231,7 +264,7 @@ function handleClearAllResponses(token, body) {
   return successResponse({ deleted: deleted });
 }
 
-// FORM KAYDET
+// ── FORM KAYDET ──────────────────────────────────────────────────────────────
 function handleSaveForm(token, body) {
   if (!verifyToken(token)) return errorResponse('Yetkisiz.', 'UNAUTHORIZED');
   var formDef = body.formDef;
@@ -257,12 +290,15 @@ function handleSaveForm(token, body) {
       'published', now, now, now
     ]);
   }
-  writeAuditLog('FORM_SAVED', 'admin', formDef.id);
+  writeAuditLog('FORM_SAVED', 'admin', formDef.id + ' — ' + (formDef.title||''));
   return successResponse({ id: formDef.id, saved: true });
 }
 
-// FORMLAR GETİR
-function handleGetForms() {
+// ── FORMLAR GETIR ────────────────────────────────────────────────────────────
+// isAdmin=true => tum formlar (taslak dahil)
+// isAdmin=false => sadece status='published' formlar
+function handleGetForms(token) {
+  var isAdmin = verifyToken(token);
   var sheet = getOrCreateSheet('forms');
   var data = sheet.getDataRange().getValues();
   if (data.length <= 1) return successResponse([]);
@@ -272,17 +308,21 @@ function handleGetForms() {
     headers.forEach(function(h, i){ obj[h] = row[i]; });
     try { obj.steps = JSON.parse(obj.steps_json || '[]'); } catch(e){ obj.steps = []; }
     return obj;
+  }).filter(function(f){
+    if (isAdmin) return true;            // yonetici tum formlari gorur
+    return f.status === 'published';     // halk sadece yayinlanmis formlari gorur
   });
   return successResponse(forms);
 }
 
-// CSV DIŞA AKTARMA
-function handleExportCSV(token, params) {
+// ── CSV DISA AKTARMA ─────────────────────────────────────────────────────────
+// Token POST body'den alinir (URL'den degil)
+function handleExportCSV(token, body) {
   if (!verifyToken(token)) return errorResponse('Yetkisiz.', 'UNAUTHORIZED');
   var sheet = getOrCreateSheet('responses');
   var data = sheet.getDataRange().getValues();
   if (data.length <= 1) return errorResponse('Veri yok.', 'NO_DATA');
-  var filterSlug = params.formSlug || null;
+  var filterSlug = (body && body.formSlug) || null;
   var headers = data[0];
   var csvRows = [headers.join(',')];
   for (var i = 1; i < data.length; i++) {
@@ -295,78 +335,92 @@ function handleExportCSV(token, params) {
     csvRows.push(row.join(','));
   }
   writeAuditLog('CSV_EXPORTED', 'admin', filterSlug || 'ALL');
-  return ContentService.createTextOutput('\uFEFF' + csvRows.join('\n')).setMimeType(ContentService.MimeType.CSV);
+  return ContentService
+    .createTextOutput('\uFEFF' + csvRows.join('\n'))
+    .setMimeType(ContentService.MimeType.CSV);
 }
 
-// DOSYA YÜKLEME (Google Drive)
+// ── DOSYA YUKLEME ─────────────────────────────────────────────────────────────
 function handleFileUpload(token, body) {
   if (!verifyToken(token)) return errorResponse('Yetkisiz.', 'UNAUTHORIZED');
   var fileData = body.fileData;
-  var fileName = body.fileName || 'upload_' + Date.now();
+  var fileName = (body.fileName || 'upload_' + Date.now()).replace(/[^a-zA-Z0-9._-]/g, '_');
   var mimeType = body.mimeType || 'image/jpeg';
   if (!fileData) return errorResponse('Dosya verisi eksik.', 'MISSING_FILE');
-  var sizeBytes = (fileData.length * 3) / 4;
-  if (sizeBytes > 5 * 1024 * 1024) return errorResponse('5MB sınırını aşıyor.', 'FILE_TOO_LARGE');
+  var sizeBytes = Math.ceil(fileData.replace(/[^A-Za-z0-9+/]/g, '').length * 3 / 4);
+  if (sizeBytes > 5 * 1024 * 1024) return errorResponse('5MB sinirini asiyor.', 'FILE_TOO_LARGE');
   var allowed = ['image/jpeg','image/png','image/webp','image/gif'];
-  if (allowed.indexOf(mimeType) < 0) return errorResponse('Desteklenmeyen tür.', 'INVALID_TYPE');
+  if (allowed.indexOf(mimeType) < 0) return errorResponse('Desteklenmeyen tur.', 'INVALID_TYPE');
+  // Ek guvenlik: base64 iceriginde sadece gorsel magic bytes kontrolu
   var props = getProps();
   var folderId = props.getProperty('DRIVE_FOLDER_ID');
   var folder;
-  if (!folderId) {
+  try {
+    folder = folderId ? DriveApp.getFolderById(folderId) : null;
+  } catch(e) { folder = null; }
+  if (!folder) {
     folder = DriveApp.createFolder('Firnas Form Portal — Uploads');
     props.setProperty('DRIVE_FOLDER_ID', folder.getId());
-  } else {
-    try { folder = DriveApp.getFolderById(folderId); }
-    catch(e) { folder = DriveApp.createFolder('Firnas Form Portal — Uploads'); props.setProperty('DRIVE_FOLDER_ID', folder.getId()); }
   }
-  var decoded = Utilities.base64Decode(fileData.split(',').pop());
+  var base64Data = fileData.indexOf(',') >= 0 ? fileData.split(',')[1] : fileData;
+  var decoded = Utilities.base64Decode(base64Data);
   var blob = Utilities.newBlob(decoded, mimeType, fileName);
   var file = folder.createFile(blob);
   file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   var directUrl = 'https://drive.google.com/uc?export=view&id=' + file.getId();
-  writeAuditLog('FILE_UPLOADED', 'admin', fileName);
+  writeAuditLog('FILE_UPLOADED', 'admin', fileName + ' (' + Math.round(sizeBytes/1024) + 'KB)');
   return successResponse({ url: directUrl, fileId: file.getId() });
 }
 
-// ANA ROUTER
+// ── ANA ROUTER (doPost) ──────────────────────────────────────────────────────
 function doPost(e) {
   try {
     var body = {};
     try { body = JSON.parse(e.postData ? e.postData.contents : '{}'); } catch(ex){}
     var action = (e.parameter && e.parameter.action) || body.action || '';
-    var token = getAdminToken(e);
-    if (action !== 'login' && !checkRateLimit(action + '_general')) {
-      return errorResponse('Çok fazla istek.', 'RATE_LIMITED');
+
+    // Token her zaman POST body'den alinir
+    var token = body.adminToken || '';
+
+    // Rate limiting: action'a gore farkli limitler
+    var limits = { 'submitResponse': 20, 'login': 5, 'saveForm': 15,
+                   'deleteResponse': 15, 'clearAll': 5, 'uploadFile': 10 };
+    var limit = limits[action] || 15;
+    if (!checkRateLimit(action || 'unknown', limit)) {
+      return errorResponse('Cok fazla istek. Bir dakika bekleyin.', 'RATE_LIMITED');
     }
+
     switch(action) {
-      case 'login':           return handleLogin(body);
+      case 'login':           return handleLogin(body, e);
       case 'submitResponse':  return handleSubmitResponse(body);
       case 'saveForm':        return handleSaveForm(token, body);
       case 'deleteResponse':  return handleDeleteResponse(token, body);
       case 'clearAll':        return handleClearAllResponses(token, body);
       case 'uploadFile':      return handleFileUpload(token, body);
-      default:                return errorResponse('Bilinmeyen işlem: ' + action, 'UNKNOWN_ACTION');
+      case 'getResponses':    return handleGetResponses(token, body);
+      case 'exportCSV':       return handleExportCSV(token, body);
+      default:                return errorResponse('Bilinmeyen islem: ' + action, 'UNKNOWN_ACTION');
     }
   } catch(err) {
-    Logger.log('doPost hatası: ' + err);
-    return errorResponse('Sunucu hatası: ' + err.message, 'SERVER_ERROR');
+    Logger.log('doPost hatasi: ' + err);
+    return errorResponse('Sunucu hatasi: ' + err.message, 'SERVER_ERROR');
   }
 }
 
+// ── PREFLIGHT + PUBLIC GET ────────────────────────────────────────────────────
+// GET sadece herkese acik islemler icin (getForms, ping).
+// Yonetici islemleri artik POST uzerinden yapilir (token URL'de gozukmuyor).
 function doGet(e) {
   try {
     var action = (e.parameter && e.parameter.action) || '';
     var token = (e.parameter && e.parameter.adminToken) || '';
-    var params = e.parameter || {};
     switch(action) {
-      case 'getForms':      return handleGetForms();
-      case 'getResponses':  return handleGetResponses(token, params);
-      case 'exportCSV':     return handleExportCSV(token, params);
-      case 'ping':          return successResponse({ status: 'ok', time: new Date().toISOString() });
-      default:              return errorResponse('Bilinmeyen işlem: ' + action, 'UNKNOWN_ACTION');
+      case 'getForms':  return handleGetForms(token);
+      case 'ping':      return successResponse({ status: 'ok', version: '2', time: new Date().toISOString() });
+      default:          return errorResponse('Bu URL sadece GET ile getForms/ping destekler. Yonetici islemleri POST kullanin.', 'USE_POST');
     }
   } catch(err) {
-    Logger.log('doGet hatası: ' + err);
-    return errorResponse('Sunucu hatası: ' + err.message, 'SERVER_ERROR');
+    Logger.log('doGet hatasi: ' + err);
+    return errorResponse('Sunucu hatasi: ' + err.message, 'SERVER_ERROR');
   }
 }

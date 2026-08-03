@@ -7,6 +7,7 @@ import { saveCustomForm } from '../core/apiService.js';
 import { slugify, escapeHtml, showAlertDialog, showToastNotification } from '../utils/stringHelpers.js';
 
 export function setupFormBuilder(container, store) {
+    let editingFormId = null;
     let builderQuestions = [
         {
             id: 'q_default_1',
@@ -22,6 +23,114 @@ export function setupFormBuilder(container, store) {
     let currentTheme = 'cyan';
     let currentBannerUrl = '';
     let currentVideoUrl = '';
+
+    // Global helper: Load any form into Google Forms Editor
+    window.editFormInBuilder = (formId) => {
+        const state = store.getState();
+        const titleInput = container.querySelector('#builder-form-title');
+        const descInput = container.querySelector('#builder-form-desc');
+
+        if (!formId || !state.formDefinitions[formId]) {
+            // Create New Blank Form Mode
+            editingFormId = null;
+            if (titleInput) titleInput.value = 'Başlıksız Form';
+            if (descInput) descInput.value = 'Form açıklaması giriniz...';
+            currentBannerUrl = '';
+            currentVideoUrl = '';
+            currentTheme = 'cyan';
+            builderQuestions = [
+                {
+                    id: 'q_1',
+                    type: 'text',
+                    title: 'Özel Soru Metni',
+                    required: false,
+                    options: []
+                }
+            ];
+        } else {
+            // Edit Existing Form Mode
+            const f = state.formDefinitions[formId];
+            editingFormId = f.id;
+            if (titleInput) titleInput.value = f.title || '';
+            if (descInput) descInput.value = f.description || '';
+            currentBannerUrl = f.banner || '';
+            currentVideoUrl = f.videoUrl || '';
+            currentTheme = f.theme || 'cyan';
+
+            // Extract custom fields from form steps into builderQuestions
+            const extracted = [];
+            if (f.steps && Array.isArray(f.steps)) {
+                f.steps.forEach(step => {
+                    if (step.fields && Array.isArray(step.fields)) {
+                        step.fields.forEach(field => {
+                            // Skip fixed identity system fields from editable question cards
+                            if (['fullName', 'phone', 'email', 'district', 'kvkk'].includes(field.id)) return;
+
+                            let qType = field.type;
+                            if (qType === 'radio_cards') qType = 'choice';
+                            if (qType === 'select') qType = 'dropdown';
+
+                            const opts = (field.options || []).map(o => (typeof o === 'object' ? o.value || o.text || String(o) : String(o)));
+
+                            extracted.push({
+                                id: field.id || ('q_' + Math.random().toString(36).substr(2, 6)),
+                                type: qType,
+                                title: field.label || 'Soru',
+                                required: !!field.required,
+                                options: opts
+                            });
+                        });
+                    }
+                });
+            }
+
+            builderQuestions = extracted.length > 0 ? extracted : [
+                {
+                    id: 'q_custom_1',
+                    type: 'text',
+                    title: 'Katılımcı Notu / Özel Detay',
+                    required: false,
+                    options: []
+                }
+            ];
+
+            showToastNotification(`"${f.title}" Google Forms düzenleyicide açıldı.`);
+        }
+
+        // Update Media Banner & Video Preview Elements
+        updateMediaPreviews();
+
+        if (window.requestAuthTabSwitch) {
+            window.requestAuthTabSwitch('builder');
+        } else {
+            store.setState({ activeTab: 'builder' });
+        }
+        render();
+    };
+
+    function updateMediaPreviews() {
+        const bannerBox = container.querySelector('#gform-banner-preview-box');
+        const bannerImg = container.querySelector('#gform-banner-preview-img');
+        const videoBox = container.querySelector('#gform-video-preview-box');
+        const videoIframe = container.querySelector('#gform-video-preview-iframe');
+
+        if (bannerBox && bannerImg) {
+            if (currentBannerUrl) {
+                bannerImg.src = currentBannerUrl;
+                bannerBox.style.display = 'block';
+            } else {
+                bannerBox.style.display = 'none';
+            }
+        }
+        if (videoBox && videoIframe) {
+            if (currentVideoUrl) {
+                videoIframe.src = currentVideoUrl;
+                videoBox.style.display = 'block';
+            } else {
+                videoBox.style.display = 'none';
+            }
+        }
+    }
 
     function render() {
         const state = store.getState();
@@ -123,85 +232,38 @@ export function setupFormBuilder(container, store) {
                     </div>
                 `;
             }).join('');
-
-            bindCardEvents(canvasList);
         }
 
-        bindToolButtons(container);
+        bindQuestionEvents(container);
         setupThemePicker(container);
-        setupHeaderMediaTools(container);
     }
 
-    function bindCardEvents(canvasList) {
-        // Text Formatting Buttons (Bold, Italic, Underline)
-        canvasList.querySelectorAll('.btn-fmt').forEach(btn => {
-            btn.onclick = () => {
-                const qIdx = parseInt(btn.dataset.qidx);
-                const fmt = btn.dataset.fmt;
-                if (!builderQuestions[qIdx]) return;
-
-                if (fmt === 'bold') {
-                    builderQuestions[qIdx].fontWeight = builderQuestions[qIdx].fontWeight === 'bold' ? 'normal' : 'bold';
-                } else if (fmt === 'italic') {
-                    builderQuestions[qIdx].fontStyle = builderQuestions[qIdx].fontStyle === 'italic' ? 'normal' : 'italic';
-                } else if (fmt === 'underline') {
-                    builderQuestions[qIdx].textDecoration = builderQuestions[qIdx].textDecoration === 'underline' ? 'none' : 'underline';
-                }
-                render();
-            };
-        });
-
-        // Add Image to Question
-        canvasList.querySelectorAll('.btn-add-q-image').forEach(btn => {
-            btn.onclick = () => {
-                const qIdx = parseInt(btn.dataset.qidx);
-                const url = prompt('Soruya eklenecek fotoğraf bağlantısını (URL) giriniz:', 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80');
-                if (url && builderQuestions[qIdx]) {
-                    builderQuestions[qIdx].imageUrl = url;
-                    render();
-                }
-            };
-        });
-
-        // Remove Image from Question
-        canvasList.querySelectorAll('.btn-remove-q-image').forEach(btn => {
-            btn.onclick = () => {
-                const qIdx = parseInt(btn.dataset.qidx);
-                if (builderQuestions[qIdx]) {
-                    delete builderQuestions[qIdx].imageUrl;
-                    render();
-                }
-            };
-        });
-
-        // Title input
-        canvasList.querySelectorAll('.gform-q-title-input').forEach(input => {
+    function bindQuestionEvents(container) {
+        // Question Title Input
+        container.querySelectorAll('.gform-q-title-input').forEach(input => {
             input.oninput = (e) => {
                 const qIdx = parseInt(e.target.dataset.qidx);
-                if (builderQuestions[qIdx]) {
-                    builderQuestions[qIdx].title = e.target.value;
-                }
+                if (builderQuestions[qIdx]) builderQuestions[qIdx].title = e.target.value;
             };
         });
 
         // Question Type Select
-        canvasList.querySelectorAll('.gform-q-type-select').forEach(select => {
+        container.querySelectorAll('.gform-q-type-select').forEach(select => {
             select.onchange = (e) => {
                 const qIdx = parseInt(e.target.dataset.qidx);
-                const newType = e.target.value;
                 if (builderQuestions[qIdx]) {
-                    builderQuestions[qIdx].type = newType;
-                    if ((newType === 'choice' || newType === 'dropdown') && (!builderQuestions[qIdx].options || builderQuestions[qIdx].options.length === 0)) {
-                        builderQuestions[qIdx].options = ['Seçenek 1', 'Seçenek 2', 'Seçenek 3'];
+                    builderQuestions[qIdx].type = e.target.value;
+                    if ((e.target.value === 'choice' || e.target.value === 'dropdown') && (!builderQuestions[qIdx].options || builderQuestions[qIdx].options.length === 0)) {
+                        builderQuestions[qIdx].options = ['Seçenek 1', 'Seçenek 2'];
                     }
                     render();
                 }
             };
         });
 
-        // Option Inputs
-        canvasList.querySelectorAll('.gform-opt-input').forEach(input => {
-            input.oninput = (e) => {
+        // Option Value Input
+        container.querySelectorAll('.gform-opt-input').forEach(optInput => {
+            optInput.oninput = (e) => {
                 const qIdx = parseInt(e.target.dataset.qidx);
                 const optIdx = parseInt(e.target.dataset.optidx);
                 if (builderQuestions[qIdx] && builderQuestions[qIdx].options) {
@@ -211,7 +273,7 @@ export function setupFormBuilder(container, store) {
         });
 
         // Add Option Button
-        canvasList.querySelectorAll('.btn-add-opt').forEach(btn => {
+        container.querySelectorAll('.btn-add-opt').forEach(btn => {
             btn.onclick = () => {
                 const qIdx = parseInt(btn.dataset.qidx);
                 if (builderQuestions[qIdx]) {
@@ -223,7 +285,7 @@ export function setupFormBuilder(container, store) {
         });
 
         // Delete Option Button
-        canvasList.querySelectorAll('.btn-delete-opt').forEach(btn => {
+        container.querySelectorAll('.btn-delete-opt').forEach(btn => {
             btn.onclick = () => {
                 const qIdx = parseInt(btn.dataset.qidx);
                 const optIdx = parseInt(btn.dataset.optidx);
@@ -235,21 +297,21 @@ export function setupFormBuilder(container, store) {
         });
 
         // Duplicate Question
-        canvasList.querySelectorAll('.btn-duplicate-q').forEach(btn => {
+        container.querySelectorAll('.btn-duplicate-q').forEach(btn => {
             btn.onclick = () => {
                 const qIdx = parseInt(btn.dataset.qidx);
                 if (builderQuestions[qIdx]) {
-                    const qCopy = JSON.parse(JSON.stringify(builderQuestions[qIdx]));
-                    qCopy.id = 'q_' + Date.now();
-                    qCopy.title = qCopy.title + ' (Kopya)';
-                    builderQuestions.splice(qIdx + 1, 0, qCopy);
+                    const cloned = JSON.parse(JSON.stringify(builderQuestions[qIdx]));
+                    cloned.id = 'q_' + Math.random().toString(36).substr(2, 6);
+                    cloned.title += ' (Kopya)';
+                    builderQuestions.splice(qIdx + 1, 0, cloned);
                     render();
                 }
             };
         });
 
         // Delete Question
-        canvasList.querySelectorAll('.btn-delete-q').forEach(btn => {
+        container.querySelectorAll('.btn-delete-q').forEach(btn => {
             btn.onclick = () => {
                 const qIdx = parseInt(btn.dataset.qidx);
                 builderQuestions.splice(qIdx, 1);
@@ -258,66 +320,109 @@ export function setupFormBuilder(container, store) {
         });
 
         // Required Toggle
-        canvasList.querySelectorAll('.gform-req-checkbox').forEach(cb => {
-            cb.onchange = (e) => {
+        container.querySelectorAll('.gform-req-checkbox').forEach(chk => {
+            chk.onchange = (e) => {
                 const qIdx = parseInt(e.target.dataset.qidx);
+                if (builderQuestions[qIdx]) builderQuestions[qIdx].required = e.target.checked;
+            };
+        });
+
+        // Formatting Bar (Bold, Italic, Underline)
+        container.querySelectorAll('.btn-fmt[data-fmt]').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                const fmt = btn.dataset.fmt;
                 if (builderQuestions[qIdx]) {
-                    builderQuestions[qIdx].required = e.target.checked;
+                    if (fmt === 'bold') builderQuestions[qIdx].fontWeight = builderQuestions[qIdx].fontWeight === 'bold' ? 'normal' : 'bold';
+                    if (fmt === 'italic') builderQuestions[qIdx].fontStyle = builderQuestions[qIdx].fontStyle === 'italic' ? 'normal' : 'italic';
+                    if (fmt === 'underline') builderQuestions[qIdx].textDecoration = builderQuestions[qIdx].textDecoration === 'underline' ? 'none' : 'underline';
+                    render();
                 }
             };
         });
-    }
 
-    function setupHeaderMediaTools(container) {
-        const btnBanner = container.querySelector('#btn-add-header-banner');
-        const btnVideo = container.querySelector('#btn-add-header-video');
-        const bannerBox = container.querySelector('#gform-banner-preview-box');
-        const bannerImg = container.querySelector('#gform-banner-preview-img');
-        const btnRemoveBanner = container.querySelector('#btn-remove-banner');
-        const videoBox = container.querySelector('#gform-video-preview-box');
-        const videoIframe = container.querySelector('#gform-video-preview-iframe');
-        const btnRemoveVideo = container.querySelector('#btn-remove-video');
+        // Add Image to Question
+        container.querySelectorAll('.btn-add-q-image').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                const url = prompt('Soru için Görsel URL\'si giriniz (Google Drive / Görsel Bağlantısı):');
+                if (url && builderQuestions[qIdx]) {
+                    builderQuestions[qIdx].imageUrl = url.trim();
+                    render();
+                }
+            };
+        });
 
-        if (btnBanner) {
-            btnBanner.onclick = () => {
-                const url = prompt('Form Banner Görseli URL adresini giriniz:', '/asset/feam_banner.png');
+        // Remove Image from Question
+        container.querySelectorAll('.btn-remove-q-image').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                if (builderQuestions[qIdx]) {
+                    delete builderQuestions[qIdx].imageUrl;
+                    render();
+                }
+            };
+        });
+
+        // Add Header Banner Button
+        const addBannerBtn = container.querySelector('#btn-add-header-banner');
+        if (addBannerBtn) {
+            addBannerBtn.onclick = () => {
+                const url = prompt('Form Banner Görseli URL\'si giriniz:');
                 if (url) {
-                    currentBannerUrl = url;
-                    if (bannerImg) bannerImg.src = url;
-                    if (bannerBox) bannerBox.style.display = 'block';
-                    showToastNotification('Banner görseli eklendi.');
+                    currentBannerUrl = url.trim();
+                    updateMediaPreviews();
                 }
             };
         }
 
-        if (btnRemoveBanner) {
-            btnRemoveBanner.onclick = () => {
-                currentBannerUrl = '';
-                if (bannerBox) bannerBox.style.display = 'none';
-            };
-        }
-
-        if (btnVideo) {
-            btnVideo.onclick = () => {
-                const url = prompt('YouTube Video veya Tanıtım Linki giriniz (Örn: https://www.youtube.com/watch?v=dQw4w9WgXcQ):', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
+        // Add Header Video Button
+        const addVideoBtn = container.querySelector('#btn-add-header-video');
+        if (addVideoBtn) {
+            addVideoBtn.onclick = () => {
+                const url = prompt('YouTube Video veya Embed Linki giriniz:');
                 if (url) {
-                    let embedUrl = url;
-                    if (url.includes('watch?v=')) {
-                        embedUrl = url.replace('watch?v=', 'embed/');
+                    let embedUrl = url.trim();
+                    if (embedUrl.includes('watch?v=')) {
+                        embedUrl = embedUrl.replace('watch?v=', 'embed/');
                     }
                     currentVideoUrl = embedUrl;
-                    if (videoIframe) videoIframe.src = embedUrl;
-                    if (videoBox) videoBox.style.display = 'block';
-                    showToastNotification('Tanıtım videosu eklendi.');
+                    updateMediaPreviews();
                 }
             };
         }
 
-        if (btnRemoveVideo) {
-            btnRemoveVideo.onclick = () => {
-                currentVideoUrl = '';
-                if (videoBox) videoBox.style.display = 'none';
+        // Remove Banner / Video Buttons
+        const removeBannerBtn = container.querySelector('#btn-remove-banner');
+        if (removeBannerBtn) {
+            removeBannerBtn.onclick = () => { currentBannerUrl = ''; updateMediaPreviews(); };
+        }
+        const removeVideoBtn = container.querySelector('#btn-remove-video');
+        if (removeVideoBtn) {
+            removeVideoBtn.onclick = () => { currentVideoUrl = ''; updateMediaPreviews(); };
+        }
+
+        // Top Header Action: Add Question
+        const addQBtn = container.querySelector('#btn-gform-add-question');
+        if (addQBtn) {
+            addQBtn.onclick = () => {
+                builderQuestions.push({
+                    id: 'q_' + Math.random().toString(36).substr(2, 6),
+                    type: 'text',
+                    title: 'Yeni Soru Metni',
+                    required: false,
+                    options: []
+                });
+                render();
+                showToastNotification('Yeni soru bloğu eklendi.');
             };
+        }
+
+        const titleInput = container.querySelector('#builder-form-title');
+        const descInput = container.querySelector('#builder-form-desc');
+        const publishBtn = container.querySelector('#btn-publish-builder-form');
+        if (publishBtn) {
+            publishBtn.onclick = () => publishForm(titleInput, descInput, store);
         }
     }
 
@@ -361,37 +466,7 @@ export function setupFormBuilder(container, store) {
         }
     }
 
-    function bindToolButtons(container) {
-        const backBtn = container.querySelector('#btn-back-from-builder');
-        if (backBtn) {
-            backBtn.onclick = () => store.setState({ activeTab: 'fill' });
-        }
-
-        const addQBtn = container.querySelector('#btn-gform-add-question');
-        if (addQBtn) {
-            addQBtn.onclick = () => {
-                builderQuestions.push({
-                    id: 'q_' + Date.now(),
-                    type: 'text',
-                    title: 'Yeni Soru',
-                    required: true,
-                    fontWeight: 'bold',
-                    options: []
-                });
-                render();
-                showToastNotification('Yeni soru bloğu eklendi.');
-            };
-        }
-
-        const titleInput = container.querySelector('#builder-form-title');
-        const descInput = container.querySelector('#builder-form-desc');
-        const publishBtn = container.querySelector('#btn-publish-builder-form');
-        if (publishBtn) {
-            publishBtn.onclick = () => publishForm(titleInput, descInput, store);
-        }
-    }
-
-    function publishForm(titleInput, descInput, store) {
+    async function publishForm(titleInput, descInput, store) {
         const title = (titleInput?.value || '').trim();
         const desc = (descInput?.value || '').trim();
 
@@ -400,16 +475,18 @@ export function setupFormBuilder(container, store) {
             return;
         }
 
-        const formSlug = slugify(title);
+        const formSlug = editingFormId || slugify(title);
+        const existingForm = store.getState().formDefinitions[formSlug];
+
         const newFormDef = {
             id: formSlug,
             title: title,
-            category: 'Özel Tasarım',
+            category: existingForm?.category || 'Özel Tasarım',
             banner: currentBannerUrl || null,
             videoUrl: currentVideoUrl || null,
             theme: currentTheme || 'cyan',
             meta: [
-                { icon: 'fa-wand-magic-sparkles', text: 'Özel Tasarım Form' },
+                { icon: 'fa-wand-magic-sparkles', text: 'Google Forms Tasarımı' },
                 { icon: 'fa-check-circle', text: 'Aktif Form' }
             ],
             description: desc || 'Özel oluşturulmuş başvuru formu.',
@@ -438,9 +515,11 @@ export function setupFormBuilder(container, store) {
             ]
         };
 
-        // Save Custom Form
-        const updatedCustomForms = saveCustomForm(newFormDef);
+        // Save Custom Form to LocalStorage + GAS Backend
+        const saveResult = await saveCustomForm(newFormDef);
         const state = store.getState();
+
+        const updatedCustomForms = (saveResult && Array.isArray(saveResult)) ? saveResult : [...(state.customForms || []), newFormDef];
 
         // Update Store's formDefinitions
         const newDefs = {
@@ -456,6 +535,8 @@ export function setupFormBuilder(container, store) {
             currentStep: 1,
             formData: {}
         });
+
+        showToastNotification(`"${title}" formu başarıyla güncellendi & yayınlandı!`);
 
         if (window.openFormShareModal) {
             window.openFormShareModal(formSlug);

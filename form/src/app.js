@@ -233,6 +233,57 @@ function bindGlobalEvents(container, store) {
     if (closeDetail && detailModal) {
         closeDetail.onclick = () => detailModal.classList.remove('active');
     }
+
+    // Builder Header Sub-Tabs & Navigation
+    const btnQ = container.querySelector('#btn-builder-tab-questions');
+    const btnR = container.querySelector('#btn-builder-tab-responses');
+    const btnP = container.querySelector('#btn-builder-tab-preview');
+    const btnBackBuilder = container.querySelector('#btn-back-from-builder');
+
+    if (btnBackBuilder) {
+        btnBackBuilder.onclick = () => {
+            if (window.exitPreviewToCatalog) window.exitPreviewToCatalog();
+            else store.setState({ activeTab: 'fill' });
+        };
+    }
+
+    if (btnQ) {
+        btnQ.onclick = () => {
+            btnQ.classList.add('active');
+            if (btnR) btnR.classList.remove('active');
+            if (btnP) btnP.classList.remove('active');
+            store.setState({ activeTab: 'builder' });
+        };
+    }
+
+    if (btnR) {
+        btnR.onclick = () => {
+            const currentF = store.getState().currentFormId;
+            if (window.requestAuthTabSwitch) {
+                store.setState({ responseFilterFormId: currentF, selectedFormId: currentF });
+                window.requestAuthTabSwitch('responses');
+            } else {
+                store.setState({ activeTab: 'responses', responseFilterFormId: currentF, selectedFormId: currentF });
+            }
+        };
+    }
+
+    if (btnP) {
+        btnP.onclick = () => {
+            const currentF = store.getState().currentFormId;
+            const f = store.getState().formDefinitions[currentF];
+            if (f) {
+                document.body.classList.add('form-filling-view');
+                document.body.classList.remove('dashboard-view', 'standalone-form-mode');
+                const previewBar = container.querySelector('#form-preview-bar');
+                const previewName = container.querySelector('#preview-bar-form-name');
+                if (previewBar) previewBar.style.display = 'flex';
+                if (previewName) previewName.innerText = `Şu an "${f.title}" formunu önizliyorsunuz.`;
+                store.setState({ activeTab: 'fill', currentStep: 1 });
+            }
+        };
+    }
+
 }
 
 function updateTabVisibility(state) {
