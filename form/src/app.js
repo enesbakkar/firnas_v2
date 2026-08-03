@@ -27,18 +27,26 @@ document.addEventListener('DOMContentLoaded', () => {
     // 2. Set Standalone Participant View Mode if a specific form link was opened
     if (hasFormParam) {
         document.body.classList.add('standalone-form-mode');
+        document.body.classList.remove('dashboard-view', 'form-filling-view');
     } else {
-        document.body.classList.remove('standalone-form-mode');
+        document.body.classList.add('dashboard-view');
+        document.body.classList.remove('standalone-form-mode', 'form-filling-view');
     }
 
     // Global helper to toggle standalone mode & exit preview
     window.toggleStandaloneMode = (enable) => {
-        if (enable) document.body.classList.add('standalone-form-mode');
-        else document.body.classList.remove('standalone-form-mode');
+        if (enable) {
+            document.body.classList.add('standalone-form-mode');
+            document.body.classList.remove('dashboard-view', 'form-filling-view');
+        } else {
+            document.body.classList.add('dashboard-view');
+            document.body.classList.remove('standalone-form-mode', 'form-filling-view');
+        }
     };
 
     window.exitPreviewToCatalog = () => {
-        document.body.classList.remove('standalone-form-mode');
+        document.body.classList.add('dashboard-view');
+        document.body.classList.remove('standalone-form-mode', 'form-filling-view');
         const previewBar = document.getElementById('form-preview-bar');
         if (previewBar) previewBar.style.display = 'none';
 

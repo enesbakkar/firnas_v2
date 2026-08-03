@@ -18,8 +18,24 @@
 }
 
 /* ==========================================================================
-   STANDALONE PARTICIPANT FORM FILLING MODE (PURE FORM VIEW)
+   GOOGLE FORMS DASHBOARD VIEW VS FORM FILLING VIEW
    ========================================================================== */
+body.dashboard-view #selected-form-wrapper,
+body.dashboard-view .form-switcher-bar,
+body.dashboard-view #form-preview-bar {
+    display: none !important;
+}
+
+body.form-filling-view .portal-gallery-section,
+body.form-filling-view .form-switcher-bar,
+body.form-filling-view .form-header {
+    display: none !important;
+}
+
+body.form-filling-view #selected-form-wrapper {
+    display: block !important;
+}
+
 body.standalone-form-mode .form-header,
 body.standalone-form-mode .portal-gallery-section,
 body.standalone-form-mode .form-switcher-bar,

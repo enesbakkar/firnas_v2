@@ -126,6 +126,9 @@ export function setupFormWizard(container, store) {
                         formData: {}
                     });
 
+                    document.body.classList.add('form-filling-view');
+                    document.body.classList.remove('dashboard-view', 'standalone-form-mode');
+
                     // Show Form Preview Bar
                     const previewBar = container.querySelector('#form-preview-bar');
                     const previewName = container.querySelector('#preview-bar-form-name');
