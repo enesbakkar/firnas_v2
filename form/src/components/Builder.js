@@ -1,6 +1,6 @@
 /* ==========================================================================
-   GOOGLE FORMS STYLE BUILDER COMPONENT (src/components/Builder.js)
-   Firnas Dark Glassmorphism Styling + Google Forms Editor UX
+   COMPREHENSIVE GOOGLE FORMS STYLE BUILDER COMPONENT (src/components/Builder.js)
+   Firnas Dark Glassmorphism + Rich Media (Photos, Video Embeds, Formatting & Themes)
    ========================================================================== */
 
 import { saveCustomForm } from '../core/apiService.js';
@@ -13,9 +13,15 @@ export function setupFormBuilder(container, store) {
             type: 'text',
             title: 'Katılımcı Notu veya İlgi Alanı',
             required: false,
+            fontWeight: 'bold',
+            fontSize: 'normal',
             options: []
         }
     ];
+
+    let currentTheme = 'cyan';
+    let currentBannerUrl = '';
+    let currentVideoUrl = '';
 
     function render() {
         const state = store.getState();
@@ -35,7 +41,10 @@ export function setupFormBuilder(container, store) {
         } else {
             canvasList.innerHTML = builderQuestions.map((q, qIdx) => {
                 const isOptionType = (q.type === 'choice' || q.type === 'dropdown');
-                
+                const isBold = q.fontWeight === 'bold';
+                const isItalic = q.fontStyle === 'italic';
+                const isUnderline = q.textDecoration === 'underline';
+
                 let optionsHtml = '';
                 if (isOptionType) {
                     const opts = q.options && q.options.length > 0 ? q.options : ['Seçenek 1'];
@@ -55,11 +64,31 @@ export function setupFormBuilder(container, store) {
                     `;
                 }
 
+                // Question level image / video preview if attached
+                let qMediaHtml = '';
+                if (q.imageUrl) {
+                    qMediaHtml += `
+                        <div class="q-media-box" style="margin-top:0.75rem; position:relative;">
+                            <img src="${escapeHtml(q.imageUrl)}" alt="Soru Görseli" style="max-height:160px; border-radius:10px; object-fit:cover;">
+                            <button type="button" class="btn-icon-danger btn-remove-q-image" data-qidx="${qIdx}" style="position:absolute; top:5px; right:5px;"><i class="fas fa-times"></i></button>
+                        </div>
+                    `;
+                }
+
                 return `
                     <div class="gform-question-card" data-qidx="${qIdx}">
+                        <!-- Rich Text Formatting Bar -->
+                        <div class="gform-fmt-toolbar" style="display:flex; gap:6px; margin-bottom:8px; align-items:center;">
+                            <button type="button" class="btn-fmt ${isBold ? 'active' : ''}" data-qidx="${qIdx}" data-fmt="bold" title="Kalın (Bold)"><strong>B</strong></button>
+                            <button type="button" class="btn-fmt ${isItalic ? 'active' : ''}" data-qidx="${qIdx}" data-fmt="italic" title="İtalik (Italic)"><em>I</em></button>
+                            <button type="button" class="btn-fmt ${isUnderline ? 'active' : ''}" data-qidx="${qIdx}" data-fmt="underline" title="Altı Çizili"><u>U</u></button>
+                            <div style="width:1px; height:18px; background:rgba(255,255,255,0.15); margin:0 4px;"></div>
+                            <button type="button" class="btn-fmt btn-add-q-image" data-qidx="${qIdx}" title="Soruya Fotoğraf Ekle"><i class="fas fa-image text-accent"></i></button>
+                        </div>
+
                         <div class="gform-card-top-bar">
                             <div class="gform-q-title-wrapper" style="flex:1;">
-                                <input type="text" class="gform-q-title-input" data-qidx="${qIdx}" value="${escapeHtml(q.title)}" placeholder="Soru metnini giriniz...">
+                                <input type="text" class="gform-q-title-input ${isBold ? 'fw-bold' : ''} ${isItalic ? 'fst-italic' : ''} ${isUnderline ? 'text-decoration-underline' : ''}" data-qidx="${qIdx}" value="${escapeHtml(q.title)}" placeholder="Soru metnini giriniz...">
                             </div>
                             <div class="gform-q-type-select-wrapper">
                                 <select class="gform-q-type-select" data-qidx="${qIdx}">
@@ -71,6 +100,7 @@ export function setupFormBuilder(container, store) {
                             </div>
                         </div>
 
+                        ${qMediaHtml}
                         ${optionsHtml}
 
                         <div class="gform-card-footer">
@@ -94,15 +124,57 @@ export function setupFormBuilder(container, store) {
                 `;
             }).join('');
 
-            // Bind Question Card Inputs & Actions
             bindCardEvents(canvasList);
         }
 
         bindToolButtons(container);
+        setupThemePicker(container);
+        setupHeaderMediaTools(container);
     }
 
     function bindCardEvents(canvasList) {
-        // Question Title Input
+        // Text Formatting Buttons (Bold, Italic, Underline)
+        canvasList.querySelectorAll('.btn-fmt').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                const fmt = btn.dataset.fmt;
+                if (!builderQuestions[qIdx]) return;
+
+                if (fmt === 'bold') {
+                    builderQuestions[qIdx].fontWeight = builderQuestions[qIdx].fontWeight === 'bold' ? 'normal' : 'bold';
+                } else if (fmt === 'italic') {
+                    builderQuestions[qIdx].fontStyle = builderQuestions[qIdx].fontStyle === 'italic' ? 'normal' : 'italic';
+                } else if (fmt === 'underline') {
+                    builderQuestions[qIdx].textDecoration = builderQuestions[qIdx].textDecoration === 'underline' ? 'none' : 'underline';
+                }
+                render();
+            };
+        });
+
+        // Add Image to Question
+        canvasList.querySelectorAll('.btn-add-q-image').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                const url = prompt('Soruya eklenecek fotoğraf bağlantısını (URL) giriniz:', 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=800&q=80');
+                if (url && builderQuestions[qIdx]) {
+                    builderQuestions[qIdx].imageUrl = url;
+                    render();
+                }
+            };
+        });
+
+        // Remove Image from Question
+        canvasList.querySelectorAll('.btn-remove-q-image').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                if (builderQuestions[qIdx]) {
+                    delete builderQuestions[qIdx].imageUrl;
+                    render();
+                }
+            };
+        });
+
+        // Title input
         canvasList.querySelectorAll('.gform-q-title-input').forEach(input => {
             input.oninput = (e) => {
                 const qIdx = parseInt(e.target.dataset.qidx);
@@ -185,7 +257,7 @@ export function setupFormBuilder(container, store) {
             };
         });
 
-        // Required Toggle Switch
+        // Required Toggle
         canvasList.querySelectorAll('.gform-req-checkbox').forEach(cb => {
             cb.onchange = (e) => {
                 const qIdx = parseInt(e.target.dataset.qidx);
@@ -194,6 +266,99 @@ export function setupFormBuilder(container, store) {
                 }
             };
         });
+    }
+
+    function setupHeaderMediaTools(container) {
+        const btnBanner = container.querySelector('#btn-add-header-banner');
+        const btnVideo = container.querySelector('#btn-add-header-video');
+        const bannerBox = container.querySelector('#gform-banner-preview-box');
+        const bannerImg = container.querySelector('#gform-banner-preview-img');
+        const btnRemoveBanner = container.querySelector('#btn-remove-banner');
+        const videoBox = container.querySelector('#gform-video-preview-box');
+        const videoIframe = container.querySelector('#gform-video-preview-iframe');
+        const btnRemoveVideo = container.querySelector('#btn-remove-video');
+
+        if (btnBanner) {
+            btnBanner.onclick = () => {
+                const url = prompt('Form Banner Görseli URL adresini giriniz:', '/asset/feam_banner.png');
+                if (url) {
+                    currentBannerUrl = url;
+                    if (bannerImg) bannerImg.src = url;
+                    if (bannerBox) bannerBox.style.display = 'block';
+                    showToastNotification('Banner görseli eklendi.');
+                }
+            };
+        }
+
+        if (btnRemoveBanner) {
+            btnRemoveBanner.onclick = () => {
+                currentBannerUrl = '';
+                if (bannerBox) bannerBox.style.display = 'none';
+            };
+        }
+
+        if (btnVideo) {
+            btnVideo.onclick = () => {
+                const url = prompt('YouTube Video veya Tanıtım Linki giriniz (Örn: https://www.youtube.com/watch?v=dQw4w9WgXcQ):', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
+                if (url) {
+                    let embedUrl = url;
+                    if (url.includes('watch?v=')) {
+                        embedUrl = url.replace('watch?v=', 'embed/');
+                    }
+                    currentVideoUrl = embedUrl;
+                    if (videoIframe) videoIframe.src = embedUrl;
+                    if (videoBox) videoBox.style.display = 'block';
+                    showToastNotification('Tanıtım videosu eklendi.');
+                }
+            };
+        }
+
+        if (btnRemoveVideo) {
+            btnRemoveVideo.onclick = () => {
+                currentVideoUrl = '';
+                if (videoBox) videoBox.style.display = 'none';
+            };
+        }
+    }
+
+    function setupThemePicker(container) {
+        const themeModal = container.querySelector('#form-theme-modal');
+        const openThemeBtn = container.querySelector('#btn-open-theme-modal');
+        const closeThemeBtn = container.querySelector('#btn-close-theme-modal');
+        const applyThemeBtn = container.querySelector('#btn-apply-theme-modal');
+        const themeAccentLine = container.querySelector('#gform-theme-accent-line');
+
+        if (openThemeBtn && themeModal) {
+            openThemeBtn.onclick = () => themeModal.classList.add('active');
+        }
+        if (closeThemeBtn && themeModal) {
+            closeThemeBtn.onclick = () => themeModal.classList.remove('active');
+        }
+
+        const themeCards = container.querySelectorAll('.theme-preset-card');
+        themeCards.forEach(card => {
+            card.onclick = () => {
+                themeCards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+                currentTheme = card.dataset.theme;
+            };
+        });
+
+        if (applyThemeBtn) {
+            applyThemeBtn.onclick = () => {
+                const themeGradients = {
+                    cyan: 'linear-gradient(90deg, #00b8d4 0%, #38bdf8 100%)',
+                    purple: 'linear-gradient(90deg, #a855f7 0%, #c084fc 100%)',
+                    green: 'linear-gradient(90deg, #10b981 0%, #34d399 100%)',
+                    amber: 'linear-gradient(90deg, #f59e0b 0%, #fbbf24 100%)'
+                };
+                if (themeAccentLine) {
+                    themeAccentLine.style.background = themeGradients[currentTheme] || themeGradients.cyan;
+                }
+                if (themeModal) themeModal.classList.remove('active');
+                showToastNotification(`Form teması "${currentTheme.toUpperCase()}" olarak güncellendi.`);
+            };
+        }
     }
 
     function bindToolButtons(container) {
@@ -210,6 +375,7 @@ export function setupFormBuilder(container, store) {
                     type: 'text',
                     title: 'Yeni Soru',
                     required: true,
+                    fontWeight: 'bold',
                     options: []
                 });
                 render();
@@ -219,20 +385,6 @@ export function setupFormBuilder(container, store) {
 
         const titleInput = container.querySelector('#builder-form-title');
         const descInput = container.querySelector('#builder-form-desc');
-        const previewTitle = container.querySelector('#preview-form-title');
-        const previewDesc = container.querySelector('#preview-form-desc');
-
-        if (titleInput) {
-            titleInput.oninput = () => {
-                if (previewTitle) previewTitle.innerText = titleInput.value || 'Özel Form';
-            };
-        }
-        if (descInput) {
-            descInput.oninput = () => {
-                if (previewDesc) previewDesc.innerText = descInput.value || '';
-            };
-        }
-
         const publishBtn = container.querySelector('#btn-publish-builder-form');
         if (publishBtn) {
             publishBtn.onclick = () => publishForm(titleInput, descInput, store);
@@ -253,7 +405,9 @@ export function setupFormBuilder(container, store) {
             id: formSlug,
             title: title,
             category: 'Özel Tasarım',
-            banner: null,
+            banner: currentBannerUrl || null,
+            videoUrl: currentVideoUrl || null,
+            theme: currentTheme || 'cyan',
             meta: [
                 { icon: 'fa-wand-magic-sparkles', text: 'Özel Tasarım Form' },
                 { icon: 'fa-check-circle', text: 'Aktif Form' }

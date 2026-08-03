@@ -259,7 +259,10 @@
                     <button class="btn btn-secondary btn-sm" id="btn-back-from-builder">
                         <i class="fas fa-arrow-left"></i> Form Kataloğuna Dön
                     </button>
-                    <div style="display:flex; gap:10px;">
+                    <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-open-theme-modal">
+                            <i class="fas fa-palette text-accent"></i> Tema Özelleştir
+                        </button>
                         <button type="button" class="btn btn-secondary btn-sm" id="btn-gform-add-question">
                             <i class="fas fa-plus text-accent"></i> Soru Ekle
                         </button>
@@ -270,14 +273,37 @@
                 </div>
 
                 <div class="gform-builder-container">
-                    <!-- GOOGLE FORMS TOP HEADER CARD (Title & Description) -->
-                    <div class="gform-header-card">
-                        <div class="gform-header-accent-line"></div>
+                    <!-- GOOGLE FORMS TOP HEADER CARD (Title, Description & Media) -->
+                    <div class="gform-header-card" id="gform-main-header-card">
+                        <div class="gform-header-accent-line" id="gform-theme-accent-line"></div>
+                        
+                        <!-- Optional Form Banner Preview -->
+                        <div id="gform-banner-preview-box" class="gform-media-preview-box" style="display:none; margin-bottom: 1rem;">
+                            <img id="gform-banner-preview-img" src="" alt="Form Banner" style="width:100%; max-height:180px; object-fit:cover; border-radius:12px;">
+                            <button type="button" class="btn-icon-danger btn-remove-banner" id="btn-remove-banner" title="Görseli Kaldır"><i class="fas fa-times"></i></button>
+                        </div>
+
+                        <!-- Optional Form Video Preview -->
+                        <div id="gform-video-preview-box" class="gform-media-preview-box" style="display:none; margin-bottom: 1rem;">
+                            <iframe id="gform-video-preview-iframe" width="100%" height="220" src="" frameborder="0" allowfullscreen style="border-radius:12px;"></iframe>
+                            <button type="button" class="btn-icon-danger btn-remove-video" id="btn-remove-video" title="Videoyu Kaldır"><i class="fas fa-times"></i></button>
+                        </div>
+
                         <div class="form-group" style="margin-bottom: 0.75rem;">
                             <input type="text" id="builder-form-title" class="gform-main-title-input" value="Başlıksız Form" placeholder="Form Başlığı">
                         </div>
-                        <div class="form-group" style="margin-bottom: 0;">
+                        <div class="form-group" style="margin-bottom: 1rem;">
                             <input type="text" id="builder-form-desc" class="gform-main-desc-input" value="Firnas Katılımcı Kayıt ve İletişim Formu" placeholder="Form açıklaması...">
+                        </div>
+
+                        <!-- Top Card Media Buttons -->
+                        <div class="gform-header-media-tools" style="display:flex; gap:10px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:0.75rem;">
+                            <button type="button" class="btn-gform-action" id="btn-add-header-banner">
+                                <i class="fas fa-image text-accent"></i> Banner Görseli Ekle
+                            </button>
+                            <button type="button" class="btn-gform-action" id="btn-add-header-video">
+                                <i class="fab fa-youtube style-red" style="color:#ef4444;"></i> Video Linki Ekle
+                            </button>
                         </div>
                     </div>
 
@@ -402,6 +428,45 @@
             </div>
 
             <button class="btn btn-secondary full-width" id="btn-done-share-modal">Tamam</button>
+        </div>
+    </div>
+
+    <!-- THEME CUSTOMIZER MODAL -->
+    <div id="form-theme-modal" class="modal-overlay">
+        <div class="modal-card" style="max-width: 520px; text-align: left;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 0.75rem;">
+                <h3 style="margin:0; font-size: 1.25rem;"><i class="fas fa-palette text-accent"></i> Form Teması & Renk Paleti</h3>
+                <button type="button" class="password-toggle-btn" id="btn-close-theme-modal"><i class="fas fa-times" style="font-size: 1.2rem;"></i></button>
+            </div>
+            
+            <p class="small text-muted" style="margin-bottom: 1.25rem;">Formunuzun görsel temasını ve renk tonunu özelleştirin.</p>
+            
+            <div class="theme-presets-grid" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 1.5rem;">
+                <button type="button" class="theme-preset-card active" data-theme="cyan" style="background: rgba(0,184,212,0.15); border: 2px solid #00b8d4; border-radius: 12px; padding: 12px; text-align: left; cursor: pointer;">
+                    <div style="display:flex; align-items:center; gap:8px; color:#ffffff; font-weight:700;">
+                        <span style="width:16px; height:16px; border-radius:50%; background:#00b8d4; display:inline-block;"></span> Firnas Cyan (Orijinal)
+                    </div>
+                </button>
+                <button type="button" class="theme-preset-card" data-theme="purple" style="background: rgba(168,85,247,0.15); border: 1px solid rgba(168,85,247,0.4); border-radius: 12px; padding: 12px; text-align: left; cursor: pointer;">
+                    <div style="display:flex; align-items:center; gap:8px; color:#ffffff; font-weight:700;">
+                        <span style="width:16px; height:16px; border-radius:50%; background:#a855f7; display:inline-block;"></span> Neon Violet (Mor)
+                    </div>
+                </button>
+                <button type="button" class="theme-preset-card" data-theme="green" style="background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.4); border-radius: 12px; padding: 12px; text-align: left; cursor: pointer;">
+                    <div style="display:flex; align-items:center; gap:8px; color:#ffffff; font-weight:700;">
+                        <span style="width:16px; height:16px; border-radius:50%; background:#10b981; display:inline-block;"></span> Emerald Green (Yeşil)
+                    </div>
+                </button>
+                <button type="button" class="theme-preset-card" data-theme="amber" style="background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); border-radius: 12px; padding: 12px; text-align: left; cursor: pointer;">
+                    <div style="display:flex; align-items:center; gap:8px; color:#ffffff; font-weight:700;">
+                        <span style="width:16px; height:16px; border-radius:50%; background:#f59e0b; display:inline-block;"></span> Sunset Gold (Altın)
+                    </div>
+                </button>
+            </div>
+
+            <button type="button" class="btn btn-primary full-width" id="btn-apply-theme-modal">
+                <i class="fas fa-check"></i> Temayı Uygula
+            </button>
         </div>
     </div>
 
