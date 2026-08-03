@@ -51,13 +51,13 @@ export function setupFormWizard(container, store) {
         let cardsHtml = `
             <!-- NEW FORM CREATION CARD -->
             <div class="dashboard-form-card new-form-create-card" id="btn-card-create-new-form">
-                <div class="create-card-inner">
-                    <div class="card-icon-box icon-cyan" style="width:54px; height:54px; font-size:1.5rem; background:rgba(0,184,212,0.15);">
+                <div class="create-card-inner" style="padding: 1.5rem 1rem;">
+                    <div class="card-icon-box icon-cyan" style="width:52px; height:52px; font-size:1.4rem; background:rgba(0,184,212,0.15); margin-bottom:0.75rem;">
                         <i class="fas fa-plus"></i>
                     </div>
-                    <h4>Yeni Form Oluştur</h4>
-                    <p class="card-desc">Soru tiplerini belirleyip özel başvuru veya kayıt formu tasarlayın.</p>
-                    <button class="btn btn-primary full-width" style="margin-top:auto;">
+                    <h4 style="color:#ffffff; font-weight:800; margin-bottom:0.4rem;">Yeni Form Oluştur</h4>
+                    <p class="card-desc" style="color:#94a3b8; font-size:0.82rem; margin-bottom:1.25rem; text-align:center;">Soru tiplerini belirleyip özel başvuru veya kayıt formu tasarlayın.</p>
+                    <button type="button" class="btn-card-edit full-width" style="margin-top:auto;">
                         <i class="fas fa-wand-magic-sparkles"></i> Form Düzenleyiciyi Aç
                     </button>
                 </div>
@@ -71,9 +71,25 @@ export function setupFormWizard(container, store) {
             const isCustom = (state.customForms || []).some(cf => cf.id === fId);
 
             const hasBanner = !!f.banner;
-            const coverHtml = hasBanner 
-                ? `<div class="card-thumb-box"><img src="${escapeHtml(f.banner)}" alt="${escapeHtml(f.title)}" class="card-thumb-img"><span class="form-badge-tag tag-cyan card-thumb-badge">${escapeHtml(f.category || 'FORM')}</span></div>`
-                : `<div class="card-thumb-box placeholder-thumb"><div class="thumb-icon-placeholder"><i class="fas fa-file-lines"></i></div><span class="form-badge-tag tag-cyan card-thumb-badge">${escapeHtml(f.category || 'FORM')}</span></div>`;
+            const coverHtml = `
+                <div class="card-thumb-box ${!hasBanner ? 'placeholder-thumb' : ''}">
+                    ${hasBanner 
+                        ? `<img src="${escapeHtml(f.banner)}" alt="${escapeHtml(f.title)}" class="card-thumb-img">`
+                        : `<div class="thumb-icon-placeholder"><i class="fas fa-file-lines"></i></div>`
+                    }
+                    <span class="form-badge-tag tag-cyan card-thumb-badge">${escapeHtml(f.category || 'FORM')}</span>
+                    <div class="card-thumb-actions">
+                        <button type="button" class="thumb-action-btn btn-share-form" data-form-id="${f.id}" title="Form Bağlantısını Paylaş">
+                            <i class="fas fa-share-nodes"></i>
+                        </button>
+                        ${isCustom ? `
+                            <button type="button" class="thumb-action-btn btn-delete-custom-form" data-form-id="${f.id}" title="Formu Sil" style="color:#ef4444;">
+                                <i class="fas fa-trash-can"></i>
+                            </button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
 
             return `
                 <div class="dashboard-form-card ${isSelected ? 'selected' : ''}">
@@ -94,14 +110,12 @@ export function setupFormWizard(container, store) {
                             <button type="button" class="btn-card-sub-pill btn-open-responses" data-form-id="${f.id}" title="E-Tablo Yanıtlarını İncele" style="flex:1;">
                                 <i class="fas fa-table-cells text-accent"></i> <strong>${responsesCount}</strong> Yanıt
                             </button>
-                            <button type="button" class="btn-card-sub-pill btn-card-sub-icon btn-share-form" data-form-id="${f.id}" title="Form Bağlantısını Paylaş">
-                                <i class="fas fa-share-nodes text-accent"></i>
-                            </button>
                         </div>
                     </div>
                 </div>
             `;
         }).join('');
+
 
 
         galleryContainer.innerHTML = cardsHtml;

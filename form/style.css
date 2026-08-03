@@ -409,12 +409,46 @@ ul, ol {
 .card-thumb-badge {
     position: absolute;
     top: 10px;
-    right: 10px;
+    left: 10px;
     background: rgba(5, 20, 33, 0.85);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(0, 184, 212, 0.4);
     color: var(--form-accent);
+    z-index: 5;
 }
+
+.card-thumb-actions {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    gap: 6px;
+    z-index: 5;
+}
+
+.thumb-action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 10px;
+    background: rgba(5, 20, 33, 0.82);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 184, 212, 0.35);
+    color: var(--form-accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 0.85rem;
+    transition: var(--form-transition);
+}
+
+.thumb-action-btn:hover {
+    background: rgba(0, 184, 212, 0.25);
+    border-color: var(--form-accent);
+    color: #ffffff;
+    transform: scale(1.08);
+}
+
 
 .card-body-content {
     padding: 1.25rem 1.25rem 0.5rem 1.25rem;
