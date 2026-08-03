@@ -74,26 +74,23 @@ export function setupFormWizard(container, store) {
                         <div class="card-icon-box icon-cyan">
                             <i class="fas ${f.banner ? 'fa-image' : 'fa-file-signature'}"></i>
                         </div>
-                        <span class="form-badge-tag tag-cyan">${f.category || 'FORM'}</span>
+                        <span class="form-badge-tag tag-cyan">${escapeHtml(f.category || 'FORM')}</span>
                     </div>
-                    <h4>${f.title}</h4>
-                    <p class="card-desc">${f.description ? (f.description.substring(0, 90) + '...') : ''}</p>
-                    <div class="card-meta">
-                        <span><i class="fas fa-users text-accent"></i> ${responsesCount} Katılımcı Kaydı</span>
-                        <span><i class="fas fa-link"></i> ?f=${f.id}</span>
-                    </div>
-                    <div class="card-actions-row" style="display:flex; flex-direction:column; gap:8px;">
-                        <div style="display:flex; gap:6px;">
-                            <button class="btn btn-primary btn-preview-form" style="flex:1;" data-form-id="${f.id}" title="Formu Önizle ve Test Et">
-                                <i class="fas fa-eye"></i> Önizle & Doldur
+                    <h4>${escapeHtml(f.title)}</h4>
+                    <p class="card-desc">${escapeHtml(f.description ? (f.description.substring(0, 80) + '...') : '')}</p>
+                    
+                    <div class="card-footer-bar" style="margin-top:auto; padding-top: 0.85rem; border-top: 1px dashed rgba(15,46,74,0.1); display:flex; flex-direction:column; gap:10px;">
+                        <button class="btn btn-primary full-width btn-preview-form" data-form-id="${f.id}">
+                            <i class="fas fa-paper-plane"></i> Formu Doldur
+                        </button>
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <button type="button" class="btn-card-sub-action btn-open-responses" data-form-id="${f.id}" title="E-Tablo Yanıtlarını İncele">
+                                <i class="fas fa-table-cells text-accent"></i> <strong>${responsesCount}</strong> Yanıt
                             </button>
-                            <button class="btn btn-secondary btn-share-form" data-form-id="${f.id}" title="Form Bağlantısını Paylaş">
-                                <i class="fas fa-share-nodes"></i>
+                            <button type="button" class="btn-card-sub-action btn-share-form" data-form-id="${f.id}" title="Formu Paylaş">
+                                <i class="fas fa-share-nodes text-accent"></i> Paylaş
                             </button>
                         </div>
-                        <button class="btn btn-secondary full-width btn-open-responses" data-form-id="${f.id}">
-                            <i class="fas fa-table-cells text-accent"></i> Yanıtlar & E-Tablo Detayları (${responsesCount})
-                        </button>
                     </div>
                 </div>
             `;

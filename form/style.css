@@ -324,8 +324,34 @@ ul, ol {
    ========================================================================== */
 .dashboard-forms-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     gap: 1.25rem;
+}
+
+@media (min-width: 1024px) {
+    .dashboard-forms-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+.btn-card-sub-action {
+    background: transparent;
+    border: none;
+    color: #64748b;
+    font-size: 0.82rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: var(--form-transition);
+}
+
+.btn-card-sub-action:hover {
+    color: var(--form-primary);
+    background: rgba(15, 46, 74, 0.08);
 }
 
 .dashboard-form-card {
