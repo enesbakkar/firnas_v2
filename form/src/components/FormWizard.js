@@ -400,19 +400,34 @@ export function setupFormWizard(container, store) {
                     submitBtn.innerHTML = `<i class="fas fa-spinner fa-spin"></i> Gönderiliyor...`;
                 }
 
+                // Capture all question answers dynamically (custom + builtin)
+                const customAnswers = {};
+                if (formDef && formDef.steps) {
+                    formDef.steps.forEach(step => {
+                        if (step.fields) {
+                            step.fields.forEach(field => {
+                                if (curState.formData[field.id] !== undefined) {
+                                    customAnswers[field.label || field.id] = curState.formData[field.id];
+                                }
+                            });
+                        }
+                    });
+                }
+
                 const refCode = generateRefCode(curState.currentFormId);
                 const responsePayload = {
                     refCode: refCode,
                     formSlug: curState.currentFormId,
-                    fullName: curState.formData.fullName || '',
-                    phone: curState.formData.phone || '',
-                    email: curState.formData.email || '',
-                    district: curState.formData.district || '',
-                    university: curState.formData.university || '',
-                    department: curState.formData.department || '',
-                    grade: curState.formData.grade || '',
+                    fullName: curState.formData.fullName || customAnswers['İsim Soyisim'] || 'Anonim Katılımcı',
+                    phone: curState.formData.phone || customAnswers['Telefon Numarası'] || '-',
+                    email: curState.formData.email || customAnswers['E-posta Adresi'] || '-',
+                    district: curState.formData.district || customAnswers['İlçe'] || '-',
+                    university: curState.formData.university || '-',
+                    department: curState.formData.department || '-',
+                    grade: curState.formData.grade || '-',
                     hearAbout: curState.formData.hearAbout || '-',
                     notes: curState.formData.notes || '-',
+                    customAnswers: customAnswers,
                     date: new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
                 };
 

@@ -30,8 +30,18 @@ export function slugify(str) {
 
 export function generateRefCode(formSlug = 'feam-2026') {
     const prefix = formSlug.toUpperCase().replace(/[^A-Z]/g, '').substring(0, 4) || 'FEAM';
-    const randomDigits = Math.floor(10000 + Math.random() * 90000);
-    return `${prefix}-${randomDigits}`;
+    const timestampDigits = Date.now().toString().slice(-4);
+    const randomDigits = Math.floor(1000 + Math.random() * 9000);
+    return `${prefix}-${timestampDigits}${randomDigits}`;
+}
+
+export function sanitizeCsvCell(val) {
+    if (val === null || val === undefined) return '';
+    let str = String(val).trim();
+    if (str.startsWith('=') || str.startsWith('+') || str.startsWith('-') || str.startsWith('@')) {
+        return `'${str}`; // Disarm formula injection in Excel
+    }
+    return str;
 }
 
 export async function hashPasswordSHA256(text) {

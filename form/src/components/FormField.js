@@ -9,6 +9,7 @@ export function renderFormField(fieldDef, value = '', error = '') {
     const requiredMark = fieldDef.required ? '<span class="required">*</span>' : '';
     const errorClass = error ? 'has-error' : '';
     const errorMsgHtml = `<span class="error-msg" id="err-${fieldId}" style="${error ? 'display:block;' : ''}">${escapeHtml(error)}</span>`;
+    const fieldImageHtml = fieldDef.imageUrl ? `<div class="field-image-wrapper" style="margin-bottom:8px;"><img src="${escapeHtml(fieldDef.imageUrl)}" alt="${escapeHtml(fieldDef.label)}" style="max-height:180px; border-radius:10px; object-fit:cover;"></div>` : '';
 
     if (fieldDef.type === 'kvkk_checkbox') {
         return `

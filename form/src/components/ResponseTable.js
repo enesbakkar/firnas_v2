@@ -3,7 +3,7 @@
    Real-Time Search & Form-Filtered Responses Dashboard
    ========================================================================== */
 
-import { escapeHtml, showConfirmDialog, showAlertDialog } from '../utils/stringHelpers.js';
+import { escapeHtml, showConfirmDialog, showAlertDialog, sanitizeCsvCell } from '../utils/stringHelpers.js';
 import { deleteResponseByRefCode, clearAllResponses } from '../core/apiService.js';
 
 export function setupResponseTable(container, store) {
@@ -206,7 +206,7 @@ export function setupResponseTable(container, store) {
         }
         let csvContent = "\uFEFFReferans Kodu,Form Kimligi,Ad Soyad,Telefon,E-posta,İlçe,Üniversite,Bölüm,Sınıf,Nereden Duydunuz,Ek Notlar,Kayıt Tarihi\n";
         list.forEach(r => {
-            csvContent += `"${r.refCode}","${r.formSlug || 'feam-2026'}","${r.fullName}","${r.phone}","${r.email}","${r.district}","${r.university}","${r.department}","${r.grade}","${r.hearAbout}","${r.notes}","${r.date}"\n`;
+            csvContent += `"${sanitizeCsvCell(r.refCode)}","${sanitizeCsvCell(r.formSlug || 'feam-2026')}","${sanitizeCsvCell(r.fullName)}","${sanitizeCsvCell(r.phone)}","${sanitizeCsvCell(r.email)}","${sanitizeCsvCell(r.district)}","${sanitizeCsvCell(r.university)}","${sanitizeCsvCell(r.department)}","${sanitizeCsvCell(r.grade)}","${sanitizeCsvCell(r.hearAbout)}","${sanitizeCsvCell(r.notes)}","${sanitizeCsvCell(r.date)}"\n`;
         });
 
         const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
