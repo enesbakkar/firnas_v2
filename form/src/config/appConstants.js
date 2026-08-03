@@ -2,8 +2,8 @@
    APP CONSTANTS (src/config/appConstants.js)
    ========================================================================== */
 
-// Hashed SHA-256 password (FORMS_fir_2023)
-export const ADMIN_PASSWORD_HASH = '2e7cd34aa543b59bdc43a41c1075d9e5d4cbdf2bb19a3b6329c3be7a44f2b1d6';
+export const ADMIN_PASSWORD = 'FORMS_fir_2023';
+export const ADMIN_PASSWORD_HASH = '4129340ba99f33a623c0a2d920dfe874235cc613b4cc5f35cf239afd81f3324d';
 
 export const DEFAULT_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbx_EXAMPLE_WEBHOOK_URL/exec';
 

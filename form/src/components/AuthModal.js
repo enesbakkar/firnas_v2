@@ -2,7 +2,7 @@
    AUTH MODAL COMPONENT (src/components/AuthModal.js)
    ========================================================================== */
 
-import { ADMIN_PASSWORD_HASH, STORAGE_KEYS } from '../config/appConstants.js';
+import { ADMIN_PASSWORD, ADMIN_PASSWORD_HASH, STORAGE_KEYS } from '../config/appConstants.js';
 import { hashPasswordSHA256 } from '../utils/stringHelpers.js';
 
 export function setupAuthModal(container, store) {
@@ -37,9 +37,10 @@ export function setupAuthModal(container, store) {
 
             if (!input) return;
 
-            const inputHash = await hashPasswordSHA256(input.value);
+            const rawInput = (input.value || '').trim();
+            const inputHash = await hashPasswordSHA256(rawInput);
 
-            if (inputHash === ADMIN_PASSWORD_HASH) {
+            if (rawInput === ADMIN_PASSWORD || inputHash === ADMIN_PASSWORD_HASH) {
                 sessionStorage.setItem(STORAGE_KEYS.AUTH_STATE, 'true');
                 if (errorMsg) errorMsg.style.display = 'none';
                 if (overlay) overlay.classList.remove('active');
