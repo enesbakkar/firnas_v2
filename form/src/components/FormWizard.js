@@ -68,18 +68,20 @@ export function setupFormWizard(container, store) {
             const isSelected = (fId === state.currentFormId);
             const responsesCount = (state.responses || []).filter(r => (r.formSlug === fId || (!r.formSlug && fId === 'feam-2026'))).length;
 
+            const hasBanner = !!f.banner;
+            const coverHtml = hasBanner 
+                ? `<div class="card-thumb-box"><img src="${escapeHtml(f.banner)}" alt="${escapeHtml(f.title)}" class="card-thumb-img"><span class="form-badge-tag tag-cyan card-thumb-badge">${escapeHtml(f.category || 'FORM')}</span></div>`
+                : `<div class="card-thumb-box placeholder-thumb"><div class="thumb-icon-placeholder"><i class="fas fa-file-lines"></i></div><span class="form-badge-tag tag-cyan card-thumb-badge">${escapeHtml(f.category || 'FORM')}</span></div>`;
+
             return `
                 <div class="dashboard-form-card ${isSelected ? 'selected' : ''}">
-                    <div class="card-top-row">
-                        <div class="card-icon-box icon-cyan">
-                            <i class="fas ${f.banner ? 'fa-image' : 'fa-file-signature'}"></i>
-                        </div>
-                        <span class="form-badge-tag tag-cyan">${escapeHtml(f.category || 'FORM')}</span>
+                    ${coverHtml}
+                    <div class="card-body-content">
+                        <h4>${escapeHtml(f.title)}</h4>
+                        <p class="card-desc">${escapeHtml(f.description ? (f.description.substring(0, 80) + '...') : '')}</p>
                     </div>
-                    <h4>${escapeHtml(f.title)}</h4>
-                    <p class="card-desc">${escapeHtml(f.description ? (f.description.substring(0, 80) + '...') : '')}</p>
                     
-                    <div class="card-footer-bar" style="margin-top:auto; padding-top: 0.85rem; border-top: 1px dashed rgba(15,46,74,0.1); display:flex; flex-direction:column; gap:10px;">
+                    <div class="card-footer-bar" style="margin-top:auto; padding-top: 0.85rem; border-top: 1px dashed rgba(255,255,255,0.1); display:flex; flex-direction:column; gap:10px;">
                         <button class="btn btn-primary full-width btn-preview-form" data-form-id="${f.id}">
                             <i class="fas fa-paper-plane"></i> Formu Doldur
                         </button>
