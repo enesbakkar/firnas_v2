@@ -7,6 +7,9 @@ import { hashPasswordSHA256 } from '../utils/stringHelpers.js';
 
 export function setupAuthModal(container, store) {
     let pendingTabTarget = null;
+    const overlay = container.querySelector('#auth-lock-overlay');
+    const authForm = container.querySelector('#auth-form');
+    const cancelBtn = container.querySelector('#btn-cancel-auth');
 
     function render() {
         const state = store.getState();
@@ -15,11 +18,15 @@ export function setupAuthModal(container, store) {
             if (state.isAuthenticated) lockBtn.classList.remove('hidden');
             else lockBtn.classList.add('hidden');
         }
-    }
 
-    const overlay = container.querySelector('#auth-lock-overlay');
-    const authForm = container.querySelector('#auth-form');
-    const cancelBtn = container.querySelector('#btn-cancel-auth');
+        // Strict Portal Lock: If not authenticated and NOT in standalone form fill mode, LOCK IMMEDIATELY!
+        const isStandalone = document.body.classList.contains('standalone-form-mode');
+        if (!state.isAuthenticated && !isStandalone) {
+            if (overlay) overlay.classList.add('active');
+        } else if (state.isAuthenticated) {
+            if (overlay) overlay.classList.remove('active');
+        }
+    }
 
     if (authForm) {
         authForm.onsubmit = async (e) => {
@@ -56,8 +63,14 @@ export function setupAuthModal(container, store) {
 
     if (cancelBtn) {
         cancelBtn.onclick = () => {
-            if (overlay) overlay.classList.remove('active');
-            pendingTabTarget = null;
+            const state = store.getState();
+            if (!state.isAuthenticated) {
+                // Return to home page if canceled on initial lock
+                window.location.href = '/';
+            } else {
+                if (overlay) overlay.classList.remove('active');
+                pendingTabTarget = null;
+            }
         };
     }
 
@@ -66,6 +79,7 @@ export function setupAuthModal(container, store) {
         lockBtn.onclick = () => {
             sessionStorage.removeItem(STORAGE_KEYS.AUTH_STATE);
             store.setState({ isAuthenticated: false, activeTab: 'fill' });
+            if (overlay) overlay.classList.add('active');
         };
     }
 
