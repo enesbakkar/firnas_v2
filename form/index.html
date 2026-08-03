@@ -253,57 +253,37 @@
                 </div>
             </div>
 
-            <!-- TAB 3: FORM BUILDER -->
+            <!-- TAB 3: FORM BUILDER (GOOGLE FORMS EDITOR LAYOUT) -->
             <div id="tab-builder" class="tab-content">
-                <div style="margin-bottom: 1rem;">
+                <div class="gform-builder-header-bar">
                     <button class="btn btn-secondary btn-sm" id="btn-back-from-builder">
                         <i class="fas fa-arrow-left"></i> Form Kataloğuna Dön
                     </button>
-                </div>
-                <div class="builder-layout-grid">
-                    <div class="builder-sidebar">
-                        <h3><i class="fas fa-toolbox"></i> Soru Türü Ekle</h3>
-                        <div class="builder-tools">
-                            <button class="btn btn-secondary full-width btn-tool btn-tool-add" data-type="text">
-                                <i class="fas fa-font"></i> Kısa Metin Girdisi
-                            </button>
-                            <button class="btn btn-secondary full-width btn-tool btn-tool-add" data-type="textarea">
-                                <i class="fas fa-align-left"></i> Uzun Paragraf Metni
-                            </button>
-                            <button class="btn btn-secondary full-width btn-tool btn-tool-add" data-type="choice">
-                                <i class="fas fa-list-check"></i> Çoktan Seçmeli (Radio)
-                            </button>
-                            <button class="btn btn-secondary full-width btn-tool btn-tool-add" data-type="dropdown">
-                                <i class="fas fa-caret-down"></i> Açılır Liste (Dropdown)
-                            </button>
-                        </div>
-
-                        <hr style="margin: 1.5rem 0; border: none; border-top: 1px solid var(--form-border);">
-                        
-                        <h3><i class="fas fa-gear"></i> Form Ayarları</h3>
-                        <div class="form-group">
-                            <label>Form Başlığı</label>
-                            <input type="text" id="builder-form-title" class="form-control" value="Özel Kayıt Formu">
-                        </div>
-                        <div class="form-group">
-                            <label>Form Açıklaması</label>
-                            <textarea id="builder-form-desc" class="form-control" rows="3">Firnas TEAM Katılımcı Kayıt Formu</textarea>
-                        </div>
-                        <button class="btn btn-primary full-width" id="btn-publish-builder-form">
-                            <i class="fas fa-paper-plane"></i> Formu Yayınla & Listeye Ekle
+                    <div style="display:flex; gap:10px;">
+                        <button type="button" class="btn btn-secondary btn-sm" id="btn-gform-add-question">
+                            <i class="fas fa-plus text-accent"></i> Soru Ekle
+                        </button>
+                        <button type="button" class="btn btn-primary btn-sm" id="btn-publish-builder-form">
+                            <i class="fas fa-paper-plane"></i> Formu Yayınla & Paylaş
                         </button>
                     </div>
+                </div>
 
-                    <div class="builder-canvas">
-                        <div class="builder-preview-header">
-                            <span class="form-badge">CANLI ÖNİZLEME</span>
-                            <h2 id="preview-form-title">Özel Kayıt Formu</h2>
-                            <p id="preview-form-desc">Firnas TEAM Katılımcı Kayıt Formu</p>
+                <div class="gform-builder-container">
+                    <!-- GOOGLE FORMS TOP HEADER CARD (Title & Description) -->
+                    <div class="gform-header-card">
+                        <div class="gform-header-accent-line"></div>
+                        <div class="form-group" style="margin-bottom: 0.75rem;">
+                            <input type="text" id="builder-form-title" class="gform-main-title-input" value="Başlıksız Form" placeholder="Form Başlığı">
                         </div>
+                        <div class="form-group" style="margin-bottom: 0;">
+                            <input type="text" id="builder-form-desc" class="gform-main-desc-input" value="Firnas Katılımcı Kayıt ve İletişim Formu" placeholder="Form açıklaması...">
+                        </div>
+                    </div>
 
-                        <div id="builder-questions-list" class="builder-questions-list">
-                            <!-- Dynamic Questions -->
-                        </div>
+                    <!-- DYNAMIC GOOGLE FORMS QUESTION CARDS LIST -->
+                    <div id="builder-questions-list" class="builder-questions-list">
+                        <!-- Dynamic Google Forms style question cards -->
                     </div>
                 </div>
             </div>

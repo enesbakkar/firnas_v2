@@ -1,12 +1,21 @@
 /* ==========================================================================
-   FUNCTIONAL FORM BUILDER COMPONENT (src/components/Builder.js)
+   GOOGLE FORMS STYLE BUILDER COMPONENT (src/components/Builder.js)
+   Firnas Dark Glassmorphism Styling + Google Forms Editor UX
    ========================================================================== */
 
 import { saveCustomForm } from '../core/apiService.js';
-import { slugify, escapeHtml, showAlertDialog } from '../utils/stringHelpers.js';
+import { slugify, escapeHtml, showAlertDialog, showToastNotification } from '../utils/stringHelpers.js';
 
 export function setupFormBuilder(container, store) {
-    let builderQuestions = [];
+    let builderQuestions = [
+        {
+            id: 'q_default_1',
+            type: 'text',
+            title: 'Katılımcı Notu veya İlgi Alanı',
+            required: false,
+            options: []
+        }
+    ];
 
     function render() {
         const state = store.getState();
@@ -16,43 +25,175 @@ export function setupFormBuilder(container, store) {
         if (!canvasList) return;
 
         if (builderQuestions.length === 0) {
-            canvasList.innerHTML = `<p class="text-center text-muted" style="padding: 2rem;">Henüz soru eklenmedi. Sol menüden soru türü seçin.</p>`;
-        } else {
-            canvasList.innerHTML = builderQuestions.map((q, idx) => `
-                <div class="builder-q-item">
-                    <div class="q-item-header">
-                        <input type="text" class="q-title-input" value="${escapeHtml(q.title)}" data-idx="${idx}" placeholder="Soru başlığı...">
-                        <button class="btn-q-delete" data-idx="${idx}" title="Sil"><i class="fas fa-trash"></i></button>
-                    </div>
-                    <div style="margin-top: 8px; font-size: 0.8rem; color: #64748b;">
-                        Tür: <strong>${q.type}</strong> | Zorunlu: <input type="checkbox" class="q-req-cb" data-idx="${idx}" ${q.required ? 'checked' : ''}>
-                    </div>
+            canvasList.innerHTML = `
+                <div class="gform-empty-card text-center py-5">
+                    <i class="fas fa-file-circle-plus" style="font-size: 2.5rem; color: var(--form-accent); margin-bottom: 1rem;"></i>
+                    <h4 style="color:#ffffff;">Henüz soru eklenmedi</h4>
+                    <p class="text-muted small">Yeni bir soru eklemek için "Soru Ekle" butonuna tıklayın.</p>
                 </div>
-            `).join('');
+            `;
+        } else {
+            canvasList.innerHTML = builderQuestions.map((q, qIdx) => {
+                const isOptionType = (q.type === 'choice' || q.type === 'dropdown');
+                
+                let optionsHtml = '';
+                if (isOptionType) {
+                    const opts = q.options && q.options.length > 0 ? q.options : ['Seçenek 1'];
+                    optionsHtml = `
+                        <div class="gform-options-editor" style="margin-top: 1rem; padding-left: 0.5rem;">
+                            ${opts.map((optVal, optIdx) => `
+                                <div class="gform-option-row" style="display:flex; align-items:center; gap:10px; margin-bottom:8px;">
+                                    <i class="${q.type === 'choice' ? 'far fa-circle' : 'fas fa-caret-right'}" style="color:var(--form-accent);"></i>
+                                    <input type="text" class="form-control gform-opt-input" data-qidx="${qIdx}" data-optidx="${optIdx}" value="${escapeHtml(optVal)}" placeholder="Seçenek ${optIdx + 1}">
+                                    ${opts.length > 1 ? `<button type="button" class="btn-icon-danger btn-delete-opt" data-qidx="${qIdx}" data-optidx="${optIdx}" title="Seçeneği Sil"><i class="fas fa-times"></i></button>` : ''}
+                                </div>
+                            `).join('')}
+                            <button type="button" class="btn btn-secondary btn-sm btn-add-opt" data-qidx="${qIdx}" style="margin-top:4px;">
+                                <i class="fas fa-plus"></i> Seçenek Ekle
+                            </button>
+                        </div>
+                    `;
+                }
 
-            // Bind Q inputs
-            canvasList.querySelectorAll('.q-title-input').forEach(input => {
-                input.oninput = (e) => {
-                    const idx = parseInt(e.target.dataset.idx);
-                    builderQuestions[idx].title = e.target.value;
-                };
-            });
-            canvasList.querySelectorAll('.q-req-cb').forEach(cb => {
-                cb.onchange = (e) => {
-                    const idx = parseInt(e.target.dataset.idx);
-                    builderQuestions[idx].required = e.target.checked;
-                };
-            });
-            canvasList.querySelectorAll('.btn-q-delete').forEach(btn => {
-                btn.onclick = () => {
-                    const idx = parseInt(btn.dataset.idx);
-                    builderQuestions.splice(idx, 1);
-                    render();
-                };
-            });
+                return `
+                    <div class="gform-question-card" data-qidx="${qIdx}">
+                        <div class="gform-card-top-bar">
+                            <div class="gform-q-title-wrapper" style="flex:1;">
+                                <input type="text" class="gform-q-title-input" data-qidx="${qIdx}" value="${escapeHtml(q.title)}" placeholder="Soru metnini giriniz...">
+                            </div>
+                            <div class="gform-q-type-select-wrapper">
+                                <select class="gform-q-type-select" data-qidx="${qIdx}">
+                                    <option value="text" ${q.type === 'text' ? 'selected' : ''}>📝 Kısa Yanıt</option>
+                                    <option value="textarea" ${q.type === 'textarea' ? 'selected' : ''}>📄 Paragraf Metni</option>
+                                    <option value="choice" ${q.type === 'choice' ? 'selected' : ''}>🔘 Çoktan Seçmeli</option>
+                                    <option value="dropdown" ${q.type === 'dropdown' ? 'selected' : ''}>▼ Açılır Liste</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        ${optionsHtml}
+
+                        <div class="gform-card-footer">
+                            <div class="gform-footer-left">
+                                <button type="button" class="btn-gform-action btn-duplicate-q" data-qidx="${qIdx}" title="Soruyu Çoğalt">
+                                    <i class="fas fa-copy"></i> Çoğalt
+                                </button>
+                                <button type="button" class="btn-gform-action btn-delete-q" data-qidx="${qIdx}" title="Soruyu Sil">
+                                    <i class="fas fa-trash-can"></i> Sil
+                                </button>
+                            </div>
+                            <div class="gform-footer-right">
+                                <label class="gform-toggle-switch">
+                                    <span>Zorunlu</span>
+                                    <input type="checkbox" class="gform-req-checkbox" data-qidx="${qIdx}" ${q.required ? 'checked' : ''}>
+                                    <span class="gform-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // Bind Question Card Inputs & Actions
+            bindCardEvents(canvasList);
         }
 
         bindToolButtons(container);
+    }
+
+    function bindCardEvents(canvasList) {
+        // Question Title Input
+        canvasList.querySelectorAll('.gform-q-title-input').forEach(input => {
+            input.oninput = (e) => {
+                const qIdx = parseInt(e.target.dataset.qidx);
+                if (builderQuestions[qIdx]) {
+                    builderQuestions[qIdx].title = e.target.value;
+                }
+            };
+        });
+
+        // Question Type Select
+        canvasList.querySelectorAll('.gform-q-type-select').forEach(select => {
+            select.onchange = (e) => {
+                const qIdx = parseInt(e.target.dataset.qidx);
+                const newType = e.target.value;
+                if (builderQuestions[qIdx]) {
+                    builderQuestions[qIdx].type = newType;
+                    if ((newType === 'choice' || newType === 'dropdown') && (!builderQuestions[qIdx].options || builderQuestions[qIdx].options.length === 0)) {
+                        builderQuestions[qIdx].options = ['Seçenek 1', 'Seçenek 2', 'Seçenek 3'];
+                    }
+                    render();
+                }
+            };
+        });
+
+        // Option Inputs
+        canvasList.querySelectorAll('.gform-opt-input').forEach(input => {
+            input.oninput = (e) => {
+                const qIdx = parseInt(e.target.dataset.qidx);
+                const optIdx = parseInt(e.target.dataset.optidx);
+                if (builderQuestions[qIdx] && builderQuestions[qIdx].options) {
+                    builderQuestions[qIdx].options[optIdx] = e.target.value;
+                }
+            };
+        });
+
+        // Add Option Button
+        canvasList.querySelectorAll('.btn-add-opt').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                if (builderQuestions[qIdx]) {
+                    if (!builderQuestions[qIdx].options) builderQuestions[qIdx].options = [];
+                    builderQuestions[qIdx].options.push(`Seçenek ${builderQuestions[qIdx].options.length + 1}`);
+                    render();
+                }
+            };
+        });
+
+        // Delete Option Button
+        canvasList.querySelectorAll('.btn-delete-opt').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                const optIdx = parseInt(btn.dataset.optidx);
+                if (builderQuestions[qIdx] && builderQuestions[qIdx].options) {
+                    builderQuestions[qIdx].options.splice(optIdx, 1);
+                    render();
+                }
+            };
+        });
+
+        // Duplicate Question
+        canvasList.querySelectorAll('.btn-duplicate-q').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                if (builderQuestions[qIdx]) {
+                    const qCopy = JSON.parse(JSON.stringify(builderQuestions[qIdx]));
+                    qCopy.id = 'q_' + Date.now();
+                    qCopy.title = qCopy.title + ' (Kopya)';
+                    builderQuestions.splice(qIdx + 1, 0, qCopy);
+                    render();
+                }
+            };
+        });
+
+        // Delete Question
+        canvasList.querySelectorAll('.btn-delete-q').forEach(btn => {
+            btn.onclick = () => {
+                const qIdx = parseInt(btn.dataset.qidx);
+                builderQuestions.splice(qIdx, 1);
+                render();
+            };
+        });
+
+        // Required Toggle Switch
+        canvasList.querySelectorAll('.gform-req-checkbox').forEach(cb => {
+            cb.onchange = (e) => {
+                const qIdx = parseInt(e.target.dataset.qidx);
+                if (builderQuestions[qIdx]) {
+                    builderQuestions[qIdx].required = e.target.checked;
+                }
+            };
+        });
     }
 
     function bindToolButtons(container) {
@@ -61,25 +202,20 @@ export function setupFormBuilder(container, store) {
             backBtn.onclick = () => store.setState({ activeTab: 'fill' });
         }
 
-        container.querySelectorAll('.btn-tool-add').forEach(btn => {
-            btn.onclick = () => {
-                const type = btn.dataset.type || 'text';
-                const defaultTitles = {
-                    text: 'Yeni Metin Sorusu',
-                    textarea: 'Yeni Açıklama Sorusu',
-                    choice: 'Yeni Çoktan Seçmeli Soru',
-                    dropdown: 'Yeni Açılır Liste Sorusu'
-                };
+        const addQBtn = container.querySelector('#btn-gform-add-question');
+        if (addQBtn) {
+            addQBtn.onclick = () => {
                 builderQuestions.push({
                     id: 'q_' + Date.now(),
-                    type: type,
-                    title: defaultTitles[type] || 'Yeni Soru',
+                    type: 'text',
+                    title: 'Yeni Soru',
                     required: true,
-                    options: (type === 'choice' || type === 'dropdown') ? ['Seçenek 1', 'Seçenek 2', 'Seçenek 3'] : []
+                    options: []
                 });
                 render();
+                showToastNotification('Yeni soru bloğu eklendi.');
             };
-        });
+        }
 
         const titleInput = container.querySelector('#builder-form-title');
         const descInput = container.querySelector('#builder-form-desc');
