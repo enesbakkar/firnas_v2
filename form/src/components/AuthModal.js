@@ -2,7 +2,8 @@
    AUTH MODAL COMPONENT (src/components/AuthModal.js)
    ========================================================================== */
 
-import { ADMIN_PASSWORD, STORAGE_KEYS } from '../config/appConstants.js';
+import { ADMIN_PASSWORD_HASH, STORAGE_KEYS } from '../config/appConstants.js';
+import { hashPasswordSHA256 } from '../utils/stringHelpers.js';
 
 export function setupAuthModal(container, store) {
     let pendingTabTarget = null;
@@ -21,13 +22,17 @@ export function setupAuthModal(container, store) {
     const cancelBtn = container.querySelector('#btn-cancel-auth');
 
     if (authForm) {
-        authForm.onsubmit = (e) => {
+        authForm.onsubmit = async (e) => {
             e.preventDefault();
             const input = container.querySelector('#auth-password-input');
             const errorMsg = container.querySelector('#auth-error-msg');
             const authCard = container.querySelector('.auth-card');
 
-            if (input && input.value === ADMIN_PASSWORD) {
+            if (!input) return;
+
+            const inputHash = await hashPasswordSHA256(input.value);
+
+            if (inputHash === ADMIN_PASSWORD_HASH) {
                 sessionStorage.setItem(STORAGE_KEYS.AUTH_STATE, 'true');
                 if (errorMsg) errorMsg.style.display = 'none';
                 if (overlay) overlay.classList.remove('active');

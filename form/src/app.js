@@ -106,7 +106,8 @@ function setupShareModal(container, store) {
         const f = state.formDefinitions[formId] || state.formDefinitions['feam-2026'];
         if (!f) return;
 
-        const directUrl = `${window.location.origin}/form/?f=${f.id}`;
+        const basePath = window.location.origin + window.location.pathname;
+        const directUrl = `${basePath}?f=${f.id}`;
         const iframeCode = `<iframe src="${directUrl}" width="100%" height="750px" frameborder="0" style="border:none; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1);"></iframe>`;
 
         const titleElem = shareModal.querySelector('#share-modal-form-title');
@@ -153,6 +154,13 @@ function setupShareModal(container, store) {
 }
 
 function bindGlobalEvents(container, store) {
+    // Global Modal Escape Key Listener (Accessibility)
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            document.querySelectorAll('.modal-overlay.active').forEach(m => m.classList.remove('active'));
+        }
+    });
+
     // Tab Buttons
     container.querySelectorAll('.tab-btn').forEach(btn => {
         btn.onclick = () => {

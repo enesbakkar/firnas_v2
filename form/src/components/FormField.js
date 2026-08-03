@@ -29,7 +29,7 @@ export function renderFormField(fieldDef, value = '', error = '') {
         const optionsHtml = (fieldDef.options || []).map(opt => {
             const optVal = typeof opt === 'string' ? opt : opt.value;
             const optIcon = typeof opt === 'object' && opt.icon ? opt.icon : 'fas fa-check-circle';
-            const isChecked = (value === optVal || (!value && optVal === 'Instagram'));
+            const isChecked = (value === optVal);
 
             return `
                 <label class="category-card">

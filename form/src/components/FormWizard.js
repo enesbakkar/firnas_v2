@@ -408,7 +408,7 @@ export function setupFormWizard(container, store) {
                     university: curState.formData.university || '',
                     department: curState.formData.department || '',
                     grade: curState.formData.grade || '',
-                    hearAbout: curState.formData.hearAbout || 'Instagram',
+                    hearAbout: curState.formData.hearAbout || '-',
                     notes: curState.formData.notes || '-',
                     date: new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
                 };

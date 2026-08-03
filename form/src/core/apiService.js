@@ -42,6 +42,13 @@ export function getResponses() {
     }
 }
 
+export function deleteResponseByRefCode(refCode) {
+    const responses = getResponses();
+    const filtered = responses.filter(r => r.refCode !== refCode);
+    localStorage.setItem(STORAGE_KEYS.RESPONSES, JSON.stringify(filtered));
+    return filtered;
+}
+
 export function deleteResponse(index) {
     const responses = getResponses();
     responses.splice(index, 1);
@@ -80,28 +87,27 @@ export function clearDraft(formId) {
     } catch (err) {}
 }
 
-export function getCustomForms() {
+export function saveCustomForm(formDef) {
     try {
-        const data = localStorage.getItem(STORAGE_KEYS.CUSTOM_FORMS);
-        return data ? JSON.parse(data) : [];
+        const customForms = getCustomForms();
+        const existingIdx = customForms.findIndex(f => f.id === formDef.id);
+        if (existingIdx >= 0) {
+            customForms[existingIdx] = formDef;
+        } else {
+            customForms.push(formDef);
+        }
+        localStorage.setItem(STORAGE_KEYS.CUSTOM_FORMS, JSON.stringify(customForms));
+        return customForms;
     } catch (err) {
         return [];
     }
 }
 
-export function saveCustomForm(formObj) {
+export function getCustomForms() {
     try {
-        const customForms = getCustomForms();
-        const existingIdx = customForms.findIndex(f => f.id === formObj.id);
-        if (existingIdx >= 0) {
-            customForms[existingIdx] = formObj;
-        } else {
-            customForms.push(formObj);
-        }
-        localStorage.setItem(STORAGE_KEYS.CUSTOM_FORMS, JSON.stringify(customForms));
-        return customForms;
+        const data = localStorage.getItem(STORAGE_KEYS.CUSTOM_FORMS);
+        return data ? JSON.parse(data) : [];
     } catch (err) {
-        console.warn('Save custom form warning:', err);
         return [];
     }
 }

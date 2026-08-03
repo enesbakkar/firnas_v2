@@ -3,7 +3,7 @@
    ========================================================================== */
 
 import { saveCustomForm } from '../core/apiService.js';
-import { slugify, escapeHtml } from '../utils/stringHelpers.js';
+import { slugify, escapeHtml, showAlertDialog } from '../utils/stringHelpers.js';
 
 export function setupFormBuilder(container, store) {
     let builderQuestions = [];
@@ -108,7 +108,7 @@ export function setupFormBuilder(container, store) {
         const desc = (descInput?.value || '').trim();
 
         if (!title) {
-            alert('Lütfen form başlığı giriniz.');
+            showAlertDialog('Eksik Bilgi', 'Lütfen yayınlamak için geçerli bir form başlığı giriniz.');
             return;
         }
 

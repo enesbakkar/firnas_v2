@@ -3,8 +3,8 @@
    Real-Time Search & Form-Filtered Responses Dashboard
    ========================================================================== */
 
-import { escapeHtml } from '../utils/stringHelpers.js';
-import { deleteResponse, clearAllResponses } from '../core/apiService.js';
+import { escapeHtml, showConfirmDialog, showAlertDialog } from '../utils/stringHelpers.js';
+import { deleteResponseByRefCode, clearAllResponses } from '../core/apiService.js';
 
 export function setupResponseTable(container, store) {
     let filterSlug = 'all';
@@ -73,7 +73,7 @@ export function setupResponseTable(container, store) {
                 <td>
                     <div style="display:flex; gap:6px;">
                         <button class="btn btn-secondary btn-sm btn-detail-view" data-index="${index}" title="Detay"><i class="fas fa-eye"></i></button>
-                        <button class="btn btn-danger btn-sm btn-delete-row" data-index="${index}" title="Sil"><i class="fas fa-trash"></i></button>
+                        <button class="btn btn-danger btn-sm btn-delete-row" data-ref="${escapeHtml(r.refCode)}" title="Sil"><i class="fas fa-trash"></i></button>
                     </div>
                 </td>
             </tr>
@@ -89,11 +89,16 @@ export function setupResponseTable(container, store) {
 
         tbody.querySelectorAll('.btn-delete-row').forEach(btn => {
             btn.onclick = () => {
-                const idx = parseInt(btn.dataset.index);
-                if (confirm('Bu kayıt silinsin mi?')) {
-                    const newResponses = deleteResponse(idx);
-                    store.setState({ responses: newResponses });
-                }
+                const refCode = btn.dataset.ref;
+                if (!refCode) return;
+                showConfirmDialog(
+                    'Kayıt Silme',
+                    `"${refCode}" referans kodlu katılımcı kaydı tamamen silinsin mi?`,
+                    () => {
+                        const newResponses = deleteResponseByRefCode(refCode);
+                        store.setState({ responses: newResponses });
+                    }
+                );
             };
         });
 
@@ -160,10 +165,14 @@ export function setupResponseTable(container, store) {
         }
         if (btnClear) {
             btnClear.onclick = () => {
-                if (confirm('Tüm kayıtları silmek istediğinize emin misiniz?')) {
-                    const emptyResponses = clearAllResponses();
-                    store.setState({ responses: emptyResponses });
-                }
+                showConfirmDialog(
+                    'Tüm Kayıtları Sıfırla',
+                    'Tüm katılımcı kayıtlarını silmek istediğinize emin misiniz? Bu işlem geri alınamaz.',
+                    () => {
+                        const emptyResponses = clearAllResponses();
+                        store.setState({ responses: emptyResponses });
+                    }
+                );
             };
         }
     }
@@ -192,7 +201,7 @@ export function setupResponseTable(container, store) {
     function exportResponsesCSV(responses, filterSlug) {
         let list = (filterSlug === 'all') ? responses : responses.filter(r => r.formSlug === filterSlug);
         if (!list || list.length === 0) {
-            alert('İndirilecek kayıt bulunmuyor.');
+            showAlertDialog('Dışa Aktarma', 'İndirilecek kayıt bulunmuyor.');
             return;
         }
         let csvContent = "\uFEFFReferans Kodu,Form Kimligi,Ad Soyad,Telefon,E-posta,İlçe,Üniversite,Bölüm,Sınıf,Nereden Duydunuz,Ek Notlar,Kayıt Tarihi\n";
@@ -211,7 +220,7 @@ export function setupResponseTable(container, store) {
     function exportResponsesJSON(responses, filterSlug) {
         let list = (filterSlug === 'all') ? responses : responses.filter(r => r.formSlug === filterSlug);
         if (!list || list.length === 0) {
-            alert('İndirilecek kayıt bulunmuyor.');
+            showAlertDialog('Dışa Aktarma', 'İndirilecek kayıt bulunmuyor.');
             return;
         }
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(list, null, 2));
