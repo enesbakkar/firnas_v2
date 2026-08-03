@@ -996,13 +996,27 @@ select.form-control {
 /* ==========================================================================
    MODAL OVERLAYS & CARDS
    ========================================================================== */
-.modal-overlay, .auth-modal-overlay {
+.modal-overlay {
     position: fixed;
     inset: 0;
     background: rgba(5, 20, 33, 0.85);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.25rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.auth-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: #051421;
+    z-index: 99999;
     display: flex;
     align-items: center;
     justify-content: center;
