@@ -5,8 +5,9 @@
 
 import { renderFormField } from './FormField.js';
 import { validateStepFields } from '../core/validators.js';
-import { saveDraft, clearDraft, postToGoogleSheets, saveResponseToLocal } from '../core/apiService.js';
-import { generateRefCode } from '../utils/stringHelpers.js';
+import { saveDraft, clearDraft, submitResponse, saveResponseToLocal } from '../core/apiService.js';
+import { IS_GAS_CONFIGURED } from '../config/appConstants.js';
+import { generateRefCode, escapeHtml, showAlertDialog } from '../utils/stringHelpers.js';
 
 export function setupFormWizard(container, store) {
     let lastRenderedFormId = null;
@@ -430,9 +431,21 @@ export function setupFormWizard(container, store) {
                     date: new Date().toLocaleDateString('tr-TR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' })
                 };
 
-                await postToGoogleSheets(responsePayload);
-                const updatedResponses = saveResponseToLocal(responsePayload);
+                // Submit to GAS backend (with local fallback)
+                const submitResult = await submitResponse(responsePayload);
                 clearDraft(curState.currentFormId);
+
+                if (submitBtn) {
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Kaydı Tamamla & Gönder`;
+                }
+
+                if (!submitResult.success && !submitResult.local) {
+                    // GAS'tan gerçek hata döndü (örn. duplicate, doğrulama hatası)
+                    const errMsg = submitResult.error || 'Gönderim sırasında bir hata oluştu.';
+                    showAlertDialog('Gönderim Hatası', errMsg);
+                    return;
+                }
 
                 // Show Success Modal
                 const modalRef = document.getElementById('modal-ref-code');
@@ -443,20 +456,20 @@ export function setupFormWizard(container, store) {
                 if (modalRefInput) modalRefInput.value = refCode;
                 if (successModal) successModal.classList.add('active');
 
+                // GAS yapılandırılmamışsa bilgi notu göster
+                if (!IS_GAS_CONFIGURED && submitResult.local) {
+                    console.info('Yanıt tarayıcıya kaydedildi. GAS backend henüz kurulmadı.');
+                }
+
                 // Reset Form State
                 errorsMap = {};
                 lastRenderedStep = null;
                 store.setState({
                     currentStep: 1,
                     formData: {},
-                    responses: updatedResponses,
+                    responses: saveResponseToLocal(responsePayload),
                     draftSavedTimestamp: null
                 });
-
-                if (submitBtn) {
-                    submitBtn.disabled = false;
-                    submitBtn.innerHTML = `<i class="fas fa-paper-plane"></i> Kaydı Tamamla & Gönder`;
-                }
             };
         }
     }
