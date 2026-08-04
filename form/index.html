@@ -310,6 +310,23 @@
                             <input type="text" id="builder-form-desc" class="gform-main-desc-input" value="Firnas Katılımcı Kayıt ve İletişim Formu" placeholder="Form açıklaması...">
                         </div>
 
+                        <!-- CUSTOM FORM LINK SLUG INPUT -->
+                        <div style="background: rgba(5,20,33,0.75); border: 1px solid rgba(0,184,212,0.3); border-radius: 12px; padding: 10px 14px; margin-bottom: 1rem;">
+                            <label style="color: #cbd5e1; font-weight: 700; font-size: 0.82rem; display: flex; align-items: center; gap: 6px; margin-bottom: 6px;">
+                                <i class="fas fa-link text-accent"></i> Özel Form Bağlantı Uzantısı (URL Slug)
+                            </label>
+                            <div style="display: flex; align-items: center; background: rgba(15,46,74,0.95); border: 1px solid rgba(0,184,212,0.4); border-radius: 8px; overflow: hidden; padding: 0 10px;">
+                                <span style="color: var(--form-accent); font-family: monospace; font-size: 0.86rem; font-weight: 700; white-space: nowrap; user-select: none;">
+                                    firnastechnologies.com/form/?f=
+                                </span>
+                                <input type="text" id="builder-form-slug" style="background: transparent; border: none; color: #ffffff; font-family: monospace; font-weight: 800; font-size: 0.92rem; padding: 8px 4px; outline: none; width: 100%;" placeholder="ozel-form-linki" value="yeni-form">
+                            </div>
+                            <p class="small text-muted" style="margin: 6px 0 0 0; font-size: 0.78rem;">
+                                💡 Katılımcıların formu açacağı özel linktir (Örn: <code>feam-2026</code>, <code>yaz-kampi</code>). Boşluklar otomatik tireye çevrilir.
+                            </p>
+                        </div>
+
+
                         <!-- Top Card Media Buttons -->
                         <div class="gform-header-media-tools" style="display:flex; gap:10px; border-top:1px dashed rgba(255,255,255,0.1); padding-top:0.75rem;">
                             <button type="button" class="btn-gform-action" id="btn-add-header-banner">

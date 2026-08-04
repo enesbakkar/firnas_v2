@@ -29,12 +29,14 @@ export function setupFormBuilder(container, store) {
         const state = store.getState();
         const titleInput = container.querySelector('#builder-form-title');
         const descInput = container.querySelector('#builder-form-desc');
+        const slugInput = container.querySelector('#builder-form-slug');
 
         if (!formId || !state.formDefinitions[formId]) {
             // Create New Blank Form Mode
             editingFormId = null;
             if (titleInput) titleInput.value = 'Başlıksız Form';
             if (descInput) descInput.value = 'Form açıklaması giriniz...';
+            if (slugInput) slugInput.value = 'yeni-form-' + Math.random().toString(36).substring(2, 6);
             currentBannerUrl = '';
             currentVideoUrl = '';
             currentTheme = 'cyan';
@@ -53,9 +55,11 @@ export function setupFormBuilder(container, store) {
             editingFormId = f.id;
             if (titleInput) titleInput.value = f.title || '';
             if (descInput) descInput.value = f.description || '';
+            if (slugInput) slugInput.value = f.id || slugify(f.title);
             currentBannerUrl = f.banner || '';
             currentVideoUrl = f.videoUrl || '';
             currentTheme = f.theme || 'cyan';
+
 
             // Extract custom fields from form steps into builderQuestions
             const extracted = [];
@@ -464,19 +468,37 @@ export function setupFormBuilder(container, store) {
                 showToastNotification(`Form teması "${currentTheme.toUpperCase()}" olarak güncellendi.`);
             };
         }
+
+        // Live slug formatting listener
+        const slugInput = container.querySelector('#builder-form-slug');
+        if (slugInput) {
+            slugInput.oninput = (e) => {
+                e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9\-]/g, '-').replace(/-+/g, '-');
+            };
+            slugInput.onblur = (e) => {
+                e.target.value = slugify(e.target.value) || 'yeni-form';
+            };
+        }
     }
 
     async function publishForm(titleInput, descInput, store) {
         const title = (titleInput?.value || '').trim();
         const desc = (descInput?.value || '').trim();
+        const slugInput = container.querySelector('#builder-form-slug');
+        const rawSlug = (slugInput?.value || '').trim();
 
         if (!title) {
             showAlertDialog('Eksik Bilgi', 'Lütfen yayınlamak için geçerli bir form başlığı giriniz.');
             return;
         }
 
-        const formSlug = editingFormId || slugify(title);
+        let formSlug = slugify(rawSlug) || editingFormId || slugify(title);
+        if (!formSlug) {
+            formSlug = 'form-' + Math.random().toString(36).substring(2, 7);
+        }
+
         const existingForm = store.getState().formDefinitions[formSlug];
+
 
         const newFormDef = {
             id: formSlug,
