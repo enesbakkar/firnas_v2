@@ -234,18 +234,50 @@ function bindGlobalEvents(container, store) {
         closeDetail.onclick = () => detailModal.classList.remove('active');
     }
 
+    // Global Event Delegation for Preview Bar Buttons & Catalog Navigation
+    document.addEventListener('click', (e) => {
+        // Back to Catalog Button (From Preview Bar, Builder, or Navigation Header)
+        const backBtn = e.target.closest('#btn-preview-back-catalog') || e.target.closest('#btn-nav-back-to-portal') || e.target.closest('#btn-back-from-builder') || e.target.closest('#btn-back-to-form-catalog');
+        if (backBtn) {
+            e.preventDefault();
+            if (window.exitPreviewToCatalog) {
+                window.exitPreviewToCatalog();
+            } else {
+                document.body.classList.add('dashboard-view');
+                document.body.classList.remove('standalone-form-mode', 'form-filling-view');
+                const previewBar = document.getElementById('form-preview-bar');
+                if (previewBar) previewBar.style.display = 'none';
+                store.setState({ activeTab: 'fill' });
+            }
+            return;
+        }
+
+        // Edit Form Button (From Preview Bar)
+        const editBtn = e.target.closest('#btn-preview-edit-form');
+        if (editBtn) {
+            e.preventDefault();
+            const currentF = store.getState().currentFormId;
+            const previewBar = document.getElementById('form-preview-bar');
+            if (previewBar) previewBar.style.display = 'none';
+
+            document.body.classList.add('dashboard-view');
+            document.body.classList.remove('form-filling-view', 'standalone-form-mode');
+
+            if (window.editFormInBuilder) {
+                window.editFormInBuilder(currentF);
+            } else if (window.requestAuthTabSwitch) {
+                window.requestAuthTabSwitch('builder');
+            } else {
+                store.setState({ activeTab: 'builder' });
+            }
+            return;
+        }
+    });
+
     // Builder Header Sub-Tabs & Navigation
     const btnQ = container.querySelector('#btn-builder-tab-questions');
     const btnR = container.querySelector('#btn-builder-tab-responses');
     const btnP = container.querySelector('#btn-builder-tab-preview');
-    const btnBackBuilder = container.querySelector('#btn-back-from-builder');
-
-    if (btnBackBuilder) {
-        btnBackBuilder.onclick = () => {
-            if (window.exitPreviewToCatalog) window.exitPreviewToCatalog();
-            else store.setState({ activeTab: 'fill' });
-        };
-    }
 
     if (btnQ) {
         btnQ.onclick = () => {
@@ -283,6 +315,7 @@ function bindGlobalEvents(container, store) {
             }
         };
     }
+
 
 }
 
