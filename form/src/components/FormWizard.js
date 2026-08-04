@@ -289,6 +289,11 @@ export function setupFormWizard(container, store) {
         });
     }
 
+function isPreviewActive() {
+    const previewBar = document.getElementById('form-preview-bar');
+    return previewBar && previewBar.style.display !== 'none';
+}
+
     function renderProgressUI(formDef, state) {
         const totalSteps = formDef.steps.length;
         const currentStep = state.currentStep;
@@ -315,6 +320,7 @@ export function setupFormWizard(container, store) {
         }
 
         if (dotsContainer) {
+            const inPreview = isPreviewActive();
             dotsContainer.innerHTML = formDef.steps.map((step, idx) => {
                 const stepNum = idx + 1;
                 let statusClass = '';
@@ -322,12 +328,22 @@ export function setupFormWizard(container, store) {
                 else if (stepNum < currentStep) statusClass = 'completed';
 
                 return `
-                    <div class="step-dot ${statusClass}" data-step="${stepNum}">
+                    <div class="step-dot ${statusClass}" data-step="${stepNum}" style="cursor:pointer;" title="${inPreview ? 'Tıkla ve Adıma Git' : 'Adım ' + stepNum}">
                         <span>${stepNum}</span>
                         <label>${step.title.split(' ')[0]}</label>
                     </div>
                 `;
             }).join('');
+
+            dotsContainer.querySelectorAll('.step-dot').forEach(dot => {
+                dot.onclick = () => {
+                    const stepNum = parseInt(dot.dataset.step);
+                    if (inPreview || stepNum < state.currentStep) {
+                        errorsMap = {};
+                        store.setState({ currentStep: stepNum });
+                    }
+                };
+            });
         }
 
         const prevBtn = container.querySelector('#btn-prev-step');
@@ -403,7 +419,11 @@ export function setupFormWizard(container, store) {
             nextBtn.onclick = () => {
                 const curState = store.getState();
                 const stepDef = formDef.steps[curState.currentStep - 1];
-                const validation = validateStepFields(stepDef, curState.formData);
+                const inPreview = isPreviewActive();
+                const validation = inPreview 
+                    ? { isValid: true, errorsMap: {} }
+                    : validateStepFields(stepDef, curState.formData);
+
                 if (validation.isValid) {
                     errorsMap = {};
                     store.setState({ currentStep: curState.currentStep + 1 });
@@ -420,13 +440,22 @@ export function setupFormWizard(container, store) {
                 e.preventDefault();
                 const curState = store.getState();
                 const stepDef = formDef.steps[curState.currentStep - 1];
-                const validation = validateStepFields(stepDef, curState.formData);
+                const inPreview = isPreviewActive();
+                const validation = inPreview 
+                    ? { isValid: true, errorsMap: {} }
+                    : validateStepFields(stepDef, curState.formData);
+
                 if (!validation.isValid) {
                     errorsMap = validation.errorsMap;
                     lastRenderedStep = null;
                     render();
                     return;
                 }
+
+                if (inPreview) {
+                    showToastNotification('ℹ️ Önizleme Modu: Test kaydı başarıyla simüle edildi.');
+                }
+
 
                 const submitBtn = container.querySelector('#btn-submit-form');
                 if (submitBtn) {
