@@ -469,35 +469,24 @@ export function setupFormBuilder(container, store) {
             };
         }
 
-        // Live slug formatting listener
-        const slugInput = container.querySelector('#builder-form-slug');
-        if (slugInput) {
-            slugInput.oninput = (e) => {
-                e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9\-]/g, '-').replace(/-+/g, '-');
-            };
-            slugInput.onblur = (e) => {
-                e.target.value = slugify(e.target.value) || 'yeni-form';
-            };
-        }
     }
 
     async function publishForm(titleInput, descInput, store) {
         const title = (titleInput?.value || '').trim();
         const desc = (descInput?.value || '').trim();
-        const slugInput = container.querySelector('#builder-form-slug');
-        const rawSlug = (slugInput?.value || '').trim();
 
         if (!title) {
             showAlertDialog('Eksik Bilgi', 'Lütfen yayınlamak için geçerli bir form başlığı giriniz.');
             return;
         }
 
-        let formSlug = slugify(rawSlug) || editingFormId || slugify(title);
+        let formSlug = editingFormId || slugify(title);
         if (!formSlug) {
             formSlug = 'form-' + Math.random().toString(36).substring(2, 7);
         }
 
         const existingForm = store.getState().formDefinitions[formSlug];
+
 
 
         const newFormDef = {

@@ -116,10 +116,14 @@ function setupShareModal(container, store) {
     const shareModal = container.querySelector('#form-share-modal');
     if (!shareModal) return;
 
+    let activeSharingFormId = null;
+
     window.openFormShareModal = (formId) => {
         const state = store.getState();
         const f = state.formDefinitions[formId] || state.formDefinitions['feam-2026'];
         if (!f) return;
+
+        activeSharingFormId = f.id;
 
         const basePath = window.location.origin + window.location.pathname;
         const directUrl = `${basePath}?f=${f.id}`;
@@ -127,11 +131,13 @@ function setupShareModal(container, store) {
 
         const titleElem = shareModal.querySelector('#share-modal-form-title');
         const badgeElem = shareModal.querySelector('#share-modal-form-badge');
+        const slugInput = shareModal.querySelector('#share-modal-slug-input');
         const urlInput = shareModal.querySelector('#share-modal-direct-url');
         const iframeInput = shareModal.querySelector('#share-modal-iframe-code');
 
         if (titleElem) titleElem.innerText = f.title;
         if (badgeElem) badgeElem.innerText = (f.category || 'FORM').toUpperCase();
+        if (slugInput) slugInput.value = f.id;
         if (urlInput) urlInput.value = directUrl;
         if (iframeInput) iframeInput.value = iframeCode;
 
@@ -160,6 +166,66 @@ function setupShareModal(container, store) {
         shareModal.classList.add('active');
     };
 
+    // Live Slug Format & Save Handler in Share Modal
+    const slugInput = shareModal.querySelector('#share-modal-slug-input');
+    const saveSlugBtn = shareModal.querySelector('#btn-save-share-slug');
+
+    if (slugInput) {
+        slugInput.oninput = (e) => {
+            e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9\-]/g, '-').replace(/-+/g, '-');
+        };
+    }
+
+    if (saveSlugBtn) {
+        saveSlugBtn.onclick = async () => {
+            if (!activeSharingFormId) return;
+            const newSlug = slugify(slugInput?.value || '');
+
+            if (!newSlug) {
+                showAlertDialog('Geçersiz Uzantı', 'Lütfen geçerli bir bağlantı uzantısı yazın.');
+                return;
+            }
+
+            const state = store.getState();
+            if (newSlug === activeSharingFormId) {
+                showToastNotification('Bağlantı uzantısı zaten güncel.');
+                return;
+            }
+
+            const oldFormDef = state.formDefinitions[activeSharingFormId];
+            if (!oldFormDef) return;
+
+            // Create updated Form Definition with new ID/slug
+            const updatedFormDef = {
+                ...oldFormDef,
+                id: newSlug
+            };
+
+            // Update formDefinitions object
+            const newDefs = { ...state.formDefinitions };
+            delete newDefs[activeSharingFormId];
+            newDefs[newSlug] = updatedFormDef;
+
+            // Update customForms array
+            const updatedCustomForms = (state.customForms || []).map(cf => cf.id === activeSharingFormId ? updatedFormDef : cf);
+            if (!updatedCustomForms.some(cf => cf.id === newSlug)) {
+                updatedCustomForms.push(updatedFormDef);
+            }
+
+            // Save to LocalStorage + GAS
+            await saveCustomForm(updatedFormDef);
+
+            store.setState({
+                formDefinitions: newDefs,
+                customForms: updatedCustomForms,
+                currentFormId: newSlug
+            });
+
+            showToastNotification(`✅ Özel form bağlantı uzantısı "${newSlug}" olarak güncellendi!`);
+            window.openFormShareModal(newSlug);
+        };
+    }
+
     // Close Actions
     const closeBtn = shareModal.querySelector('#btn-close-share-modal');
     const doneBtn = shareModal.querySelector('#btn-done-share-modal');
@@ -167,6 +233,7 @@ function setupShareModal(container, store) {
     if (closeBtn) closeBtn.onclick = () => shareModal.classList.remove('active');
     if (doneBtn) doneBtn.onclick = () => shareModal.classList.remove('active');
 }
+
 
 function bindGlobalEvents(container, store) {
     // Global Modal Escape Key Listener (Accessibility)
