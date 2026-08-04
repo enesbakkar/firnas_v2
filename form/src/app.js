@@ -224,8 +224,12 @@ function bindGlobalEvents(container, store) {
     const successModal = container.querySelector('#form-success-modal');
     const closeSuccess = container.querySelector('#btn-close-success-modal');
     if (closeSuccess && successModal) {
-        closeSuccess.onclick = () => successModal.classList.remove('active');
+        closeSuccess.onclick = () => {
+            if (window.successRedirectTimer) clearInterval(window.successRedirectTimer);
+            successModal.classList.remove('active');
+        };
     }
+
 
     // Response Detail Modal Close
     const detailModal = container.querySelector('#response-detail-modal');

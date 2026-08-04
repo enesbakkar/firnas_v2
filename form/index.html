@@ -333,22 +333,33 @@
 
     <!-- SUCCESS REGISTRATION MODAL -->
     <div id="form-success-modal" class="modal-overlay">
-        <div class="modal-card" style="max-width: 480px; padding: 2.25rem 2rem;">
-            <div class="auth-shield-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.3); margin-bottom: 1.25rem;">
+        <div class="modal-card" style="max-width: 500px; padding: 2.25rem 2rem; text-align: center;">
+            <div class="auth-shield-icon" style="background: rgba(16, 185, 129, 0.15); color: #10b981; box-shadow: 0 0 25px rgba(16, 185, 129, 0.3); margin: 0 auto 1.25rem;">
                 <i class="fas fa-circle-check"></i>
             </div>
-            <span class="auth-badge" style="background: rgba(16, 185, 129, 0.1); color: #10b981; margin-bottom: 0.75rem;">TEŞEKKÜRLER</span>
-            <h2 style="font-size: 1.6rem; margin-bottom: 0.75rem;">Yanıtınız Alındı!</h2>
-            <p style="font-size: 0.95rem; color: #cbd5e1; margin-bottom: 1.75rem; line-height: 1.6;">
-                Başvurunuz ve form yanıtlarınız başarıyla kaydedilmiştir. İlginiz için teşekkür ederiz.
+            <span class="auth-badge" style="background: rgba(16, 185, 129, 0.12); color: #10b981; margin-bottom: 0.75rem; padding: 4px 14px; border-radius: 20px; font-weight: 800;">TEŞEKKÜRLER</span>
+            <h2 style="font-size: 1.65rem; margin-bottom: 0.5rem; color: #ffffff; font-weight: 800;">Yanıtınız Başarıyla Alındı!</h2>
+            <p style="font-size: 0.92rem; color: #94a3b8; margin-bottom: 1.25rem; line-height: 1.5;">
+                Başvurunuz kaydedilmiştir. Firnas Technologies topluluğuna katıldığınız için teşekkür ederiz.
             </p>
+
+            <!-- Countdown Box -->
+            <div class="redirect-countdown-box" style="background: rgba(0, 184, 212, 0.08); border: 1px solid rgba(0, 184, 212, 0.3); border-radius: 14px; padding: 12px 16px; margin-bottom: 1.5rem; font-size: 0.88rem; color: #e2e8f0; display: flex; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-spinner fa-spin text-accent"></i>
+                <span><strong id="countdown-seconds" style="color: var(--form-accent); font-size: 1.1rem;">5</strong> saniye içinde ana sayfaya yönlendiriliyorsunuz...</span>
+            </div>
             
-            <button class="btn btn-primary full-width" id="btn-close-success-modal" style="padding: 12px; font-weight: 800;">
-                <i class="fas fa-check"></i> Tamam (Başka Bir Yanıt Gönder)
-            </button>
-            <input type="hidden" id="modal-ref-code-text" value="">
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <a href="https://firnastechnologies.com/" class="btn btn-primary full-width" style="padding: 12px; font-weight: 800; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                    <i class="fas fa-globe"></i> Hemen Ana Sayfaya Git
+                </a>
+                <button type="button" class="btn btn-secondary full-width" id="btn-close-success-modal" style="padding: 10px; font-size: 0.88rem;">
+                    <i class="fas fa-rotate-left"></i> Başka Bir Yanıt Gönder
+                </button>
+            </div>
         </div>
     </div>
+
 
 
     <!-- KVKK AYDINLATMA METNİ MODAL -->

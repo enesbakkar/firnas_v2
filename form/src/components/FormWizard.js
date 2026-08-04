@@ -510,19 +510,27 @@ function isPreviewActive() {
                     return;
                 }
 
-                // Show Success Modal
-                const modalRef = document.getElementById('modal-ref-code');
-                const modalRefInput = document.getElementById('modal-ref-code-text');
+                // Show Success Modal & Start 5-Second Countdown Redirect to Homepage
                 const successModal = document.getElementById('form-success-modal');
+                if (successModal) {
+                    successModal.classList.add('active');
+                    
+                    let countdown = 5;
+                    const countdownElem = document.getElementById('countdown-seconds');
+                    if (countdownElem) countdownElem.innerText = countdown;
 
-                if (modalRef) modalRef.innerText = refCode;
-                if (modalRefInput) modalRefInput.value = refCode;
-                if (successModal) successModal.classList.add('active');
+                    if (window.successRedirectTimer) clearInterval(window.successRedirectTimer);
 
-                // GAS yapılandırılmamışsa bilgi notu göster
-                if (!IS_GAS_CONFIGURED && submitResult.local) {
-                    console.info('Yanıt tarayıcıya kaydedildi. GAS backend henüz kurulmadı.');
+                    window.successRedirectTimer = setInterval(() => {
+                        countdown--;
+                        if (countdownElem) countdownElem.innerText = countdown;
+                        if (countdown <= 0) {
+                            clearInterval(window.successRedirectTimer);
+                            window.location.href = 'https://firnastechnologies.com/';
+                        }
+                    }, 1000);
                 }
+
 
                 // Reset Form State
                 errorsMap = {};
