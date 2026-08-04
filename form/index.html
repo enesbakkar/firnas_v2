@@ -417,32 +417,33 @@
             </div>
 
             <!-- CUSTOMIZABLE URL EXTENSION (SLUG) SETTING -->
-            <div class="form-group" style="margin-bottom: 1.25rem; background: rgba(5,20,33,0.75); border: 1px solid rgba(0,184,212,0.3); border-radius: 12px; padding: 12px 14px;">
-                <label style="color: #cbd5e1; font-weight:700; font-size:0.82rem; display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+            <div class="form-group" style="margin-bottom: 1.25rem; background: #f8fafc; border: 1px solid rgba(15,46,74,0.12); border-radius: 12px; padding: 12px 14px;">
+                <label style="color: var(--form-primary); font-weight:700; font-size:0.82rem; display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
                     <span><i class="fa-solid fa-link text-accent"></i> Özel Bağlantı Uzantısı (URL Slug)</span>
-                    <span style="font-size:0.75rem; color:#94a3b8; font-weight:normal;">Uzantıyı değiştirip güncelleyebilirsiniz</span>
+                    <span style="font-size:0.75rem; color:#64748b; font-weight:normal;">Uzantıyı değiştirip güncelleyebilirsiniz</span>
                 </label>
                 
-                <div style="display: flex; align-items: center; background: rgba(15,46,74,0.95); border: 1px solid rgba(0,184,212,0.4); border-radius: 8px; overflow: hidden; padding: 0 10px; margin-bottom: 10px;">
+                <div style="display: flex; align-items: center; background: #ffffff; border: 1px solid rgba(0,184,212,0.4); border-radius: 8px; overflow: hidden; padding: 0 10px; margin-bottom: 10px;">
                     <span style="color: var(--form-accent); font-family: monospace; font-size: 0.85rem; font-weight: 700; white-space: nowrap; user-select: none;">
                         firnastechnologies.com/form/?f=
                     </span>
-                    <input type="text" id="share-modal-slug-input" style="background: transparent; border: none; color: #ffffff; font-family: monospace; font-weight: 800; font-size: 0.9rem; padding: 8px 4px; outline: none; width: 100%;" placeholder="ozel-uzanti">
-                    <button type="button" class="btn btn-primary" id="btn-save-share-slug" style="white-space: nowrap; padding: 6px 14px; font-size: 0.8rem; border-radius: 6px;">
+                    <input type="text" id="share-modal-slug-input" style="background: transparent; border: none; color: var(--form-primary); font-family: monospace; font-weight: 800; font-size: 0.9rem; padding: 8px 4px; outline: none; width: 100%;" placeholder="ozel-uzanti">
+                    <button type="button" class="btn btn-primary" id="btn-save-share-slug" style="white-space: nowrap; padding: 6px 14px; font-size: 0.8rem; border-radius: 6px; background: var(--form-primary);">
                         <i class="fa-solid fa-floppy-disk"></i> Güncelle
                     </button>
                 </div>
 
                 <div style="display: flex; gap: 8px;">
                     <div class="input-icon-wrapper" style="flex: 1;">
-                        <i class="fa-solid fa-globe"></i>
-                        <input type="text" id="share-modal-direct-url" class="form-control" readonly style="font-weight: 700; color: var(--form-accent); background: rgba(5,20,33,0.9); border-color: rgba(0,184,212,0.3); font-size:0.84rem;">
+                        <i class="fa-solid fa-globe" style="color: var(--form-accent);"></i>
+                        <input type="text" id="share-modal-direct-url" class="form-control" readonly style="font-weight: 700; color: var(--form-primary); background: #ffffff; border-color: rgba(0,184,212,0.3); font-size:0.84rem;">
                     </div>
                     <button type="button" class="btn btn-primary" id="btn-copy-share-url" style="white-space: nowrap; padding: 0 16px;">
                         <i class="fa-solid fa-copy"></i> Kopyala
                     </button>
                 </div>
             </div>
+
 
             <!-- Social Share Quick Buttons -->
 
