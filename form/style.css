@@ -1973,3 +1973,104 @@ select.form-control {
         font-size: 0.82rem;
     }
 }
+
+/* ==========================================================================
+   MOBILE & RESPONSIVE DESIGN ENHANCEMENTS (NAVBAR & PREVIEW BAR)
+   ========================================================================== */
+@media (max-width: 640px) {
+    .navbar {
+        padding: 0.6rem 0;
+    }
+
+    .nav-container {
+        padding: 0 0.75rem;
+        gap: 6px;
+    }
+
+    .logo-text {
+        font-size: 0.92rem !important;
+        white-space: nowrap;
+        gap: 6px;
+        flex-shrink: 1;
+        overflow: hidden;
+    }
+
+    .logo-text img {
+        height: 32px !important;
+    }
+
+    .subdomain-tag {
+        font-size: 0.62rem !important;
+        padding: 2px 6px !important;
+        margin-left: 2px !important;
+    }
+
+    .nav-links {
+        gap: 6px;
+        flex-shrink: 0;
+    }
+
+    .nav-link-btn {
+        padding: 6px 10px !important;
+        font-size: 0.78rem !important;
+        white-space: nowrap !important;
+        border-radius: 8px !important;
+    }
+
+    /* Form Preview Top Bar Mobile Fix */
+    .form-preview-top-bar {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 10px 14px !important;
+        gap: 10px !important;
+    }
+
+    .preview-bar-info {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 6px !important;
+        width: 100% !important;
+    }
+
+    .preview-title {
+        font-size: 0.82rem !important;
+        line-height: 1.3 !important;
+    }
+
+    .preview-bar-actions {
+        width: 100% !important;
+        display: flex !important;
+        gap: 8px !important;
+    }
+
+    .preview-bar-actions .btn {
+        flex: 1 !important;
+        justify-content: center !important;
+        padding: 8px 10px !important;
+        font-size: 0.78rem !important;
+        white-space: nowrap !important;
+    }
+
+    /* Form Card Container Mobile Spacing */
+    .container {
+        padding: 0 0.75rem !important;
+    }
+
+    .form-page-wrapper {
+        padding: 1.25rem 0 3rem !important;
+    }
+
+    .form-wizard-card {
+        padding: 1.25rem 1rem !important;
+        border-radius: 16px !important;
+    }
+
+    .form-header h1 {
+        font-size: 1.4rem !important;
+    }
+
+    .form-header p {
+        font-size: 0.82rem !important;
+    }
+}
+
