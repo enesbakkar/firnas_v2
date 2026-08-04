@@ -115,14 +115,131 @@ html {
 
 body {
     font-family: var(--font-sans);
-    background-color: #f0f7fb;
-    background-image: radial-gradient(rgba(15, 46, 74, 0.05) 1.5px, transparent 1.5px);
-    background-size: 24px 24px;
+    background-color: #eef7fc;
+    background-image: 
+        radial-gradient(rgba(15, 46, 74, 0.08) 1.5px, transparent 1.5px),
+        linear-gradient(135deg, #eef7fc 0%, #e2f2fe 40%, #f0f8ff 70%, #e6f4fd 100%);
+    background-size: 24px 24px, 100% 100%;
+    background-attachment: fixed;
     color: #1e293b;
     min-height: 100vh;
     line-height: 1.6;
     -webkit-font-smoothing: antialiased;
+    position: relative;
+    overflow-x: hidden;
 }
+
+/* Floating Ambient Neon Orbs & Tech Glows */
+body::before {
+    content: '';
+    position: fixed;
+    top: -10vh;
+    right: -10vw;
+    width: 60vw;
+    height: 60vw;
+    max-width: 750px;
+    max-height: 750px;
+    background: radial-gradient(circle, rgba(0, 184, 212, 0.22) 0%, rgba(56, 189, 248, 0.12) 40%, transparent 70%);
+    pointer-events: none;
+    z-index: -2;
+    filter: blur(80px);
+    animation: floatOrb1 18s ease-in-out infinite alternate;
+}
+
+body::after {
+    content: '';
+    position: fixed;
+    bottom: -15vh;
+    left: -10vw;
+    width: 65vw;
+    height: 65vw;
+    max-width: 800px;
+    max-height: 800px;
+    background: radial-gradient(circle, rgba(15, 46, 74, 0.18) 0%, rgba(0, 184, 212, 0.14) 45%, transparent 70%);
+    pointer-events: none;
+    z-index: -2;
+    filter: blur(95px);
+    animation: floatOrb2 22s ease-in-out infinite alternate;
+}
+
+@keyframes floatOrb1 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(-40px, 60px) scale(1.1); }
+    100% { transform: translate(30px, 100px) scale(0.95); }
+}
+
+@keyframes floatOrb2 {
+    0% { transform: translate(0, 0) scale(1); }
+    50% { transform: translate(50px, -50px) scale(1.08); }
+    100% { transform: translate(-30px, -80px) scale(0.92); }
+}
+
+/* ==========================================================================
+   DYNAMIC BACKGROUND TECH DECORATIONS
+   ========================================================================== */
+.bg-decor-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+}
+
+.bg-decor-circle {
+    position: absolute;
+    border-radius: 50%;
+    border: 1px dashed rgba(0, 184, 212, 0.25);
+    animation: rotateDecor 40s linear infinite;
+}
+
+.bg-decor-circle.circle-1 {
+    width: 500px;
+    height: 500px;
+    top: -100px;
+    right: 5%;
+    background: radial-gradient(circle, rgba(0, 184, 212, 0.08) 0%, transparent 60%);
+}
+
+.bg-decor-circle.circle-2 {
+    width: 650px;
+    height: 650px;
+    bottom: -150px;
+    left: -100px;
+    border-color: rgba(15, 46, 74, 0.15);
+    animation-duration: 55s;
+    animation-direction: reverse;
+}
+
+.bg-decor-grid-line {
+    position: absolute;
+    background: linear-gradient(90deg, transparent, rgba(0, 184, 212, 0.2), transparent);
+    height: 1px;
+    width: 100%;
+}
+
+.bg-decor-grid-line.line-1 {
+    top: 22%;
+    animation: pulseLine 8s ease-in-out infinite;
+}
+
+.bg-decor-grid-line.line-2 {
+    top: 68%;
+    animation: pulseLine 12s ease-in-out infinite 2s;
+}
+
+@keyframes rotateDecor {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+@keyframes pulseLine {
+    0%, 100% { opacity: 0.2; transform: scaleX(0.8); }
+    50% { opacity: 0.85; transform: scaleX(1.05); }
+}
+
 
 
 a {
