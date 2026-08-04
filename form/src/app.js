@@ -118,26 +118,26 @@ function setupShareModal(container, store) {
 
     let activeSharingFormId = null;
 
-    window.openFormShareModal = (formId) => {
+    function updateShareModalContent(formId) {
         const state = store.getState();
         const f = state.formDefinitions[formId] || state.formDefinitions['feam-2026'];
         if (!f) return;
 
         activeSharingFormId = f.id;
 
-        const basePath = window.location.origin + window.location.pathname;
-        const directUrl = `${basePath}?f=${f.id}`;
-        const iframeCode = `<iframe src="${directUrl}" width="100%" height="750px" frameborder="0" style="border:none; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1);"></iframe>`;
-
-        const titleElem = shareModal.querySelector('#share-modal-form-title');
-        const badgeElem = shareModal.querySelector('#share-modal-form-badge');
         const slugInput = shareModal.querySelector('#share-modal-slug-input');
         const urlInput = shareModal.querySelector('#share-modal-direct-url');
         const iframeInput = shareModal.querySelector('#share-modal-iframe-code');
+        const titleElem = shareModal.querySelector('#share-modal-form-title');
+        const badgeElem = shareModal.querySelector('#share-modal-form-badge');
+
+        const currentSlug = (slugInput && slugInput.value.trim()) ? slugInput.value.trim() : f.id;
+        const basePath = window.location.origin + window.location.pathname;
+        const directUrl = `${basePath}?f=${currentSlug}`;
+        const iframeCode = `<iframe src="${directUrl}" width="100%" height="750px" frameborder="0" style="border:none; border-radius:16px; box-shadow:0 10px 30px rgba(0,0,0,0.1);"></iframe>`;
 
         if (titleElem) titleElem.innerText = f.title;
         if (badgeElem) badgeElem.innerText = (f.category || 'FORM').toUpperCase();
-        if (slugInput) slugInput.value = f.id;
         if (urlInput) urlInput.value = directUrl;
         if (iframeInput) iframeInput.value = iframeCode;
 
@@ -162,37 +162,55 @@ function setupShareModal(container, store) {
         if (copyIframeBtn) {
             copyIframeBtn.onclick = () => copyTextToClipboard(iframeCode, '✅ HTML iFrame gömme kodu panoya kopyalandı!');
         }
+    }
 
+    window.openFormShareModal = (formId) => {
+        const state = store.getState();
+        const f = state.formDefinitions[formId] || state.formDefinitions['feam-2026'];
+        if (!f) return;
+
+        activeSharingFormId = f.id;
+        const slugInput = shareModal.querySelector('#share-modal-slug-input');
+        if (slugInput) slugInput.value = f.id;
+
+        updateShareModalContent(f.id);
         shareModal.classList.add('active');
     };
 
-    // Live Slug Format & Save Handler in Share Modal
+    // Live Slug Format & Realtime URL Preview Handler
     const slugInput = shareModal.querySelector('#share-modal-slug-input');
     const saveSlugBtn = shareModal.querySelector('#btn-save-share-slug');
 
     if (slugInput) {
         slugInput.oninput = (e) => {
-            e.target.value = e.target.value.toLowerCase().replace(/[^a-z0-9\-]/g, '-').replace(/-+/g, '-');
+            const formatted = e.target.value.toLowerCase().replace(/[^a-z0-9\-]/g, '-').replace(/-+/g, '-');
+            e.target.value = formatted;
+            if (activeSharingFormId) {
+                updateShareModalContent(activeSharingFormId);
+            }
         };
     }
 
     if (saveSlugBtn) {
-        saveSlugBtn.onclick = async () => {
-            if (!activeSharingFormId) return;
-            const newSlug = slugify(slugInput?.value || '');
+        saveSlugBtn.onclick = async (e) => {
+            e.preventDefault();
+            const rawVal = slugInput?.value || '';
+            const newSlug = slugify(rawVal);
 
             if (!newSlug) {
-                showAlertDialog('Geçersiz Uzantı', 'Lütfen geçerli bir bağlantı uzantısı yazın.');
+                showAlertDialog('Geçersiz Uzantı', 'Lütfen geçerli bir bağlantı uzantısı yazın (örn: feam-26).');
                 return;
             }
 
             const state = store.getState();
-            if (newSlug === activeSharingFormId) {
+            const targetId = activeSharingFormId || state.currentFormId || 'feam-2026';
+
+            if (newSlug === targetId) {
                 showToastNotification('Bağlantı uzantısı zaten güncel.');
                 return;
             }
 
-            const oldFormDef = state.formDefinitions[activeSharingFormId];
+            const oldFormDef = state.formDefinitions[targetId] || BUILTIN_FORM_DEFINITIONS[targetId];
             if (!oldFormDef) return;
 
             // Create updated Form Definition with new ID/slug
@@ -201,30 +219,38 @@ function setupShareModal(container, store) {
                 id: newSlug
             };
 
-            // Update formDefinitions object
+            // Update formDefinitions dictionary
             const newDefs = { ...state.formDefinitions };
-            delete newDefs[activeSharingFormId];
+            delete newDefs[targetId];
             newDefs[newSlug] = updatedFormDef;
 
             // Update customForms array
-            const updatedCustomForms = (state.customForms || []).map(cf => cf.id === activeSharingFormId ? updatedFormDef : cf);
-            if (!updatedCustomForms.some(cf => cf.id === newSlug)) {
-                updatedCustomForms.push(updatedFormDef);
-            }
+            let updatedCustomForms = (state.customForms || []).filter(cf => cf.id !== targetId && cf.id !== newSlug);
+            updatedCustomForms.push(updatedFormDef);
 
-            // Save to LocalStorage + GAS
+            // Save to LocalStorage
+            try {
+                localStorage.setItem(STORAGE_KEYS.CUSTOM_FORMS, JSON.stringify(updatedCustomForms));
+            } catch (err) {}
+
+            // Save to GAS Backend
             await saveCustomForm(updatedFormDef);
 
+            // Update store state
             store.setState({
                 formDefinitions: newDefs,
                 customForms: updatedCustomForms,
-                currentFormId: newSlug
+                currentFormId: newSlug,
+                selectedFormId: newSlug
             });
 
-            showToastNotification(`✅ Özel form bağlantı uzantısı "${newSlug}" olarak güncellendi!`);
-            window.openFormShareModal(newSlug);
+            activeSharingFormId = newSlug;
+            updateShareModalContent(newSlug);
+
+            showToastNotification(`✅ Form bağlantı uzantısı "${newSlug}" olarak başarıyla güncellendi!`);
         };
     }
+
 
     // Close Actions
     const closeBtn = shareModal.querySelector('#btn-close-share-modal');
