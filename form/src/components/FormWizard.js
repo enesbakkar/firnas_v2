@@ -436,9 +436,28 @@ function isPreviewActive() {
         }
 
         if (formElem) {
+            formElem.onkeydown = (e) => {
+                if (e.key === 'Enter' && e.target.tagName !== 'TEXTAREA') {
+                    const curState = store.getState();
+                    const totalSteps = formDef.steps.length;
+                    if (curState.currentStep < totalSteps) {
+                        e.preventDefault();
+                        if (nextBtn) nextBtn.click();
+                    }
+                }
+            };
+
             formElem.onsubmit = async (e) => {
                 e.preventDefault();
                 const curState = store.getState();
+                const totalSteps = formDef.steps.length;
+
+                // Prevent premature submission on intermediate steps (Step 1, Step 2)
+                if (curState.currentStep < totalSteps) {
+                    if (nextBtn) nextBtn.click();
+                    return;
+                }
+
                 const stepDef = formDef.steps[curState.currentStep - 1];
                 const inPreview = isPreviewActive();
                 const validation = inPreview 
@@ -455,6 +474,7 @@ function isPreviewActive() {
                 if (inPreview) {
                     showToastNotification('ℹ️ Önizleme Modu: Test kaydı başarıyla simüle edildi.');
                 }
+
 
 
                 const submitBtn = container.querySelector('#btn-submit-form');
