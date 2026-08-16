@@ -23,95 +23,10 @@
     <meta name="twitter:description" content="Tamamen yerli donanım ve açık kaynak geliştirme altyapısı ile tasarlanan programlanabilir öğrenme ekosistemi FiCo ve profesyonel havacılık çözümlerimiz.">
     <meta name="twitter:image" content="https://firnastechnologies.com/asset/firnas_og.png?v=2">
 
-    <link rel="icon" type="image/png" href="/asset/firnas_logo.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@600;800;900&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary: #0f2e4a;
-            --primary-dark: #051421;
-            --accent: #00b8d4;
-            --accent-glow: rgba(0, 184, 212, 0.4);
-            --bg-white: #ffffff;
-            --bg-light: #f0f7fb;
-            --text-main: #1a202c;
-            --text-muted: #64748b;
-            --border-glass: rgba(255, 255, 255, 0.2);
-            --border-light: rgba(15, 46, 74, 0.1);
-            --font-sans: 'Inter', sans-serif;
-            --font-display: 'Outfit', sans-serif;
-        }
-        body {
-            font-family: var(--font-sans);
-            color: var(--text-main);
-            background-color: var(--bg-light);
-            background-image: radial-gradient(rgba(15, 46, 74, 0.04) 1.5px, transparent 1.5px);
-            background-size: 24px 24px;
-        }
-        .project-visual {
-            overflow: hidden;
-            border-radius: 28px !important;
-            border: 1px solid rgba(0, 184, 212, 0.18) !important;
-            background: rgba(5, 20, 33, 0.6) !important;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 !important;
-            aspect-ratio: 16/10;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
-            position: relative;
-        }
-        .product-showcase-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-            filter: drop-shadow(0 0 15px rgba(0, 184, 212, 0.15));
-        }
-        
-        /* FiCo image padding to look clean */
-        .fico-img-style {
-            width: 85% !important;
-            height: auto !important;
-            object-fit: contain !important;
-        }
-        
-        .project-showcase:hover .product-showcase-img {
-            transform: scale(1.06) rotate(1deg);
-            filter: drop-shadow(0 0 25px rgba(0, 184, 212, 0.4));
-        }
-        .project-showcase:hover .fico-img-style {
-            transform: scale(1.06) translateY(-5px);
-        }
-
-        /* Make entire product cards deep corporate royal-navy glass panels for ultimate premium contrast */
-        .project-showcase {
-            background: linear-gradient(135deg, rgba(15, 46, 74, 0.96) 0%, rgba(5, 20, 33, 0.98) 100%) !important;
-            border: 1px solid rgba(0, 184, 212, 0.28) !important;
-            box-shadow: 0 15px 35px rgba(15, 46, 74, 0.12), 0 0 25px rgba(0, 184, 212, 0.04) !important;
-        }
-
-        .project-showcase:hover {
-            box-shadow: 0 20px 40px rgba(15, 46, 74, 0.2), 0 0 30px rgba(0, 184, 212, 0.15) !important;
-            border-color: rgba(0, 184, 212, 0.5) !important;
-        }
-
-        /* Override text colors inside the dark cards to be perfectly visible */
-        .project-info h2 {
-            color: #ffffff !important;
-        }
-
-        .project-info p {
-            color: #cbd5e1 !important; /* highly legible light grey on dark background */
-        }
-
-        /* Align image containers inside the dark theme card */
-        .project-visual {
-            background: rgba(5, 20, 33, 0.4) !important;
-            border: none !important; /* blend seamlessly */
-        }
-    </style>
-    <link rel="preload" href="/styles.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="/styles.css"></noscript>
+    <link rel="stylesheet" href="/styles.css?v=1.1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
