@@ -2762,17 +2762,16 @@ html, body {
   0% { transform: rotate(-2deg); }
   100% { transform: rotate(2deg); }
 }
-
 /* ==========================================================================
-   Homepage Achievements Marquee Carousel Preview (Futuristic Dark Cyber Theme)
+   Homepage Achievements Marquee Carousel Preview (Glassmorphism Light Theme)
    ========================================================================== */
 .achievements-preview-section {
   position: relative;
   overflow: hidden;
   padding: 100px 0;
-  background: linear-gradient(135deg, #f0f7f9 0%, #e6f3f7 50%, #e0f2f7 100%);
-  border-top: 1px solid rgba(0, 184, 212, 0.18);
-  border-bottom: 1px solid rgba(0, 184, 212, 0.18);
+  background: var(--bg-light);
+  border-top: 1px solid var(--border-light);
+  border-bottom: 1px solid var(--border-light);
 }
 
 .achievements-preview-header {
@@ -2825,14 +2824,15 @@ html, body {
 .marquee-card {
   width: 360px;
   flex-shrink: 0;
-  background: linear-gradient(145deg, rgba(8, 28, 48, 0.92) 0%, rgba(3, 14, 26, 0.96) 100%);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(0, 184, 212, 0.35);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(15, 46, 74, 0.1);
+  border-top: 4px solid var(--accent);
   border-radius: 20px;
   padding: 1.6rem;
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+  box-shadow: var(--shadow-glass);
+  transition: var(--transition);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -2841,9 +2841,11 @@ html, body {
 }
 
 .marquee-card:hover {
+  background: rgba(255, 255, 255, 0.98);
+  border-color: rgba(0, 184, 212, 0.3);
+  border-top-color: var(--accent);
   transform: translateY(-8px) scale(1.02);
-  border-color: #00e5ff;
-  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.7), 0 0 30px rgba(0, 229, 255, 0.25), inset 0 1px 0 rgba(0, 229, 255, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 184, 212, 0.15), 0 0 15px rgba(0, 184, 212, 0.05);
 }
 
 .marquee-card-badge {
@@ -2851,17 +2853,15 @@ html, body {
   align-items: center;
   gap: 6px;
   padding: 0.4rem 0.9rem;
-  background: rgba(0, 229, 255, 0.12);
-  border: 1px solid rgba(0, 229, 255, 0.4);
-  color: #00e5ff;
-  text-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+  background: rgba(0, 184, 212, 0.1);
+  border: 1px solid rgba(0, 184, 212, 0.25);
+  color: #00838f;
   border-radius: 50px;
   font-size: 0.78rem;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.05em;
   margin-bottom: 1.1rem;
   width: fit-content;
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);
 }
 
 .marquee-card-img {
@@ -2870,32 +2870,35 @@ html, body {
   object-fit: cover;
   border-radius: 14px;
   margin-bottom: 1.1rem;
-  border: 1px solid rgba(0, 184, 212, 0.35);
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(15, 46, 74, 0.08);
 }
 
 .marquee-card-icon-wrapper {
   width: 100%;
   height: 145px;
-  background: linear-gradient(135deg, rgba(0, 184, 212, 0.12) 0%, rgba(5, 20, 35, 0.7) 100%);
-  border: 1px solid rgba(0, 184, 212, 0.35);
+  background: rgba(0, 184, 212, 0.06);
+  border: 1px solid rgba(0, 184, 212, 0.15);
   border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   margin-bottom: 1.1rem;
-  box-shadow: inset 0 0 20px rgba(0, 184, 212, 0.2);
 }
 
 .marquee-card-icon-wrapper i {
-  color: #00e5ff !important;
-  filter: drop-shadow(0 0 14px rgba(0, 229, 255, 0.75));
+  color: var(--accent) !important;
+  font-size: 3rem;
+  transition: transform 0.4s ease;
+}
+
+.marquee-card:hover .marquee-card-icon-wrapper i {
+  transform: scale(1.15);
 }
 
 .marquee-card-title {
   font-size: 1.25rem;
-  font-weight: 900;
-  color: #ffffff;
+  font-weight: 800;
+  color: var(--primary);
   margin-bottom: 0.5rem;
   line-height: 1.35;
   font-family: var(--font-display);
@@ -2903,7 +2906,7 @@ html, body {
 
 .marquee-card-desc {
   font-size: 0.925rem;
-  color: #94a3b8;
+  color: var(--text-muted);
   line-height: 1.55;
   margin-bottom: 1.1rem;
 }
@@ -2913,15 +2916,14 @@ html, body {
   align-items: center;
   gap: 6px;
   font-size: 0.88rem;
-  font-weight: 800;
-  color: #00e5ff;
+  font-weight: 700;
+  color: var(--accent);
   margin-top: auto;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
+  transition: color 0.3s ease;
 }
 
 .marquee-card:hover .marquee-card-link {
-  color: #ffffff;
-  text-shadow: 0 0 10px rgba(0, 229, 255, 0.8);
+  color: #00838f;
 }
 
 .marquee-card-link i {
@@ -2934,5 +2936,3 @@ html, body {
 [dir="rtl"] .marquee-card:hover .marquee-card-link i {
   transform: translateX(-5px);
 }
-
-
