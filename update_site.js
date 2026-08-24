@@ -110,7 +110,7 @@ const new_translations = `const translations = {
         "location_office_title": "Merkez Ofis",
         "location_office_coords": "41.0343° N, 28.7909° E",
         "location_workshop_title": "Üretim Atölyesi",
-        "location_workshop_coords": "41.0267° N, 29.0142° E",
+        "location_workshop_coords": "41.0204° N, 29.0200° E",
         "location_expand_hint": "Genişletmek için tıklayın"
     },
     "en": {
@@ -214,7 +214,7 @@ const new_translations = `const translations = {
         "location_office_title": "Headquarters",
         "location_office_coords": "41.0343° N, 28.7909° E",
         "location_workshop_title": "Production Workshop",
-        "location_workshop_coords": "41.0267° N, 29.0142° E",
+        "location_workshop_coords": "41.0204° N, 29.0200° E",
         "location_expand_hint": "Click to expand"
     },
     "ar": {
@@ -318,7 +318,7 @@ const new_translations = `const translations = {
         "location_office_title": "المكتب الرئيسي",
         "location_office_coords": "41.0343° N, 28.7909° E",
         "location_workshop_title": "ورشة الإنتاج",
-        "location_workshop_coords": "41.0267° N, 29.0142° E",
+        "location_workshop_coords": "41.0204° N, 29.0200° E",
         "location_expand_hint": "انقر للتوسيع"
     }
 };`;

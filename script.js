@@ -104,7 +104,7 @@ const translations = {
         "location_office_title": "Merkez Ofis",
         "location_office_coords": "41.0343° N, 28.7909° E",
         "location_workshop_title": "Üretim Atölyesi",
-        "location_workshop_coords": "41.0267° N, 29.0142° E",
+        "location_workshop_coords": "41.0204° N, 29.0200° E",
         "location_expand_hint": "Genişletmek için tıklayın",
         
         // About Page Missing Translations
@@ -136,6 +136,8 @@ const translations = {
         "partner_ihh_role": "Stratejik Paydaş",
         "partner_iic_title": "International Incubation Center",
         "partner_iic_role": "Kuluçka Merkezi",
+        "partner_t3gm_title": "T3 Girişim Merkezi",
+        "partner_t3gm_role": "Girişimcilik Merkezi",
         "partner_iyiligin_mucitleri_title": "İyiliğin Mucitleri",
         "partner_iyiligin_mucitleri_role": "Sosyal İnovasyon Ortağı",
         "partner_atolye_uskudar_title": "Atölye Üsküdar",
@@ -367,7 +369,7 @@ const translations = {
         "location_office_title": "Headquarters",
         "location_office_coords": "41.0343° N, 28.7909° E",
         "location_workshop_title": "Production Workshop",
-        "location_workshop_coords": "41.0267° N, 29.0142° E",
+        "location_workshop_coords": "41.0204° N, 29.0200° E",
         "location_expand_hint": "Click to expand",
         
         // About Page Missing Translations (EN)
@@ -399,6 +401,8 @@ const translations = {
         "partner_ihh_role": "Strategic Partner",
         "partner_iic_title": "International Incubation Center",
         "partner_iic_role": "Incubation Center",
+        "partner_t3gm_title": "T3 Entrepreneurship Center",
+        "partner_t3gm_role": "Entrepreneurship Center",
         "partner_iyiligin_mucitleri_title": "Inventors of Goodness",
         "partner_iyiligin_mucitleri_role": "Social Innovation Partner",
         "partner_atolye_uskudar_title": "Workshop Uskudar",
@@ -630,7 +634,7 @@ const translations = {
         "location_office_title": "المكتب الرئيسي",
         "location_office_coords": "41.0343° N, 28.7909° E",
         "location_workshop_title": "ورشة الإنتاج",
-        "location_workshop_coords": "41.0267° N, 29.0142° E",
+        "location_workshop_coords": "41.0204° N, 29.0200° E",
         "location_expand_hint": "انقر للتوسيع",
         
         // About Page Missing Translations (AR)
@@ -662,6 +666,8 @@ const translations = {
         "partner_ihh_role": "شريك استراتيجي",
         "partner_iic_title": "مركز الحاضنة الدولي",
         "partner_iic_role": "حاضنة الأعمال",
+        "partner_t3gm_title": "مركز T3 لريادة الأعمال",
+        "partner_t3gm_role": "مركز ريادة الأعمال",
         "partner_iyiligin_mucitleri_title": "مخترعو الخير",
         "partner_iyiligin_mucitleri_role": "شريك الابتكار الاجتماعي",
         "partner_atolye_uskudar_title": "ورشة عمل أوسكودار",
