@@ -2763,4 +2763,149 @@ html, body {
   100% { transform: rotate(2deg); }
 }
 
+/* ==========================================================================
+   Homepage Achievements Marquee Carousel Preview
+   ========================================================================== */
+.achievements-preview-section {
+  position: relative;
+  overflow: hidden;
+  padding: 90px 0;
+  background: linear-gradient(180deg, rgba(2, 12, 22, 0.95) 0%, rgba(5, 20, 35, 0.98) 100%);
+  border-top: 1px solid rgba(0, 184, 212, 0.15);
+  border-bottom: 1px solid rgba(0, 184, 212, 0.15);
+}
+
+.achievements-preview-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.marquee-viewport {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 6%, black 94%, transparent 100%);
+  padding: 15px 0;
+}
+
+.marquee-track {
+  display: flex;
+  gap: 1.75rem;
+  width: max-content;
+  animation: marquee-scroll 32s linear infinite;
+}
+
+.marquee-viewport:hover .marquee-track {
+  animation-play-state: paused;
+}
+
+@keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(-50% - 0.875rem));
+  }
+}
+
+[dir="rtl"] @keyframes marquee-scroll {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(calc(50% + 0.875rem));
+  }
+}
+
+.marquee-card {
+  width: 360px;
+  flex-shrink: 0;
+  background: rgba(10, 25, 47, 0.7);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(0, 184, 212, 0.2);
+  border-radius: 20px;
+  padding: 1.5rem;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s ease, box-shadow 0.35s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-decoration: none;
+  color: inherit;
+}
+
+.marquee-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  border-color: rgba(0, 184, 212, 0.6);
+  box-shadow: 0 16px 36px rgba(0, 184, 212, 0.25);
+}
+
+.marquee-card-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0.35rem 0.85rem;
+  background: rgba(0, 184, 212, 0.12);
+  border: 1px solid rgba(0, 184, 212, 0.3);
+  color: var(--accent);
+  border-radius: 50px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  margin-bottom: 1rem;
+  width: fit-content;
+}
+
+.marquee-card-img {
+  width: 100%;
+  height: 170px;
+  object-fit: cover;
+  border-radius: 14px;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.marquee-card-icon-wrapper {
+  width: 100%;
+  height: 140px;
+  background: rgba(0, 184, 212, 0.05);
+  border: 1px solid rgba(0, 184, 212, 0.15);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.marquee-card-title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #ffffff;
+  margin-bottom: 0.5rem;
+  line-height: 1.35;
+  font-family: var(--font-display);
+}
+
+.marquee-card-desc {
+  font-size: 0.9rem;
+  color: #94a3b8;
+  line-height: 1.5;
+  margin-bottom: 1rem;
+}
+
+.marquee-card-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  margin-top: auto;
+}
+
 

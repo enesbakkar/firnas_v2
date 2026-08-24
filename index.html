@@ -146,44 +146,122 @@
     </header>
 
 
-    <section class="section-padding services-section">
+    <!-- Moving Achievements Preview Section -->
+    <section class="achievements-preview-section">
         <div class="container">
-            <div class="section-header" style="text-align: center; margin-bottom: 5rem;">
-                <h2 data-i18n="services_title">Yazılım ve Teknoloji Altyapımız</h2>
+            <div class="achievements-preview-header">
+                <div>
+                    <h2 data-i18n="home_achievements_title" style="color: #ffffff; background: linear-gradient(90deg, #ffffff 0%, var(--accent) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Başarılarımız & Ödüllerimiz</h2>
+                    <p class="text-muted" style="margin-top: 0.5rem; max-width: 600px;" data-i18n="home_achievements_subtitle">Milli teknoloji hamlesi, insani vizyon ve mühendislik birikimimizle ulusal ve uluslararası alanda elde ettiğimiz dereceler.</p>
+                </div>
+                <a href="/about/#basarilarimiz" class="btn btn-secondary" style="border-radius: 100px; padding: 0.6rem 1.5rem;" data-i18n="home_achievements_view_all">
+                    Tümünü İnceleyin <i class="fas fa-arrow-right" style="margin-left: 8px;"></i>
+                </a>
             </div>
-            <div class="services-grid">
-                <div class="service-img">
-                    <img src="asset/work_colored.png" alt="Software Work">
-                </div>
-                <div class="services-cards">
-                    <div class="service-card">
-                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
-                            <i class="fas fa-route" style="font-size: 2.5rem; color: var(--accent);"></i>
-                            <div>
-                                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="srv_1_title">Otonom Sistemler</h3>
-                                <p class="text-muted" data-i18n="srv_1_desc">İnsansız araçlar için rota planlama</p>
-                            </div>
-                        </div>
+        </div>
+
+        <div class="marquee-viewport">
+            <div class="marquee-track">
+                <!-- Card 1: Türkiye Girişimci Buluşması 1.lik -->
+                <a href="/about/#basarilarimiz" class="marquee-card">
+                    <img src="asset/tgb_sahne.jpg" alt="Türkiye Girişimci Buluşması 1.lik Ödülü" class="marquee-card-img" loading="lazy">
+                    <div class="marquee-card-badge">
+                        <i class="fas fa-trophy"></i> <span data-i18n="ach_tgb_badge">ULUSLARARASI BİRİNCİLİK</span>
                     </div>
-                    <div class="service-card">
-                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
-                            <i class="fas fa-eye" style="font-size: 2.5rem; color: var(--accent);"></i>
-                            <div>
-                                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="srv_2_title">Görüntü İşleme</h3>
-                                <p class="text-muted" data-i18n="srv_2_desc">Endüstriyel gerçek zamanlı nesne takibi</p>
-                            </div>
-                        </div>
+                    <h3 class="marquee-card-title" data-i18n="ach_tgb_title_short">Uluslararası Proje 1.'lik Ödülü</h3>
+                    <p class="marquee-card-desc" data-i18n="ach_tgb_desc_short">FiCo projemizle Türkiye Girişimci Buluşması Uluslararası Proje Kategorisi'nde 1.'lik ödülüne layık görüldük.</p>
+                    <span class="marquee-card-link"><span data-i18n="ach_detail_btn">Detayları Gör</span> <i class="fas fa-chevron-right"></i></span>
+                </a>
+
+                <!-- Card 2: TEKNOFEST Adana -->
+                <a href="/about/#basarilarimiz" class="marquee-card">
+                    <div class="marquee-card-icon-wrapper">
+                        <i class="fas fa-award" style="font-size: 3rem; color: var(--accent);"></i>
                     </div>
-                    <div class="service-card">
-                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
-                            <i class="fas fa-laptop-code" style="font-size: 2.5rem; color: var(--accent);"></i>
-                            <div>
-                                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="srv_3_title">Eğitim Teknolojileri</h3>
-                                <p class="text-muted" data-i18n="srv_3_desc">Kişiselleştirilebilir STEM simülasyonları</p>
-                            </div>
-                        </div>
+                    <div class="marquee-card-badge">
+                        <i class="fas fa-fighter-jet"></i> <span>TEKNOFEST</span>
                     </div>
-                </div>
+                    <h3 class="marquee-card-title" data-i18n="ach_1_title">TEKNOFEST Adana</h3>
+                    <p class="marquee-card-desc" data-i18n="ach_1_desc">Savaşan İHA kategorisinde elde edilen otonom sistem ve teknik liderlik saha tecrübesi.</p>
+                    <span class="marquee-card-link"><span data-i18n="ach_detail_btn">Detayları Gör</span> <i class="fas fa-chevron-right"></i></span>
+                </a>
+
+                <!-- Card 3: Imagine Tomorrow -->
+                <a href="/about/#basarilarimiz" class="marquee-card">
+                    <div class="marquee-card-icon-wrapper">
+                        <i class="fas fa-rocket" style="font-size: 3rem; color: var(--accent);"></i>
+                    </div>
+                    <div class="marquee-card-badge">
+                        <i class="fas fa-lightbulb"></i> <span>İNOVASYON</span>
+                    </div>
+                    <h3 class="marquee-card-title" data-i18n="ach_2_title">Imagine Tomorrow İnovasyon Yarışması</h3>
+                    <p class="marquee-card-desc" data-i18n="ach_2_desc">Eğitim dronu (FiCo) ekosistemi ile sergilenen girişimcilik ve özgün iş modeli vizyonu.</p>
+                    <span class="marquee-card-link"><span data-i18n="ach_detail_btn">Detayları Gör</span> <i class="fas fa-chevron-right"></i></span>
+                </a>
+
+                <!-- Card 4: T3 Vakfı & Deneyap -->
+                <a href="/about/#basarilarimiz" class="marquee-card">
+                    <div class="marquee-card-icon-wrapper">
+                        <i class="fas fa-hands-helping" style="font-size: 3rem; color: var(--accent);"></i>
+                    </div>
+                    <div class="marquee-card-badge">
+                        <i class="fas fa-chalkboard-teacher"></i> <span>MENTÖRLÜK</span>
+                    </div>
+                    <h3 class="marquee-card-title" data-i18n="ach_3_title">T3 Vakfı & Deneyap Atölyeleri</h3>
+                    <p class="marquee-card-desc" data-i18n="ach_3_desc">Geleceğin mühendislerini yetiştirme yolunda sağlanan Eğitmen Mentörlüğü ve ekosistem katkısı.</p>
+                    <span class="marquee-card-link"><span data-i18n="ach_detail_btn">Detayları Gör</span> <i class="fas fa-chevron-right"></i></span>
+                </a>
+
+                <!-- DUPLICATE FOR INFINITE LOOP -->
+                <!-- Card 1 Duplicate -->
+                <a href="/about/#basarilarimiz" class="marquee-card">
+                    <img src="asset/tgb_sahne.jpg" alt="Türkiye Girişimci Buluşması 1.lik Ödülü" class="marquee-card-img" loading="lazy">
+                    <div class="marquee-card-badge">
+                        <i class="fas fa-trophy"></i> <span data-i18n="ach_tgb_badge">ULUSLARARASI BİRİNCİLİK</span>
+                    </div>
+                    <h3 class="marquee-card-title" data-i18n="ach_tgb_title_short">Uluslararası Proje 1.'lik Ödülü</h3>
+                    <p class="marquee-card-desc" data-i18n="ach_tgb_desc_short">FiCo projemizle Türkiye Girişimci Buluşması Uluslararası Proje Kategorisi'nde 1.'lik ödülüne layık görüldük.</p>
+                    <span class="marquee-card-link"><span data-i18n="ach_detail_btn">Detayları Gör</span> <i class="fas fa-chevron-right"></i></span>
+                </a>
+
+                <!-- Card 2 Duplicate -->
+                <a href="/about/#basarilarimiz" class="marquee-card">
+                    <div class="marquee-card-icon-wrapper">
+                        <i class="fas fa-award" style="font-size: 3rem; color: var(--accent);"></i>
+                    </div>
+                    <div class="marquee-card-badge">
+                        <i class="fas fa-fighter-jet"></i> <span>TEKNOFEST</span>
+                    </div>
+                    <h3 class="marquee-card-title" data-i18n="ach_1_title">TEKNOFEST Adana</h3>
+                    <p class="marquee-card-desc" data-i18n="ach_1_desc">Savaşan İHA kategorisinde elde edilen otonom sistem ve teknik liderlik saha tecrübesi.</p>
+                    <span class="marquee-card-link"><span data-i18n="ach_detail_btn">Detayları Gör</span> <i class="fas fa-chevron-right"></i></span>
+                </a>
+
+                <!-- Card 3 Duplicate -->
+                <a href="/about/#basarilarimiz" class="marquee-card">
+                    <div class="marquee-card-icon-wrapper">
+                        <i class="fas fa-rocket" style="font-size: 3rem; color: var(--accent);"></i>
+                    </div>
+                    <div class="marquee-card-badge">
+                        <i class="fas fa-lightbulb"></i> <span>İNOVASYON</span>
+                    </div>
+                    <h3 class="marquee-card-title" data-i18n="ach_2_title">Imagine Tomorrow İnovasyon Yarışması</h3>
+                    <p class="marquee-card-desc" data-i18n="ach_2_desc">Eğitim dronu (FiCo) ekosistemi ile sergilenen girişimcilik ve özgün iş modeli vizyonu.</p>
+                    <span class="marquee-card-link"><span data-i18n="ach_detail_btn">Detayları Gör</span> <i class="fas fa-chevron-right"></i></span>
+                </a>
+
+                <!-- Card 4 Duplicate -->
+                <a href="/about/#basarilarimiz" class="marquee-card">
+                    <div class="marquee-card-icon-wrapper">
+                        <i class="fas fa-hands-helping" style="font-size: 3rem; color: var(--accent);"></i>
+                    </div>
+                    <div class="marquee-card-badge">
+                        <i class="fas fa-chalkboard-teacher"></i> <span>MENTÖRLÜK</span>
+                    </div>
+                    <h3 class="marquee-card-title" data-i18n="ach_3_title">T3 Vakfı & Deneyap Atölyeleri</h3>
+                    <p class="marquee-card-desc" data-i18n="ach_3_desc">Geleceğin mühendislerini yetiştirme yolunda sağlanan Eğitmen Mentörlüğü ve ekosistem katkısı.</p>
+                    <span class="marquee-card-link"><span data-i18n="ach_detail_btn">Detayları Gör</span> <i class="fas fa-chevron-right"></i></span>
+                </a>
             </div>
         </div>
     </section>
@@ -318,6 +396,49 @@
                 </div>
             </div>
 
+        </div>
+    </section>
+
+    <!-- Yazılım ve Teknoloji Altyapımız (Alt Banner Öncesi) -->
+    <section class="section-padding services-section">
+        <div class="container">
+            <div class="section-header" style="text-align: center; margin-bottom: 5rem;">
+                <h2 data-i18n="services_title">Yazılım ve Teknoloji Altyapımız</h2>
+            </div>
+            <div class="services-grid">
+                <div class="service-img">
+                    <img src="asset/work_colored.png" alt="Software Work">
+                </div>
+                <div class="services-cards">
+                    <div class="service-card">
+                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                            <i class="fas fa-route" style="font-size: 2.5rem; color: var(--accent);"></i>
+                            <div>
+                                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="srv_1_title">Otonom Sistemler</h3>
+                                <p class="text-muted" data-i18n="srv_1_desc">İnsansız araçlar için rota planlama</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-card">
+                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                            <i class="fas fa-eye" style="font-size: 2.5rem; color: var(--accent);"></i>
+                            <div>
+                                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="srv_2_title">Görüntü İşleme</h3>
+                                <p class="text-muted" data-i18n="srv_2_desc">Endüstriyel gerçek zamanlı nesne takibi</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="service-card">
+                        <div style="display: flex; gap: 1.5rem; align-items: flex-start;">
+                            <i class="fas fa-laptop-code" style="font-size: 2.5rem; color: var(--accent);"></i>
+                            <div>
+                                <h3 style="font-size: 1.5rem; margin-bottom: 0.5rem;" data-i18n="srv_3_title">Eğitim Teknolojileri</h3>
+                                <p class="text-muted" data-i18n="srv_3_desc">Kişiselleştirilebilir STEM simülasyonları</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </section>
 
