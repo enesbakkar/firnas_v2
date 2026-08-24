@@ -2770,9 +2770,9 @@ html, body {
   position: relative;
   overflow: hidden;
   padding: 100px 0;
-  background: linear-gradient(180deg, #020b14 0%, #061828 50%, #020c16 100%);
-  border-top: 1px solid rgba(0, 184, 212, 0.2);
-  border-bottom: 1px solid rgba(0, 184, 212, 0.2);
+  background: linear-gradient(135deg, #f0f7f9 0%, #e6f3f7 50%, #e0f2f7 100%);
+  border-top: 1px solid rgba(0, 184, 212, 0.18);
+  border-bottom: 1px solid rgba(0, 184, 212, 0.18);
 }
 
 .achievements-preview-header {
