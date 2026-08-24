@@ -2828,11 +2828,11 @@ html, body {
 .marquee-card {
   width: 360px;
   flex-shrink: 0;
-  background: #ffffff;
-  border: 1px solid rgba(0, 184, 212, 0.2);
+  background: linear-gradient(145deg, #071a2b 0%, #0a233c 100%);
+  border: 1px solid rgba(0, 184, 212, 0.25);
   border-radius: 20px;
   padding: 1.5rem;
-  box-shadow: 0 10px 30px rgba(0, 184, 212, 0.08);
+  box-shadow: 0 14px 35px rgba(5, 20, 33, 0.22);
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1), border-color 0.35s ease, box-shadow 0.35s ease;
   display: flex;
   flex-direction: column;
@@ -2843,8 +2843,8 @@ html, body {
 
 .marquee-card:hover {
   transform: translateY(-8px) scale(1.02);
-  border-color: rgba(0, 184, 212, 0.6);
-  box-shadow: 0 20px 45px rgba(0, 184, 212, 0.2);
+  border-color: rgba(0, 184, 212, 0.7);
+  box-shadow: 0 20px 45px rgba(0, 184, 212, 0.3);
 }
 
 .marquee-card-badge {
@@ -2852,9 +2852,9 @@ html, body {
   align-items: center;
   gap: 6px;
   padding: 0.35rem 0.85rem;
-  background: rgba(0, 184, 212, 0.1);
-  border: 1px solid rgba(0, 184, 212, 0.25);
-  color: #0088a3;
+  background: rgba(0, 184, 212, 0.12);
+  border: 1px solid rgba(0, 184, 212, 0.35);
+  color: var(--accent);
   border-radius: 50px;
   font-size: 0.75rem;
   font-weight: 700;
@@ -2869,14 +2869,14 @@ html, body {
   object-fit: cover;
   border-radius: 14px;
   margin-bottom: 1rem;
-  border: 1px solid rgba(0, 184, 212, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .marquee-card-icon-wrapper {
   width: 100%;
   height: 140px;
-  background: rgba(0, 184, 212, 0.05);
-  border: 1px solid rgba(0, 184, 212, 0.15);
+  background: rgba(0, 184, 212, 0.08);
+  border: 1px solid rgba(0, 184, 212, 0.2);
   border-radius: 14px;
   display: flex;
   align-items: center;
@@ -2887,7 +2887,7 @@ html, body {
 .marquee-card-title {
   font-size: 1.2rem;
   font-weight: 800;
-  color: #0b3c4d;
+  color: #ffffff;
   margin-bottom: 0.5rem;
   line-height: 1.35;
   font-family: var(--font-display);
@@ -2895,7 +2895,7 @@ html, body {
 
 .marquee-card-desc {
   font-size: 0.9rem;
-  color: #475569;
+  color: #94a3b8;
   line-height: 1.55;
   margin-bottom: 1rem;
 }
@@ -2906,7 +2906,7 @@ html, body {
   gap: 6px;
   font-size: 0.85rem;
   font-weight: 700;
-  color: #0088a3;
+  color: var(--accent);
   margin-top: auto;
 }
 
