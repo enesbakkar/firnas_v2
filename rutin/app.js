@@ -419,7 +419,7 @@ const TRANSLATIONS = {
     supabase_url: "Supabase Project URL",
     supabase_key: "Supabase Anon Key",
     supabase_db_guide: "Database Setup Guide",
-    supabase_db_query: "Run this query in your Supabase SQL Editor to create the table:",
+    supabase_db_query: "Run rutin/supabase/schema.sql in the Supabase SQL editor. It creates the routines table with Row Level Security so only your signed-in account can read or write it.",
     supabase_save: "Save & Sync Now",
     supabase_disconnect: "Disconnect Cloud Sync",
     
@@ -606,7 +606,17 @@ const TRANSLATIONS = {
     backup_copy_failed: "Could not access the clipboard.",
     backup_invalid: "This is not a valid Horizon backup.",
     backup_confirm: "Replace current data with this backup?\n\nDays: {days}\nJournal entries: {journal}\nTransactions: {transactions}\nEvents: {events}\n\nYour current data is kept so you can undo.",
-    backup_undo_confirm: "Return to the data you had before the last restore?"
+    backup_undo_confirm: "Return to the data you had before the last restore?",
+    supabase_email: "Account email",
+    supabase_password: "Account password",
+    sync_status_local: "Local only. Data stays on this device.",
+    sync_status_active: "Cloud sync on · {email}",
+    sync_status_signin: "Sign in to turn on cloud sync.",
+    sync_connecting: "Signing in and syncing…",
+    sync_connected: "Signed in. Cloud sync is on.",
+    supabase_login_required: "Email and password are required: cloud sync only works for a signed-in account.",
+    supabase_login_failed: "Sign-in failed. Check email and password.",
+    supabase_table_error: "Signed in, but the routines table could not be read. Run supabase/schema.sql first."
   },
   tr: {
     nav_brief: "Ana Panel",
@@ -700,7 +710,7 @@ const TRANSLATIONS = {
     supabase_url: "Supabase Proje URL",
     supabase_key: "Supabase Anon Key",
     supabase_db_guide: "Veritabanı Kurulum Kılavuzu",
-    supabase_db_query: "Tabloyu oluşturmak için Supabase SQL Editöründe bu sorguyu çalıştırın:",
+    supabase_db_query: "rutin/supabase/schema.sql dosyasını Supabase SQL editöründe çalıştırın. Tabloyu Satır Düzeyi Güvenlik (RLS) ile oluşturur; yalnızca giriş yapan hesabınız okuyup yazabilir.",
     supabase_save: "Kaydet ve Eşitle",
     supabase_disconnect: "Bulut Bağlantısını Kes",
     
@@ -887,7 +897,17 @@ const TRANSLATIONS = {
     backup_copy_failed: "Panoya erişilemedi.",
     backup_invalid: "Bu geçerli bir Horizon yedeği değil.",
     backup_confirm: "Mevcut veriler bu yedekle değiştirilsin mi?\n\nGün: {days}\nGünlük kaydı: {journal}\nİşlem: {transactions}\nEtkinlik: {events}\n\nMevcut verileriniz saklanır, geri alabilirsiniz.",
-    backup_undo_confirm: "Son geri yüklemeden önceki verilere dönülsün mü?"
+    backup_undo_confirm: "Son geri yüklemeden önceki verilere dönülsün mü?",
+    supabase_email: "Hesap e-postası",
+    supabase_password: "Hesap şifresi",
+    sync_status_local: "Yalnızca yerel. Veriler bu cihazda kalır.",
+    sync_status_active: "Bulut senkronu açık · {email}",
+    sync_status_signin: "Bulut senkronu için giriş yapın.",
+    sync_connecting: "Giriş yapılıyor ve senkronize ediliyor…",
+    sync_connected: "Giriş yapıldı. Bulut senkronu açık.",
+    supabase_login_required: "E-posta ve şifre gerekli: bulut senkronu yalnızca giriş yapmış hesapla çalışır.",
+    supabase_login_failed: "Giriş başarısız. E-posta ve şifreyi kontrol edin.",
+    supabase_table_error: "Giriş yapıldı ama routines tablosu okunamadı. Önce supabase/schema.sql dosyasını çalıştırın."
   },
   ar: {
     nav_brief: "اللوحة الرئيسية",
@@ -976,7 +996,7 @@ const TRANSLATIONS = {
     supabase_url: "رابط مشروع سوبابيس (URL)",
     supabase_key: "مفتاح سوبابيس (Anon Key)",
     supabase_db_guide: "دليل إعداد قاعدة البيانات",
-    supabase_db_query: "قم بتشغيل هذا الاستعلام في محرر SQL في سوبابيس لإنشاء الجدول:",
+    supabase_db_query: "شغّل الملف rutin/supabase/schema.sql في محرر SQL في Supabase. ينشئ الجدول مع أمان مستوى الصف بحيث لا يقرأ البيانات أو يكتبها إلا حسابك المسجَّل.",
     supabase_save: "حفظ ومزامنة الآن",
     supabase_disconnect: "فصل الاتصال السحابي",
     
@@ -1163,7 +1183,17 @@ const TRANSLATIONS = {
     backup_copy_failed: "تعذّر الوصول إلى الحافظة.",
     backup_invalid: "هذه ليست نسخة احتياطية صالحة من Horizon.",
     backup_confirm: "هل تريد استبدال البيانات الحالية بهذه النسخة؟\n\nالأيام: {days}\nاليوميات: {journal}\nالمعاملات: {transactions}\nالأحداث: {events}\n\nستُحفظ بياناتك الحالية ويمكنك التراجع.",
-    backup_undo_confirm: "هل تريد العودة إلى البيانات السابقة لآخر استعادة؟"
+    backup_undo_confirm: "هل تريد العودة إلى البيانات السابقة لآخر استعادة؟",
+    supabase_email: "البريد الإلكتروني للحساب",
+    supabase_password: "كلمة مرور الحساب",
+    sync_status_local: "محلي فقط. تبقى البيانات على هذا الجهاز.",
+    sync_status_active: "المزامنة السحابية مفعّلة · {email}",
+    sync_status_signin: "سجّل الدخول لتفعيل المزامنة السحابية.",
+    sync_connecting: "جارٍ تسجيل الدخول والمزامنة…",
+    sync_connected: "تم تسجيل الدخول. المزامنة السحابية مفعّلة.",
+    supabase_login_required: "البريد الإلكتروني وكلمة المرور مطلوبان: المزامنة السحابية تعمل فقط لحساب مسجَّل الدخول.",
+    supabase_login_failed: "فشل تسجيل الدخول. تحقّق من البريد وكلمة المرور.",
+    supabase_table_error: "تم تسجيل الدخول لكن تعذّرت قراءة جدول routines. شغّل supabase/schema.sql أولاً."
   }
 };
 
@@ -1655,246 +1685,183 @@ const StreakEngine = {
   }
 };
 
-  // ================= SUPABASE CLOUD SYNC MANAGER =================
-  const SupabaseManager = {
-    url: "https://yhyxvhbknyuurppahznm.supabase.co",
-    key: "sb_publishable_I1wY5Tc0FEVxSElsAipCJg_7xwJgb9P",
+// ================= SUPABASE CLOUD SYNC MANAGER =================
+// Requires the RLS schema in supabase/schema.sql. Sync only runs with a signed-in session;
+// the publishable key alone never reads or writes data.
+const SupabaseManager = {
+  DEFAULT_URL: "https://yhyxvhbknyuurppahznm.supabase.co",
+  DEFAULT_KEY: "sb_publishable_I1wY5Tc0FEVxSElsAipCJg_7xwJgb9P",
+  url: "",
+  key: "",
 
-    init() {
-      this.url = localStorage.getItem('supabase_url') || "https://yhyxvhbknyuurppahznm.supabase.co";
-      this.key = localStorage.getItem('supabase_key') || "sb_publishable_I1wY5Tc0FEVxSElsAipCJg_7xwJgb9P";
-    },
+  init() {
+    // An empty string means the user disconnected; null means never configured (use defaults).
+    const url = localStorage.getItem('supabase_url');
+    const key = localStorage.getItem('supabase_key');
+    this.url = url !== null ? url : this.DEFAULT_URL;
+    this.key = key !== null ? key : this.DEFAULT_KEY;
+  },
 
-    isEnabled() {
-      return this.url !== "" && this.key !== "";
-    },
+  isEnabled() {
+    return this.url !== "" && this.key !== "";
+  },
 
-    getHeaders() {
-      const token = localStorage.getItem('supabase_session_token') || this.key;
-      return {
-        'apikey': this.key,
-        'Authorization': `Bearer ${token}`,
-        'Content-Type': 'application/json'
-      };
-    },
+  hasSession() {
+    return !!localStorage.getItem('supabase_session_token');
+  },
 
-    // Perform background upsert of a single record
-    async upsert(dateKey, dayData) {
-      if (!this.isEnabled()) return;
-      try {
-        const url = `${this.url}/rest/v1/routines?date=eq.${dateKey}`;
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            ...this.getHeaders(),
-            'Prefer': 'resolution=merge-duplicates'
-          },
-          body: JSON.stringify({
-            date: dateKey,
-            data: dayData,
-            updated_at: new Date().toISOString()
-          })
+  canSync() {
+    return this.isEnabled() && this.hasSession();
+  },
+
+  getHeaders() {
+    return {
+      'apikey': this.key,
+      'Authorization': `Bearer ${localStorage.getItem('supabase_session_token')}`,
+      'Content-Type': 'application/json'
+    };
+  },
+
+  // fetch with the session token; on 401 refresh the session once and retry.
+  async authedFetch(path, options = {}) {
+    const doFetch = () => fetch(`${this.url}${path}`, { ...options, headers: { ...this.getHeaders(), ...(options.headers || {}) } });
+    let response = await doFetch();
+    if (response.status === 401 && await this.refreshSession()) {
+      response = await doFetch();
+    }
+    return response;
+  },
+
+  async upsert(dateKey, dayData) {
+    if (!this.canSync()) return;
+    try {
+      const response = await this.authedFetch('/rest/v1/routines?on_conflict=user_id,date', {
+        method: 'POST',
+        headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+        body: JSON.stringify({ date: dateKey, data: dayData, updated_at: new Date().toISOString() })
+      });
+      if (!response.ok) throw new Error(`Sync error: ${response.status}`);
+    } catch (e) {
+      console.error("Supabase background upload failed:", e);
+    }
+  },
+
+  async fetchInitialSync() {
+    if (!this.canSync()) return;
+    try {
+      const response = await this.authedFetch('/rest/v1/routines?select=date,data', { method: 'GET' });
+      if (!response.ok) throw new Error(`Fetch error: ${response.status}`);
+      const rows = await response.json();
+      if (Array.isArray(rows)) {
+        rows.forEach(row => {
+          if (row.date && row.data) STATE.db[row.date] = row.data;
         });
-
-        if (!response.ok) {
-          throw new Error(`Sync error: ${response.status} ${response.statusText}`);
-        }
-        console.log(`Cloud sync success for: ${dateKey}`);
-      } catch (e) {
-        console.error("Supabase background upload failed:", e);
+        StorageManager.saveDatabase();
       }
-    },
+    } catch (e) {
+      console.error("Supabase initial sync fetch failed:", e);
+    }
+  },
 
-    // Initial fetch on app start, merging with local data
-    async fetchInitialSync() {
-      if (!this.isEnabled()) return;
-      try {
-        const url = `${this.url}/rest/v1/routines`;
-        const response = await fetch(url, {
-          method: 'GET',
-          headers: this.getHeaders()
-        });
+  storeSession(session) {
+    localStorage.setItem('supabase_session_token', session.access_token);
+    if (session.refresh_token) localStorage.setItem('supabase_refresh_token', session.refresh_token);
+  },
 
-        if (!response.ok) {
-          throw new Error(`Fetch error: ${response.statusText}`);
-        }
+  async signIn(url, key, email, password) {
+    const response = await fetch(`${url}/auth/v1/token?grant_type=password`, {
+      method: 'POST',
+      headers: { 'apikey': key, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    });
+    if (!response.ok) throw new Error('supabase_login_failed');
+    return response.json();
+  },
 
-        const rows = await response.json();
-        if (Array.isArray(rows)) {
-          rows.forEach(row => {
-            if (row.date && row.data) {
-              STATE.db[row.date] = row.data;
-            }
-          });
-          StorageManager.saveDatabase(); // Save cache
-          console.log(`Supabase Sync: Successfully loaded ${rows.length} routines.`);
-        }
-      } catch (e) {
-        console.error("Supabase initial sync fetch failed:", e);
-      }
-    },
+  // Verify credentials by signing in and reading one row, then persist and pull data.
+  async saveCredentials(url, key, email = "", password = "") {
+    const cleanUrl = url.trim().replace(/\/$/, "");
+    const cleanKey = key.trim();
+    if (!email.trim() || !password) throw new Error('supabase_login_required');
 
-    // Save new credentials, verifying them with a test fetch and optionally logging in
-    async saveCredentials(url, key, email = "", password = "") {
-      try {
-        const cleanUrl = url.trim().replace(/\/$/, "");
-        const cleanKey = key.trim();
-        
-        let token = cleanKey;
-        let sessionData = null;
+    const session = await this.signIn(cleanUrl, cleanKey, email.trim(), password);
+    const test = await fetch(`${cleanUrl}/rest/v1/routines?select=date&limit=1`, {
+      headers: { 'apikey': cleanKey, 'Authorization': `Bearer ${session.access_token}` }
+    });
+    if (!test.ok) throw new Error('supabase_table_error');
 
-        // If email and password are provided, attempt to login using Supabase Auth (GoTrue REST API)
-        if (email.trim() !== "" && password.trim() !== "") {
-          const loginResponse = await fetch(`${cleanUrl}/auth/v1/token?grant_type=password`, {
-            method: 'POST',
-            headers: {
-              'apikey': cleanKey,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ email: email.trim(), password: password.trim() })
-          });
-          
-          if (!loginResponse.ok) {
-            const errData = await loginResponse.json().catch(() => ({}));
-            throw new Error(errData.error_description || "Supabase Auth login failed.");
-          }
-          
-          sessionData = await loginResponse.json();
-          token = sessionData.access_token;
-        }
+    localStorage.setItem('supabase_url', cleanUrl);
+    localStorage.setItem('supabase_key', cleanKey);
+    localStorage.setItem('supabase_email', email.trim());
+    this.url = cleanUrl;
+    this.key = cleanKey;
+    this.storeSession(session);
 
-        const testUrl = `${cleanUrl}/rest/v1/routines?limit=1`;
-        const response = await fetch(testUrl, {
-          method: 'GET',
-          headers: {
-            'apikey': cleanKey,
-            'Authorization': `Bearer ${token}`
-          }
-        });
+    await this.fetchInitialSync();
+    return true;
+  },
 
-        if (!response.ok) {
-          throw new Error("Invalid URL or Key, or routines table access denied.");
-        }
-
-        // Valid: save to local storage
-        localStorage.setItem('supabase_url', cleanUrl);
-        localStorage.setItem('supabase_key', cleanKey);
-        this.url = cleanUrl;
-        this.key = cleanKey;
-
-        if (sessionData) {
-          localStorage.setItem('supabase_email', email.trim());
-          localStorage.setItem('supabase_session_token', sessionData.access_token);
-          if (sessionData.refresh_token) {
-            localStorage.setItem('supabase_refresh_token', sessionData.refresh_token);
-          }
-        } else {
-          localStorage.removeItem('supabase_email');
-          localStorage.removeItem('supabase_session_token');
-          localStorage.removeItem('supabase_refresh_token');
-        }
-
-        // Immediately run full sync
-        await this.fetchInitialSync();
-        return true;
-      } catch (e) {
-        console.error("Supabase verification failed:", e);
-        throw e;
-      }
-    },
-
-    // Verify stored session token or refresh if expired
-    async verifyToken() {
-      if (!this.isEnabled()) return false;
-      let token = localStorage.getItem('supabase_session_token');
-      if (!token) return false;
-
-      try {
-        const response = await fetch(`${this.url}/auth/v1/user`, {
-          method: 'GET',
-          headers: {
-            'apikey': this.key,
-            'Authorization': `Bearer ${token}`
-          }
-        });
-        if (response.ok) {
+  async refreshSession() {
+    const refreshToken = localStorage.getItem('supabase_refresh_token');
+    if (!this.isEnabled() || !refreshToken) return false;
+    try {
+      const response = await fetch(`${this.url}/auth/v1/token?grant_type=refresh_token`, {
+        method: 'POST',
+        headers: { 'apikey': this.key, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ refresh_token: refreshToken })
+      });
+      if (response.ok) {
+        const data = await response.json();
+        if (data.access_token) {
+          this.storeSession(data);
           return true;
         }
-        
-        // If unauthorized, attempt to refresh the token using refresh_token
-        const refreshToken = localStorage.getItem('supabase_refresh_token');
-        if (refreshToken) {
-          const refreshResponse = await fetch(`${this.url}/auth/v1/token?grant_type=refresh_token`, {
-            method: 'POST',
-            headers: {
-              'apikey': this.key,
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ refresh_token: refreshToken })
-          });
-          if (refreshResponse.ok) {
-            const data = await refreshResponse.json();
-            if (data.access_token) {
-              localStorage.setItem('supabase_session_token', data.access_token);
-              if (data.refresh_token) {
-                localStorage.setItem('supabase_refresh_token', data.refresh_token);
-              }
-              return true;
-            }
-          }
-        }
-      } catch (e) {
-        console.error("Supabase token verification error:", e);
       }
-      
-      // Clear expired session if everything failed
-      localStorage.removeItem('supabase_session_token');
-      localStorage.removeItem('supabase_refresh_token');
-      return false;
-    },
-
-    // Authenticate with passcode on the lock screen using GoTrue auth
-    async loginWithPasscode(passcode) {
-      if (!this.isEnabled()) return false;
-      const email = localStorage.getItem('supabase_email');
-      if (!email) return false;
-      try {
-        const response = await fetch(`${this.url}/auth/v1/token?grant_type=password`, {
-          method: 'POST',
-          headers: {
-            'apikey': this.key,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ email, password: passcode })
-        });
-        if (response.ok) {
-          const data = await response.json();
-          if (data.access_token) {
-            localStorage.setItem('supabase_session_token', data.access_token);
-            if (data.refresh_token) {
-              localStorage.setItem('supabase_refresh_token', data.refresh_token);
-            }
-            return true;
-          }
-        }
-      } catch (e) {
-        console.error("Supabase login with passcode failed:", e);
-      }
-      return false;
-    },
-
-    // Clear credentials
-    clearCredentials() {
-      localStorage.removeItem('supabase_url');
-      localStorage.removeItem('supabase_key');
-      localStorage.removeItem('supabase_session_token');
-      localStorage.removeItem('supabase_refresh_token');
-      localStorage.removeItem('supabase_email');
-      this.url = "";
-      this.key = "";
-      console.log("Supabase sync disconnected.");
+    } catch (e) {
+      console.error("Supabase token refresh failed:", e);
     }
-  };
+    return false;
+  },
+
+  // Verify stored session token or refresh if expired
+  async verifyToken() {
+    if (!this.canSync()) return false;
+    try {
+      const response = await fetch(`${this.url}/auth/v1/user`, {
+        headers: { 'apikey': this.key, 'Authorization': `Bearer ${localStorage.getItem('supabase_session_token')}` }
+      });
+      if (response.ok) return true;
+      if (await this.refreshSession()) return true;
+    } catch (e) {
+      console.error("Supabase token verification error:", e);
+    }
+    localStorage.removeItem('supabase_session_token');
+    localStorage.removeItem('supabase_refresh_token');
+    return false;
+  },
+
+  // Lock screen fallback: the passcode doubles as the Supabase password for the saved email.
+  async loginWithPasscode(passcode) {
+    const email = localStorage.getItem('supabase_email');
+    if (!this.isEnabled() || !email) return false;
+    try {
+      this.storeSession(await this.signIn(this.url, this.key, email, passcode));
+      return true;
+    } catch (e) {
+      return false;
+    }
+  },
+
+  clearCredentials() {
+    localStorage.setItem('supabase_url', '');
+    localStorage.setItem('supabase_key', '');
+    localStorage.removeItem('supabase_session_token');
+    localStorage.removeItem('supabase_refresh_token');
+    localStorage.removeItem('supabase_email');
+    this.url = "";
+    this.key = "";
+  }
+};
 
 // ================= WEB AUDIO API SYNTHESIS =================
 const AudioFeedback = {
@@ -2244,6 +2211,14 @@ const UIController = {
       if (await PasscodeManager.verify(entered)) {
         success = true;
         sessionStorage.setItem('hrt_session', 'unlocked');
+        // Re-open the cloud session in the background when the passcode is also the Supabase password.
+        if (SupabaseManager.isEnabled() && !SupabaseManager.hasSession()) {
+          SupabaseManager.loginWithPasscode(entered).then(ok => {
+            if (!ok) return;
+            if (this.refreshSyncUI) this.refreshSyncUI();
+            SupabaseManager.fetchInitialSync().then(() => this.loadDashboard());
+          });
+        }
       }
       // 2. Fallback to Supabase authentication if local check failed and Supabase is active
       else if (SupabaseManager.isEnabled()) {
@@ -2577,31 +2552,25 @@ const UIController = {
       if (this.dom.inlineSupabasePassword) this.dom.inlineSupabasePassword.value = "";
 
       // Sync status indicators
-      statusMsg.className = "sync-status-msg";
-      if (this.dom.inlineSyncStatus) this.dom.inlineSyncStatus.className = "sync-status-msg";
-
-      if (enabled) {
-        statusMsg.textContent = "Status: Cloud Sync is active.";
-        statusMsg.classList.add('status-success');
-        clearBtn.style.display = "block";
-
-        if (this.dom.inlineSyncStatus) {
-          this.dom.inlineSyncStatus.textContent = "Status: Connected & backup active.";
-          this.dom.inlineSyncStatus.classList.add('status-success');
-        }
-        if (this.dom.inlineClearSyncBtn) this.dom.inlineClearSyncBtn.style.display = "block";
-      } else {
-        statusMsg.textContent = "Status: Local storage only.";
-        statusMsg.classList.add('status-loading');
-        clearBtn.style.display = "none";
-
-        if (this.dom.inlineSyncStatus) {
-          this.dom.inlineSyncStatus.textContent = "Status: Local storage only.";
-          this.dom.inlineSyncStatus.classList.add('status-error');
-        }
-        if (this.dom.inlineClearSyncBtn) this.dom.inlineClearSyncBtn.style.display = "none";
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+      let text = dict.sync_status_local;
+      let cls = 'status-loading';
+      if (SupabaseManager.canSync()) {
+        text = dict.sync_status_active.replace('{email}', email);
+        cls = 'status-success';
+      } else if (enabled) {
+        text = dict.sync_status_signin;
+        cls = 'status-error';
       }
+      [statusMsg, this.dom.inlineSyncStatus].forEach(el => {
+        if (!el) return;
+        el.className = `sync-status-msg ${cls}`;
+        el.textContent = text;
+      });
+      clearBtn.style.display = enabled ? "block" : "none";
+      if (this.dom.inlineClearSyncBtn) this.dom.inlineClearSyncBtn.style.display = enabled ? "block" : "none";
     };
+    this.refreshSyncUI = refreshSyncUI;
 
     // Initial load
     refreshSyncUI();
@@ -2631,7 +2600,7 @@ const UIController = {
       e.preventDefault();
       
       statusMsg.className = "sync-status-msg status-loading";
-      statusMsg.textContent = "Connecting & syncing records...";
+      statusMsg.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).sync_connecting;
       
       const url = urlInput.value;
       const key = keyInput.value;
@@ -2643,7 +2612,7 @@ const UIController = {
         refreshSyncUI();
         
         statusMsg.className = "sync-status-msg status-success";
-        statusMsg.textContent = "Success! Cloud Sync connected.";
+        statusMsg.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).sync_connected;
         
         // Refresh views
         this.updateStreakDisplay();
@@ -2657,7 +2626,8 @@ const UIController = {
         }, 1500);
       } catch (err) {
         statusMsg.className = "sync-status-msg status-error";
-        statusMsg.textContent = err.message || "Connection failed! Check credentials & table setup.";
+        const d = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+        statusMsg.textContent = d[err.message] || err.message || d.supabase_table_error;
       }
     });
 
@@ -2668,7 +2638,7 @@ const UIController = {
         
         const inlineStatus = this.dom.inlineSyncStatus;
         inlineStatus.className = "sync-status-msg status-loading";
-        inlineStatus.textContent = "Connecting & syncing records...";
+        inlineStatus.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).sync_connecting;
         
         const url = this.dom.inlineSupabaseUrl.value;
         const key = this.dom.inlineSupabaseKey.value;
@@ -2680,7 +2650,7 @@ const UIController = {
           refreshSyncUI();
           
           inlineStatus.className = "sync-status-msg status-success";
-          inlineStatus.textContent = "Success! Cloud Sync connected.";
+          inlineStatus.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).sync_connected;
           
           // Refresh views
           this.updateStreakDisplay();
@@ -2690,7 +2660,8 @@ const UIController = {
           this.renderHeatmap(); // Refresh heatmap grid
         } catch (err) {
           inlineStatus.className = "sync-status-msg status-error";
-          inlineStatus.textContent = err.message || "Connection failed! Check credentials & table setup.";
+          const d = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+          inlineStatus.textContent = d[err.message] || err.message || d.supabase_table_error;
         }
       });
     }
@@ -2701,14 +2672,6 @@ const UIController = {
       if (confirm(dict.confirm_disconnect || "Disconnect Supabase Sync? Your data will remain stored locally.")) {
         SupabaseManager.clearCredentials();
         refreshSyncUI();
-        
-        statusMsg.className = "sync-status-msg status-error";
-        statusMsg.textContent = dict.supabase_disconnect || "Cloud Sync disconnected.";
-        
-        if (this.dom.inlineSyncStatus) {
-          this.dom.inlineSyncStatus.className = "sync-status-msg status-error";
-          this.dom.inlineSyncStatus.textContent = dict.supabase_disconnect || "Cloud Sync disconnected.";
-        }
       }
     };
 

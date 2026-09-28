@@ -1095,12 +1095,12 @@
                     <input type="password" id="inline-supabase-key" placeholder="eyJhbGciOi..." autocomplete="off" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
                   </div>
                   <div class="input-group" style="margin-top: 1rem;">
-                    <label for="inline-supabase-email">Supabase Auth Email (Optional)</label>
-                    <input type="email" id="inline-supabase-email" placeholder="email@example.com" autocomplete="off" style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
+                    <label for="inline-supabase-email" data-i18n="supabase_email">Email</label>
+                    <input type="email" id="inline-supabase-email" placeholder="email@example.com" autocomplete="username" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
                   </div>
                   <div class="input-group" style="margin-top: 1rem;">
-                    <label for="inline-supabase-password">Supabase Auth Password (Optional)</label>
-                    <input type="password" id="inline-supabase-password" placeholder="••••••••" autocomplete="off" style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
+                    <label for="inline-supabase-password" data-i18n="supabase_password">Password</label>
+                    <input type="password" id="inline-supabase-password" placeholder="••••••••" autocomplete="current-password" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
                   </div>
                   <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap;">
                     <button type="submit" class="btn btn-primary" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem;" data-i18n="supabase_connect_btn">Connect & Sync</button>
@@ -1502,22 +1502,17 @@
             <input type="password" id="supabase-key" placeholder="eyJhbGciOi..." autocomplete="off" required>
           </div>
           <div class="input-group" style="margin-top: 1rem;">
-            <label for="supabase-email">Supabase Auth Email (Optional)</label>
-            <input type="email" id="supabase-email" placeholder="email@example.com" autocomplete="off">
+            <label for="supabase-email" data-i18n="supabase_email">Email</label>
+            <input type="email" id="supabase-email" placeholder="email@example.com" autocomplete="username" required>
           </div>
           <div class="input-group" style="margin-top: 1rem;">
-            <label for="supabase-password">Supabase Auth Password (Optional)</label>
-            <input type="password" id="supabase-password" placeholder="••••••••" autocomplete="off">
+            <label for="supabase-password" data-i18n="supabase_password">Password</label>
+            <input type="password" id="supabase-password" placeholder="••••••••" autocomplete="current-password" required>
           </div>
           
           <div class="sql-instructions">
             <h4 data-i18n="supabase_db_guide">Database Setup Guide:</h4>
-            <p data-i18n="supabase_db_query">Run this query in your Supabase SQL Editor to create the table:</p>
-            <pre><code>create table routines (
-  date text primary key,
-  data jsonb not null,
-  updated_at timestamp with time zone default now()
-);</code></pre>
+            <p data-i18n="supabase_db_query">Run rutin/supabase/schema.sql in the Supabase SQL editor. It creates the routines table with Row Level Security so only your signed-in account can read or write it.</p>
           </div>
 
           <div class="modal-actions" style="margin-top: 1.5rem;">
