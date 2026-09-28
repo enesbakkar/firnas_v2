@@ -6,6 +6,60 @@ async function sha256(message) {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+// ================= PASSCODE (PBKDF2) =================
+// Stored as hrt_passcode = {v, alg, iter, salt, hash} (base64). Until a record exists, the legacy
+// SHA-256 default passcode is accepted once and immediately migrated to PBKDF2.
+const PasscodeManager = {
+  STORAGE_KEY: 'hrt_passcode',
+  ITERATIONS: 310000,
+  LEGACY_SHA256: "42e6799f8c934e1b419b495723b3f2dec475c46e3418953b971bae790d2c5207",
+
+  toB64(bytes) {
+    return btoa(String.fromCharCode(...new Uint8Array(bytes)));
+  },
+
+  fromB64(str) {
+    return Uint8Array.from(atob(str), c => c.charCodeAt(0));
+  },
+
+  async derive(passcode, salt, iterations) {
+    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(passcode), 'PBKDF2', false, ['deriveBits']);
+    return crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations }, key, 256);
+  },
+
+  getRecord() {
+    try {
+      const rec = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || 'null');
+      return rec && rec.salt && rec.hash && rec.iter ? rec : null;
+    } catch (e) {
+      return null;
+    }
+  },
+
+  async set(passcode) {
+    const salt = crypto.getRandomValues(new Uint8Array(16));
+    const hash = await this.derive(passcode, salt, this.ITERATIONS);
+    localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
+      v: 1, alg: 'PBKDF2-SHA256', iter: this.ITERATIONS, salt: this.toB64(salt), hash: this.toB64(hash)
+    }));
+  },
+
+  async verify(passcode) {
+    const rec = this.getRecord();
+    if (!rec) {
+      const ok = (await sha256(passcode)) === this.LEGACY_SHA256;
+      if (ok) await this.set(passcode);
+      return ok;
+    }
+    const actual = new Uint8Array(await this.derive(passcode, this.fromB64(rec.salt), rec.iter));
+    const expected = this.fromB64(rec.hash);
+    if (actual.length !== expected.length) return false;
+    let diff = 0;
+    for (let i = 0; i < actual.length; i++) diff |= actual[i] ^ expected[i];
+    return diff === 0;
+  }
+};
+
 // Google OAuth client IDs are public by design; never put a client secret or refresh token in this file.
 const GOOGLE_CLIENT_ID = "335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.googleusercontent.com";
 const GOOGLE_CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";
@@ -15,7 +69,6 @@ const STATE = {
   activeDate: new Date(), // Date object currently displayed in the checklist
   todayDate: new Date(),  // Real system date
   authenticated: false,
-  passcodeHash: "42e6799f8c934e1b419b495723b3f2dec475c46e3418953b971bae790d2c5207", // SHA-256 hash of default passcode
   selectedMonth: "2026-06", // Default starting month
   db: {}, // Loaded daily records
   journal: {}, // Loaded journal entries {"YYYY-MM-DD": {mood, content, tags}}
@@ -445,7 +498,17 @@ const TRANSLATIONS = {
     fin_initial_balance: "Balance",
     fin_select_icon: "Icon / Emoji",
     fin_confirm_delete_account: "Are you sure you want to delete this account? This action cannot be undone.",
-    calendar_disconnect: "Disconnect Google Calendar"
+    calendar_disconnect: "Disconnect Google Calendar",
+    auth_error: "Incorrect passcode. Please try again.",
+    settings_security_title: "Passcode",
+    passcode_current: "Current passcode",
+    passcode_new: "New passcode",
+    passcode_confirm: "Repeat new passcode",
+    passcode_change_btn: "Change passcode",
+    passcode_changed: "Passcode updated.",
+    passcode_wrong_current: "Current passcode is incorrect.",
+    passcode_mismatch: "The new passcodes do not match.",
+    passcode_too_short: "Use at least 4 characters."
   },
   tr: {
     nav_brief: "Ana Panel",
@@ -702,7 +765,17 @@ const TRANSLATIONS = {
     fin_initial_balance: "Bakiye",
     fin_select_icon: "Simge / Emoji",
     fin_confirm_delete_account: "Bu hesabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-    calendar_disconnect: "Google Takvim Bağlantısını Kes"
+    calendar_disconnect: "Google Takvim Bağlantısını Kes",
+    auth_error: "Şifre hatalı. Lütfen tekrar deneyin.",
+    settings_security_title: "Giriş şifresi",
+    passcode_current: "Mevcut şifre",
+    passcode_new: "Yeni şifre",
+    passcode_confirm: "Yeni şifre (tekrar)",
+    passcode_change_btn: "Şifreyi değiştir",
+    passcode_changed: "Şifre güncellendi.",
+    passcode_wrong_current: "Mevcut şifre yanlış.",
+    passcode_mismatch: "Yeni şifreler eşleşmiyor.",
+    passcode_too_short: "En az 4 karakter kullanın."
   },
   ar: {
     nav_brief: "اللوحة الرئيسية",
@@ -954,7 +1027,17 @@ const TRANSLATIONS = {
     fin_initial_balance: "الرصيد",
     fin_select_icon: "الرمز",
     fin_confirm_delete_account: "هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء.",
-    calendar_disconnect: "فصل تقويم جوجل"
+    calendar_disconnect: "فصل تقويم جوجل",
+    auth_error: "رمز الدخول غير صحيح. حاول مرة أخرى.",
+    settings_security_title: "رمز الدخول",
+    passcode_current: "الرمز الحالي",
+    passcode_new: "الرمز الجديد",
+    passcode_confirm: "أعد إدخال الرمز الجديد",
+    passcode_change_btn: "تغيير الرمز",
+    passcode_changed: "تم تحديث رمز الدخول.",
+    passcode_wrong_current: "الرمز الحالي غير صحيح.",
+    passcode_mismatch: "الرمزان الجديدان غير متطابقين.",
+    passcode_too_short: "استخدم ٤ أحرف على الأقل."
   }
 };
 
@@ -1920,6 +2003,7 @@ const UIController = {
     this.setupChecklist();
     this.setupMonthSelector();
     this.setupSyncSettings(); // Setup Supabase modal & inline controls
+    this.setupPasscodeSettings();
     this.setupGoogleSettings(); // Setup Google Calendar credential forms
     
     // Setup Life OS Subsystems
@@ -1969,8 +2053,8 @@ const UIController = {
     let isAuthed = false;
 
     // 1. Check local session state in sessionStorage first
-    const sessionHash = sessionStorage.getItem('hrt_session_hash');
-    if (sessionHash === STATE.passcodeHash) {
+    sessionStorage.removeItem('hrt_session_hash'); // legacy session marker
+    if (sessionStorage.getItem('hrt_session') === 'unlocked') {
       isAuthed = true;
     }
 
@@ -2003,14 +2087,13 @@ const UIController = {
     this.dom.authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const entered = this.dom.passcode.value;
-      const enteredHash = await sha256(entered);
       let success = false;
 
       // 1. Check local passcode first (always allowed for local access)
-      if (enteredHash === STATE.passcodeHash) {
+      if (await PasscodeManager.verify(entered)) {
         success = true;
-        sessionStorage.setItem('hrt_session_hash', enteredHash);
-      } 
+        sessionStorage.setItem('hrt_session', 'unlocked');
+      }
       // 2. Fallback to Supabase authentication if local check failed and Supabase is active
       else if (SupabaseManager.isEnabled()) {
         const supSuccess = await SupabaseManager.loginWithPasscode(entered);
@@ -2026,7 +2109,7 @@ const UIController = {
         this.dom.appContainer.classList.remove('hidden');
         this.loadDashboard();
       } else {
-        this.dom.authError.textContent = "Incorrect Passcode. Access Denied.";
+        this.dom.authError.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).auth_error;
         this.dom.passcode.value = "";
         this.dom.passcode.focus();
       }
@@ -2038,7 +2121,7 @@ const UIController = {
       if (btn.classList.contains('sync-settings-btn')) return;
       btn.addEventListener('click', () => {
         STATE.authenticated = false;
-        sessionStorage.removeItem('hrt_session_hash');
+        sessionStorage.removeItem('hrt_session');
         localStorage.removeItem('supabase_session_token');
         localStorage.removeItem('supabase_refresh_token');
         this.dom.appContainer.classList.add('hidden');
@@ -2526,6 +2609,31 @@ const UIController = {
         }
       });
     }
+  },
+
+  setupPasscodeSettings() {
+    const form = document.getElementById('passcode-change-form');
+    if (!form) return;
+    const current = document.getElementById('passcode-current');
+    const next = document.getElementById('passcode-new');
+    const confirmInput = document.getElementById('passcode-confirm');
+    const status = document.getElementById('passcode-change-status');
+
+    const show = (key, ok) => {
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+      status.textContent = dict[key];
+      status.className = `sync-status-msg ${ok ? 'status-success' : 'status-error'}`;
+    };
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (next.value.length < 4) return show('passcode_too_short', false);
+      if (next.value !== confirmInput.value) return show('passcode_mismatch', false);
+      if (!(await PasscodeManager.verify(current.value))) return show('passcode_wrong_current', false);
+      await PasscodeManager.set(next.value);
+      form.reset();
+      show('passcode_changed', true);
+    });
   },
 
   extractYouTubeId(url) {

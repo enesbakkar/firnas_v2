@@ -1433,6 +1433,25 @@
           </select>
         </div>
 
+        <!-- Passcode Section -->
+        <form id="passcode-change-form" class="settings-section" autocomplete="off">
+          <h3 data-i18n="settings_security_title">Passcode</h3>
+          <div class="input-group">
+            <label for="passcode-current" data-i18n="passcode_current">Current passcode</label>
+            <input type="password" id="passcode-current" autocomplete="current-password" required>
+          </div>
+          <div class="input-group">
+            <label for="passcode-new" data-i18n="passcode_new">New passcode</label>
+            <input type="password" id="passcode-new" autocomplete="new-password" minlength="4" required>
+          </div>
+          <div class="input-group">
+            <label for="passcode-confirm" data-i18n="passcode_confirm">Repeat new passcode</label>
+            <input type="password" id="passcode-confirm" autocomplete="new-password" minlength="4" required>
+          </div>
+          <button type="submit" class="btn btn-primary" data-i18n="passcode_change_btn">Change passcode</button>
+          <p id="passcode-change-status" class="sync-status-msg" role="status"></p>
+        </form>
+
         <!-- Focus Video Customization Section -->
         <div class="input-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
           <label for="custom-video-url" data-i18n="focus_video_url_label" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Custom Focus Video URL (YouTube)</label>
