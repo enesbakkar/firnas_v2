@@ -6,6 +6,10 @@ async function sha256(message) {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
+// Google OAuth client IDs are public by design; never put a client secret or refresh token in this file.
+const GOOGLE_CLIENT_ID = "335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.googleusercontent.com";
+const GOOGLE_CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";
+
 // ================= APPLICATION STATE =================
 const STATE = {
   activeDate: new Date(), // Date object currently displayed in the checklist
@@ -440,7 +444,8 @@ const TRANSLATIONS = {
     fin_account_name: "Account Name",
     fin_initial_balance: "Balance",
     fin_select_icon: "Icon / Emoji",
-    fin_confirm_delete_account: "Are you sure you want to delete this account? This action cannot be undone."
+    fin_confirm_delete_account: "Are you sure you want to delete this account? This action cannot be undone.",
+    calendar_disconnect: "Disconnect Google Calendar"
   },
   tr: {
     nav_brief: "Ana Panel",
@@ -517,7 +522,7 @@ const TRANSLATIONS = {
     finance_empty: "Henüz finansal kayıt bulunmuyor.",
     calendar_title: "Google Calendar & Ajanda",
     calendar_subtitle: "Günlük programını gör ve yeni etkinlikler ekle.",
-    calendar_connect: "Google Hesabını Bağla",
+    calendar_connect: "Google Takvim'i Bağla",
     calendar_connected: "Google Takvim Bağlandı ✓",
     calendar_active_day: "Bugün",
     calendar_add_title: "Yeni Etkinlik Planla",
@@ -696,7 +701,8 @@ const TRANSLATIONS = {
     fin_account_name: "Hesap Adı",
     fin_initial_balance: "Bakiye",
     fin_select_icon: "Simge / Emoji",
-    fin_confirm_delete_account: "Bu hesabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
+    fin_confirm_delete_account: "Bu hesabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
+    calendar_disconnect: "Google Takvim Bağlantısını Kes"
   },
   ar: {
     nav_brief: "اللوحة الرئيسية",
@@ -768,7 +774,7 @@ const TRANSLATIONS = {
     finance_empty: "لا توجد سجلات مالية بعد.",
     calendar_title: "تقويم جوجل والمذكرة",
     calendar_subtitle: "عرض جدول اليوم وإضافة مواعيد جديدة.",
-    calendar_connect: "ربط حساب جوجل",
+    calendar_connect: "ربط تقويم جوجل",
     calendar_connected: "تم ربط تقويم جوجل بنجاح ✓",
     calendar_active_day: "اليوم",
     calendar_add_title: "جدولة موعد جديد",
@@ -947,7 +953,8 @@ const TRANSLATIONS = {
     fin_account_name: "اسم الحساب",
     fin_initial_balance: "الرصيد",
     fin_select_icon: "الرمز",
-    fin_confirm_delete_account: "هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء."
+    fin_confirm_delete_account: "هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء.",
+    calendar_disconnect: "فصل تقويم جوجل"
   }
 };
 
@@ -1888,6 +1895,7 @@ const UIController = {
         el.setAttribute('placeholder', dict[key]);
       }
     });
+    this.refreshGoogleButton();
 
     if (STATE.authenticated) {
       this.updateStreakDisplay();
@@ -4325,53 +4333,76 @@ const UIController = {
     });
   },
 
+  // --- Google Calendar (Google Identity Services token flow: client ID only, no secret) ---
   setupGoogleSettings() {
-    // No longer needed as credentials are hardcoded directly
+    const btn = document.getElementById('google-auth-btn');
+    if (!btn) return;
+    this.refreshGoogleButton();
+    btn.addEventListener('click', () => {
+      if (this.getGoogleAccessTokenSync()) {
+        this.disconnectGoogleCalendar();
+      } else {
+        this.connectGoogleCalendar();
+      }
+    });
   },
 
+  refreshGoogleButton() {
+    const btn = document.getElementById('google-auth-btn');
+    if (!btn) return;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const connected = !!this.getGoogleAccessTokenSync();
+    btn.textContent = connected ? dict.calendar_disconnect : dict.calendar_connect;
+    btn.classList.toggle('is-connected', connected);
+  },
+
+  getGoogleAccessTokenSync() {
+    const token = localStorage.getItem('google_access_token');
+    const expiry = parseInt(localStorage.getItem('google_token_expiry') || '0', 10);
+    return token && Date.now() < expiry ? token : null;
+  },
+
+  // Kept async for existing callers; never talks to the network.
   async getGoogleAccessToken() {
-    const cachedToken = localStorage.getItem('google_access_token');
-    const expiry = localStorage.getItem('google_token_expiry');
-    
-    if (cachedToken && expiry && Date.now() < parseInt(expiry)) {
-      return cachedToken;
+    return this.getGoogleAccessTokenSync();
+  },
+
+  connectGoogleCalendar() {
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    if (!window.google || !google.accounts || !google.accounts.oauth2) {
+      alert(dict.alert_google_load_fail);
+      return;
     }
-    
-    const refreshToken = "1//" + "09UC37wpyndIlCgYIARA" + "AGAkSNwF-L9IrYKj" + "JuvLUhX76TSuvTeCRsCv" + "ymBlpfZN180_mP_R0_" + "4JVxg9CS2ooXoeJVfeiaCvCunA";
-    const clientSecret = "GOCSPX-" + "hh-278Jgmf4" + "efCcA5QyY-PcEf9s7";
-    const clientId = "335043330325-" + "2jmm3bel2c5pe6c5" + "km2ndbqafd64dmrn" + ".apps.googleusercontent.com";
-    
-    try {
-      console.log("Refreshing Google Access Token using hardcoded Refresh Token...");
-      const response = await fetch('https://oauth2.googleapis.com/token', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/x-www-form-urlencoded'
-        },
-        body: new URLSearchParams({
-          client_id: clientId,
-          client_secret: clientSecret,
-          refresh_token: refreshToken,
-          grant_type: 'refresh_token'
-        })
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data.access_token) {
-          localStorage.setItem('google_access_token', data.access_token);
-          const expiresIn = data.expires_in || 3600;
-          localStorage.setItem('google_token_expiry', String(Date.now() + expiresIn * 1000));
-          return data.access_token;
+    const client = google.accounts.oauth2.initTokenClient({
+      client_id: GOOGLE_CLIENT_ID,
+      scope: GOOGLE_CALENDAR_SCOPE,
+      callback: (resp) => {
+        if (resp.error || !resp.access_token) {
+          alert(dict.alert_google_auth_error + (resp.error_description || resp.error || ''));
+          return;
         }
-      } else {
-        console.error("Failed to refresh Google token:", await response.text());
+        localStorage.setItem('google_access_token', resp.access_token);
+        localStorage.setItem('google_token_expiry', String(Date.now() + (Number(resp.expires_in) || 3600) * 1000));
+        this.refreshGoogleButton();
+        this.syncGoogleCalendar(resp.access_token);
       }
-    } catch (err) {
-      console.error("Error refreshing Google token:", err);
+    });
+    client.requestAccessToken();
+  },
+
+  disconnectGoogleCalendar() {
+    const token = localStorage.getItem('google_access_token');
+    if (token && window.google && google.accounts && google.accounts.oauth2) {
+      google.accounts.oauth2.revoke(token, () => {});
     }
-    
-    return null;
+    localStorage.removeItem('google_access_token');
+    localStorage.removeItem('google_token_expiry');
+    // Drop cached Google events; local events stay.
+    STATE.calendar = STATE.calendar.filter(evt => evt.isLocal);
+    StorageManager.saveCalendar();
+    this.refreshGoogleButton();
+    this.renderCalendar();
+    this.renderBrief();
   },
 
   setupCalendarTab() {
@@ -4464,26 +4495,8 @@ const UIController = {
       if (!response.ok) {
         if (response.status === 401) {
           localStorage.removeItem('google_access_token');
-          
-          if (!this._retryingGoogleSync) {
-            this._retryingGoogleSync = true;
-            console.log("Token expired during sync. Attempting auto-refresh...");
-            const newToken = await this.getGoogleAccessToken();
-            if (newToken) {
-              this._retryingGoogleSync = false;
-              await this.syncGoogleCalendar(newToken);
-              return;
-            }
-            this._retryingGoogleSync = false;
-          }
-          
-          const authBtn = document.getElementById('google-auth-btn');
-          if (authBtn) {
-            authBtn.innerHTML = (TRANSLATIONS[lang] || TRANSLATIONS.en).calendar_connect || "Google Hesabını Bağla";
-            authBtn.style.backgroundColor = "#4285f4";
-            authBtn.style.borderColor = "#4285f4";
-          }
-          console.log("Google token expired, auth reset.");
+          localStorage.removeItem('google_token_expiry');
+          this.refreshGoogleButton();
           const tExpired = {
             en: "Google Calendar session expired. Please reconnect.",
             tr: "Google Takvim oturumu sona erdi. Lütfen tekrar bağlanın.",
