@@ -153,7 +153,7 @@ const STATE = {
   activeDate: new Date(), // Date object currently displayed in the checklist
   todayDate: new Date(),  // Real system date
   authenticated: false,
-  selectedMonth: "2026-06", // Default starting month
+  selectedMonth: formatDateKey(new Date()).slice(0, 7), // "YYYY-MM", starts at the current month
   db: {}, // Loaded daily records
   journal: {}, // Loaded journal entries {"YYYY-MM-DD": {mood, content, tags}}
   finance: {
@@ -1175,6 +1175,24 @@ function formatDateKey(date) {
   return `${y}-${m}-${d}`;
 }
 
+// Parse "YYYY-MM-DD" as a local date (new Date("YYYY-MM-DD") is UTC and shifts the day west of GMT).
+function parseDateKey(key) {
+  const [y, m, d] = key.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+// Earliest day that has at least one completed routine, or null.
+function getEarliestActiveDate() {
+  let earliest = null;
+  Object.keys(STATE.db).forEach(key => {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return;
+    const day = STATE.db[key];
+    if (!day || !Object.values(day).some(v => v === true)) return;
+    if (earliest === null || key < earliest) earliest = key;
+  });
+  return earliest ? parseDateKey(earliest) : null;
+}
+
 // Setup virtual keypad handler with desktop physical keyboard filtering
 function setupKeypad(inputEl, keypadEl, onOkCallback) {
   if (!inputEl || !keypadEl) return;
@@ -1554,8 +1572,8 @@ const StreakEngine = {
   computeStreaks() {
     StorageManager.loadDatabase();
     
-    const startCycle = new Date(2026, 5, 1); // June 1, 2026
     const today = new Date(STATE.todayDate.getFullYear(), STATE.todayDate.getMonth(), STATE.todayDate.getDate());
+    const startCycle = getEarliestActiveDate() || today;
     
     let tempDate = new Date(startCycle);
     const dayScores = {};
@@ -2165,8 +2183,14 @@ const UIController = {
 
     setInterval(() => {
       const now = new Date();
-      if (now.getDate() !== STATE.todayDate.getDate()) {
+      if (formatDateKey(now) !== formatDateKey(STATE.todayDate)) {
+        const wasViewingToday = formatDateKey(STATE.activeDate) === formatDateKey(STATE.todayDate);
+        const wasViewingThisMonth = STATE.selectedMonth === formatDateKey(STATE.todayDate).slice(0, 7);
         STATE.todayDate = now;
+        if (wasViewingToday) STATE.activeDate = new Date(now);
+        if (wasViewingThisMonth) STATE.selectedMonth = formatDateKey(now).slice(0, 7);
+        this.setupMonthSelector();
+        this.loadDateData();
         this.updateStreakDisplay();
         this.renderNotionGrid();
         this.renderAnalytics();
@@ -2472,17 +2496,18 @@ const UIController = {
   setupMonthSelector() {
     const selectors = document.querySelectorAll('.month-sync-select');
     
+    // Range: earliest month with data (or the selected month, if earlier) up to the current month.
+    const earliest = getEarliestActiveDate() || STATE.todayDate;
+    const [selY, selM] = STATE.selectedMonth.split('-').map(Number);
+    let rangeStart = new Date(earliest.getFullYear(), earliest.getMonth(), 1);
+    const selectedStart = new Date(selY, selM - 1, 1);
+    if (selectedStart < rangeStart) rangeStart = selectedStart;
+    const currentLimit = new Date(STATE.todayDate.getFullYear(), STATE.todayDate.getMonth(), 1);
+
     selectors.forEach(select => {
-      const prevVal = select.value || STATE.selectedMonth;
       select.innerHTML = "";
-      
-      const startYear = 2026;
-      const startMonth = 5; // June (0-indexed is 5)
-      const currentLimit = new Date(STATE.todayDate);
-      currentLimit.setMonth(currentLimit.getMonth() + 12);
-      
-      const temp = new Date(startYear, startMonth, 1);
-      
+      const temp = new Date(rangeStart);
+
       const localeMap = {
         en: 'en-US',
         tr: 'tr-TR',
@@ -2502,10 +2527,8 @@ const UIController = {
         select.appendChild(option);
         temp.setMonth(temp.getMonth() + 1);
       }
-      
-      if (prevVal) {
-        select.value = prevVal;
-      }
+
+      select.value = STATE.selectedMonth;
     });
     
     if (!this._monthSelectorListenerBound) {
@@ -3279,7 +3302,7 @@ const UIController = {
     container.querySelectorAll('.chart-point').forEach(dot => {
       dot.addEventListener('click', () => {
         const dateStr = dot.getAttribute('data-date');
-        STATE.activeDate = new Date(dateStr);
+        STATE.activeDate = parseDateKey(dateStr);
         this.loadDateData();
         
         // Swap back to Checklist tab
@@ -3465,7 +3488,7 @@ const UIController = {
           <p>${item.tags ? item.tags : (dict.journal_no_tags || 'No tags')}</p>
         `;
         row.addEventListener('click', () => {
-          STATE.activeDate = new Date(k);
+          STATE.activeDate = parseDateKey(k);
           this.renderJournal();
         });
         this.dom.journalHistoryList.appendChild(row);
@@ -3761,7 +3784,7 @@ const UIController = {
           <div class="item-tags-container">${tagsHtml}</div>
         `;
         row.addEventListener('click', () => {
-          STATE.activeDate = new Date(k);
+          STATE.activeDate = parseDateKey(k);
           this.renderJournal();
         });
         this.dom.journalHistoryList.appendChild(row);
@@ -4270,7 +4293,7 @@ const UIController = {
       const dayExpense = txs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
 
       // Parse date to show day of week
-      const dateObj = new Date(dateStr);
+      const dateObj = parseDateKey(dateStr);
       const daysOfWeek = {
         en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         tr: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"],
