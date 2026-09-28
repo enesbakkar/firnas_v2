@@ -1452,6 +1452,27 @@
           <p id="passcode-change-status" class="sync-status-msg" role="status"></p>
         </form>
 
+        <!-- Backup Section -->
+        <section class="settings-section" id="backup-section">
+          <h3 data-i18n="backup_title">Backup &amp; restore</h3>
+          <p class="modal-info-text" data-i18n="backup_desc">Download all routines, journal, finance and calendar data as a JSON file.</p>
+          <div class="settings-actions">
+            <button type="button" id="backup-download-btn" class="btn btn-primary" data-i18n="backup_download">Download backup</button>
+            <button type="button" id="backup-copy-btn" class="btn btn-secondary" data-i18n="backup_copy">Copy to clipboard</button>
+          </div>
+          <label class="btn btn-secondary file-btn">
+            <span data-i18n="backup_restore_file">Restore from file…</span>
+            <input type="file" id="backup-file-input" accept="application/json,.json" hidden>
+          </label>
+          <details class="backup-paste">
+            <summary data-i18n="backup_paste_toggle">Or paste backup JSON</summary>
+            <textarea id="backup-paste-input" rows="4" spellcheck="false"></textarea>
+            <button type="button" id="backup-paste-btn" class="btn btn-secondary" data-i18n="backup_restore_btn">Restore</button>
+          </details>
+          <button type="button" id="backup-undo-btn" class="btn btn-secondary" data-i18n="backup_undo" hidden>Undo last restore</button>
+          <p id="backup-status" class="sync-status-msg" role="status"></p>
+        </section>
+
         <!-- Focus Video Customization Section -->
         <div class="input-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
           <label for="custom-video-url" data-i18n="focus_video_url_label" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Custom Focus Video URL (YouTube)</label>

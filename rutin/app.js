@@ -60,6 +60,90 @@ const PasscodeManager = {
   }
 };
 
+// ================= JSON BACKUP / RESTORE =================
+// Only user data keys are exported; passcode, Supabase and Google credentials never leave the device.
+const BackupManager = {
+  KEYS: ['hrt_db', 'hrt_journal', 'hrt_finance', 'hrt_calendar', 'hrt_best_streak', 'hrt_lang', 'hrt_theme'],
+  UNDO_KEY: 'hrt_restore_undo',
+
+  build() {
+    const data = {};
+    this.KEYS.forEach(k => {
+      const raw = localStorage.getItem(k);
+      if (raw === null) return;
+      try { data[k] = JSON.parse(raw); } catch (e) { data[k] = raw; }
+    });
+    return { app: 'horizon-tracker', format: 1, exportedAt: new Date().toISOString(), data };
+  },
+
+  toJSON() {
+    return JSON.stringify(this.build(), null, 2);
+  },
+
+  fileName() {
+    return `horizon-backup-${formatDateKey(new Date())}.json`;
+  },
+
+  download() {
+    const blob = new Blob([this.toJSON()], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = this.fileName();
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  },
+
+  // Returns { backup, summary } or throws Error with a translation key as message.
+  parse(text) {
+    let backup;
+    try { backup = JSON.parse(text); } catch (e) { throw new Error('backup_invalid'); }
+    const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
+    if (!isObj(backup) || backup.app !== 'horizon-tracker' || !isObj(backup.data)) throw new Error('backup_invalid');
+    const d = backup.data;
+    if ('hrt_db' in d && !(isObj(d.hrt_db) && Object.values(d.hrt_db).every(isObj))) throw new Error('backup_invalid');
+    if ('hrt_journal' in d && !isObj(d.hrt_journal)) throw new Error('backup_invalid');
+    if ('hrt_finance' in d && !(isObj(d.hrt_finance) && isObj(d.hrt_finance.accounts) && Array.isArray(d.hrt_finance.transactions))) throw new Error('backup_invalid');
+    if ('hrt_calendar' in d && !Array.isArray(d.hrt_calendar)) throw new Error('backup_invalid');
+    return {
+      backup,
+      summary: {
+        days: d.hrt_db ? Object.keys(d.hrt_db).length : 0,
+        journal: d.hrt_journal ? Object.keys(d.hrt_journal).length : 0,
+        transactions: d.hrt_finance ? d.hrt_finance.transactions.length : 0,
+        events: d.hrt_calendar ? d.hrt_calendar.length : 0,
+        exportedAt: backup.exportedAt || ''
+      }
+    };
+  },
+
+  write(data) {
+    this.KEYS.forEach(k => {
+      if (!(k in data)) return;
+      const v = data[k];
+      localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
+    });
+  },
+
+  restore(backup) {
+    localStorage.setItem(this.UNDO_KEY, JSON.stringify(this.build()));
+    this.write(backup.data);
+  },
+
+  hasUndo() {
+    return localStorage.getItem(this.UNDO_KEY) !== null;
+  },
+
+  undo() {
+    const prev = JSON.parse(localStorage.getItem(this.UNDO_KEY));
+    this.KEYS.forEach(k => { if (!(k in prev.data)) localStorage.removeItem(k); });
+    this.write(prev.data);
+    localStorage.removeItem(this.UNDO_KEY);
+  }
+};
+
 // Google OAuth client IDs are public by design; never put a client secret or refresh token in this file.
 const GOOGLE_CLIENT_ID = "335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.googleusercontent.com";
 const GOOGLE_CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";
@@ -508,7 +592,21 @@ const TRANSLATIONS = {
     passcode_changed: "Passcode updated.",
     passcode_wrong_current: "Current passcode is incorrect.",
     passcode_mismatch: "The new passcodes do not match.",
-    passcode_too_short: "Use at least 4 characters."
+    passcode_too_short: "Use at least 4 characters.",
+    backup_title: "Backup & restore",
+    backup_desc: "Save all routines, journal, finance and calendar data as a JSON file. Passcode and sync credentials are not included.",
+    backup_download: "Download backup",
+    backup_copy: "Copy to clipboard",
+    backup_restore_file: "Restore from file…",
+    backup_paste_toggle: "Or paste backup JSON",
+    backup_restore_btn: "Restore",
+    backup_undo: "Undo last restore",
+    backup_downloaded: "Backup file created.",
+    backup_copied: "Backup copied to clipboard.",
+    backup_copy_failed: "Could not access the clipboard.",
+    backup_invalid: "This is not a valid Horizon backup.",
+    backup_confirm: "Replace current data with this backup?\n\nDays: {days}\nJournal entries: {journal}\nTransactions: {transactions}\nEvents: {events}\n\nYour current data is kept so you can undo.",
+    backup_undo_confirm: "Return to the data you had before the last restore?"
   },
   tr: {
     nav_brief: "Ana Panel",
@@ -775,7 +873,21 @@ const TRANSLATIONS = {
     passcode_changed: "Şifre güncellendi.",
     passcode_wrong_current: "Mevcut şifre yanlış.",
     passcode_mismatch: "Yeni şifreler eşleşmiyor.",
-    passcode_too_short: "En az 4 karakter kullanın."
+    passcode_too_short: "En az 4 karakter kullanın.",
+    backup_title: "Yedekleme ve geri yükleme",
+    backup_desc: "Tüm rutin, günlük, finans ve takvim verilerini JSON dosyası olarak kaydedin. Şifre ve senkron bilgileri dahil edilmez.",
+    backup_download: "Yedeği indir",
+    backup_copy: "Panoya kopyala",
+    backup_restore_file: "Dosyadan geri yükle…",
+    backup_paste_toggle: "Ya da yedek JSON'unu yapıştırın",
+    backup_restore_btn: "Geri yükle",
+    backup_undo: "Son geri yüklemeyi geri al",
+    backup_downloaded: "Yedek dosyası oluşturuldu.",
+    backup_copied: "Yedek panoya kopyalandı.",
+    backup_copy_failed: "Panoya erişilemedi.",
+    backup_invalid: "Bu geçerli bir Horizon yedeği değil.",
+    backup_confirm: "Mevcut veriler bu yedekle değiştirilsin mi?\n\nGün: {days}\nGünlük kaydı: {journal}\nİşlem: {transactions}\nEtkinlik: {events}\n\nMevcut verileriniz saklanır, geri alabilirsiniz.",
+    backup_undo_confirm: "Son geri yüklemeden önceki verilere dönülsün mü?"
   },
   ar: {
     nav_brief: "اللوحة الرئيسية",
@@ -1037,7 +1149,21 @@ const TRANSLATIONS = {
     passcode_changed: "تم تحديث رمز الدخول.",
     passcode_wrong_current: "الرمز الحالي غير صحيح.",
     passcode_mismatch: "الرمزان الجديدان غير متطابقين.",
-    passcode_too_short: "استخدم ٤ أحرف على الأقل."
+    passcode_too_short: "استخدم ٤ أحرف على الأقل.",
+    backup_title: "النسخ الاحتياطي والاستعادة",
+    backup_desc: "احفظ جميع بيانات العادات واليوميات والمالية والتقويم في ملف JSON. لا يتضمن رمز الدخول وبيانات المزامنة.",
+    backup_download: "تنزيل النسخة الاحتياطية",
+    backup_copy: "نسخ إلى الحافظة",
+    backup_restore_file: "استعادة من ملف…",
+    backup_paste_toggle: "أو الصق نص النسخة الاحتياطية",
+    backup_restore_btn: "استعادة",
+    backup_undo: "التراجع عن آخر استعادة",
+    backup_downloaded: "تم إنشاء ملف النسخة الاحتياطية.",
+    backup_copied: "تم نسخ النسخة الاحتياطية إلى الحافظة.",
+    backup_copy_failed: "تعذّر الوصول إلى الحافظة.",
+    backup_invalid: "هذه ليست نسخة احتياطية صالحة من Horizon.",
+    backup_confirm: "هل تريد استبدال البيانات الحالية بهذه النسخة؟\n\nالأيام: {days}\nاليوميات: {journal}\nالمعاملات: {transactions}\nالأحداث: {events}\n\nستُحفظ بياناتك الحالية ويمكنك التراجع.",
+    backup_undo_confirm: "هل تريد العودة إلى البيانات السابقة لآخر استعادة؟"
   }
 };
 
@@ -2004,6 +2130,7 @@ const UIController = {
     this.setupMonthSelector();
     this.setupSyncSettings(); // Setup Supabase modal & inline controls
     this.setupPasscodeSettings();
+    this.setupBackupSettings();
     this.setupGoogleSettings(); // Setup Google Calendar credential forms
     
     // Setup Life OS Subsystems
@@ -2633,6 +2760,67 @@ const UIController = {
       await PasscodeManager.set(next.value);
       form.reset();
       show('passcode_changed', true);
+    });
+  },
+
+  setupBackupSettings() {
+    const status = document.getElementById('backup-status');
+    const undoBtn = document.getElementById('backup-undo-btn');
+    const fileInput = document.getElementById('backup-file-input');
+    const pasteInput = document.getElementById('backup-paste-input');
+    if (!status) return;
+    const t = () => TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const show = (text, ok) => {
+      status.textContent = text;
+      status.className = `sync-status-msg ${ok ? 'status-success' : 'status-error'}`;
+    };
+    undoBtn.hidden = !BackupManager.hasUndo();
+
+    document.getElementById('backup-download-btn').addEventListener('click', () => {
+      BackupManager.download();
+      show(t().backup_downloaded, true);
+    });
+
+    document.getElementById('backup-copy-btn').addEventListener('click', async () => {
+      try {
+        await navigator.clipboard.writeText(BackupManager.toJSON());
+        show(t().backup_copied, true);
+      } catch (e) {
+        show(t().backup_copy_failed, false);
+      }
+    });
+
+    const restoreFromText = (text) => {
+      let parsed;
+      try {
+        parsed = BackupManager.parse(text);
+      } catch (e) {
+        return show(t()[e.message] || t().backup_invalid, false);
+      }
+      const s = parsed.summary;
+      const msg = t().backup_confirm
+        .replace('{days}', s.days).replace('{journal}', s.journal)
+        .replace('{transactions}', s.transactions).replace('{events}', s.events);
+      if (!confirm(msg)) return;
+      BackupManager.restore(parsed.backup);
+      location.reload();
+    };
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files && fileInput.files[0];
+      if (!file) return;
+      file.text().then(restoreFromText);
+      fileInput.value = '';
+    });
+
+    document.getElementById('backup-paste-btn').addEventListener('click', () => {
+      restoreFromText(pasteInput.value.trim());
+    });
+
+    undoBtn.addEventListener('click', () => {
+      if (!confirm(t().backup_undo_confirm)) return;
+      BackupManager.undo();
+      location.reload();
     });
   },
 
