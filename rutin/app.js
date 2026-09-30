@@ -1,4 +1,26 @@
 // ================= UTILITIES & HELPERS =================
+// PBKDF2 passcode hashing (salted, 150k iterations). Stored as "pbkdf2$salt$hash".
+async function pbkdf2Hash(passcode, saltHex) {
+  const enc = new TextEncoder();
+  const salt = saltHex
+    ? new Uint8Array(saltHex.match(/../g).map(h => parseInt(h, 16)))
+    : crypto.getRandomValues(new Uint8Array(16));
+  const keyMat = await crypto.subtle.importKey('raw', enc.encode(passcode), 'PBKDF2', false, ['deriveBits']);
+  const bits = await crypto.subtle.deriveBits({ name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' }, keyMat, 256);
+  const hex = a => Array.from(new Uint8Array(a)).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `pbkdf2$${hex(salt)}$${hex(bits)}`;
+}
+
+// Verifies a passcode against the stored hash (supports legacy plain SHA-256 hashes)
+async function verifyPasscode(passcode, stored) {
+  if (!stored) return false;
+  if (stored.startsWith('pbkdf2$')) {
+    const salt = stored.split('$')[1];
+    return (await pbkdf2Hash(passcode, salt)) === stored;
+  }
+  return (await sha256(passcode)) === stored;
+}
+
 async function sha256(message) {
   const msgBuffer = new TextEncoder().encode(message);
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
@@ -6,162 +28,22 @@ async function sha256(message) {
   return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
 }
 
-// ================= PASSCODE (PBKDF2) =================
-// Stored as hrt_passcode = {v, alg, iter, salt, hash} (base64). Until a record exists, the legacy
-// SHA-256 default passcode is accepted once and immediately migrated to PBKDF2.
-const PasscodeManager = {
-  STORAGE_KEY: 'hrt_passcode',
-  ITERATIONS: 310000,
-  LEGACY_SHA256: "42e6799f8c934e1b419b495723b3f2dec475c46e3418953b971bae790d2c5207",
-
-  toB64(bytes) {
-    return btoa(String.fromCharCode(...new Uint8Array(bytes)));
-  },
-
-  fromB64(str) {
-    return Uint8Array.from(atob(str), c => c.charCodeAt(0));
-  },
-
-  async derive(passcode, salt, iterations) {
-    const key = await crypto.subtle.importKey('raw', new TextEncoder().encode(passcode), 'PBKDF2', false, ['deriveBits']);
-    return crypto.subtle.deriveBits({ name: 'PBKDF2', hash: 'SHA-256', salt, iterations }, key, 256);
-  },
-
-  getRecord() {
-    try {
-      const rec = JSON.parse(localStorage.getItem(this.STORAGE_KEY) || 'null');
-      return rec && rec.salt && rec.hash && rec.iter ? rec : null;
-    } catch (e) {
-      return null;
-    }
-  },
-
-  async set(passcode) {
-    const salt = crypto.getRandomValues(new Uint8Array(16));
-    const hash = await this.derive(passcode, salt, this.ITERATIONS);
-    localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
-      v: 1, alg: 'PBKDF2-SHA256', iter: this.ITERATIONS, salt: this.toB64(salt), hash: this.toB64(hash)
-    }));
-  },
-
-  async verify(passcode) {
-    const rec = this.getRecord();
-    if (!rec) {
-      const ok = (await sha256(passcode)) === this.LEGACY_SHA256;
-      if (ok) await this.set(passcode);
-      return ok;
-    }
-    const actual = new Uint8Array(await this.derive(passcode, this.fromB64(rec.salt), rec.iter));
-    const expected = this.fromB64(rec.hash);
-    if (actual.length !== expected.length) return false;
-    let diff = 0;
-    for (let i = 0; i < actual.length; i++) diff |= actual[i] ^ expected[i];
-    return diff === 0;
-  }
-};
-
-// ================= JSON BACKUP / RESTORE =================
-// Only user data keys are exported; passcode and Google credentials never leave the device.
-const BackupManager = {
-  KEYS: ['hrt_db', 'hrt_journal', 'hrt_finance', 'hrt_calendar', 'hrt_best_streak', 'hrt_lang', 'hrt_theme'],
-  UNDO_KEY: 'hrt_restore_undo',
-
-  build() {
-    const data = {};
-    this.KEYS.forEach(k => {
-      const raw = localStorage.getItem(k);
-      if (raw === null) return;
-      try { data[k] = JSON.parse(raw); } catch (e) { data[k] = raw; }
-    });
-    return { app: 'horizon-tracker', format: 1, exportedAt: new Date().toISOString(), data };
-  },
-
-  toJSON() {
-    return JSON.stringify(this.build(), null, 2);
-  },
-
-  fileName() {
-    return `horizon-backup-${formatDateKey(new Date())}.json`;
-  },
-
-  download() {
-    const blob = new Blob([this.toJSON()], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = this.fileName();
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    setTimeout(() => URL.revokeObjectURL(url), 1000);
-  },
-
-  // Returns { backup, summary } or throws Error with a translation key as message.
-  parse(text) {
-    let backup;
-    try { backup = JSON.parse(text); } catch (e) { throw new Error('backup_invalid'); }
-    const isObj = v => v && typeof v === 'object' && !Array.isArray(v);
-    if (!isObj(backup) || backup.app !== 'horizon-tracker' || !isObj(backup.data)) throw new Error('backup_invalid');
-    const d = backup.data;
-    if ('hrt_db' in d && !(isObj(d.hrt_db) && Object.values(d.hrt_db).every(isObj))) throw new Error('backup_invalid');
-    if ('hrt_journal' in d && !isObj(d.hrt_journal)) throw new Error('backup_invalid');
-    if ('hrt_finance' in d && !(isObj(d.hrt_finance) && isObj(d.hrt_finance.accounts) && Array.isArray(d.hrt_finance.transactions))) throw new Error('backup_invalid');
-    if ('hrt_calendar' in d && !Array.isArray(d.hrt_calendar)) throw new Error('backup_invalid');
-    return {
-      backup,
-      summary: {
-        days: d.hrt_db ? Object.keys(d.hrt_db).length : 0,
-        journal: d.hrt_journal ? Object.keys(d.hrt_journal).length : 0,
-        transactions: d.hrt_finance ? d.hrt_finance.transactions.length : 0,
-        events: d.hrt_calendar ? d.hrt_calendar.length : 0,
-        exportedAt: backup.exportedAt || ''
-      }
-    };
-  },
-
-  write(data) {
-    this.KEYS.forEach(k => {
-      if (!(k in data)) return;
-      const v = data[k];
-      localStorage.setItem(k, typeof v === 'string' ? v : JSON.stringify(v));
-    });
-  },
-
-  restore(backup) {
-    localStorage.setItem(this.UNDO_KEY, JSON.stringify(this.build()));
-    this.write(backup.data);
-  },
-
-  hasUndo() {
-    return localStorage.getItem(this.UNDO_KEY) !== null;
-  },
-
-  undo() {
-    const prev = JSON.parse(localStorage.getItem(this.UNDO_KEY));
-    this.KEYS.forEach(k => { if (!(k in prev.data)) localStorage.removeItem(k); });
-    this.write(prev.data);
-    localStorage.removeItem(this.UNDO_KEY);
-  }
-};
-
-// Google OAuth client IDs are public by design; never put a client secret or refresh token in this file.
-const GOOGLE_CLIENT_ID = "335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.googleusercontent.com";
-const GOOGLE_CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";
-// drive.file: the app can only see files it created itself.
-const GOOGLE_DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
-
 // ================= APPLICATION STATE =================
 const STATE = {
   activeDate: new Date(), // Date object currently displayed in the checklist
   todayDate: new Date(),  // Real system date
   authenticated: false,
-  selectedMonth: formatDateKey(new Date()).slice(0, 7), // "YYYY-MM", starts at the current month
+  // Passcode hash: user-set value in localStorage wins; the legacy default is only a first-run fallback.
+  passcodeHash: localStorage.getItem('hrt_passcode_hash') || "42e6799f8c934e1b419b495723b3f2dec475c46e3418953b971bae790d2c5207",
+  selectedMonth: (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`; })(), // Current month
   db: {}, // Loaded daily records
   journal: {}, // Loaded journal entries {"YYYY-MM-DD": {mood, content, tags}}
   finance: {
     accounts: {
-      cash: { name: "Cash Wallet", balance: 0 },
-      bank: { name: "Bank Account", balance: 0 }
+      cash:     { name: "Cash Wallet",   balance: 1500  },
+      bank:     { name: "Bank Account",  balance: 8450  },
+      credit:   { name: "Credit Card",   balance: -450  },
+      business: { name: "Business Card", balance: 24500 }
     },
     transactions: []
   },
@@ -174,8 +56,7 @@ const AYAHS = [
   { 
     arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", 
     tr: '"Şüphesiz güçlükle beraber bir kolaylık vardır."', 
-    en: "\"Indeed, with hardship comes ease.\"",
-    tafsir: 'فإن مع الضيق والشدة فرجاً ومخرجاً ويسراً عظيماً',
+    en: '"فإن مع الضيق والشدة فرجاً ومخرجاً ويسراً عظيماً"', 
     ar: '"فإن مع العسر يسراً"',
     source_tr: "İnşirâh Suresi, 5. Ayet",
     source_en: "Surah Al-Inshirah, Verse 5",
@@ -184,8 +65,7 @@ const AYAHS = [
   { 
     arabic: "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا", 
     tr: '"Allah, hiç kimseye gücünün üstünde bir yük yüklemez."', 
-    en: "\"Allah does not burden any soul beyond what it can bear.\"",
-    tafsir: 'لا يطالب الله نفساً من التكاليف إلا بما تطيقه وتسعد به',
+    en: '"لا يطالب الله نفساً من التكاليف إلا بما تطيقه وتسعد به"', 
     ar: '"لا يكلف الله نفساً إلا وسعها"',
     source_tr: "Bakara Suresi, 286. Ayet",
     source_en: "Surah Al-Baqarah, Verse 286",
@@ -194,8 +74,7 @@ const AYAHS = [
   { 
     arabic: "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ", 
     tr: '"Rabbin seni terk etmedi ve sana darılmadı."', 
-    en: "\"Your Lord has not forsaken you, nor is He displeased.\"",
-    tafsir: 'ما تركك ربك يا محمد وما أبغضك منذ اختارك لرسالته',
+    en: '"ما تركك ربك يا محمد وما أبغضك منذ اختارك لرسالته"', 
     ar: '"ما ودعك ربك وما قلى"',
     source_tr: "Duhâ Suresi, 3. Ayet",
     source_en: "Surah Ad-Duha, Verse 3",
@@ -204,8 +83,7 @@ const AYAHS = [
   { 
     arabic: "وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَىٰ", 
     tr: '"İnsan için ancak çalıştığının karşılığı vardır."', 
-    en: "\"A person will have only what they strive for.\"",
-    tafsir: 'ليس للإنسان من الثواب والأجر إلا ما سعى وعمل بنفسه',
+    en: '"ليس للإنسان من الثواب والأجر إلا ما سعى وعمل بنفسه"', 
     ar: '"وأن ليس للإنسان إلا ما سعى"',
     source_tr: "Necm Suresi, 39. Ayet",
     source_en: "Surah An-Najm, Verse 39",
@@ -214,8 +92,7 @@ const AYAHS = [
   { 
     arabic: "وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ عَلَيْهِ تَوَكَّلْتُ", 
     tr: '"Benim başarım ancak Allah\'ın yardımıyladır. Yalnız O\'na tevekkül ettim."', 
-    en: "\"My success comes only through Allah. In Him I put my trust.\"",
-    tafsir: 'وما توفيقي لإصابة الحق والعمل الصالح إلا بمعونة الله وتوفيقه',
+    en: '"وما توفيقي لإصابة الحق والعمل الصالح إلا بمعونة الله وتوفيقه"', 
     ar: '"وما توفيقي إلا بالله عليه توكلت"',
     source_tr: "Hûd Suresi, 88. Ayet",
     source_en: "Surah Hud, Verse 88",
@@ -224,8 +101,7 @@ const AYAHS = [
   { 
     arabic: "وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ", 
     tr: '"Sabret! Çünkü Allah iyilik yapanların mükafatını zayi etmez."', 
-    en: "\"Be patient, for Allah does not let the reward of those who do good go to waste.\"",
-    tafsir: 'واصبر على الطاعات وعن المحرمات، فإن الله لا يضيع ثواب المحسنين',
+    en: '"واصبر على الطاعات وعن المحرمات، فإن الله لا يضيع ثواب المحسنين"', 
     ar: '"واصبر فإن الله لا يضيع أجر المحسنين"',
     source_tr: "Hûd Suresi, 115. Ayet",
     source_en: "Surah Hud, Verse 115",
@@ -234,8 +110,7 @@ const AYAHS = [
   { 
     arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ", 
     tr: '"Bilesiniz ki, kalpler ancak Allah\'ı anmakla huzur bulur."', 
-    en: "\"Surely, in the remembrance of Allah do hearts find rest.\"",
-    tafsir: 'ألا بذكر الله وطاعته تسكن القلوب وتزول وحشتها وحيرتها',
+    en: '"ألا بذكر الله وطاعته تسكن القلوب وتزول وحشتها وحيرتها"', 
     ar: '"ألا بذكر الله تطمئن القلوب"',
     source_tr: "Ra\'d Suresi, 28. Ayet",
     source_en: "Surah Ar-Ra'd, Verse 28",
@@ -244,8 +119,7 @@ const AYAHS = [
   { 
     arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", 
     tr: '"Eğer şükrederseniz, elbette size (nimetimi) artırırım."', 
-    en: "\"If you are grateful, I will surely give you more.\"",
-    tafsir: 'لئن شكرتم الله على نعمه لأزيدنكم من فضله وإحسانه',
+    en: '"لئن شكرتم الله على نعمه لأزيدنكم من فضله وإحسانه"', 
     ar: '"لئن شكرتم لأزيدنكم"',
     source_tr: "İbrâhîm Suresi, 7. Ayet",
     source_en: "Surah Ibrahim, Verse 7",
@@ -254,8 +128,7 @@ const AYAHS = [
   { 
     arabic: "ادْعُونِي أَسْتَجِبْ لَكُمْ", 
     tr: '"Bana dua edin, size icabet edeyim."', 
-    en: "\"Call upon Me and I will answer you.\"",
-    tafsir: 'اعبدوني وأخلصوا لي العبادة، واستعينوا بي أستجب لكم وأعطكم مرادكم',
+    en: '"اعبدوني وأخلصوا لي العبادة، واستعينوا بي أستجب لكم وأعطكم مرادكم"', 
     ar: '"ادعوني أستجب لكم"',
     source_tr: "Mü\'min Suresi, 60. Ayet",
     source_en: "Surah Ghafir, Verse 60",
@@ -264,8 +137,7 @@ const AYAHS = [
   { 
     arabic: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", 
     tr: '"Şüphesiz Allah sabredenlerle beraberdir."', 
-    en: "\"Indeed, Allah is with the patient.\"",
-    tafsir: 'إن الله مع الصابرين بالمعونة والتسديد والتأييد في دنياهم وأخراهم',
+    en: '"إن الله مع الصابرين بالمعونة والتسديد والتأييد في دنياهم وأخراهم"', 
     ar: '"إن الله مع الصابرين"',
     source_tr: "Bakara Suresi, 153. Ayet",
     source_en: "Surah Al-Baqarah, Verse 153",
@@ -338,64 +210,132 @@ const HABIT_ICONS = {
 
 const TRANSLATIONS = {
   en: {
+    drive_title: "Google Drive Sync",
+    drive_desc: "Sign in with Google once on each device. Routines, journal, finance and calendar sync automatically through a private app folder in your Drive.",
+    drive_connect: "Sign in with Google",
+    drive_sync_now: "Sync Now",
+    drive_disconnect: "Disconnect",
+    drive_status_off: "Local only. Not connected.",
+    drive_status_syncing: "Syncing...",
+    drive_status_tap: "Session expired. Tap anywhere to continue syncing.",
+    drive_status_error: "Sync error",
+    drive_status_ok: "Synced",
+    drive_connect_failed: "Google sign-in failed",
+    drive_confirm_disconnect: "Disconnect Google Drive sync? Your data stays on this device.",
+    analytics_sync_title: "Google Drive Sync",
+    analytics_sync_subtitle: "Keep every device in sync through your Google account",
+    backup_title: "Data Backup",
+    backup_desc: "Download all local data (routines, journal, finance, calendar) as JSON, or restore from a backup.",
+    backup_export: "Export JSON",
+    backup_import: "Import JSON",
+    backup_export_ok: "Backup downloaded.",
+    backup_import_confirm: "This will replace current local data. Continue?",
+    backup_import_ok: "Backup restored. Reloading...",
+    backup_import_err: "Invalid backup file.",
+    passcode_title: "Change Passcode",
+    passcode_current: "Current passcode",
+    passcode_new: "New passcode (min. 6 characters)",
+    passcode_confirm: "Repeat new passcode",
+    passcode_save: "Update Passcode",
+    passcode_wrong: "Current passcode is wrong.",
+    passcode_short: "New passcode must be at least 6 characters.",
+    passcode_mismatch: "Passcodes do not match.",
+    passcode_changed: "Passcode updated.",
+    nav_brief: "Dashboard",
+    nav_routines: "Routines",
+    nav_monthly: "Monthly Grid",
     nav_journal: "Mind Log",
     nav_finance: "FinFlow+",
-    nav_calendar: "Agenda",
+    nav_calendar: "Scheduler",
+    nav_analytics: "Analytics",
     nav_settings: "Settings",
-    nav_lock: "Lock",
+    nav_lock: "Lock Dashboard",
     auth_title: "Horizon Tracker",
-    auth_sub: "Private dashboard",
+    auth_sub: "Private Single-User Dashboard",
     auth_label: "Access Passcode",
-    auth_unlock: "Unlock",
+    auth_unlock: "Unlock Dashboard",
     auth_footer: "© 2026 Firnas Technologies",
-    brief_yesterday_score: "Yesterday's score",
-    brief_yesterday_spend: "Spent yesterday",
-    brief_today_events: "Events today",
-    journal_title: "Mind Log",
-    journal_history: "History",
-    journal_new: "New",
+    brief_greeting_morning: "Good Morning, Enes!",
+    brief_greeting_afternoon: "Good Afternoon, Enes!",
+    brief_greeting_evening: "Good Evening, Enes!",
+    brief_greeting_night: "Good Night, Enes!",
+    brief_sub_morning: "Today is a great day to achieve new goals and grow.",
+    brief_sub_afternoon: "Keep pushing hard towards your goals this afternoon.",
+    brief_sub_evening: "Remember to refresh your mind while unwinding.",
+    brief_sub_night: "A good sleep is the best preparation for tomorrow's success.",
+    brief_ayah_title: "Daily Verse of Focus",
+    brief_ayah_subtitle: "Spiritual guidance to start your morning",
+    brief_yesterday_score: "Yesterday's Routine",
+    brief_yesterday_spend: "Yesterday's Spending",
+    brief_today_events: "Today's Events",
+    brief_weather: "Weather",
+    brief_video_title: "Recommended Focus Video",
+    brief_video_subtitle: "Motivational support to start the day",
+    journal_title: "Mind Log & Observations",
+    journal_history: "Mind Log History",
+    journal_new: "+ New",
     journal_date: "Date",
-    journal_mood: "Mood",
+    journal_mood: "Your Mood Today",
     mood_awesome: "Awesome",
     mood_good: "Good",
     mood_neutral: "Neutral",
     mood_tired: "Tired",
     mood_bad: "Bad",
-    journal_summary: "Notes",
+    journal_summary: "Daily Summary & Mental State",
     journal_placeholder: "What did you achieve today? What challenges did you face? Any thoughts occupying your mind?...",
     journal_tags: "Tags (comma separated)",
-    journal_save: "Save",
+    journal_save: "Save & Synchronize",
     journal_delete: "Delete",
-    journal_empty: "No entries yet. Write your first log.",
-    finance_total_balance: "Total assets",
-    finance_monthly_income: "Income",
-    finance_monthly_expense: "Expenses",
-    finance_new_tx: "Add transaction",
+    journal_empty: "No entries yet. Write your first log!",
+    finance_title: "FinFlow+ Hub",
+    finance_subtitle: "Track personal and business transactions",
+    finance_total_balance: "Total Net Balance",
+    finance_monthly_income: "Monthly Inflow",
+    finance_monthly_expense: "Monthly Outflow",
+    finance_new_tx: "Log Transaction",
+    finance_tx_type: "Type",
     finance_tx_income: "Income",
     finance_tx_expense: "Expense",
+    finance_tx_transfer: "Transfer",
     finance_account: "Account",
+    finance_target_account: "Target Account",
     finance_category: "Category",
+    finance_amount: "Amount (TL)",
+    finance_desc: "Description",
     finance_save: "Save",
-    finance_category_title: "By category",
-    finance_empty: "No transactions this month.",
-    calendar_title: "Agenda",
+    fin_adjust_save: "Save Balance",
+    finance_accounts_title: "Account Summary",
+    finance_category_title: "Monthly Expense Breakdown",
+    finance_history_title: "Recent Transactions",
+    finance_table_date: "Date",
+    finance_table_desc: "Description",
+    finance_table_cat: "Category",
+    finance_table_acc: "Account",
+    finance_table_amt: "Amount",
+    finance_empty: "No financial transactions recorded yet.",
+    calendar_title: "Google Calendar & Agenda",
+    calendar_subtitle: "View daily program and add new events.",
     calendar_connect: "Connect Google Calendar",
-    calendar_add_title: "New event",
+    calendar_connected: "Google Calendar Connected ✓",
+    calendar_active_day: "Today",
+    calendar_add_title: "Plan New Event",
     calendar_event_title: "Event Title",
     calendar_start_time: "Start Time",
     calendar_end_time: "End Time",
     calendar_notes: "Notes / Location",
-    calendar_add_btn: "Add event",
-    settings_title: "Settings",
-    settings_subtitle: "Language, passcode and backups",
-    language_label: "Language",
+    calendar_add_btn: "Add to Timeline",
+    settings_title: "Application Settings",
+    settings_subtitle: "Configure language and database credentials",
+    language_label: "Application Language",
     
-
+    // Extended keys
     focus_current_streak: "Current Streak",
     focus_personal_best: "Personal Best",
+    focus_day_navigator: "Day Navigator",
     focus_today: "Today",
-    grid_title: "Monthly log",
-    grid_subtitle: "Select a day to open its checklist.",
+    focus_completed: "Completed",
+    grid_title: "Monthly Log Grid",
+    grid_subtitle: "Click a day to load its routine checklist details.",
     grid_col_date: "Date",
     grid_col_score: "Score",
     weekday_mon: "Mon",
@@ -405,32 +345,37 @@ const TRANSLATIONS = {
     weekday_fri: "Fri",
     weekday_sat: "Sat",
     weekday_sun: "Sun",
-    analytics_title: "Progress",
-    analytics_subtitle: "Monthly scores, trends and habit consistency.",
-    analytics_kpi_avg: "Average daily score",
-    analytics_kpi_perfect: "Perfect days",
-    analytics_kpi_top: "Most consistent",
-    analytics_kpi_focus: "Needs attention",
-    analytics_chart_title: "Daily score",
-    analytics_chart_legend: "Score for each day of the month so far",
-    analytics_ranks_title: "Habit consistency",
-    analytics_ranks_legend: "How often each routine was completed this month",
-    analytics_heatmap_title: "Last 365 days",
-    analytics_heatmap_legend: "Select a day to open its checklist.",
+    analytics_title: "Performance Analytics",
+    analytics_subtitle: "Historical progress data, trend chart, and habit consistency.",
+    analytics_kpi_avg: "Avg Daily Score",
+    analytics_kpi_perfect: "Perfect Days (100%)",
+    analytics_kpi_top: "Most Consistent",
+    analytics_kpi_focus: "Needs Consistency",
+    analytics_chart_title: "Daily Score Trend",
+    analytics_chart_legend: "Score % over active month days",
+    analytics_ranks_title: "Habit-by-Habit Consistency",
+    analytics_ranks_legend: "Frequency of completion this month",
+    analytics_heatmap_title: "Annual Discipline Calendar",
+    analytics_heatmap_legend: "Consistency heatmap over the past 365 days. Click any day to jump to its checklist.",
     analytics_heatmap_less: "Less",
     analytics_heatmap_more: "More",
     journal_tags_placeholder: "e.g. work, gym, devotion, family",
     journal_no_tags: "No tags",
-    finance_desc_placeholder: "Optional",
-    calendar_timeline_title: "Schedule",
+    finance_health_status: "Financial Health: Stable",
+    finance_inflow_desc: "▲ Active Inflows",
+    finance_outflow_desc: "▼ Spending",
+    finance_desc_placeholder: "Enter transaction details...",
+    calendar_timeline_title: "Daily Agenda Flow",
     calendar_event_placeholder: "Meeting, class, workout...",
     calendar_notes_placeholder: "Enter description or location...",
     habit_fajr_sunnah_title: "Fajr 2 Rakah Sunnah",
+    habit_fajr_sunnah_desc: "Dawn Optional Devotion",
     habit_fajr_fard_title: "Fajr 2 Rakah Fard",
+    habit_fajr_fard_desc: "Dawn Obligation",
     habit_morning_dhikr_title: "Morning Dhikr",
     habit_morning_dhikr_desc: "Morning Remembrance",
     habit_quran_devotion_title: "Quran Devotion",
-    habit_quran_devotion_desc: "Daily wird / recitation",
+    habit_quran_devotion_desc: "Daily Wird / Tilavet",
     habit_intellectual_growth_title: "Intellectual Growth",
     habit_intellectual_growth_desc: "Book Reading",
     habit_physical_training_title: "Physical Training",
@@ -438,224 +383,234 @@ const TRANSLATIONS = {
     habit_nutritional_fuel_title: "Nutritional Fuel",
     habit_nutritional_fuel_desc: "Healthy Breakfast",
     habit_horizon_sync_title: "Horizon Sync",
-    habit_horizon_sync_desc: "Daily planning",
+    habit_horizon_sync_desc: "Daily Planning & Vision Alignment",
     habit_duha_prayer_title: "Duha Prayer",
+    habit_duha_prayer_desc: "Forenoon Prayer",
     habit_evening_dhikr_title: "Evening Dhikr",
     habit_evening_dhikr_desc: "Evening Remembrance",
     habit_maghrib_fard_title: "Maghrib 3 Rakah Fard",
+    habit_maghrib_fard_desc: "Sunset Obligation",
     habit_maghrib_sunnah_title: "Maghrib 2 Rakah Sunnah",
+    habit_maghrib_sunnah_desc: "Post-Sunset Devotion",
     habit_isha_sunnah1_title: "Isha 4 Rakah Sunnah",
+    habit_isha_sunnah1_desc: "Pre-Obligation Devotion",
     habit_isha_fard_title: "Isha 4 Rakah Fard",
+    habit_isha_fard_desc: "Night Obligation",
     habit_isha_sunnah2_title: "Isha 2 Rakah Sunnah",
+    habit_isha_sunnah2_desc: "Post-Obligation Devotion",
     habit_witr_prayer_title: "Witr 3 Rakah Prayer",
+    habit_witr_prayer_desc: "Hanefi Wajib",
     habit_dhuhr_sunnah1_title: "Dhuhr 4 Rakah Sunnah",
+    habit_dhuhr_sunnah1_desc: "Pre-Obligation Devotion",
     habit_dhuhr_fard_title: "Dhuhr 4 Rakah Fard",
+    habit_dhuhr_fard_desc: "Noon Obligation",
     habit_dhuhr_sunnah2_title: "Dhuhr 2 Rakah Sunnah",
+    habit_dhuhr_sunnah2_desc: "Post-Obligation Devotion",
     habit_asr_sunnah_title: "Asr 4 Rakah Sunnah",
+    habit_asr_sunnah_desc: "Hanefi Sunnah",
     habit_asr_fard_title: "Asr 4 Rakah Fard",
+    habit_asr_fard_desc: "Afternoon Obligation",
     habit_mind_log_title: "Mind Log",
     habit_mind_log_desc: "Daily Journaling Complete",
     habit_fin_flow_title: "FinFlow",
     habit_fin_flow_desc: "Daily Expenses Logged",
+    block_morning_title: "Morning Core",
+    block_morning_desc: "Dawn to Forenoon",
+    block_midday_title: "Midday & Afternoon",
+    block_midday_desc: "Noon to Sunset",
+    block_dusk_title: "Dusk & Evening",
+    block_dusk_desc: "Sunset to Night",
+    block_night_title: "Night Closeout",
+    block_night_desc: "Before Sleep",
     alert_same_accounts: "Source and target accounts cannot be the same!",
     alert_google_load_fail: "Google API library could not be loaded. Please check your internet connection and refresh the page.",
     alert_google_auth_error: "Google auth error: ",
-    cat_food: "Groceries",
-    cat_transport: "Transport",
-    cat_tech: "Tech",
-    cat_bills: "Bills",
-    cat_invest: "Investment",
-    cat_edu: "Education",
-    cat_income: "Income",
-    cat_other: "Other",
+    alert_google_sync_success: "Google Calendar connected successfully! Synchronizing your data.",
+    cat_food: "🍔 Food & Groceries",
+    cat_transport: "🚗 Transport & Fuel",
+    cat_tech: "💻 Software & Devices",
+    cat_bills: "⚡ Bills & Subscriptions",
+    cat_invest: "📈 Investments",
+    cat_edu: "📚 Books & Education",
+    cat_income: "💰 Work/Project Income",
+    cat_other: "📦 Other",
     acc_cash: "Cash Wallet",
     acc_bank: "Bank Account",
     acc_credit: "Credit Card",
     acc_business: "Business Card",
-    inspire_perfect: "Perfect day. Everything is done.",
-    inspire_almost: "Almost there, only a few left.",
-    inspire_solid: "Solid progress. Keep going.",
-    inspire_small: "Good start. Small steps build momentum.",
-    inspire_welcome: "Start the day with your first routine.",
+    inspire_perfect: "🏆 Perfect Day! Outstanding job keeping the horizon clear!",
+    inspire_almost: "🔥 Almost there! Just a few more routines to hit 100%!",
+    inspire_solid: "⚡ Solid progress. Keep pushing through the day!",
+    inspire_small: "🚀 Small steps build momentum. Complete another routine!",
+    inspire_welcome: "✨ Welcome! Start your day by checking off your first routine.",
+    brief_video_item_title: "Why Do We Fall - Focus Motivation",
+    brief_video_item_desc: "A powerful compilation to help you build focus, mental strength, and push through difficult times.",
+    focus_video_url_label: "Custom Focus Video URL (YouTube)",
+    focus_video_save_btn: "Save",
+    focus_video_save_msg: "Video saved successfully!",
+    focus_video_reset_msg: "Video reset to default.",
+    focus_video_error_msg: "Invalid YouTube URL!",
+    brief_video_custom_title: "Personalized Focus Video",
+    brief_video_custom_desc: "Playing custom video loaded from your settings.",
+    back_to_routines: "Back to Routines",
+    back_to_dashboard: "Back to Dashboard",
+    brief_weather_desc: "Istanbul - Clear & Sunny",
     kpi_top_none: "None yet",
     kpi_focus_none: "None yet",
+    brief_today_events_label: "Events",
     fin_subtab_daily: "Daily",
     fin_subtab_calendar: "Calendar",
     fin_subtab_summary: "Summary",
     fin_subtab_accounts: "Accounts",
-    fin_net_balance: "Net",
+    fin_net_balance: "Net Balance",
     fin_add_income: "Income",
     fin_add_expense: "Expense",
     fin_add_transfer: "Transfer",
-    fin_select_category: "Please select a category.",
+    fin_category_group: "Category",
+    fin_select_category: "Select Category",
     fin_amount_label: "Amount",
     fin_date_label: "Date",
-    fin_desc_label: "Note",
+    fin_desc_label: "Description / Note",
     fin_source_account: "From Account",
     fin_target_account: "To Account",
+    fin_adjust_balance: "Adjust Balance",
+    fin_adjust_balance_title: "Enter new balance for {account}:",
     fin_delete_tx_confirm: "Are you sure you want to delete this transaction?",
     fin_add_account: "Add Account",
-    fin_edit_account: "Edit",
+    fin_edit_account: "Edit Account",
     fin_delete_account: "Delete Account",
     fin_account_name: "Account Name",
     fin_initial_balance: "Balance",
     fin_select_icon: "Icon / Emoji",
-    fin_confirm_delete_account: "Are you sure you want to delete this account? This action cannot be undone.",
-    calendar_disconnect: "Disconnect Google Calendar",
-    auth_error: "Incorrect passcode. Please try again.",
-    settings_security_title: "Passcode",
-    passcode_current: "Current passcode",
-    passcode_new: "New passcode",
-    passcode_confirm: "Repeat new passcode",
-    passcode_change_btn: "Change passcode",
-    passcode_changed: "Passcode updated.",
-    passcode_wrong_current: "Current passcode is incorrect.",
-    passcode_mismatch: "The new passcodes do not match.",
-    passcode_too_short: "Use at least 4 characters.",
-    backup_title: "Backup & restore",
-    backup_desc: "Save all routines, journal, finance and calendar data as a JSON file. Passcode and sync credentials are not included.",
-    backup_download: "Download backup",
-    backup_copy: "Copy to clipboard",
-    backup_restore_file: "Restore from file…",
-    backup_paste_toggle: "Or paste backup JSON",
-    backup_restore_btn: "Restore",
-    backup_undo: "Undo last restore",
-    backup_downloaded: "Backup file created.",
-    backup_copied: "Backup copied to clipboard.",
-    backup_copy_failed: "Could not access the clipboard.",
-    backup_invalid: "This is not a valid Horizon backup.",
-    backup_confirm: "Replace current data with this backup?\n\nDays: {days}\nJournal entries: {journal}\nTransactions: {transactions}\nEvents: {events}\n\nYour current data is kept so you can undo.",
-    backup_undo_confirm: "Return to the data you had before the last restore?",
-    drive_title: "Google Drive backup",
-    drive_desc: "Keeps one backup file in your own Google Drive. The app can only see the file it created, nothing else in your Drive.",
-    drive_connect: "Connect Google account",
-    drive_auto: "Back up automatically after changes",
-    drive_backup_now: "Back up now",
-    drive_restore: "Restore from Drive",
-    drive_never: "never",
-    drive_status_signin: "Not connected. Connect your Google account to back up to Drive.",
-    drive_no_scope: "Connected, but Drive permission was not granted. Connect again and tick the Drive box.",
-    drive_status_ready: "Connected. Last backup: {time}",
-    drive_status_saving: "Backing up…",
-    drive_status_conflict: "Drive has a backup from another device. Restore it, or press \"Back up now\" to replace it.",
-    drive_status_error: "Could not reach Google Drive. Try again.",
-    drive_no_backup: "No backup found in Drive yet.",
-    drive_overwrite_confirm: "Replace the backup in Drive with the data on this device?",
-    nav_today: "Today",
-    nav_progress: "Progress",
-    nav_journal_short: "Journal",
-    nav_finance_short: "Finance",
-    nav_more: "More",
-    auth_toggle: "Show or hide passcode",
-    day_prev: "Previous day",
-    day_next: "Next day",
-    month_prev: "Previous month",
-    month_next: "Next month",
-    month_select_label: "Select month",
-    day_count: "{done} of {total} done",
-    section_prayers: "Prayers",
-    section_dhikr: "Dhikr & Quran",
-    section_growth: "Growth",
-    section_close: "Day close",
-    prayer_fajr: "Fajr",
-    prayer_duha: "Duha",
-    prayer_dhuhr: "Dhuhr",
-    prayer_asr: "Asr",
-    prayer_maghrib: "Maghrib",
-    prayer_isha: "Isha",
-    prayer_witr: "Witr",
-    abbr_sunnah: "S",
-    abbr_fard: "F",
-    abbr_wajib: "W",
-    abbr_nafl: "N",
-    chip_legend: "S: Sunnah · F: Fard · W: Wajib · N: Nafl. Numbers are rak'ahs.",
-    tag_auto: "auto",
-    status_done: "done",
-    status_left: "{n} left",
-    grid_col_dhikr: "Dhikr",
-    grid_col_quran: "Quran",
-    grid_col_read: "Read",
-    grid_col_sport: "Sport",
-    grid_col_fuel: "Food",
-    grid_col_plan: "Plan",
-    grid_col_journal: "Journal",
-    grid_col_expense: "Expense",
-    journal_delete_confirm: "Delete this journal entry? This cannot be undone.",
-    cat_cafe: "Cafe",
-    cat_shopping: "Shopping",
-    cat_housing: "Housing",
-    cat_health: "Health",
-    cat_entertainment: "Leisure",
-    cat_salary: "Salary",
-    cat_freelance: "Side income",
-    cat_gift: "Gift",
-    calendar_empty: "Nothing planned for this day.",
-    calendar_untitled: "Untitled event",
-    settings_appearance: "Appearance",
-    theme_label: "Theme",
-    theme_light: "Light",
-    theme_night: "Night",
-    cancel: "Cancel"
+    fin_confirm_delete_account: "Are you sure you want to delete this account? This action cannot be undone."
   },
   tr: {
-    nav_journal: "Günlük",
-    nav_finance: "Finans",
+    drive_title: "Google Drive Senkronu",
+    drive_desc: "Her cihazda bir kez Google ile giriş yap. Rutinler, günlük, finans ve takvim Drive'ındaki gizli uygulama klasörü üzerinden otomatik eşitlenir.",
+    drive_connect: "Google ile Giriş Yap",
+    drive_sync_now: "Şimdi Eşitle",
+    drive_disconnect: "Bağlantıyı Kes",
+    drive_status_off: "Sadece bu cihazda. Bağlı değil.",
+    drive_status_syncing: "Eşitleniyor...",
+    drive_status_tap: "Oturum yenilenmeli. Devam etmek için ekrana dokun.",
+    drive_status_error: "Eşitleme hatası",
+    drive_status_ok: "Eşitlendi",
+    drive_connect_failed: "Google girişi başarısız",
+    drive_confirm_disconnect: "Drive senkronu kapatılsın mı? Veriler bu cihazda kalır.",
+    analytics_sync_title: "Google Drive Senkronu",
+    analytics_sync_subtitle: "Tüm cihazların Google hesabın üzerinden eşit kalsın",
+    backup_title: "Veri Yedeği",
+    backup_desc: "Tüm yerel verileri (rutinler, günlük, finans, takvim) JSON olarak indir veya yedekten geri yükle.",
+    backup_export: "JSON Dışa Aktar",
+    backup_import: "JSON İçe Aktar",
+    backup_export_ok: "Yedek indirildi.",
+    backup_import_confirm: "Mevcut yerel veriler değiştirilecek. Devam edilsin mi?",
+    backup_import_ok: "Yedek geri yüklendi. Yenileniyor...",
+    backup_import_err: "Geçersiz yedek dosyası.",
+    passcode_title: "Şifreyi Değiştir",
+    passcode_current: "Mevcut şifre",
+    passcode_new: "Yeni şifre (en az 6 karakter)",
+    passcode_confirm: "Yeni şifre (tekrar)",
+    passcode_save: "Şifreyi Güncelle",
+    passcode_wrong: "Mevcut şifre yanlış.",
+    passcode_short: "Yeni şifre en az 6 karakter olmalı.",
+    passcode_mismatch: "Şifreler eşleşmiyor.",
+    passcode_changed: "Şifre güncellendi.",
+    nav_brief: "Ana Panel",
+    nav_routines: "Rutinler",
+    nav_monthly: "Aylık Takip",
+    nav_journal: "Günlük Yaz",
+    nav_finance: "FinFlow+",
     nav_calendar: "Takvim",
+    nav_analytics: "Analiz",
     nav_settings: "Ayarlar",
-    nav_lock: "Kilitle",
+    nav_lock: "Paneli Kilitle",
     auth_title: "Horizon Tracker",
-    auth_sub: "Kişisel panel",
+    auth_sub: "Özel Tek Kullanıcılı Panel",
     auth_label: "Erişim Şifresi",
-    auth_unlock: "Kilidi aç",
+    auth_unlock: "Giriş Yap",
     auth_footer: "© 2026 Firnas Technologies",
-    brief_yesterday_score: "Dünkü skor",
-    brief_yesterday_spend: "Dünkü harcama",
-    brief_today_events: "Bugünkü etkinlik",
-    journal_title: "Günlük",
-    journal_history: "Geçmiş",
-    journal_new: "Yeni",
+    brief_greeting_morning: "Hayırlı Sabahlar, Enes!",
+    brief_greeting_afternoon: "Günün Enerjisi, Enes!",
+    brief_greeting_evening: "Hayırlı Akşamlar, Enes!",
+    brief_greeting_night: "Huzurlu Geceler, Enes!",
+    brief_sub_morning: "Bugün yeni hedeflere ulaşmak ve gelişmek için harika bir gün.",
+    brief_sub_afternoon: "Öğleden sonra hedeflerine tam gaz odaklanmaya devam et.",
+    brief_sub_evening: "Günün yorgunluğunu atarken zihnini tazelemeyi unutma.",
+    brief_sub_night: "Güzel bir uyku, yarının başarısı için en büyük hazırlıktır.",
+    brief_ayah_title: "Günün Zihinsel Odak Ayeti",
+    brief_ayah_subtitle: "Sabaha başlarken manevi rehberlik",
+    brief_yesterday_score: "Dünkü Rutin",
+    brief_yesterday_spend: "Dünkü Harcama",
+    brief_today_events: "Bugünkü Program",
+    brief_weather: "Hava Durumu",
+    brief_video_title: "Önerilen Zihinsel Odak Videosu",
+    brief_video_subtitle: "Güne başlarken motivasyonel destek",
+    journal_title: "Zihinsel Günlük & Gözlem",
+    journal_history: "Geçmiş Günlükler",
+    journal_new: "+ Yeni",
     journal_date: "Tarih",
-    journal_mood: "Ruh hali",
+    journal_mood: "Bugünkü Ruh Halin",
     mood_awesome: "Mükemmel",
     mood_good: "İyi",
     mood_neutral: "Normal",
     mood_tired: "Yorgun",
     mood_bad: "Kötü",
-    journal_summary: "Notlar",
+    journal_summary: "Günün Özeti & Zihinsel Durumun",
     journal_placeholder: "Bugün neler başardın? Karşılaştığın zorluklar nelerdi? Zihnini meşgul eden düşünceler var mı?...",
     journal_tags: "Etiketler (Virgülle ayırın)",
-    journal_save: "Kaydet",
+    journal_save: "Kaydet & Senkronize Et",
     journal_delete: "Sil",
-    journal_empty: "Henüz kayıt yok. İlk günlüğünü yaz.",
-    finance_total_balance: "Toplam varlık",
-    finance_monthly_income: "Gelir",
-    finance_monthly_expense: "Gider",
-    finance_new_tx: "İşlem ekle",
+    journal_empty: "Henüz kayıt yok. İlk günlükünü yaz!",
+    finance_title: "FinFlow+ Paneli",
+    finance_subtitle: "Kişisel ve şirket harcamalarını takip et",
+    finance_total_balance: "Toplam Net Bakiye",
+    finance_monthly_income: "Aylık Gelir",
+    finance_monthly_expense: "Aylık Gider",
+    finance_new_tx: "İşlem Kaydet",
+    finance_tx_type: "Tür",
     finance_tx_income: "Gelir",
     finance_tx_expense: "Gider",
+    finance_tx_transfer: "Havale/Transfer",
     finance_account: "Hesap",
+    finance_target_account: "Hedef Hesap",
     finance_category: "Kategori",
+    finance_amount: "Tutar (TL)",
+    finance_desc: "Açıklama",
     finance_save: "Kaydet",
-    finance_category_title: "Kategoriye göre",
-    finance_empty: "Bu ay işlem yok.",
-    calendar_title: "Takvim",
-    calendar_connect: "Google Takvim'i Bağla",
-    calendar_add_title: "Yeni etkinlik",
+    fin_adjust_save: "Bakiyeyi Kaydet",
+    finance_accounts_title: "Hesap Özetleri",
+    finance_category_title: "Aylık Gider Dağılımı",
+    finance_history_title: "Son İşlemler",
+    finance_table_date: "Tarih",
+    finance_table_desc: "Açıklama",
+    finance_table_cat: "Kategori",
+    finance_table_acc: "Hesap",
+    finance_table_amt: "Tutar",
+    finance_empty: "Henüz finansal kayıt bulunmuyor.",
+    calendar_title: "Google Calendar & Ajanda",
+    calendar_subtitle: "Günlük programını gör ve yeni etkinlikler ekle.",
+    calendar_connect: "Google Hesabını Bağla",
+    calendar_connected: "Google Takvim Bağlandı ✓",
+    calendar_active_day: "Bugün",
+    calendar_add_title: "Yeni Etkinlik Planla",
     calendar_event_title: "Etkinlik Başlığı",
     calendar_start_time: "Başlangıç Saati",
     calendar_end_time: "Bitiş Saati",
     calendar_notes: "Notlar / Konum",
-    calendar_add_btn: "Etkinlik ekle",
-    settings_title: "Ayarlar",
-    settings_subtitle: "Dil, şifre ve yedekleme",
-    language_label: "Dil",
+    calendar_add_btn: "Takvime Ekle",
+    settings_title: "Uygulama Ayarları",
+    settings_subtitle: "Dil ve veri tabanı yedekleme ayarları",
+    language_label: "Uygulama Dili",
     
-
+    // Extended keys
     focus_current_streak: "Mevcut Seri",
     focus_personal_best: "En İyi Seri",
+    focus_day_navigator: "Gün Gezgini",
     focus_today: "Bugün",
-    grid_title: "Aylık döküm",
-    grid_subtitle: "Bir güne dokunarak o günün listesini açın.",
+    focus_completed: "Tamamlandı",
+    grid_title: "Aylık Takip Tablosu",
+    grid_subtitle: "Detayları yüklemek için bir güne tıklayın.",
     grid_col_date: "Tarih",
     grid_col_score: "Skor",
     weekday_mon: "Pzt",
@@ -665,32 +620,37 @@ const TRANSLATIONS = {
     weekday_fri: "Cum",
     weekday_sat: "Cmt",
     weekday_sun: "Paz",
-    analytics_title: "İlerleme",
-    analytics_subtitle: "Aylık skorlar, eğilim ve alışkanlık istikrarı.",
-    analytics_kpi_avg: "Günlük ortalama",
-    analytics_kpi_perfect: "Kusursuz gün",
-    analytics_kpi_top: "En istikrarlı",
-    analytics_kpi_focus: "İlgi bekleyen",
-    analytics_chart_title: "Günlük skor",
-    analytics_chart_legend: "Ayın bugüne kadarki her günü için skor",
-    analytics_ranks_title: "Alışkanlık istikrarı",
-    analytics_ranks_legend: "Her rutinin bu ay tamamlanma oranı",
-    analytics_heatmap_title: "Son 365 gün",
-    analytics_heatmap_legend: "Bir güne dokunarak o günün listesini açın.",
+    analytics_title: "Performans Analizi",
+    analytics_subtitle: "Geçmiş ilerleme verileri, eğilim grafiği ve alışkanlık kararlılığı.",
+    analytics_kpi_avg: "Ort. Günlük Skor",
+    analytics_kpi_perfect: "Kusursuz Günler (%100)",
+    analytics_kpi_top: "En Kararlı",
+    analytics_kpi_focus: "Odaklanılması Gereken",
+    analytics_chart_title: "Günlük Skor Eğilimi",
+    analytics_chart_legend: "Aktif ay günleri bazında skor %",
+    analytics_ranks_title: "Alışkanlık Bazında Kararlılık",
+    analytics_ranks_legend: "Bu ayki tamamlanma sıklığı",
+    analytics_heatmap_title: "Yıllık Disiplin Takvimi",
+    analytics_heatmap_legend: "Son 365 gündeki kararlılık ısı haritası. Detaylar için bir güne tıklayın.",
     analytics_heatmap_less: "Az",
     analytics_heatmap_more: "Çok",
     journal_tags_placeholder: "örn: iş, spor, ibadet, aile",
     journal_no_tags: "Etiket yok",
-    finance_desc_placeholder: "İsteğe bağlı",
-    calendar_timeline_title: "Program",
+    finance_health_status: "Finansal Sağlık Durumu: Stabil",
+    finance_inflow_desc: "▲ Aktif Kazançlar",
+    finance_outflow_desc: "▼ Giderler",
+    finance_desc_placeholder: "İşlem açıklaması yazın...",
+    calendar_timeline_title: "Günlük Program Akışı",
     calendar_event_placeholder: "Toplantı, ders, buluşma...",
     calendar_notes_placeholder: "Açıklama veya yer girin...",
     habit_fajr_sunnah_title: "Sabah 2 Rekat Sünnet",
+    habit_fajr_sunnah_desc: "Farz Öncesi İsteğe Bağlı İbadet",
     habit_fajr_fard_title: "Sabah 2 Rekat Farz",
+    habit_fajr_fard_desc: "Sabah Namazı Farzı",
     habit_morning_dhikr_title: "Sabah Evradı / Zikir",
     habit_morning_dhikr_desc: "Güne Başlarken Hatırlama",
     habit_quran_devotion_title: "Kur'an Okuma",
-    habit_quran_devotion_desc: "Günlük vird / tilavet",
+    habit_quran_devotion_desc: "Günlük Vird / Tilavet",
     habit_intellectual_growth_title: "Entelektüel Okuma",
     habit_intellectual_growth_desc: "Kitap Okuma",
     habit_physical_training_title: "Spor ve Egzersiz",
@@ -698,219 +658,229 @@ const TRANSLATIONS = {
     habit_nutritional_fuel_title: "Besleyici Kahvaltı",
     habit_nutritional_fuel_desc: "Sağlıklı Öğün",
     habit_horizon_sync_title: "Ufuk Eşitlemesi",
-    habit_horizon_sync_desc: "Günlük planlama",
+    habit_horizon_sync_desc: "Günlük Planlama & Hedef Hizalama",
     habit_duha_prayer_title: "Duha / Kuşluk Namazı",
+    habit_duha_prayer_desc: "Kuşluk Vakti İbadeti",
     habit_evening_dhikr_title: "Akşam Evradı / Zikir",
     habit_evening_dhikr_desc: "Günü Kapatırken Hatırlama",
     habit_maghrib_fard_title: "Akşam 3 Rekat Farz",
+    habit_maghrib_fard_desc: "Gün Batımı Farzı",
     habit_maghrib_sunnah_title: "Akşam 2 Rekat Sünnet",
+    habit_maghrib_sunnah_desc: "Farz Sonrası Sünnet",
     habit_isha_sunnah1_title: "Yatsı İlk Sünnet",
+    habit_isha_sunnah1_desc: "Farz Öncesi İbadet",
     habit_isha_fard_title: "Yatsı 4 Rekat Farz",
+    habit_isha_fard_desc: "Yatsı Namazı Farzı",
     habit_isha_sunnah2_title: "Yatsı Son Sünnet",
+    habit_isha_sunnah2_desc: "Farz Sonrası İbadet",
     habit_witr_prayer_title: "Vitir Namazı",
+    habit_witr_prayer_desc: "Hanefi Vacib İbadet",
     habit_dhuhr_sunnah1_title: "Öğle İlk Sünnet",
+    habit_dhuhr_sunnah1_desc: "Farz Öncesi İbadet",
     habit_dhuhr_fard_title: "Öğle 4 Rekat Farz",
+    habit_dhuhr_fard_desc: "Öğle Namazı Farzı",
     habit_dhuhr_sunnah2_title: "Öğle Son Sünnet",
+    habit_dhuhr_sunnah2_desc: "Farz Sonrası İbadet",
     habit_asr_sunnah_title: "İkindi Sünneti",
+    habit_asr_sunnah_desc: "Gayri Müekked Sünnet",
     habit_asr_fard_title: "İkindi 4 Rekat Farz",
+    habit_asr_fard_desc: "İkindi Namazı Farzı",
     habit_mind_log_title: "Günlük Yazımı",
     habit_mind_log_desc: "Zihinsel Günlük Tamamlandı",
     habit_fin_flow_title: "FinFlow Eşitlemesi",
     habit_fin_flow_desc: "Günlük Harcamalar Kaydedildi",
+    block_morning_title: "Sabah Rutinleri",
+    block_morning_desc: "Şafaktan Kuşluk Vaktine",
+    block_midday_title: "Öğle ve Öğleden Sonra",
+    block_midday_desc: "Öğleden Akşama",
+    block_dusk_title: "Akşam ve Yatsı",
+    block_dusk_desc: "Gün Batımından Geceye",
+    block_night_title: "Günü Kapatış",
+    block_night_desc: "Uykudan Önce",
     alert_same_accounts: "Kaynak ve hedef hesaplar aynı olamaz!",
     alert_google_load_fail: "Google API kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.",
     alert_google_auth_error: "Google yetkilendirme hatası: ",
-    cat_food: "Market",
-    cat_transport: "Ulaşım",
-    cat_tech: "Teknoloji",
-    cat_bills: "Faturalar",
-    cat_invest: "Yatırım",
-    cat_edu: "Eğitim",
-    cat_income: "Gelir",
-    cat_other: "Diğer",
+    alert_google_sync_success: "Google Takvim başarıyla bağlandı! Verileriniz senkronize ediliyor.",
+    cat_food: "🍔 Gıda & Market",
+    cat_transport: "🚗 Ulaşım & Yakıt",
+    cat_tech: "💻 Yazılım & Cihazlar",
+    cat_bills: "⚡ Faturalar & Abonelikler",
+    cat_invest: "📈 Yatırımlar",
+    cat_edu: "📚 Kitap & Eğitim",
+    cat_income: "💰 İş/Proje Geliri",
+    cat_other: "📦 Diğer",
     acc_cash: "Nakit Cüzdan",
     acc_bank: "Banka Hesabı",
     acc_credit: "Kredi Kartı",
     acc_business: "Şirket Kartı",
-    inspire_perfect: "Kusursuz gün. Hepsi tamam.",
-    inspire_almost: "Az kaldı, birkaç tane daha.",
-    inspire_solid: "İyi gidiyor. Devam et.",
-    inspire_small: "Güzel başlangıç. Küçük adımlar birikir.",
-    inspire_welcome: "Güne ilk rutinini işaretleyerek başla.",
+    inspire_perfect: "🏆 Kusursuz Gün! Ufku temiz tutma konusunda harika bir iş çıkardın!",
+    inspire_almost: "🔥 Neredeyse bitti! %100'e ulaşmak için sadece birkaç rutin kaldı!",
+    inspire_solid: "⚡ Sağlam ilerleme. Gün boyu devam et!",
+    inspire_small: "🚀 Küçük adımlar ivme kazandırır. Bir rutin daha tamamla!",
+    inspire_welcome: "✨ Hoş geldin! İlk rutinini işaretleyerek güne başla.",
+    brief_video_item_title: "Neden Düşeriz? - Odaklanma Motivasyonu",
+    brief_video_item_desc: "Zihinsel dayanıklılık kazanmanıza ve zorlukların üstesinden gelmenize yardımcı olacak güçlü bir video.",
+    focus_video_url_label: "Özel Odaklanma Videosu URL'si (YouTube)",
+    focus_video_save_btn: "Kaydet",
+    focus_video_save_msg: "Video başarıyla kaydedildi!",
+    focus_video_reset_msg: "Video varsayılana sıfırlandı.",
+    focus_video_error_msg: "Geçersiz YouTube URL'si!",
+    brief_video_custom_title: "Kişisel Odaklanma Videosu",
+    brief_video_custom_desc: "Ayarlarınızdan yüklenen özel video oynatılıyor.",
+    back_to_routines: "Rutinlere Geri Dön",
+    back_to_dashboard: "Gösterge Paneline Geri Dön",
+    brief_weather_desc: "İstanbul - Açık & Güneşli",
     kpi_top_none: "Henüz Yok",
     kpi_focus_none: "Henüz Yok",
+    brief_today_events_label: "Etkinlik",
     fin_subtab_daily: "Günlük",
     fin_subtab_calendar: "Takvim",
     fin_subtab_summary: "İstatistik",
     fin_subtab_accounts: "Hesaplar",
-    fin_net_balance: "Net",
+    fin_net_balance: "Net Bakiye",
     fin_add_income: "Gelir",
     fin_add_expense: "Gider",
     fin_add_transfer: "Transfer",
-    fin_select_category: "Lütfen bir kategori seçin.",
+    fin_category_group: "Kategori",
+    fin_select_category: "Kategori Seçin",
     fin_amount_label: "Tutar",
     fin_date_label: "Tarih",
-    fin_desc_label: "Not",
+    fin_desc_label: "Açıklama / Not",
     fin_source_account: "Kaynak Hesap",
     fin_target_account: "Hedef Hesap",
+    fin_adjust_balance: "Bakiyeyi Düzenle",
+    fin_adjust_balance_title: "{account} hesabı için yeni bakiye girin:",
     fin_delete_tx_confirm: "Bu işlemi silmek istediğinize emin misiniz?",
     fin_add_account: "Hesap Ekle",
-    fin_edit_account: "Düzenle",
+    fin_edit_account: "Hesabı Düzenle",
     fin_delete_account: "Hesabı Sil",
     fin_account_name: "Hesap Adı",
     fin_initial_balance: "Bakiye",
     fin_select_icon: "Simge / Emoji",
-    fin_confirm_delete_account: "Bu hesabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-    calendar_disconnect: "Google Takvim Bağlantısını Kes",
-    auth_error: "Şifre hatalı. Lütfen tekrar deneyin.",
-    settings_security_title: "Giriş şifresi",
-    passcode_current: "Mevcut şifre",
-    passcode_new: "Yeni şifre",
-    passcode_confirm: "Yeni şifre (tekrar)",
-    passcode_change_btn: "Şifreyi değiştir",
-    passcode_changed: "Şifre güncellendi.",
-    passcode_wrong_current: "Mevcut şifre yanlış.",
-    passcode_mismatch: "Yeni şifreler eşleşmiyor.",
-    passcode_too_short: "En az 4 karakter kullanın.",
-    backup_title: "Yedekleme ve geri yükleme",
-    backup_desc: "Tüm rutin, günlük, finans ve takvim verilerini JSON dosyası olarak kaydedin. Şifre ve senkron bilgileri dahil edilmez.",
-    backup_download: "Yedeği indir",
-    backup_copy: "Panoya kopyala",
-    backup_restore_file: "Dosyadan geri yükle…",
-    backup_paste_toggle: "Ya da yedek JSON'unu yapıştırın",
-    backup_restore_btn: "Geri yükle",
-    backup_undo: "Son geri yüklemeyi geri al",
-    backup_downloaded: "Yedek dosyası oluşturuldu.",
-    backup_copied: "Yedek panoya kopyalandı.",
-    backup_copy_failed: "Panoya erişilemedi.",
-    backup_invalid: "Bu geçerli bir Horizon yedeği değil.",
-    backup_confirm: "Mevcut veriler bu yedekle değiştirilsin mi?\n\nGün: {days}\nGünlük kaydı: {journal}\nİşlem: {transactions}\nEtkinlik: {events}\n\nMevcut verileriniz saklanır, geri alabilirsiniz.",
-    backup_undo_confirm: "Son geri yüklemeden önceki verilere dönülsün mü?",
-    drive_title: "Google Drive yedeği",
-    drive_desc: "Kendi Google Drive'ınızda tek bir yedek dosyası tutar. Uygulama yalnızca kendi oluşturduğu dosyayı görebilir, Drive'ınızdaki başka hiçbir şeyi göremez.",
-    drive_connect: "Google hesabını bağla",
-    drive_auto: "Değişikliklerden sonra otomatik yedekle",
-    drive_backup_now: "Şimdi yedekle",
-    drive_restore: "Drive'dan geri yükle",
-    drive_never: "hiç",
-    drive_status_signin: "Bağlı değil. Drive'a yedeklemek için Google hesabınızı bağlayın.",
-    drive_no_scope: "Bağlandı ama Drive izni verilmedi. Yeniden bağlanın ve Drive kutusunu işaretleyin.",
-    drive_status_ready: "Bağlı. Son yedek: {time}",
-    drive_status_saving: "Yedekleniyor…",
-    drive_status_conflict: "Drive'da başka bir cihazdan alınmış yedek var. Onu geri yükleyin ya da değiştirmek için \"Şimdi yedekle\"ye basın.",
-    drive_status_error: "Google Drive'a ulaşılamadı. Tekrar deneyin.",
-    drive_no_backup: "Drive'da henüz yedek yok.",
-    drive_overwrite_confirm: "Drive'daki yedek bu cihazdaki verilerle değiştirilsin mi?",
-    nav_today: "Bugün",
-    nav_progress: "İlerleme",
-    nav_journal_short: "Günlük",
-    nav_finance_short: "Finans",
-    nav_more: "Daha",
-    auth_toggle: "Şifreyi göster veya gizle",
-    day_prev: "Önceki gün",
-    day_next: "Sonraki gün",
-    month_prev: "Önceki ay",
-    month_next: "Sonraki ay",
-    month_select_label: "Ay seç",
-    day_count: "{done} / {total} tamamlandı",
-    section_prayers: "Namaz",
-    section_dhikr: "Zikir ve Kur'an",
-    section_growth: "Gelişim",
-    section_close: "Gün sonu",
-    prayer_fajr: "Sabah",
-    prayer_duha: "Kuşluk",
-    prayer_dhuhr: "Öğle",
-    prayer_asr: "İkindi",
-    prayer_maghrib: "Akşam",
-    prayer_isha: "Yatsı",
-    prayer_witr: "Vitir",
-    abbr_sunnah: "S",
-    abbr_fard: "F",
-    abbr_wajib: "V",
-    abbr_nafl: "N",
-    chip_legend: "S: Sünnet · F: Farz · V: Vacip · N: Nafile. Sayılar rekâtı gösterir.",
-    tag_auto: "otomatik",
-    status_done: "tamam",
-    status_left: "{n} eksik",
-    grid_col_dhikr: "Zikir",
-    grid_col_quran: "Kur'an",
-    grid_col_read: "Kitap",
-    grid_col_sport: "Spor",
-    grid_col_fuel: "Beslenme",
-    grid_col_plan: "Plan",
-    grid_col_journal: "Günlük",
-    grid_col_expense: "Harcama",
-    journal_delete_confirm: "Bu günlük kaydı silinsin mi? Geri alınamaz.",
-    cat_cafe: "Kafe",
-    cat_shopping: "Alışveriş",
-    cat_housing: "Konut",
-    cat_health: "Sağlık",
-    cat_entertainment: "Eğlence",
-    cat_salary: "Maaş",
-    cat_freelance: "Ek gelir",
-    cat_gift: "Hediye",
-    calendar_empty: "Bu gün için plan yok.",
-    calendar_untitled: "Başlıksız etkinlik",
-    settings_appearance: "Görünüm",
-    theme_label: "Tema",
-    theme_light: "Açık",
-    theme_night: "Gece",
-    cancel: "Vazgeç"
+    fin_confirm_delete_account: "Bu hesabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz."
   },
   ar: {
-    nav_journal: "اليوميات",
-    nav_finance: "المالية",
+    drive_title: "مزامنة Google Drive",
+    drive_desc: "سجّل الدخول بحساب Google مرة واحدة على كل جهاز. تتم مزامنة العادات والمذكرات والمالية والتقويم تلقائياً عبر مجلد تطبيق خاص في Drive.",
+    drive_connect: "تسجيل الدخول بـ Google",
+    drive_sync_now: "مزامنة الآن",
+    drive_disconnect: "قطع الاتصال",
+    drive_status_off: "محلي فقط. غير متصل.",
+    drive_status_syncing: "جارٍ المزامنة...",
+    drive_status_tap: "انتهت الجلسة. المس الشاشة لمتابعة المزامنة.",
+    drive_status_error: "خطأ في المزامنة",
+    drive_status_ok: "تمت المزامنة",
+    drive_connect_failed: "فشل تسجيل الدخول بـ Google",
+    drive_confirm_disconnect: "هل تريد إيقاف مزامنة Drive؟ ستبقى بياناتك على هذا الجهاز.",
+    analytics_sync_title: "مزامنة Google Drive",
+    analytics_sync_subtitle: "حافظ على تزامن أجهزتك عبر حساب Google",
+    backup_title: "النسخ الاحتياطي",
+    backup_desc: "نزّل جميع البيانات المحلية (العادات، المذكرات، المالية، التقويم) بصيغة JSON أو استعدها من نسخة احتياطية.",
+    backup_export: "تصدير JSON",
+    backup_import: "استيراد JSON",
+    backup_export_ok: "تم تنزيل النسخة الاحتياطية.",
+    backup_import_confirm: "سيتم استبدال البيانات المحلية الحالية. هل تريد المتابعة؟",
+    backup_import_ok: "تمت الاستعادة. جارٍ إعادة التحميل...",
+    backup_import_err: "ملف نسخة احتياطية غير صالح.",
+    passcode_title: "تغيير رمز الدخول",
+    passcode_current: "رمز الدخول الحالي",
+    passcode_new: "رمز دخول جديد (6 أحرف على الأقل)",
+    passcode_confirm: "أعد إدخال الرمز الجديد",
+    passcode_save: "تحديث الرمز",
+    passcode_wrong: "رمز الدخول الحالي غير صحيح.",
+    passcode_short: "يجب أن يتكون الرمز الجديد من 6 أحرف على الأقل.",
+    passcode_mismatch: "الرمزان غير متطابقين.",
+    passcode_changed: "تم تحديث رمز الدخول.",
+    nav_brief: "اللوحة الرئيسية",
+    nav_routines: "العادات اليومية",
+    nav_monthly: "المتابعة الشهرية",
+    nav_journal: "كتابة اليوميات",
+    nav_finance: "الميزانية +FinFlow",
     nav_calendar: "التقويم",
+    nav_analytics: "التحليلات",
     nav_settings: "الإعدادات",
-    nav_lock: "قفل",
+    nav_lock: "قفل لوحة التحكم",
     auth_title: "تعقب هورايزون",
-    auth_sub: "لوحة شخصية",
+    auth_sub: "لوحة تحكم خاصة بمستخدم واحد",
     auth_label: "رمز الدخول",
-    auth_unlock: "فتح القفل",
+    auth_unlock: "فتح اللوحة",
     auth_footer: "© ٢٠٢٦ شركة فيرناس للتقنيات",
-    brief_yesterday_score: "نتيجة أمس",
-    brief_yesterday_spend: "مصروف أمس",
-    brief_today_events: "أحداث اليوم",
-    journal_title: "اليوميات",
-    journal_history: "السجل",
-    journal_new: "جديد",
+    brief_greeting_morning: "صباح الخير، أنس!",
+    brief_greeting_afternoon: "يوم سعيد، أنس!",
+    brief_greeting_evening: "مساء الخير، أنس!",
+    brief_greeting_night: "تصبح على خير، أنس!",
+    brief_sub_morning: "اليوم يوم رائع لتحقيق أهداف جديدة والنمو الشخصي.",
+    brief_sub_afternoon: "استمر في التركيز بقوة على أهدافك بعد الظهر.",
+    brief_sub_evening: "تذكر تصفية ذهنك والاسترخاء في المساء.",
+    brief_sub_night: "النوم الجيد هو أفضل استعداد لنجاح الغد.",
+    brief_ayah_title: "آية التركيز اليومية",
+    brief_ayah_subtitle: "الهداية الروحية لبداية الصباح",
+    brief_yesterday_score: "التزام الأمس",
+    brief_yesterday_spend: "مصاريف الأمس",
+    brief_today_events: "جدول اليوم",
+    brief_weather: "الطقس",
+    brief_video_title: "فيديو التركيز المقترح",
+    brief_video_subtitle: "الدعم التحفيزي لبداية اليوم",
+    journal_title: "اليوميات وتأملات العقل",
+    journal_history: "سجل اليوميات السابق",
+    journal_new: "+ جديد",
     journal_date: "التاريخ",
-    journal_mood: "المزاج",
-    journal_summary: "الملاحظات",
+    journal_mood: "مزاجك اليوم",
+    journal_summary: "ملخص اليوم والحالة الذهنية",
     journal_placeholder: "ماذا حققت اليوم؟ ما هي التحديات التي واجهتها؟ هل هناك أفكار تشغل بالك؟...",
     journal_tags: "الوسوم (مفصولة بفاصلة)",
-    journal_save: "حفظ",
+    journal_save: "حفظ ومزامنة",
     journal_delete: "حذف",
-    journal_empty: "لا توجد مدخلات بعد. اكتب أول يومية.",
-    finance_total_balance: "إجمالي الأصول",
-    finance_monthly_income: "الدخل",
-    finance_monthly_expense: "المصروفات",
-    finance_new_tx: "إضافة معاملة",
+    journal_empty: "لا توجد مذكرات بعد. اكتب مذكرتك الأولى!",
+    finance_title: "لوحة الميزانية +FinFlow",
+    finance_subtitle: "تتبع المعاملات الشخصية والتجارية",
+    finance_total_balance: "صافي الرصيد الإجمالي",
+    finance_monthly_income: "الدخل الشهري",
+    finance_monthly_expense: "المصاريف الشهرية",
+    finance_new_tx: "تسجيل معاملة مالية",
+    finance_tx_type: "النوع",
     finance_tx_income: "دخل",
     finance_tx_expense: "مصروف",
+    finance_tx_transfer: "تحويل مالي",
     finance_account: "الحساب",
+    finance_target_account: "الحساب المستهدف",
     finance_category: "الفئة",
+    finance_amount: "المبلغ (ليرة)",
+    finance_desc: "الوصف",
     finance_save: "حفظ المعاملة",
-    finance_category_title: "حسب الفئة",
-    finance_empty: "لا توجد معاملات هذا الشهر.",
-    calendar_title: "التقويم",
-    calendar_connect: "ربط تقويم جوجل",
-    calendar_add_title: "حدث جديد",
+    fin_adjust_save: "حفظ الرصيد",
+    finance_accounts_title: "ملخص الحسابات",
+    finance_category_title: "توزيع المصاريف الشهرية",
+    finance_history_title: "المعاملات الأخيرة",
+    finance_table_date: "التاريخ",
+    finance_table_desc: "الوصف",
+    finance_table_cat: "الفئة",
+    finance_table_acc: "الحساب",
+    finance_table_amt: "المبلغ",
+    finance_empty: "لا توجد سجلات مالية بعد.",
+    calendar_title: "تقويم جوجل والمذكرة",
+    calendar_subtitle: "عرض جدول اليوم وإضافة مواعيد جديدة.",
+    calendar_connect: "ربط حساب جوجل",
+    calendar_connected: "تم ربط تقويم جوجل بنجاح ✓",
+    calendar_active_day: "اليوم",
+    calendar_add_title: "جدولة موعد جديد",
     calendar_event_title: "عنوان الموعد",
     calendar_start_time: "وقت البدء",
     calendar_end_time: "وقت الانتهاء",
     calendar_notes: "ملاحظات / الموقع",
-    calendar_add_btn: "إضافة حدث",
-    settings_title: "الإعدادات",
-    settings_subtitle: "اللغة ورمز الدخول والنسخ الاحتياطي",
-    language_label: "اللغة",
+    calendar_add_btn: "إضافة إلى الجدول",
+    settings_title: "إعدادات التطبيق",
+    settings_subtitle: "إعدادات اللغة والنسخ الاحتياطي لقاعدة البيانات",
+    language_label: "لغة التطبيق",
     
-
+    // Extended keys
     focus_current_streak: "السلسلة الحالية",
     focus_personal_best: "أفضل سلسلة تاريخية",
+    focus_day_navigator: "مستكشف الأيام",
     focus_today: "اليوم",
-    grid_title: "السجل الشهري",
-    grid_subtitle: "اختر يوماً لفتح قائمته.",
+    focus_completed: "مكتمل",
+    grid_title: "لوحة المتابعة الشهرية",
+    grid_subtitle: "انقر فوق اليوم لعرض تفاصيل العادات اليومية.",
     grid_col_date: "التاريخ",
     grid_col_score: "الالتزام",
     weekday_mon: "الإثنين",
@@ -920,32 +890,37 @@ const TRANSLATIONS = {
     weekday_fri: "الجمعة",
     weekday_sat: "السبت",
     weekday_sun: "الأحد",
-    analytics_title: "التقدّم",
-    analytics_subtitle: "النتائج الشهرية والاتجاه وانتظام العادات.",
-    analytics_kpi_avg: "المعدل اليومي",
-    analytics_kpi_perfect: "الأيام الكاملة",
-    analytics_kpi_top: "الأكثر انتظاماً",
-    analytics_kpi_focus: "يحتاج اهتماماً",
-    analytics_chart_title: "النتيجة اليومية",
-    analytics_chart_legend: "نتيجة كل يوم من الشهر حتى الآن",
-    analytics_ranks_title: "انتظام العادات",
-    analytics_ranks_legend: "نسبة إنجاز كل عادة هذا الشهر",
-    analytics_heatmap_title: "آخر 365 يوماً",
-    analytics_heatmap_legend: "اختر يوماً لفتح قائمته.",
+    analytics_title: "تحليلات الأداء",
+    analytics_subtitle: "بيانات التقدم التاريخية، مخطط الاتجاه، وثبات العادات اليومية.",
+    analytics_kpi_avg: "متوسط ​​الالتزام اليومي",
+    analytics_kpi_perfect: "الأيام المثالية (١٠٠٪)",
+    analytics_kpi_top: "الأكثر التزاماً",
+    analytics_kpi_focus: "بحاجة إلى تركيز",
+    analytics_chart_title: "اتجاه الالتزام اليومي",
+    analytics_chart_legend: "نسبة الالتزام على مدار أيام الشهر",
+    analytics_ranks_title: "ثبات العادات بالتفصيل",
+    analytics_ranks_legend: "تكرار إنجاز العادات هذا الشهر",
+    analytics_heatmap_title: "تقويم الانضباط السنوي",
+    analytics_heatmap_legend: "خريطة الانضباط الحرارية لآخر ٣٦٥ يومًا. انقر على أي يوم للانتقال إلى قائمته.",
     analytics_heatmap_less: "أقل",
     analytics_heatmap_more: "أكثر",
     journal_tags_placeholder: "مثال: العمل، النادي، العبادة، العائلة",
     journal_no_tags: "لا توجد وسوم",
-    finance_desc_placeholder: "اختياري",
-    calendar_timeline_title: "الجدول",
+    finance_health_status: "الحالة المالية: مستقرة",
+    finance_inflow_desc: "▲ التدفقات النشطة",
+    finance_outflow_desc: "▼ المصروفات",
+    finance_desc_placeholder: "أدخل تفاصيل المعاملة المذكورة...",
+    calendar_timeline_title: "جدول المواعيد اليومي",
     calendar_event_placeholder: "اجتماع، درس، تمرين رياضي...",
     calendar_notes_placeholder: "أدخل تفاصيل أو موقع الموعد...",
     habit_fajr_sunnah_title: "سنة الفجر ركعتين",
+    habit_fajr_sunnah_desc: "صلاة نافلة قبل الفريضة",
     habit_fajr_fard_title: "فرض الفجر ركعتين",
+    habit_fajr_fard_desc: "فريضة الصبح",
     habit_morning_dhikr_title: "أذكار الصباح",
     habit_morning_dhikr_desc: "أوراد الصباح والذكر",
     habit_quran_devotion_title: "ورد القرآن الكريم",
-    habit_quran_devotion_desc: "الورد اليومي / التلاوة",
+    habit_quran_devotion_desc: "تلاوة وتدبر يومي",
     habit_intellectual_growth_title: "القراءة والتعلم",
     habit_intellectual_growth_desc: "قراءة كتاب / نمو معرفي",
     habit_physical_training_title: "الرياضة والنشاط البدني",
@@ -953,169 +928,106 @@ const TRANSLATIONS = {
     habit_nutritional_fuel_title: "وجبة فطور صحية",
     habit_nutritional_fuel_desc: "تغذية متوازنة لبدء اليوم",
     habit_horizon_sync_title: "تزامن الأهداف والتخطيط",
-    habit_horizon_sync_desc: "التخطيط اليومي",
+    habit_horizon_sync_desc: "تخطيط يومي ومواءمة الرؤية",
     habit_duha_prayer_title: "صلاة الضحى",
+    habit_duha_prayer_desc: "ركعتي الضحى المباركة",
     habit_evening_dhikr_title: "أذكار المساء",
     habit_evening_dhikr_desc: "أوراد المساء والذكر",
     habit_maghrib_fard_title: "فرض المغرب ٣ ركعات",
+    habit_maghrib_fard_desc: "صلاة المغرب عند الغروب",
     habit_maghrib_sunnah_title: "سنة المغرب ركعتين",
+    habit_maghrib_sunnah_desc: "صلاة سنة بعد فريضة المغرب",
     habit_isha_sunnah1_title: "سنة العشاء القبلية",
+    habit_isha_sunnah1_desc: "أربع ركعات سنة قبل الفرض",
     habit_isha_fard_title: "فرض العشاء ٤ ركعات",
+    habit_isha_fard_desc: "فريضة صلاة العشاء",
     habit_isha_sunnah2_title: "سنة العشاء البعدية",
+    habit_isha_sunnah2_desc: "ركعتين سنة بعد فريضة العشاء",
     habit_witr_prayer_title: "صلاة الوتر",
+    habit_witr_prayer_desc: "ثلاث ركعات وتر واجبة",
     habit_dhuhr_sunnah1_title: "سنة الظهر القبلية",
+    habit_dhuhr_sunnah1_desc: "أربع ركعات سنة قبل الفرض",
     habit_dhuhr_fard_title: "فرض الظهر ٤ ركعات",
+    habit_dhuhr_fard_desc: "فريضة صلاة الظهر",
     habit_dhuhr_sunnah2_title: "سنة الظهر البعدية",
+    habit_dhuhr_sunnah2_desc: "ركعتين سنة بعد فريضة الظهر",
     habit_asr_sunnah_title: "سنة العصر",
+    habit_asr_sunnah_desc: "أربع ركعات سنة غير مؤكدة",
     habit_asr_fard_title: "فرض العصر ٤ ركعات",
+    habit_asr_fard_desc: "فريضة صلاة العصر",
     habit_mind_log_title: "كتابة اليوميات",
     habit_mind_log_desc: "إكمال التدوين اليومي",
     habit_fin_flow_title: "تعقب الميزانية",
     habit_fin_flow_desc: "تسجيل النفقات اليومية كاملة",
+    block_morning_title: "الروتين الصباحي",
+    block_morning_desc: "من الفجر حتى الضحى",
+    block_midday_title: "فترة الظهر والمساء",
+    block_midday_desc: "من صلاة الظهر حتى الغروب",
+    block_dusk_title: "الروتين المسائي",
+    block_dusk_desc: "من الغروب حتى الليل",
+    block_night_title: "ختام اليوم",
+    block_night_desc: "قبل الذهاب للنوم",
     alert_same_accounts: "لا يمكن أن يكون حساب المصدر وحساب الهدف متطابقين!",
     alert_google_load_fail: "تعذر تحميل مكتبة Google API. يرجى التحقق من اتصالك بالإنترنت وتحديث الصفحة.",
     alert_google_auth_error: "خطأ في مصادقة جوجل: ",
-    cat_food: "البقالة",
-    cat_transport: "المواصلات",
-    cat_tech: "التقنية",
-    cat_bills: "الفواتير",
-    cat_invest: "الاستثمار",
-    cat_edu: "التعليم",
-    cat_income: "الدخل",
-    cat_other: "أخرى",
+    alert_google_sync_success: "تم ربط تقويم جوجل بنجاح! يتم الآن مزامنة بياناتك.",
+    cat_food: "🍔 الغذاء والبقالة",
+    cat_transport: "🚗 النقل والوقود",
+    cat_tech: "💻 البرمجيات والأجهزة",
+    cat_bills: "⚡ الفواتير والاشتراكات",
+    cat_invest: "📈 الاستثمارات",
+    cat_edu: "📚 الكتب والتعليم",
+    cat_income: "💰 دخل العمل/المشروع",
+    cat_other: "📦 أخرى",
     acc_cash: "المحفظة النقدية",
     acc_bank: "الحساب البنكي",
     acc_credit: "بطاقة الائتمان",
     acc_business: "بطاقة الشركة",
-    inspire_perfect: "يوم كامل. أُنجز كل شيء.",
-    inspire_almost: "اقتربت، بقي القليل.",
-    inspire_solid: "تقدّم جيد. واصل.",
-    inspire_small: "بداية طيبة. الخطوات الصغيرة تتراكم.",
-    inspire_welcome: "ابدأ يومك بأول عادة.",
+    inspire_perfect: "🏆 يوم مثالي! عمل رائع في الحفاظ على أهدافك واضحة!",
+    inspire_almost: "🔥 شارفنا على الانتهاء! فقط القليل من العادات للوصول إلى 100٪!",
+    inspire_solid: "⚡ تقدم ملموس. استمر في السعي طوال اليوم!",
+    inspire_small: "🚀 الخطوات الصغيرة تبني الزخم. أكمل عادة أخرى!",
+    inspire_welcome: "✨ مرحبًا بك! ابدأ يومك بتحديد أول عادة لك.",
+    brief_video_item_title: "لماذا نسقط؟ - تحفيز التركيز",
+    brief_video_item_desc: "فيديو قوي لمساعدتك على بناء التركيز والقوة الذهنية وتجاوز الأوقات الصعبة.",
+    focus_video_url_label: "رابط فيديو التركيز المخصص (يوتيوب)",
+    focus_video_save_btn: "حفظ",
+    focus_video_save_msg: "تم حفظ الفيديو بنجاح!",
+    focus_video_reset_msg: "تم إعادة تعيين الفيديو إلى الافتراضي.",
+    focus_video_error_msg: "رابط يوتيوب غير صالح!",
+    brief_video_custom_title: "فيديو التركيز المخصص",
+    brief_video_custom_desc: "يتم تشغيل الفيديو المخصص المحمل من إعداداتك.",
+    back_to_routines: "العودة إلى العادات",
+    back_to_dashboard: "العودة إلى لوحة التحكم",
+    brief_weather_desc: "اسطنبول - مشمس وصافٍ",
     kpi_top_none: "لا يوجد بعد",
     kpi_focus_none: "لا يوجد بعد",
+    brief_today_events_label: "فعاليات",
     fin_subtab_daily: "يومي",
     fin_subtab_calendar: "التقويم",
     fin_subtab_summary: "إحصائيات",
     fin_subtab_accounts: "الحسابات",
-    fin_net_balance: "الصافي",
+    fin_net_balance: "صافي الرصيد",
     fin_add_income: "دخل",
     fin_add_expense: "مصروف",
     fin_add_transfer: "تحويل",
-    fin_select_category: "يرجى اختيار فئة.",
+    fin_category_group: "الفئة",
+    fin_select_category: "اختر الفئة",
     fin_amount_label: "المبلغ",
     fin_date_label: "التاريخ",
-    fin_desc_label: "ملاحظة",
+    fin_desc_label: "الوصف / ملاحظة",
     fin_source_account: "من حساب",
     fin_target_account: "إلى حساب",
+    fin_adjust_balance: "تعديل الرصيد",
+    fin_adjust_balance_title: "أدخل الرصيد الجديد لحساب {account}:",
     fin_delete_tx_confirm: "هل أنت متأكد من رغبتك في حذف هذه المعاملة؟",
     fin_add_account: "إضافة حساب",
-    fin_edit_account: "تعديل",
+    fin_edit_account: "تعديل الحساب",
     fin_delete_account: "حذف الحساب",
     fin_account_name: "اسم الحساب",
     fin_initial_balance: "الرصيد",
     fin_select_icon: "الرمز",
-    fin_confirm_delete_account: "هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء.",
-    calendar_disconnect: "فصل تقويم جوجل",
-    auth_error: "رمز الدخول غير صحيح. حاول مرة أخرى.",
-    settings_security_title: "رمز الدخول",
-    passcode_current: "الرمز الحالي",
-    passcode_new: "الرمز الجديد",
-    passcode_confirm: "أعد إدخال الرمز الجديد",
-    passcode_change_btn: "تغيير الرمز",
-    passcode_changed: "تم تحديث رمز الدخول.",
-    passcode_wrong_current: "الرمز الحالي غير صحيح.",
-    passcode_mismatch: "الرمزان الجديدان غير متطابقين.",
-    passcode_too_short: "استخدم ٤ أحرف على الأقل.",
-    backup_title: "النسخ الاحتياطي والاستعادة",
-    backup_desc: "احفظ جميع بيانات العادات واليوميات والمالية والتقويم في ملف JSON. لا يتضمن رمز الدخول وبيانات المزامنة.",
-    backup_download: "تنزيل النسخة الاحتياطية",
-    backup_copy: "نسخ إلى الحافظة",
-    backup_restore_file: "استعادة من ملف…",
-    backup_paste_toggle: "أو الصق نص النسخة الاحتياطية",
-    backup_restore_btn: "استعادة",
-    backup_undo: "التراجع عن آخر استعادة",
-    backup_downloaded: "تم إنشاء ملف النسخة الاحتياطية.",
-    backup_copied: "تم نسخ النسخة الاحتياطية إلى الحافظة.",
-    backup_copy_failed: "تعذّر الوصول إلى الحافظة.",
-    backup_invalid: "هذه ليست نسخة احتياطية صالحة من Horizon.",
-    backup_confirm: "هل تريد استبدال البيانات الحالية بهذه النسخة؟\n\nالأيام: {days}\nاليوميات: {journal}\nالمعاملات: {transactions}\nالأحداث: {events}\n\nستُحفظ بياناتك الحالية ويمكنك التراجع.",
-    backup_undo_confirm: "هل تريد العودة إلى البيانات السابقة لآخر استعادة؟",
-    drive_title: "نسخة احتياطية على Google Drive",
-    drive_desc: "يحفظ ملف نسخة احتياطية واحداً في Google Drive الخاص بك. لا يرى التطبيق إلا الملف الذي أنشأه، ولا شيء آخر في Drive.",
-    drive_connect: "ربط حساب جوجل",
-    drive_auto: "نسخ احتياطي تلقائي بعد التغييرات",
-    drive_backup_now: "انسخ الآن",
-    drive_restore: "استعادة من Drive",
-    drive_never: "أبداً",
-    drive_status_signin: "غير متصل. اربط حساب جوجل للنسخ الاحتياطي إلى Drive.",
-    drive_no_scope: "تم الاتصال لكن لم يُمنح إذن Drive. اتصل مجدداً وحدّد خانة Drive.",
-    drive_status_ready: "متصل. آخر نسخة احتياطية: {time}",
-    drive_status_saving: "جارٍ النسخ الاحتياطي…",
-    drive_status_conflict: "توجد في Drive نسخة من جهاز آخر. استعدها أو اضغط «انسخ الآن» لاستبدالها.",
-    drive_status_error: "تعذّر الوصول إلى Google Drive. حاول مرة أخرى.",
-    drive_no_backup: "لا توجد نسخة احتياطية في Drive بعد.",
-    drive_overwrite_confirm: "هل تريد استبدال النسخة الموجودة في Drive ببيانات هذا الجهاز؟",
-    nav_today: "اليوم",
-    nav_progress: "التقدّم",
-    nav_journal_short: "اليوميات",
-    nav_finance_short: "المالية",
-    nav_more: "المزيد",
-    auth_toggle: "إظهار أو إخفاء الرمز",
-    day_prev: "اليوم السابق",
-    day_next: "اليوم التالي",
-    month_prev: "الشهر السابق",
-    month_next: "الشهر التالي",
-    month_select_label: "اختر الشهر",
-    day_count: "أُنجز {done} من {total}",
-    section_prayers: "الصلوات",
-    section_dhikr: "الأذكار والقرآن",
-    section_growth: "التطوير",
-    section_close: "ختام اليوم",
-    prayer_fajr: "الفجر",
-    prayer_duha: "الضحى",
-    prayer_dhuhr: "الظهر",
-    prayer_asr: "العصر",
-    prayer_maghrib: "المغرب",
-    prayer_isha: "العشاء",
-    prayer_witr: "الوتر",
-    abbr_sunnah: "س",
-    abbr_fard: "ف",
-    abbr_wajib: "و",
-    abbr_nafl: "ن",
-    chip_legend: "س: سنة · ف: فرض · و: واجب · ن: نافلة. الأرقام عدد الركعات.",
-    tag_auto: "تلقائي",
-    status_done: "تمّ",
-    status_left: "بقي {n}",
-    grid_col_dhikr: "الأذكار",
-    grid_col_quran: "القرآن",
-    grid_col_read: "القراءة",
-    grid_col_sport: "الرياضة",
-    grid_col_fuel: "التغذية",
-    grid_col_plan: "الخطة",
-    grid_col_journal: "اليوميات",
-    grid_col_expense: "المصروف",
-    journal_delete_confirm: "هل تريد حذف هذه اليومية؟ لا يمكن التراجع.",
-    mood_awesome: "ممتاز",
-    mood_good: "جيد",
-    mood_neutral: "عادي",
-    mood_tired: "متعب",
-    mood_bad: "سيئ",
-    cat_cafe: "مقهى",
-    cat_shopping: "التسوق",
-    cat_housing: "السكن",
-    cat_health: "الصحة",
-    cat_entertainment: "الترفيه",
-    cat_salary: "الراتب",
-    cat_freelance: "دخل إضافي",
-    cat_gift: "هدية",
-    calendar_empty: "لا شيء مخطط لهذا اليوم.",
-    calendar_untitled: "حدث بلا عنوان",
-    settings_appearance: "المظهر",
-    theme_label: "السمة",
-    theme_light: "فاتح",
-    theme_night: "ليلي",
-    cancel: "إلغاء"
+    fin_confirm_delete_account: "هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء."
   }
 };
 
@@ -1125,43 +1037,6 @@ function formatDateKey(date) {
   const m = String(date.getMonth() + 1).padStart(2, '0');
   const d = String(date.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
-}
-
-// Parse "YYYY-MM-DD" as a local date (new Date("YYYY-MM-DD") is UTC and shifts the day west of GMT).
-function parseDateKey(key) {
-  const [y, m, d] = key.split('-').map(Number);
-  return new Date(y, m - 1, d);
-}
-
-const APP_LOCALES = { en: 'en-US', tr: 'tr-TR', ar: 'ar-u-nu-latn' };
-function appLocale() {
-  return APP_LOCALES[STATE.language] || 'en-US';
-}
-
-function escapeHTML(value) {
-  return String(value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
-}
-
-function formatMoney(amount, fractionDigits = 2) {
-  return `${amount.toLocaleString(appLocale(), { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })} TL`;
-}
-
-function scoreClass(pct) {
-  if (pct === 100) return 'score-100';
-  if (pct >= 50) return 'score-med';
-  return pct > 0 ? 'score-low' : 'score-0';
-}
-
-// Earliest day that has at least one completed routine, or null.
-function getEarliestActiveDate() {
-  let earliest = null;
-  Object.keys(STATE.db).forEach(key => {
-    if (!/^\d{4}-\d{2}-\d{2}$/.test(key)) return;
-    const day = STATE.db[key];
-    if (!day || !Object.values(day).some(v => v === true)) return;
-    if (earliest === null || key < earliest) earliest = key;
-  });
-  return earliest ? parseDateKey(earliest) : null;
 }
 
 // Setup virtual keypad handler with desktop physical keyboard filtering
@@ -1291,7 +1166,7 @@ const StorageManager = {
 
   saveDatabase() {
     localStorage.setItem('hrt_db', JSON.stringify(STATE.db));
-    DriveBackup.schedule();
+    DriveSync.markChanged('db');
   },
 
   loadJournal() {
@@ -1301,7 +1176,7 @@ const StorageManager = {
 
   saveJournal() {
     localStorage.setItem('hrt_journal', JSON.stringify(STATE.journal));
-    DriveBackup.schedule();
+    DriveSync.markChanged('journal');
   },
 
   loadFinance() {
@@ -1327,8 +1202,10 @@ const StorageManager = {
     } else {
       STATE.finance = {
         accounts: {
-          cash: { name: "Cash Wallet", balance: 0 },
-          bank: { name: "Bank Account", balance: 0 }
+          cash:     { name: "Cash Wallet",   balance: 1500  },
+          bank:     { name: "Bank Account",  balance: 8450  },
+          credit:   { name: "Credit Card",   balance: -450  },
+          business: { name: "Business Card", balance: 24500 }
         },
         transactions: []
       };
@@ -1338,7 +1215,7 @@ const StorageManager = {
 
   saveFinance() {
     localStorage.setItem('hrt_finance', JSON.stringify(STATE.finance));
-    DriveBackup.schedule();
+    DriveSync.markChanged('finance');
   },
 
   loadCalendar() {
@@ -1362,13 +1239,19 @@ const StorageManager = {
         STATE.calendar = [];
       }
     } else {
-      STATE.calendar = [];
+      const todayKey = formatDateKey(new Date());
+      STATE.calendar = [
+        { id: "cal-1", title: "Firnas Team Sync 🚀", startTime: "09:30", endTime: "10:30", desc: "Daily coordination & tech reviews", date: todayKey, isLocal: true },
+        { id: "cal-2", title: "Project Review Meeting 🎯", startTime: "13:00", endTime: "14:15", desc: "Briefing new updates on Life OS", date: todayKey, isLocal: true },
+        { id: "cal-3", title: "Gym Session 🏋️", startTime: "18:00", endTime: "19:30", desc: "Chest day & cardio workout", date: todayKey, isLocal: true }
+      ];
+      this.saveCalendar();
     }
   },
 
   saveCalendar() {
     localStorage.setItem('hrt_calendar', JSON.stringify(STATE.calendar));
-    DriveBackup.schedule();
+    DriveSync.markChanged('calendar');
   },
 
   getDayState(dateKey) {
@@ -1428,9 +1311,18 @@ const StorageManager = {
 // ================= DUAL CALENDAR ENGINE =================
 const CalendarEngine = {
   getGregorianString(date) {
-    const options = { weekday: 'long', month: 'long', day: 'numeric' };
-    if (date.getFullYear() !== new Date().getFullYear()) options.year = 'numeric';
-    return date.toLocaleDateString(appLocale(), options);
+    const localeMap = {
+      en: 'en-US',
+      tr: 'tr-TR',
+      ar: 'ar-EG'
+    };
+    const locale = localeMap[STATE.language] || 'en-US';
+    return date.toLocaleDateString(locale, {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric'
+    });
   },
 
   hijriMonths: {
@@ -1470,7 +1362,7 @@ const CalendarEngine = {
 
   getHijriString(date) {
     const parts = this.getHijriParts(date);
-    if (!parts) return '';
+    if (!parts) return 'Hijri Calendar Error';
     
     const lang = STATE.language || 'en';
     const monthList = this.hijriMonths[lang] || this.hijriMonths.en;
@@ -1527,8 +1419,8 @@ const StreakEngine = {
   computeStreaks() {
     StorageManager.loadDatabase();
     
+    const startCycle = new Date(2026, 5, 1); // June 1, 2026
     const today = new Date(STATE.todayDate.getFullYear(), STATE.todayDate.getMonth(), STATE.todayDate.getDate());
-    const startCycle = getEarliestActiveDate() || today;
     
     let tempDate = new Date(startCycle);
     const dayScores = {};
@@ -1610,133 +1502,312 @@ const StreakEngine = {
   }
 };
 
-// ================= GOOGLE DRIVE BACKUP =================
-// One JSON file (BackupManager format) in the user's own Drive, via the drive.file scope.
-// LAST_KEY holds the file's modifiedTime as of our last upload or restore; if Drive reports a
-// different time, another device wrote it, and we never overwrite that without asking.
-const DriveBackup = {
-  FILE_NAME: 'horizon-backup.json',
-  FILE_ID_KEY: 'hrt_drive_file_id',
-  LAST_KEY: 'hrt_drive_last_backup',
-  AUTO_KEY: 'hrt_drive_auto',
-  DELAY_MS: 5000,
-  timer: null,
-  lastUploaded: null,
-  state: 'idle', // idle | saving | conflict | error | signin
-  message: '',
+// ================= GOOGLE DRIVE SYNC =================
+// All data lives in one JSON file inside the user's hidden Drive "appDataFolder".
+// Merge is per-record (each day / journal entry) with last-write-wins timestamps.
+const GOOGLE_CLIENT_ID = "335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.googleusercontent.com";
+const GOOGLE_SCOPES = "https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/calendar.readonly";
+const DRIVE_FILE_NAME = "horizon-sync.json";
 
-  token() {
-    const token = UIController.getGoogleAccessTokenSync();
-    const scopes = localStorage.getItem('google_token_scopes') || '';
-    return token && scopes.includes(GOOGLE_DRIVE_SCOPE) ? token : null;
+const DriveSync = {
+  _tokenClient: null,
+  _syncing: false,
+  _again: false,
+  _timer: null,
+  _waitingGesture: false,
+  onApplied: null,   // UI re-render callback
+  onStatus: null,    // (state, message) status callback
+
+  isEnabled() { return localStorage.getItem('drive_sync_enabled') === '1'; },
+
+  status(state, msg) {
+    this.lastState = state;
+    this.lastMsg = msg || '';
+    if (this.onStatus) this.onStatus(state, msg);
   },
 
-  isAuto() {
-    return localStorage.getItem(this.AUTO_KEY) !== '0';
+  // ---------- Auth (Google Identity Services token client) ----------
+  _cachedToken() {
+    const t = localStorage.getItem('google_access_token');
+    const exp = parseInt(localStorage.getItem('google_token_expiry') || '0', 10);
+    return (t && Date.now() < exp - 60000) ? t : null;
   },
 
-  setState(state, message = '') {
-    this.state = state;
-    this.message = message;
-    UIController.refreshDriveUI();
-  },
-
-  async api(path, options = {}) {
-    const response = await fetch(`https://www.googleapis.com${path}`, {
-      ...options,
-      headers: { 'Authorization': `Bearer ${this.token()}`, ...(options.headers || {}) }
+  _requestToken(prompt) {
+    return new Promise((resolve) => {
+      if (!window.google || !google.accounts || !google.accounts.oauth2) return resolve(null);
+      if (!this._tokenClient) {
+        this._tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: GOOGLE_SCOPES,
+          callback: () => {}
+        });
+      }
+      this._tokenClient.callback = (resp) => {
+        if (resp && resp.access_token) {
+          localStorage.setItem('google_access_token', resp.access_token);
+          localStorage.setItem('google_token_expiry', String(Date.now() + (resp.expires_in || 3600) * 1000));
+          resolve(resp.access_token);
+        } else resolve(null);
+      };
+      this._tokenClient.error_callback = () => resolve(null);
+      try { this._tokenClient.requestAccessToken({ prompt }); } catch (e) { resolve(null); }
     });
-    if (response.status === 401) UIController.clearGoogleToken();
-    return response;
   },
 
-  // Returns { id, modifiedTime } for the backup file, or null when there is none.
-  async findRemote() {
-    const cachedId = localStorage.getItem(this.FILE_ID_KEY);
-    if (cachedId) {
-      const res = await this.api(`/drive/v3/files/${cachedId}?fields=id,modifiedTime,trashed`);
-      if (res.ok) {
-        const file = await res.json();
-        if (!file.trashed) return file;
-      } else if (res.status !== 404) {
-        throw new Error('drive_status_error');
-      }
-      localStorage.removeItem(this.FILE_ID_KEY);
+  // Interactive connect (must be called from a click)
+  async connect() {
+    const token = await this._requestToken('consent');
+    if (!token) throw new Error('auth');
+    localStorage.setItem('drive_sync_enabled', '1');
+    await this.sync();
+    return token;
+  },
+
+  // Returns a valid token without user interaction, or null.
+  // If expired, silently renews on the next tap/click (browsers block popups without a gesture).
+  async getToken() {
+    const cached = this._cachedToken();
+    if (cached) return cached;
+    if (!this.isEnabled()) return null;
+    if (!this._waitingGesture) {
+      this._waitingGesture = true;
+      this.status('tap');
+      const once = async () => {
+        document.removeEventListener('click', once, true);
+        document.removeEventListener('touchend', once, true);
+        this._waitingGesture = false;
+        const t = await this._requestToken('');
+        if (t) this.sync();
+      };
+      document.addEventListener('click', once, true);
+      document.addEventListener('touchend', once, true);
     }
-    const q = encodeURIComponent(`name='${this.FILE_NAME}' and trashed=false`);
-    const res = await this.api(`/drive/v3/files?q=${q}&orderBy=modifiedTime%20desc&pageSize=1&fields=files(id,modifiedTime)`);
-    if (!res.ok) throw new Error('drive_status_error');
-    const file = ((await res.json()).files || [])[0] || null;
-    if (file) localStorage.setItem(this.FILE_ID_KEY, file.id);
-    return file;
+    return null;
   },
 
-  async upload({ force = false } = {}) {
-    if (!this.token()) return this.setState('signin');
-    const body = BackupManager.toJSON();
-    const fingerprint = JSON.stringify(BackupManager.build().data);
-    if (!force && fingerprint === this.lastUploaded) return;
-    this.setState('saving');
-    try {
-      const remote = await this.findRemote();
-      if (remote && !force && remote.modifiedTime !== localStorage.getItem(this.LAST_KEY)) {
-        return this.setState('conflict');
-      }
-      let res;
-      if (remote) {
-        res = await this.api(`/upload/drive/v3/files/${remote.id}?uploadType=media&fields=id,modifiedTime`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body
-        });
+  disconnect() {
+    const t = localStorage.getItem('google_access_token');
+    if (t && window.google && google.accounts && google.accounts.oauth2) {
+      try { google.accounts.oauth2.revoke(t, () => {}); } catch (e) {}
+    }
+    ['drive_sync_enabled', 'drive_file_id', 'google_access_token', 'google_token_expiry', 'drive_last_sync']
+      .forEach(k => localStorage.removeItem(k));
+    this.status('off');
+  },
+
+  // ---------- Change tracking ----------
+  _meta() {
+    try { return JSON.parse(localStorage.getItem('hrt_sync_meta')) || {}; } catch (e) { return {}; }
+  },
+  _saveMeta(m) { localStorage.setItem('hrt_sync_meta', JSON.stringify(m)); },
+  _read(key, fallback) {
+    try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : fallback; } catch (e) { return fallback; }
+  },
+
+  // Called after every local save: stamps changed records, then schedules an upload.
+  markChanged(kind) {
+    const meta = this._meta();
+    const now = Date.now();
+    const snap = this._snap || (this._snap = {});
+    if (kind === 'db' || kind === 'journal') {
+      const src = this._read(kind === 'db' ? 'hrt_db' : 'hrt_journal', {});
+      const prev = snap[kind] || {};
+      const m = meta[kind] || (meta[kind] = {});
+      const next = {};
+      Object.keys(src).forEach(k => {
+        const j = JSON.stringify(src[k]);
+        next[k] = j;
+        // Auto-created blank days (all false) must not overwrite real data from another device
+        const blank = !(k in prev) && src[k] && typeof src[k] === 'object' && !Object.values(src[k]).some(v => v === true || (typeof v === 'string' && v));
+        if (snap[kind] && prev[k] !== j && !blank) m[k] = { t: now };
+      });
+      if (snap[kind]) Object.keys(prev).forEach(k => { if (!(k in src)) m[k] = { t: now, d: 1 }; });
+      snap[kind] = next;
+    } else {
+      const j = localStorage.getItem(kind === 'finance' ? 'hrt_finance' : 'hrt_calendar');
+      if (snap[kind] != null && snap[kind] !== j) meta[kind] = now; // first-run seed data is not stamped
+      snap[kind] = j;
+    }
+    this._saveMeta(meta);
+    if (this.isEnabled()) this.schedule();
+  },
+
+  // Build the snapshot baseline from current storage (no timestamps changed)
+  primeSnapshot() {
+    this._snap = null;
+    ['db', 'journal', 'finance', 'calendar'].forEach(k => {
+      const meta = this._meta();
+      this._snap = this._snap || {};
+      if (k === 'db' || k === 'journal') {
+        const src = this._read(k === 'db' ? 'hrt_db' : 'hrt_journal', {});
+        this._snap[k] = {};
+        Object.keys(src).forEach(x => this._snap[k][x] = JSON.stringify(src[x]));
       } else {
-        const boundary = 'horizon' + Date.now();
-        const meta = JSON.stringify({ name: this.FILE_NAME, mimeType: 'application/json' });
-        res = await this.api('/upload/drive/v3/files?uploadType=multipart&fields=id,modifiedTime', {
-          method: 'POST',
-          headers: { 'Content-Type': `multipart/related; boundary=${boundary}` },
-          body: `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${boundary}--`
-        });
+        this._snap[k] = localStorage.getItem(k === 'finance' ? 'hrt_finance' : 'hrt_calendar');
       }
-      if (!res.ok) throw new Error('drive_status_error');
-      const file = await res.json();
-      localStorage.setItem(this.FILE_ID_KEY, file.id);
-      localStorage.setItem(this.LAST_KEY, file.modifiedTime);
-      this.lastUploaded = fingerprint;
-      this.setState('idle');
-    } catch (e) {
-      if (this.token()) this.setState('error');
-    }
+      this._saveMeta(meta);
+    });
   },
 
-  // Debounced automatic backup after any data change.
   schedule() {
-    if (!this.isAuto() || !this.token() || this.state === 'conflict') return;
-    clearTimeout(this.timer);
-    this.timer = setTimeout(() => this.upload(), this.DELAY_MS);
+    clearTimeout(this._timer);
+    this._timer = setTimeout(() => this.sync(), 2500);
   },
 
-  async download() {
-    if (!this.token()) throw new Error('drive_status_signin');
-    const remote = await this.findRemote();
-    if (!remote) throw new Error('drive_no_backup');
-    const res = await this.api(`/drive/v3/files/${remote.id}?alt=media`);
-    if (!res.ok) throw new Error('drive_status_error');
-    return { text: await res.text(), modifiedTime: remote.modifiedTime };
+  // ---------- Drive file I/O ----------
+  async _api(token, url, opts = {}) {
+    const res = await fetch(url, { ...opts, headers: { Authorization: `Bearer ${token}`, ...(opts.headers || {}) } });
+    if (res.status === 401) {
+      localStorage.removeItem('google_access_token');
+      throw new Error('401');
+    }
+    if (!res.ok) throw new Error(`Drive ${res.status}`);
+    return res;
   },
 
-  // On load / connect: flag a backup written elsewhere so it is not silently overwritten.
-  async checkRemote() {
-    if (!this.token()) return;
+  async _findFile(token) {
+    const cached = localStorage.getItem('drive_file_id');
+    if (cached) return cached;
+    const q = encodeURIComponent(`name='${DRIVE_FILE_NAME}'`);
+    const res = await this._api(token, `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=${q}&fields=files(id,modifiedTime)&orderBy=modifiedTime desc`);
+    const data = await res.json();
+    const id = data.files && data.files[0] ? data.files[0].id : null;
+    if (id) localStorage.setItem('drive_file_id', id);
+    return id;
+  },
+
+  async _download(token, id) {
     try {
-      const remote = await this.findRemote();
-      if (remote && remote.modifiedTime !== localStorage.getItem(this.LAST_KEY)) {
-        this.setState('conflict');
-      } else {
-        this.setState('idle');
-      }
+      const res = await this._api(token, `https://www.googleapis.com/drive/v3/files/${id}?alt=media`);
+      return await res.json();
     } catch (e) {
-      if (this.token()) this.setState('error');
+      if (String(e.message).includes('404')) { localStorage.removeItem('drive_file_id'); return null; }
+      throw e;
+    }
+  },
+
+  async _upload(token, id, payload) {
+    const body = JSON.stringify(payload);
+    if (id) {
+      await this._api(token, `https://www.googleapis.com/upload/drive/v3/files/${id}?uploadType=media`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body
+      });
+      return id;
+    }
+    const boundary = 'hrt' + Date.now();
+    const multipart =
+      `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n` +
+      JSON.stringify({ name: DRIVE_FILE_NAME, parents: ['appDataFolder'] }) +
+      `\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${boundary}--`;
+    const res = await this._api(token, 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
+      method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${boundary}` }, body: multipart
+    });
+    const data = await res.json();
+    localStorage.setItem('drive_file_id', data.id);
+    return data.id;
+  },
+
+  // ---------- Merge ----------
+  _localPayload() {
+    const meta = this._meta();
+    const recs = (kind, storeKey) => {
+      const src = this._read(storeKey, {});
+      const m = meta[kind] || {};
+      const out = {};
+      Object.keys(src).forEach(k => out[k] = { t: (m[k] && m[k].t) || 0, v: src[k] });
+      Object.keys(m).forEach(k => { if (m[k].d && !(k in src)) out[k] = { t: m[k].t, d: 1 }; });
+      return out;
+    };
+    return {
+      app: 'horizon-tracker', v: 1,
+      db: recs('db', 'hrt_db'),
+      journal: recs('journal', 'hrt_journal'),
+      finance: { t: meta.finance || 0, v: this._read('hrt_finance', null) },
+      calendar: { t: meta.calendar || 0, v: this._read('hrt_calendar', null) },
+      best_streak: parseInt(localStorage.getItem('hrt_best_streak') || '0', 10)
+    };
+  },
+
+  _mergeRecords(a = {}, b = {}, orMerge) {
+    const out = {};
+    new Set([...Object.keys(a), ...Object.keys(b)]).forEach(k => {
+      const x = a[k], y = b[k];
+      if (!x) { out[k] = y; return; }
+      if (!y) { out[k] = x; return; }
+      if (x.t !== y.t) { out[k] = x.t > y.t ? x : y; return; }
+      // Equal timestamps (e.g. data from before sync existed): combine safely
+      if (orMerge && x.v && y.v) {
+        const v = { ...y.v };
+        Object.keys(x.v).forEach(f => { v[f] = (x.v[f] === true || y.v[f] === true) ? true : (y.v[f] ?? x.v[f]); });
+        out[k] = { t: x.t, v };
+      } else out[k] = y.d ? x : y;
+    });
+    return out;
+  },
+
+  _merge(local, remote) {
+    if (!remote || remote.app !== 'horizon-tracker') return local;
+    const pick = (a, b) => (!b || !b.v) ? a : (!a || !a.v) ? b : (a.t > b.t ? a : b);
+    return {
+      app: 'horizon-tracker', v: 1,
+      db: this._mergeRecords(local.db, remote.db, true),
+      journal: this._mergeRecords(local.journal, remote.journal, false),
+      finance: pick(local.finance, remote.finance),
+      calendar: pick(local.calendar, remote.calendar),
+      best_streak: Math.max(local.best_streak || 0, remote.best_streak || 0)
+    };
+  },
+
+  _applyLocal(p) {
+    const meta = { db: {}, journal: {}, finance: p.finance.t, calendar: p.calendar.t };
+    const unpack = (kind, storeKey) => {
+      const out = {};
+      Object.entries(p[kind] || {}).forEach(([k, r]) => {
+        if (r.d) meta[kind][k] = { t: r.t, d: 1 };
+        else { out[k] = r.v; if (r.t) meta[kind][k] = { t: r.t }; }
+      });
+      localStorage.setItem(storeKey, JSON.stringify(out));
+    };
+    unpack('db', 'hrt_db');
+    unpack('journal', 'hrt_journal');
+    if (p.finance.v) localStorage.setItem('hrt_finance', JSON.stringify(p.finance.v));
+    if (p.calendar.v) localStorage.setItem('hrt_calendar', JSON.stringify(p.calendar.v));
+    localStorage.setItem('hrt_best_streak', String(p.best_streak || 0));
+    this._saveMeta(meta);
+    this.primeSnapshot();
+  },
+
+  // ---------- Full sync: download → merge → save locally → upload ----------
+  async sync() {
+    if (!this.isEnabled()) return;
+    if (this._syncing) { this._again = true; return; }
+    this._syncing = true;
+    try {
+      const token = await this.getToken();
+      if (!token) return;
+      this.status('syncing');
+      const id = await this._findFile(token);
+      const remote = id ? await this._download(token, id) : null;
+      const local = this._localPayload();
+      const merged = this._merge(local, remote);
+      const mergedJson = JSON.stringify(merged);
+      if (mergedJson !== JSON.stringify(local)) {
+        this._applyLocal(merged);
+        if (this.onApplied) this.onApplied();
+      }
+      if (!remote || mergedJson !== JSON.stringify(remote)) {
+        await this._upload(token, localStorage.getItem('drive_file_id'), merged);
+      }
+      localStorage.setItem('drive_last_sync', String(Date.now()));
+      this.status('ok');
+    } catch (e) {
+      console.error('Drive sync failed:', e);
+      if (e.message === '401') { this.getToken(); }
+      else this.status('error', e.message);
+    } finally {
+      this._syncing = false;
+      if (this._again) { this._again = false; this.schedule(); }
     }
   }
 };
@@ -1749,7 +1820,7 @@ const AudioFeedback = {
     if (!this.ctx) {
       this.ctx = new (window.AudioContext || window.webkitAudioContext)();
     }
-    if (this.ctx && this.ctx.state === "suspended") {
+    if (this.ctx && this.ctx.state === 'suspended') {
       this.ctx.resume().catch(e => console.warn("Failed to resume AudioContext:", e));
     }
   },
@@ -1873,6 +1944,7 @@ const UIController = {
     trendChartContainer: document.getElementById('trend-chart-container'),
     analyticsHabitList: document.getElementById('analytics-habit-list'),
 
+    // Inline cloud sync elements
 
     // Journal DOM elements
     journalForm: document.getElementById('journal-form'),
@@ -1895,6 +1967,12 @@ const UIController = {
     finTotalBalance: document.getElementById('fin-accounts-total-balance'),
     finMonthlyIncome: document.getElementById('fin-daily-summary-income'),
     finMonthlyExpense: document.getElementById('fin-daily-summary-expense'),
+    finAdjustModal: document.getElementById('fin-adjust-modal'),
+    finAdjustAmountInput: document.getElementById('fin-adjust-amount-input'),
+    financeAdjustForm: document.getElementById('finance-adjust-form'),
+    finAdjustCancelBtn: document.getElementById('fin-adjust-cancel-btn'),
+    finAdjustModalClose: document.getElementById('fin-adjust-modal-close'),
+    finAdjustModalTitle: document.getElementById('fin-adjust-modal-title'),
 
     // Calendar DOM elements
     calendarEventForm: document.getElementById('calendar-event-form'),
@@ -1908,10 +1986,14 @@ const UIController = {
 
 
   triggerProgressCelebration() {
-    const card = document.getElementById('day-card');
-    if (!card) return;
-    card.classList.add('perfect-pulse');
-    setTimeout(() => card.classList.remove('perfect-pulse'), 2600);
+    // Add pulsing glow to the navigator card widget
+    const progressWidget = document.querySelector('.daily-navigator-card');
+    if (progressWidget) {
+      progressWidget.classList.add('perfect-pulse');
+      setTimeout(() => {
+        progressWidget.classList.remove('perfect-pulse');
+      }, 4500);
+    }
   },
 
   setupLanguage() {
@@ -1933,49 +2015,54 @@ const UIController = {
     document.documentElement.lang = lang;
     document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
     const dict = TRANSLATIONS[lang] || TRANSLATIONS.en;
-
-    const apply = (attr, fn) => {
-      document.querySelectorAll(`[${attr}]`).forEach(el => {
-        const value = dict[el.getAttribute(attr)];
-        if (value) fn(el, value);
-      });
-    };
-    apply('data-i18n', (el, v) => { el.textContent = v; });
-    apply('data-i18n-placeholder', (el, v) => el.setAttribute('placeholder', v));
-    apply('data-i18n-aria', (el, v) => el.setAttribute('aria-label', v));
-    apply('data-i18n-title', (el, v) => el.setAttribute('title', v));
-    this.refreshGoogleButton();
+    
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (dict[key]) {
+        el.textContent = dict[key];
+      }
+    });
+    
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+      const key = el.getAttribute('data-i18n-placeholder');
+      if (dict[key]) {
+        el.setAttribute('placeholder', dict[key]);
+      }
+    });
 
     if (STATE.authenticated) {
-      this.setupMonthSelector();
       this.updateStreakDisplay();
       this.loadDateData();
       this.renderNotionGrid();
       this.renderAnalytics();
       this.renderHeatmap();
+      this.renderBrief();
       this.renderJournal();
       this.renderFinance();
       this.renderCalendar();
+      this.setupMonthSelector();
     }
   },
 
   init() {
-    this.setupTheme();
     this.setupLanguage();
+    DriveSync.primeSnapshot(); // Baseline for change tracking
     this.setupAuthentication();
     this.setupNavigation();
     this.setupDateNavigator();
     this.setupChecklist();
     this.setupMonthSelector();
-    this.setupPasscodeSettings();
-    this.setupBackupSettings();
-    this.setupGoogleSettings();
-    this.setupDriveSettings();
+    this.setupSyncSettings(); // Setup Supabase modal & inline controls
+    this.setupDataTools(); // JSON backup/restore + passcode change
+    this.setupGoogleSettings(); // Setup Google Calendar credential forms
+    
+    // Setup Life OS Subsystems
+    this.setupBriefTab();
     this.setupJournalTab();
     this.setupFinanceTab();
     this.setupCalendarTab();
-
-    // Unlock Web Audio API on first user gesture (required on iOS / WebKit)
+    
+    // Unlock Web Audio API on first user gesture (highly recommended for iOS & WebKit autoplay bypass)
     const unlockAudio = () => {
       AudioFeedback.init();
       document.removeEventListener('click', unlockAudio);
@@ -1983,87 +2070,90 @@ const UIController = {
     };
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
+    
+    // Auto-sync check on tab focus (for multi-device real-time updates)
+    window.addEventListener('focus', () => {
+      if (STATE.authenticated && DriveSync.isEnabled()) DriveSync.sync();
+    });
 
     setInterval(() => {
       const now = new Date();
-      if (formatDateKey(now) !== formatDateKey(STATE.todayDate)) {
-        const wasViewingToday = formatDateKey(STATE.activeDate) === formatDateKey(STATE.todayDate);
-        const wasViewingThisMonth = STATE.selectedMonth === formatDateKey(STATE.todayDate).slice(0, 7);
+      if (now.getDate() !== STATE.todayDate.getDate()) {
         STATE.todayDate = now;
-        if (wasViewingToday) STATE.activeDate = new Date(now);
-        if (wasViewingThisMonth) STATE.selectedMonth = formatDateKey(now).slice(0, 7);
-        this.setupMonthSelector();
-        this.loadDateData();
         this.updateStreakDisplay();
         this.renderNotionGrid();
         this.renderAnalytics();
-        this.renderHeatmap();
+        this.renderBrief();
       }
     }, 60000);
   },
 
-  setupTheme() {
-    const select = document.getElementById('theme-select');
-    const apply = (theme) => {
-      document.documentElement.dataset.theme = theme;
-      const meta = document.querySelector('meta[name="theme-color"]');
-      if (meta) meta.content = theme === 'night' ? '#051421' : '#0f2e4a';
-    };
-    const saved = localStorage.getItem('hrt_theme') === 'night' ? 'night' : 'light';
-    apply(saved);
-    if (!select) return;
-    select.value = saved;
-    select.addEventListener('change', () => {
-      localStorage.setItem('hrt_theme', select.value);
-      apply(select.value);
-      DriveBackup.schedule();
-    });
-  },
-
+  // --- Authentication ---
   async setupAuthentication() {
-    sessionStorage.removeItem('hrt_session_hash'); // legacy session marker
+    let isAuthed = false;
 
-    const unlock = () => {
+    // 1. Check local session state in sessionStorage first
+    const sessionHash = sessionStorage.getItem('hrt_session_hash');
+    if (sessionHash === STATE.passcodeHash) {
+      isAuthed = true;
+    }
+
+
+    if (isAuthed) {
       STATE.authenticated = true;
-      this.dom.authError.textContent = "";
       this.dom.authPortal.classList.add('hidden');
       this.dom.appContainer.classList.remove('hidden');
       this.loadDashboard();
-    };
-
-    if (sessionStorage.getItem('hrt_session') === 'unlocked') {
-      unlock();
     } else {
       this.dom.authPortal.classList.remove('hidden');
       this.dom.appContainer.classList.add('hidden');
     }
 
     this.dom.togglePassword.addEventListener('click', () => {
-      const show = this.dom.passcode.getAttribute('type') === 'password';
-      this.dom.passcode.setAttribute('type', show ? 'text' : 'password');
-      this.dom.togglePassword.setAttribute('aria-pressed', String(show));
+      const type = this.dom.passcode.getAttribute('type') === 'password' ? 'text' : 'password';
+      this.dom.passcode.setAttribute('type', type);
+      const svg = this.dom.togglePassword.querySelector('svg');
+      if (type === 'text') {
+        svg.style.color = 'var(--primary-light)';
+      } else {
+        svg.style.color = 'var(--text-muted)';
+      }
     });
 
     this.dom.authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (await PasscodeManager.verify(this.dom.passcode.value)) {
-        sessionStorage.setItem('hrt_session', 'unlocked');
-        this.dom.passcode.value = "";
-        unlock();
+      const entered = this.dom.passcode.value;
+      let success = false;
+
+      // 1. Check local passcode first (always allowed for local access)
+      if (await verifyPasscode(entered, STATE.passcodeHash)) {
+        success = true;
+        sessionStorage.setItem('hrt_session_hash', STATE.passcodeHash);
+      } 
+
+      if (success) {
+        STATE.authenticated = true;
+        this.dom.authError.textContent = "";
+        this.dom.authPortal.classList.add('hidden');
+        this.dom.appContainer.classList.remove('hidden');
+        this.loadDashboard();
       } else {
-        this.dom.authError.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).auth_error;
+        this.dom.authError.textContent = "Incorrect Passcode. Access Denied.";
         this.dom.passcode.value = "";
         this.dom.passcode.focus();
       }
     });
 
+    // Support both sidebar and mobile header logout triggers
     document.querySelectorAll('.logout-btn').forEach(btn => {
+      // Skip sync settings buttons which also have the class logout-btn
+      if (btn.classList.contains('sync-settings-btn')) return;
       btn.addEventListener('click', () => {
         STATE.authenticated = false;
-        sessionStorage.removeItem('hrt_session');
+        sessionStorage.removeItem('hrt_session_hash');
         this.dom.appContainer.classList.add('hidden');
         this.dom.authPortal.classList.remove('hidden');
-        this.dom.passcode.focus();
+        this.dom.passcode.value = "";
       });
     });
   },
@@ -2073,13 +2163,31 @@ const UIController = {
     StorageManager.loadJournal();
     StorageManager.loadFinance();
     StorageManager.loadCalendar();
-    this.setupMonthSelector();
     this.updateStreakDisplay();
     this.loadDateData();
     this.renderNotionGrid();
     this.renderAnalytics();
-    this.renderHeatmap();
-    DriveBackup.checkRemote();
+    this.renderHeatmap(); // Render yearly heatmap grid
+    this.renderBrief();
+
+    // Re-render everything whenever Drive sync brings in newer data
+    DriveSync.onApplied = () => {
+      StorageManager.loadDatabase();
+      StorageManager.loadJournal();
+      StorageManager.loadFinance();
+      StorageManager.loadCalendar();
+      this.updateStreakDisplay();
+      this.loadDateData();
+      this.renderNotionGrid();
+      this.renderAnalytics();
+      this.renderHeatmap();
+      this.renderBrief();
+      const pane = document.querySelector('.tab-pane.active-pane');
+      if (pane && pane.id === 'journal-tab') this.renderJournal();
+      if (pane && pane.id === 'finance-tab') this.renderFinance();
+      if (pane && pane.id === 'calendar-tab') this.renderCalendar();
+    };
+    if (DriveSync.isEnabled()) DriveSync.sync();
   },
 
   updateStreakDisplay() {
@@ -2098,48 +2206,58 @@ const UIController = {
     if (sideBest) sideBest.textContent = streaks.best;
   },
 
-  showTab(targetTab) {
-    document.querySelectorAll('.tab-btn').forEach(b => {
-      b.classList.toggle('active', b.getAttribute('data-tab') === targetTab);
-    });
-    // On mobile the calendar is reached through "More".
-    if (targetTab === 'calendar-tab') {
-      document.querySelectorAll('.tabbar .tab-btn[data-tab="settings-tab"]').forEach(b => b.classList.add('active'));
-    }
-    this.dom.tabPanes.forEach(pane => pane.classList.toggle('active-pane', pane.id === targetTab));
-    window.scrollTo(0, 0);
-
-    if (targetTab === 'today-tab') {
-      this.renderToday();
-    } else if (targetTab === 'progress-tab') {
-      this.renderNotionGrid();
-      this.renderAnalytics();
-      this.renderHeatmap();
-      // Show the most recent weeks first (scroll offsets are negative in RTL).
-      const scroller = document.querySelector('.heatmap-scroll');
-      if (scroller) scroller.scrollLeft = document.documentElement.dir === 'rtl' ? -scroller.scrollWidth : scroller.scrollWidth;
-    } else if (targetTab === 'journal-tab') {
-      this.renderJournal();
-    } else if (targetTab === 'finance-tab') {
-      this.renderFinance();
-    } else if (targetTab === 'calendar-tab') {
-      this.renderCalendar();
-      const token = this.getGoogleAccessTokenSync();
-      if (token && !this._isSyncingCalendar) {
-        this._isSyncingCalendar = true;
-        this.syncGoogleCalendar(token).finally(() => { this._isSyncingCalendar = false; });
-      }
-    } else if (targetTab === 'settings-tab') {
-      this.refreshDriveUI();
-    }
-  },
-
+  // --- Multi-Tab Navigation Sync ---
   setupNavigation() {
     this.dom.tabBtns.forEach(btn => {
-      btn.addEventListener('click', () => this.showTab(btn.getAttribute('data-tab')));
+      btn.addEventListener('click', () => {
+        const targetTab = btn.getAttribute('data-tab');
+        
+        // Remove active class from all tab buttons (both mobile and sidebar)
+        this.dom.tabBtns.forEach(b => b.classList.remove('active'));
+        
+        // Mark all matching buttons active
+        document.querySelectorAll(`.tab-btn[data-tab="${targetTab}"]`).forEach(b => b.classList.add('active'));
+        
+        // Switch tab content views
+        this.dom.tabPanes.forEach(pane => {
+          if (pane.id === targetTab) {
+            pane.classList.add('active-pane');
+          } else {
+            pane.classList.remove('active-pane');
+          }
+        });
+
+        if (targetTab === 'brief-tab') {
+          this.renderBrief();
+        } else if (targetTab === 'grid-tab') {
+          this.renderNotionGrid();
+        } else if (targetTab === 'analytics-tab') {
+          this.renderAnalytics();
+        } else if (targetTab === 'journal-tab') {
+          this.renderJournal();
+        } else if (targetTab === 'finance-tab') {
+          this.renderFinance();
+        } else if (targetTab === 'calendar-tab') {
+          this.renderCalendar();
+          // Sync Google Calendar whenever the tab is opened (if connected)
+          this.getGoogleAccessToken().then(token => {
+            if (token && !this._isSyncingCalendar) {
+              this._isSyncingCalendar = true;
+              this.syncGoogleCalendar(token).finally(() => {
+                this._isSyncingCalendar = false;
+              });
+            }
+          });
+        }
+      });
     });
+
+    // Setup general tab triggers (like mobile back buttons or quick links)
     document.querySelectorAll('.tab-trigger-btn').forEach(btn => {
-      btn.addEventListener('click', () => this.showTab(btn.getAttribute('data-target-tab')));
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-target-tab');
+        document.querySelectorAll(`.tab-btn[data-tab="${target}"]`).forEach(b => b.click());
+      });
     });
   },
 
@@ -2163,62 +2281,63 @@ const UIController = {
 
   loadDateData() {
     const key = formatDateKey(STATE.activeDate);
-
+    
     this.dom.gregorianDate.textContent = CalendarEngine.getGregorianString(STATE.activeDate);
     this.dom.hijriDate.textContent = CalendarEngine.getHijriString(STATE.activeDate);
-    this.dom.todayBtn.hidden = key === formatDateKey(STATE.todayDate);
-
+    
     const dayData = StorageManager.getDayState(key);
+    
     this.dom.taskCheckboxes.forEach(cb => {
-      cb.checked = !!dayData[cb.getAttribute('data-key')];
+      const dbKey = cb.getAttribute('data-key');
+      cb.checked = !!dayData[dbKey];
     });
 
     this.updateProgressRing(dayData);
-    this.renderToday();
     this.highlightActiveGridRow(key);
-    this.highlightActiveHeatmapCell(key);
+    this.highlightActiveHeatmapCell(key); // Highlight selected day square
   },
 
   updateProgressRing(dayData) {
-    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
     const percentage = StreakEngine.calculateDailyPercentage(dayData);
-    const done = ROUTINE_KEYS.filter(k => dayData[k] === true).length;
-
     this.dom.progressPercent.textContent = `${percentage}%`;
-    const circle = this.dom.progressCircle;
-    const circ = 2 * Math.PI * Number(circle.getAttribute('r'));
-    circle.style.strokeDasharray = `${circ} ${circ}`;
-    circle.style.strokeDashoffset = circ - (percentage / 100) * circ;
-    circle.classList.toggle('is-perfect', percentage === 100);
+    
+    // Center point radius r=64. Circumference = 2 * PI * r = 402.12
+    const r = 64;
+    const circ = 2 * Math.PI * r;
+    const offset = circ - (percentage / 100) * circ;
+    
+    this.dom.progressCircle.style.strokeDasharray = `${circ} ${circ}`;
+    this.dom.progressCircle.style.strokeDashoffset = offset;
+    
+    if (percentage === 100) {
+      this.dom.progressCircle.style.stroke = "var(--primary-light)";
+    } else if (percentage >= 50) {
+      this.dom.progressCircle.style.stroke = "var(--success)";
+    } else {
+      this.dom.progressCircle.style.stroke = "var(--danger)";
+    }
 
-    let message = dict.inspire_welcome;
-    if (percentage === 100) message = dict.inspire_perfect;
-    else if (percentage >= 70) message = dict.inspire_almost;
-    else if (percentage >= 40) message = dict.inspire_solid;
-    else if (percentage > 0) message = dict.inspire_small;
-    document.getElementById('daily-status-inspirational').textContent = message;
-    document.getElementById('day-count-text').textContent =
-      dict.day_count.replace('{done}', done).replace('{total}', ROUTINE_KEYS.length);
-
-    this.updateSectionCounts(dayData);
-  },
-
-  // Section counters ("3 / 14") and per-prayer status ("done" / "1 left").
-  updateSectionCounts(dayData) {
-    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-    document.querySelectorAll('[data-count-keys]').forEach(el => {
-      const keys = el.getAttribute('data-count-keys').split(',');
-      const done = keys.filter(k => dayData[k] === true).length;
-      if (el.classList.contains('prayer-status')) {
-        const left = keys.length - done;
-        el.classList.toggle('is-done', left === 0);
-        if (left === 0) el.textContent = dict.status_done;
-        else if (done === 0) el.textContent = '';
-        else el.textContent = dict.status_left.replace('{n}', left);
+    // Dynamic Inspirational Message
+    const inspirationalEl = document.getElementById('daily-status-inspirational');
+    if (inspirationalEl) {
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+      if (percentage === 100) {
+        inspirationalEl.textContent = dict.inspire_perfect;
+        inspirationalEl.style.borderLeftColor = "var(--primary-light)";
+      } else if (percentage >= 70) {
+        inspirationalEl.textContent = dict.inspire_almost;
+        inspirationalEl.style.borderLeftColor = "var(--success)";
+      } else if (percentage >= 40) {
+        inspirationalEl.textContent = dict.inspire_solid;
+        inspirationalEl.style.borderLeftColor = "var(--accent-gold)";
+      } else if (percentage > 0) {
+        inspirationalEl.textContent = dict.inspire_small;
+        inspirationalEl.style.borderLeftColor = "var(--danger)";
       } else {
-        el.textContent = `${done} / ${keys.length}`;
+        inspirationalEl.textContent = dict.inspire_welcome;
+        inspirationalEl.style.borderLeftColor = "var(--text-muted)";
       }
-    });
+    }
   },
 
   // --- Checklist ---
@@ -2259,19 +2378,23 @@ const UIController = {
   setupMonthSelector() {
     const selectors = document.querySelectorAll('.month-sync-select');
     
-    // Range: earliest month with data (or the selected month, if earlier) up to the current month.
-    const earliest = getEarliestActiveDate() || STATE.todayDate;
-    const [selY, selM] = STATE.selectedMonth.split('-').map(Number);
-    let rangeStart = new Date(earliest.getFullYear(), earliest.getMonth(), 1);
-    const selectedStart = new Date(selY, selM - 1, 1);
-    if (selectedStart < rangeStart) rangeStart = selectedStart;
-    const currentLimit = new Date(STATE.todayDate.getFullYear(), STATE.todayDate.getMonth(), 1);
-
     selectors.forEach(select => {
+      const prevVal = select.value || STATE.selectedMonth;
       select.innerHTML = "";
-      const temp = new Date(rangeStart);
-
-      const locale = appLocale();
+      
+      const startYear = 2026;
+      const startMonth = 5; // June (0-indexed is 5)
+      const currentLimit = new Date(STATE.todayDate);
+      currentLimit.setMonth(currentLimit.getMonth() + 12);
+      
+      const temp = new Date(startYear, startMonth, 1);
+      
+      const localeMap = {
+        en: 'en-US',
+        tr: 'tr-TR',
+        ar: 'ar-EG'
+      };
+      const locale = localeMap[STATE.language] || 'en-US';
       
       while (temp <= currentLimit) {
         const year = temp.getFullYear();
@@ -2285,8 +2408,10 @@ const UIController = {
         select.appendChild(option);
         temp.setMonth(temp.getMonth() + 1);
       }
-
-      select.value = STATE.selectedMonth;
+      
+      if (prevVal) {
+        select.value = prevVal;
+      }
     });
     
     if (!this._monthSelectorListenerBound) {
@@ -2307,204 +2432,283 @@ const UIController = {
     }
   },
 
+  // --- Google Drive Sync Settings Controller ---
+  setupSyncSettings() {
+    const modal = document.getElementById('sync-modal');
+    const closeBtn = document.getElementById('close-sync-modal');
+    const dict = () => TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
 
-  setupDriveSettings() {
-    const connectBtn = document.getElementById('drive-connect-btn');
-    if (!connectBtn) return;
-    const t = () => TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const render = (state, msg) => {
+      const d = dict();
+      const enabled = DriveSync.isEnabled();
+      const last = parseInt(localStorage.getItem('drive_last_sync') || '0', 10);
+      const lastStr = last ? new Date(last).toLocaleString(({ en: 'en-US', tr: 'tr-TR', ar: 'ar-EG' })[STATE.language] || 'en-US') : '';
+      let text, cls;
+      if (!enabled) { text = d.drive_status_off; cls = 'status-loading'; }
+      else if (state === 'syncing') { text = d.drive_status_syncing; cls = 'status-loading'; }
+      else if (state === 'tap') { text = d.drive_status_tap; cls = 'status-loading'; }
+      else if (state === 'error') { text = `${d.drive_status_error} (${msg || ''})`; cls = 'status-error'; }
+      else { text = `${d.drive_status_ok}${lastStr ? ' · ' + lastStr : ''}`; cls = 'status-success'; }
+      document.querySelectorAll('.drive-sync-status').forEach(el => {
+        el.className = `sync-status-msg drive-sync-status ${cls}`;
+        el.textContent = text;
+      });
+      document.querySelectorAll('.drive-connect-btn').forEach(b => b.style.display = enabled ? 'none' : '');
+      document.querySelectorAll('.drive-sync-now-btn, .drive-disconnect-btn').forEach(b => b.style.display = enabled ? '' : 'none');
+    };
+    DriveSync.onStatus = render;
+    this._renderDriveStatus = () => render(DriveSync.lastState, DriveSync.lastMsg);
+    render(DriveSync.isEnabled() ? 'ok' : 'off');
 
-    connectBtn.addEventListener('click', () => this.connectGoogleCalendar());
-
-    document.getElementById('drive-auto-toggle').addEventListener('change', (e) => {
-      localStorage.setItem(DriveBackup.AUTO_KEY, e.target.checked ? '1' : '0');
-      if (e.target.checked) DriveBackup.schedule();
-    });
-
-    document.getElementById('drive-backup-now-btn').addEventListener('click', async () => {
-      if (DriveBackup.state === 'conflict' && !confirm(t().drive_overwrite_confirm)) return;
-      await DriveBackup.upload({ force: true });
-    });
-
-    document.getElementById('drive-restore-btn').addEventListener('click', async () => {
-      let remote;
+    document.querySelectorAll('.drive-connect-btn').forEach(btn => btn.addEventListener('click', async () => {
+      render('syncing');
       try {
-        remote = await DriveBackup.download();
+        await DriveSync.connect();
       } catch (e) {
-        return DriveBackup.setState('error', t()[e.message] || t().drive_status_error);
+        render('error', dict().drive_connect_failed);
       }
-      let parsed;
-      try {
-        parsed = BackupManager.parse(remote.text);
-      } catch (e) {
-        return DriveBackup.setState('error', t().backup_invalid);
-      }
-      const s = parsed.summary;
-      const msg = t().backup_confirm
-        .replace('{days}', s.days).replace('{journal}', s.journal)
-        .replace('{transactions}', s.transactions).replace('{events}', s.events);
-      if (!confirm(msg)) return;
-      BackupManager.restore(parsed.backup);
-      localStorage.setItem(DriveBackup.LAST_KEY, remote.modifiedTime);
-      location.reload();
+    }));
+    document.querySelectorAll('.drive-sync-now-btn').forEach(btn => btn.addEventListener('click', () => DriveSync.sync()));
+    document.querySelectorAll('.drive-disconnect-btn').forEach(btn => btn.addEventListener('click', () => {
+      if (confirm(dict().drive_confirm_disconnect)) { DriveSync.disconnect(); render('off'); }
+    }));
+
+    document.querySelectorAll('.sync-settings-btn').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        this._renderDriveStatus();
+        modal.classList.remove('hidden');
+      });
     });
+    closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
 
-    this.refreshDriveUI();
-  },
+    // Custom Video settings controllers
+    const customVideoInput = document.getElementById('custom-video-url');
+    const saveCustomVideoBtn = document.getElementById('save-custom-video-btn');
+    const customVideoStatus = document.getElementById('custom-video-status');
 
-  refreshDriveUI() {
-    const status = document.getElementById('drive-status');
-    if (!status) return;
-    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-    const connected = !!DriveBackup.token();
-    const last = localStorage.getItem(DriveBackup.LAST_KEY);
-    const locale = appLocale();
-    const lastText = last ? new Date(last).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' }) : dict.drive_never;
-
-    let text = dict.drive_status_ready.replace('{time}', lastText);
-    let cls = 'status-success';
-    if (!connected) {
-      text = UIController.getGoogleAccessTokenSync() ? dict.drive_no_scope : dict.drive_status_signin;
-      cls = 'status-loading';
-    } else if (DriveBackup.state === 'saving') {
-      text = dict.drive_status_saving;
-      cls = 'status-loading';
-    } else if (DriveBackup.state === 'conflict') {
-      text = dict.drive_status_conflict;
-      cls = 'status-error';
-    } else if (DriveBackup.state === 'error') {
-      text = DriveBackup.message || dict.drive_status_error;
-      cls = 'status-error';
+    if (customVideoInput) {
+      customVideoInput.value = localStorage.getItem('custom_focus_video_url') || "";
     }
-    status.textContent = text;
-    status.className = `sync-status-msg ${cls}`;
 
-    document.getElementById('drive-connect-btn').hidden = connected;
-    document.getElementById('drive-controls').hidden = !connected;
-    document.getElementById('drive-auto-toggle').checked = DriveBackup.isAuto();
+    if (saveCustomVideoBtn && customVideoInput && customVideoStatus) {
+      saveCustomVideoBtn.addEventListener('click', () => {
+        const url = customVideoInput.value.trim();
+        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+        
+        if (!url) {
+          localStorage.removeItem('custom_focus_video_url');
+          localStorage.removeItem('custom_focus_video_id');
+          customVideoStatus.style.display = "block";
+          customVideoStatus.style.color = "var(--primary-light)";
+          customVideoStatus.textContent = dict.focus_video_reset_msg || "Video reset to default.";
+          this.renderBrief();
+          setTimeout(() => { customVideoStatus.style.display = "none"; }, 3000);
+          return;
+        }
+
+        const id = this.extractYouTubeId(url);
+        if (id) {
+          localStorage.setItem('custom_focus_video_url', url);
+          localStorage.setItem('custom_focus_video_id', id);
+          customVideoStatus.style.display = "block";
+          customVideoStatus.style.color = "var(--primary-light)";
+          customVideoStatus.textContent = dict.focus_video_save_msg || "Video saved successfully!";
+          this.renderBrief();
+          setTimeout(() => { customVideoStatus.style.display = "none"; }, 3000);
+        } else {
+          customVideoStatus.style.display = "block";
+          customVideoStatus.style.color = "var(--danger)";
+          customVideoStatus.textContent = dict.focus_video_error_msg || "Invalid YouTube URL!";
+          setTimeout(() => { customVideoStatus.style.display = "none"; }, 3000);
+        }
+      });
+    }
   },
 
-  setupPasscodeSettings() {
-    const form = document.getElementById('passcode-change-form');
-    if (!form) return;
-    const current = document.getElementById('passcode-current');
-    const next = document.getElementById('passcode-new');
-    const confirmInput = document.getElementById('passcode-confirm');
-    const status = document.getElementById('passcode-change-status');
-
-    const show = (key, ok) => {
-      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-      status.textContent = dict[key];
-      status.className = `sync-status-msg ${ok ? 'status-success' : 'status-error'}`;
+  // --- Data backup (JSON export/import) & passcode change ---
+  setupDataTools() {
+    const dict = () => TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const BACKUP_KEYS = ['hrt_db', 'hrt_journal', 'hrt_finance', 'hrt_calendar', 'hrt_best_streak',
+                         'hrt_lang', 'custom_focus_video_url', 'custom_focus_video_id'];
+    const statusEl = document.getElementById('data-tools-status');
+    const setStatus = (msg, ok = true) => {
+      if (!statusEl) return;
+      statusEl.textContent = msg;
+      statusEl.style.color = ok ? 'var(--success, #10b981)' : 'var(--danger, #ef4444)';
     };
 
-    form.addEventListener('submit', async (e) => {
+    const exportBtn = document.getElementById('export-json-btn');
+    if (exportBtn) exportBtn.addEventListener('click', () => {
+      const payload = { app: 'horizon-tracker', version: 1, exported_at: new Date().toISOString(), data: {} };
+      BACKUP_KEYS.forEach(k => {
+        const v = localStorage.getItem(k);
+        if (v !== null) payload.data[k] = v;
+      });
+      const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `horizon-backup-${formatDateKey(new Date())}.json`;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+      setStatus(dict().backup_export_ok || 'Backup downloaded.');
+    });
+
+    const importInput = document.getElementById('import-json-input');
+    const importBtn = document.getElementById('import-json-btn');
+    if (importBtn && importInput) {
+      importBtn.addEventListener('click', () => importInput.click());
+      importInput.addEventListener('change', async () => {
+        const file = importInput.files && importInput.files[0];
+        importInput.value = '';
+        if (!file) return;
+        try {
+          const parsed = JSON.parse(await file.text());
+          if (!parsed || parsed.app !== 'horizon-tracker' || typeof parsed.data !== 'object') {
+            throw new Error('invalid');
+          }
+          if (!confirm(dict().backup_import_confirm || 'This will replace current local data. Continue?')) return;
+          Object.entries(parsed.data).forEach(([k, v]) => {
+            if (BACKUP_KEYS.includes(k) && typeof v === 'string') localStorage.setItem(k, v);
+          });
+          // Stamp restored data as newest so it wins on the next Drive sync
+          const now = Date.now();
+          const stamp = (store) => {
+            const src = JSON.parse(localStorage.getItem(store) || '{}');
+            const o = {}; Object.keys(src).forEach(k => o[k] = { t: now }); return o;
+          };
+          localStorage.setItem('hrt_sync_meta', JSON.stringify({
+            db: stamp('hrt_db'), journal: stamp('hrt_journal'), finance: now, calendar: now
+          }));
+          if (DriveSync.isEnabled()) { try { await DriveSync.sync(); } catch (e) {} }
+          setStatus(dict().backup_import_ok || 'Backup restored. Reloading...');
+          setTimeout(() => location.reload(), 800);
+        } catch (e) {
+          setStatus(dict().backup_import_err || 'Invalid backup file.', false);
+        }
+      });
+    }
+
+    const pcForm = document.getElementById('passcode-change-form');
+    if (pcForm) pcForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (next.value.length < 4) return show('passcode_too_short', false);
-      if (next.value !== confirmInput.value) return show('passcode_mismatch', false);
-      if (!(await PasscodeManager.verify(current.value))) return show('passcode_wrong_current', false);
-      await PasscodeManager.set(next.value);
-      form.reset();
-      show('passcode_changed', true);
+      const cur = document.getElementById('passcode-current').value;
+      const next = document.getElementById('passcode-new').value;
+      const confirmVal = document.getElementById('passcode-confirm').value;
+      const pcStatus = document.getElementById('passcode-status');
+      const say = (msg, ok) => {
+        if (!pcStatus) return;
+        pcStatus.textContent = msg;
+        pcStatus.style.color = ok ? 'var(--success, #10b981)' : 'var(--danger, #ef4444)';
+      };
+      if (!(await verifyPasscode(cur, STATE.passcodeHash))) return say(dict().passcode_wrong || 'Current passcode is wrong.', false);
+      if (next.length < 6) return say(dict().passcode_short || 'New passcode must be at least 6 characters.', false);
+      if (next !== confirmVal) return say(dict().passcode_mismatch || 'Passcodes do not match.', false);
+      const newHash = await pbkdf2Hash(next);
+      localStorage.setItem('hrt_passcode_hash', newHash);
+      STATE.passcodeHash = newHash;
+      sessionStorage.setItem('hrt_session_hash', newHash);
+      pcForm.reset();
+      say(dict().passcode_changed || 'Passcode updated.', true);
     });
   },
 
-  setupBackupSettings() {
-    const status = document.getElementById('backup-status');
-    const undoBtn = document.getElementById('backup-undo-btn');
-    const fileInput = document.getElementById('backup-file-input');
-    const pasteInput = document.getElementById('backup-paste-input');
-    if (!status) return;
-    const t = () => TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-    const show = (text, ok) => {
-      status.textContent = text;
-      status.className = `sync-status-msg ${ok ? 'status-success' : 'status-error'}`;
-    };
-    undoBtn.hidden = !BackupManager.hasUndo();
-
-    document.getElementById('backup-download-btn').addEventListener('click', () => {
-      BackupManager.download();
-      show(t().backup_downloaded, true);
-    });
-
-    document.getElementById('backup-copy-btn').addEventListener('click', async () => {
-      try {
-        await navigator.clipboard.writeText(BackupManager.toJSON());
-        show(t().backup_copied, true);
-      } catch (e) {
-        show(t().backup_copy_failed, false);
-      }
-    });
-
-    const restoreFromText = (text) => {
-      let parsed;
-      try {
-        parsed = BackupManager.parse(text);
-      } catch (e) {
-        return show(t()[e.message] || t().backup_invalid, false);
-      }
-      const s = parsed.summary;
-      const msg = t().backup_confirm
-        .replace('{days}', s.days).replace('{journal}', s.journal)
-        .replace('{transactions}', s.transactions).replace('{events}', s.events);
-      if (!confirm(msg)) return;
-      BackupManager.restore(parsed.backup);
-      location.reload();
-    };
-
-    fileInput.addEventListener('change', () => {
-      const file = fileInput.files && fileInput.files[0];
-      if (!file) return;
-      file.text().then(restoreFromText);
-      fileInput.value = '';
-    });
-
-    document.getElementById('backup-paste-btn').addEventListener('click', () => {
-      restoreFromText(pasteInput.value.trim());
-    });
-
-    undoBtn.addEventListener('click', () => {
-      if (!confirm(t().backup_undo_confirm)) return;
-      BackupManager.undo();
-      location.reload();
-    });
+  extractYouTubeId(url) {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
   },
 
-
+  // --- Annual Discipline Heatmap Grid (365-Day contribution calendar) ---
   renderHeatmap() {
     const container = document.getElementById('heatmap-grid');
     if (!container) return;
     container.innerHTML = "";
 
-    // 365 days ending today, aligned to start on a Monday.
+    // Generate date array ending today
     const endDate = new Date(STATE.todayDate);
     const startDate = new Date(endDate);
-    startDate.setDate(startDate.getDate() - 364);
-    startDate.setDate(startDate.getDate() - (startDate.getDay() + 6) % 7);
+    startDate.setDate(startDate.getDate() - 364); // 365 days including today
 
-    const activeKey = formatDateKey(STATE.activeDate);
-    const dateFormat = { day: 'numeric', month: 'short', year: 'numeric' };
+    // Align start date to start of week (Monday)
+    let startDayOfWeek = startDate.getDay();
+    const shift = startDayOfWeek === 0 ? 6 : startDayOfWeek - 1; // shift to Monday
+    startDate.setDate(startDate.getDate() - shift);
 
-    for (let cursor = new Date(startDate); cursor <= endDate; cursor.setDate(cursor.getDate() + 1)) {
-      const day = new Date(cursor);
+    const days = [];
+    let current = new Date(startDate);
+    while (current <= endDate) {
+      days.push(new Date(current));
+      current.setDate(current.getDate() + 1);
+    }
+
+    days.forEach(day => {
       const key = formatDateKey(day);
-      const pct = STATE.db[key] ? StreakEngine.calculateDailyPercentage(STATE.db[key]) : 0;
+      const dayData = STATE.db[key];
+      
+      let pct = 0;
+      if (dayData) {
+        pct = StreakEngine.calculateDailyPercentage(dayData);
+      }
+
+      let scoreClass = "score-0";
+      if (pct === 100) {
+        scoreClass = "score-100";
+      } else if (pct >= 50) {
+        scoreClass = "score-med";
+      } else if (pct > 0) {
+        scoreClass = "score-low";
+      }
 
       const cell = document.createElement('div');
-      cell.className = `heatmap-cell ${scoreClass(pct)}${key === activeKey ? ' is-active' : ''}`;
+      cell.className = `heatmap-cell ${scoreClass}`;
       cell.setAttribute('data-date-key', key);
-      cell.title = `${day.toLocaleDateString(appLocale(), dateFormat)}: ${pct}%`;
+      
+      const dayNum = String(day.getDate()).padStart(2, '0');
+      const monthStr = day.toLocaleDateString('en-US', { month: 'short' });
+      const yearVal = day.getFullYear();
+      
+      cell.title = `${monthStr} ${dayNum}, ${yearVal}: ${pct}% completed`;
+
+      // Highlight if active date
+      const activeKey = formatDateKey(STATE.activeDate);
+      if (key === activeKey) {
+        cell.style.outline = "1px solid var(--primary-light)";
+        cell.style.transform = "scale(1.2)";
+        cell.style.zIndex = "5";
+      }
+
       cell.addEventListener('click', () => {
-        STATE.activeDate = day;
+        STATE.activeDate = new Date(day);
         this.loadDateData();
-        this.showTab('today-tab');
+        
+        // Auto-switch to daily tab if on tablet/mobile
+        const focusBtn = document.querySelector('.tab-btn[data-tab="focus-tab"]');
+        if (focusBtn && window.innerWidth < 1024) {
+          focusBtn.click();
+        }
       });
+
       container.appendChild(cell);
-    }
+    });
   },
 
   highlightActiveHeatmapCell(activeKey) {
-    document.querySelectorAll('.heatmap-cell').forEach(cell => {
-      cell.classList.toggle('is-active', cell.getAttribute('data-date-key') === activeKey);
+    const cells = document.querySelectorAll('.heatmap-cell');
+    cells.forEach(cell => {
+      if (cell.getAttribute('data-date-key') === activeKey) {
+        cell.style.outline = "1px solid var(--primary-light)";
+        cell.style.transform = "scale(1.2)";
+        cell.style.zIndex = "5";
+      } else {
+        cell.style.outline = "";
+        cell.style.transform = "";
+        cell.style.zIndex = "";
+      }
     });
   },
 
@@ -2519,7 +2723,7 @@ const UIController = {
     // 1. Render Table Rows (Desktop)
     days.forEach(day => {
       const key = formatDateKey(day);
-      const dayData = (STATE.db[key] || {});
+      const dayData = StorageManager.getDayState(key);
       const score = StreakEngine.calculateDailyPercentage(dayData);
       
       // Calculate consolidated grid columns based on flat checklist states
@@ -2543,18 +2747,22 @@ const UIController = {
       
       const getDotClass = (done, partial) => done ? 'completed' : (partial ? 'partial' : '');
       
+      const dayNum = String(day.getDate()).padStart(2, '0');
+      const gridLocale = ({ en: 'en-US', tr: 'tr-TR', ar: 'ar-EG' })[STATE.language] || 'en-US';
+      const weekdayStr = day.toLocaleDateString(gridLocale, { weekday: 'short' });
       const hijriStr = CalendarEngine.getHijriStringShort(day);
       
       const tr = document.createElement('tr');
       tr.setAttribute('data-date-key', key);
       
       const activeKey = formatDateKey(STATE.activeDate);
-      const todayKey = formatDateKey(STATE.todayDate);
-      tr.className = `${key === activeKey ? 'active-row' : ''} ${key > todayKey ? 'is-future' : ''}`.trim();
+      if (key === activeKey) {
+        tr.className = "active-row";
+      }
       
       tr.innerHTML = `
         <td class="col-date">
-          ${day.toLocaleDateString(appLocale(), { day: '2-digit', month: 'short', weekday: 'short' })}
+          ${dayNum} ${day.toLocaleDateString(gridLocale, { month: 'short' })} (${weekdayStr})
           <span class="hijri-grid-date">${hijriStr}</span>
         </td>
         <td class="col-habit text-center"><span class="cell-dot ${getDotClass(fajrDone, fajrPartial)}"></span></td>
@@ -2584,7 +2792,11 @@ const UIController = {
         STATE.activeDate = new Date(day);
         this.loadDateData();
         
-        this.showTab('today-tab');
+        // Auto-switch to daily tab if clicking on tablet/mobile
+        const focusBtn = document.querySelector('.tab-btn[data-tab="focus-tab"]');
+        if (focusBtn && window.innerWidth < 1024) {
+          focusBtn.click();
+        }
       });
       
       this.dom.notionTableBody.appendChild(tr);
@@ -2609,7 +2821,7 @@ const UIController = {
       // Append days
       days.forEach(day => {
         const key = formatDateKey(day);
-        const dayData = (STATE.db[key] || {});
+        const dayData = StorageManager.getDayState(key);
         const score = StreakEngine.calculateDailyPercentage(dayData);
         
         let scoreClass = "day-score-0";
@@ -2626,16 +2838,24 @@ const UIController = {
         cell.setAttribute('data-date-key', key);
         
         const activeKey = formatDateKey(STATE.activeDate);
-        if (key === activeKey) cell.classList.add('active-day');
-        if (key === formatDateKey(STATE.todayDate)) cell.classList.add('is-today');
+        if (key === activeKey) {
+          cell.classList.add('active-day');
+        }
 
-        cell.textContent = day.getDate();
+        cell.innerHTML = `
+          <span>${day.getDate()}</span>
+          ${score > 0 ? '<span class="day-dot"></span>' : ''}
+        `;
 
         cell.addEventListener('click', () => {
           STATE.activeDate = new Date(day);
           this.loadDateData();
           
-          this.showTab('today-tab');
+          // Switch back to checklist tab
+          const focusBtn = document.querySelector('.tab-btn[data-tab="focus-tab"]');
+          if (focusBtn) {
+            focusBtn.click();
+          }
         });
 
         mobileGridContainer.appendChild(cell);
@@ -2671,8 +2891,7 @@ const UIController = {
     if (!this.dom.kpiAvgScore) return; // Guard if not authenticated or DOM not ready
 
     const [year, month] = STATE.selectedMonth.split('-').map(Number);
-    const todayKey = formatDateKey(STATE.todayDate);
-    const days = CalendarEngine.getDaysInMonth(year, month - 1).filter(d => formatDateKey(d) <= todayKey);
+    const days = CalendarEngine.getDaysInMonth(year, month - 1);
     const N = days.length;
 
     let totalScoreSum = 0;
@@ -2686,7 +2905,7 @@ const UIController = {
 
     days.forEach(day => {
       const key = formatDateKey(day);
-      const dayData = (STATE.db[key] || {});
+      const dayData = StorageManager.getDayState(key);
       const score = StreakEngine.calculateDailyPercentage(dayData);
       
       totalScoreSum += score;
@@ -2737,7 +2956,7 @@ const UIController = {
       this.dom.kpiTopHabit.textContent = dict.kpi_top_none || "None yet";
     }
 
-    if (focusHabitKey && maxPct > 0) {
+    if (focusHabitKey) {
       const localizedName = dict[`habit_${focusHabitKey}_title`] || HABIT_DISPLAY_NAMES[focusHabitKey];
       this.dom.kpiFocusHabit.textContent = `${HABIT_ICONS[focusHabitKey]} ${localizedName} (${minPct}%)`;
     } else {
@@ -2755,8 +2974,7 @@ const UIController = {
     const container = this.dom.trendChartContainer;
     container.innerHTML = "";
 
-    // Draw at the real container width so text stays readable on phones.
-    const W = Math.max(280, container.clientWidth || 600);
+    const W = 600;
     const H = 200;
     const paddingLeft = 40;
     const paddingRight = 20;
@@ -2771,7 +2989,7 @@ const UIController = {
     const points = [];
     for (let i = 0; i < N; i++) {
       const score = scores[i] || 0;
-      const x = paddingLeft + (N > 1 ? i / (N - 1) : 0.5) * graphWidth;
+      const x = paddingLeft + (i / (N - 1)) * graphWidth;
       const y = paddingTop + graphHeight - (score / 100) * graphHeight;
       points.push({ x, y, score, dayNum: i + 1, key: formatDateKey(days[i]) });
     }
@@ -2779,18 +2997,25 @@ const UIController = {
     // Start drawing SVG
     let svgContent = `
       <svg class="chart-svg" viewBox="0 0 ${W} ${H}" width="100%" height="100%">
+        <defs>
+          <!-- Gradient fill for line graph area shadow -->
+          <linearGradient id="chartGradient" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="var(--primary)" stop-opacity="0.3"/>
+            <stop offset="100%" stop-color="var(--primary)" stop-opacity="0"/>
+          </linearGradient>
+        </defs>
 
         <!-- Horizontal Grid Lines (100%, 50%, 0%) -->
         <!-- 100% line -->
-        <line x1="${paddingLeft}" y1="${paddingTop}" x2="${W - paddingRight}" y2="${paddingTop}" class="chart-grid-line" />
+        <line x1="${paddingLeft}" y1="${paddingTop}" x2="${W - paddingRight}" y2="${paddingTop}" class="chart-grid-line" stroke="rgba(255,255,255,0.06)" />
         <text x="${paddingLeft - 10}" y="${paddingTop + 4}" class="chart-axis-text" text-anchor="end">100%</text>
 
         <!-- 50% line -->
-        <line x1="${paddingLeft}" y1="${paddingTop + graphHeight/2}" x2="${W - paddingRight}" y2="${paddingTop + graphHeight/2}" class="chart-grid-line" />
+        <line x1="${paddingLeft}" y1="${paddingTop + graphHeight/2}" x2="${W - paddingRight}" y2="${paddingTop + graphHeight/2}" class="chart-grid-line" stroke="rgba(255,255,255,0.04)" />
         <text x="${paddingLeft - 10}" y="${paddingTop + graphHeight/2 + 4}" class="chart-axis-text" text-anchor="end">50%</text>
 
         <!-- 0% line -->
-        <line x1="${paddingLeft}" y1="${paddingTop + graphHeight}" x2="${W - paddingRight}" y2="${paddingTop + graphHeight}" class="chart-grid-line" />
+        <line x1="${paddingLeft}" y1="${paddingTop + graphHeight}" x2="${W - paddingRight}" y2="${paddingTop + graphHeight}" class="chart-grid-line" stroke="rgba(255,255,255,0.06)" />
         <text x="${paddingLeft - 10}" y="${paddingTop + graphHeight + 4}" class="chart-axis-text" text-anchor="end">0%</text>
     `;
 
@@ -2801,7 +3026,7 @@ const UIController = {
         areaD += `L ${p.x} ${p.y} `;
       });
       areaD += `L ${points[points.length - 1].x} ${paddingTop + graphHeight} Z`;
-      svgContent += `<path d="${areaD}" class="chart-path-area" />`;
+      svgContent += `<path d="${areaD}" fill="url(#chartGradient)" class="chart-path-area" />`;
     }
 
     // Draw main stroke line path
@@ -2810,33 +3035,33 @@ const UIController = {
       for (let i = 1; i < points.length; i++) {
         lineD += `L ${points[i].x} ${points[i].y} `;
       }
-      svgContent += `<path d="${lineD}" fill="none" class="chart-path-line" />`;
+      svgContent += `<path d="${lineD}" fill="none" stroke="var(--primary)" stroke-width="3.5" class="chart-path-line" />`;
     }
 
     // Draw dots for each day
     points.forEach(p => {
       svgContent += `
         <circle cx="${p.x}" cy="${p.y}" r="3.5" class="chart-point" data-date="${p.key}">
-          <title>${p.key}: ${p.score}%</title>
+          <title>Day ${p.dayNum} (${p.key.split('-')[2]}): ${p.score}%</title>
         </circle>
       `;
     });
 
     // Draw X-axis labels (Day 1, Day 10, Day 20, Day 30)
-    const step = Math.max(1, Math.ceil(N / 4));
+    const step = Math.ceil(N / 4);
     for (let i = 0; i < N; i += step) {
       const p = points[i];
       if (p) {
         svgContent += `
-          <text x="${p.x}" y="${paddingTop + graphHeight + 18}" class="chart-axis-text" text-anchor="middle">${p.dayNum}</text>
+          <text x="${p.x}" y="${paddingTop + graphHeight + 18}" class="chart-axis-text" text-anchor="middle">d.${p.dayNum}</text>
         `;
       }
     }
     // Always draw last day if not drawn
-    if (N > 1 && (N - 1) % step !== 0) {
+    if ((N - 1) % step !== 0) {
       const p = points[N - 1];
       svgContent += `
-        <text x="${p.x}" y="${paddingTop + graphHeight + 18}" class="chart-axis-text" text-anchor="middle">${p.dayNum}</text>
+        <text x="${p.x}" y="${paddingTop + graphHeight + 18}" class="chart-axis-text" text-anchor="middle">d.${p.dayNum}</text>
       `;
     }
 
@@ -2847,10 +3072,12 @@ const UIController = {
     container.querySelectorAll('.chart-point').forEach(dot => {
       dot.addEventListener('click', () => {
         const dateStr = dot.getAttribute('data-date');
-        STATE.activeDate = parseDateKey(dateStr);
+        STATE.activeDate = new Date(dateStr);
         this.loadDateData();
         
-        this.showTab('today-tab');
+        // Swap back to Checklist tab
+        const focusBtn = document.querySelector('.tab-btn[data-tab="focus-tab"]');
+        if (focusBtn) focusBtn.click();
       });
     });
   },
@@ -2911,31 +3138,239 @@ const UIController = {
 
   // ================= MORNING BRIEFING & LIFE OS HANDLERS =================
 
-
-  // Verse of the day and the three quick stats on the Today screen.
-  renderToday() {
-    const activeKey = formatDateKey(STATE.activeDate);
-    const ayah = getAyahOfTheDay(activeKey);
-    document.getElementById('ayah-arabic').textContent = ayah.arabic;
-    document.getElementById('ayah-translation').textContent = { tr: ayah.tr, ar: ayah.tafsir }[STATE.language] || ayah.en;
-    document.getElementById('ayah-source').textContent = ayah[`source_${STATE.language}`] || ayah.source_en;
-
-    const yesterday = new Date(STATE.todayDate);
-    yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayKey = formatDateKey(yesterday);
-    const yesterdayData = STATE.db[yesterdayKey];
-    document.getElementById('brief-yesterday-score').textContent =
-      yesterdayData ? `${StreakEngine.calculateDailyPercentage(yesterdayData)}%` : '–';
-
-    const spent = STATE.finance.transactions
-      .filter(tx => tx.date === yesterdayKey && tx.type === 'expense')
-      .reduce((sum, tx) => sum + tx.amount, 0);
-    document.getElementById('brief-yesterday-spending').textContent = formatMoney(spent, 0);
-
-    const todayKey = formatDateKey(STATE.todayDate);
-    document.getElementById('brief-today-events').textContent = STATE.calendar.filter(e => e.date === todayKey).length;
+  setupBriefTab() {
+    document.querySelectorAll('.clickable-brief-widget').forEach(widget => {
+      widget.addEventListener('click', () => {
+        const target = widget.getAttribute('data-target-tab');
+        document.querySelectorAll(`.tab-btn[data-tab="${target}"]`).forEach(btn => btn.click());
+      });
+    });
   },
 
+  renderBrief() {
+    const hr = new Date().getHours();
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    let greeting = dict.brief_greeting_morning || "Good Morning, Enes!";
+    let greetingIcon = "🌤️";
+    let subgreeting = dict.brief_sub_morning || "Today is a great day to achieve new goals and grow.";
+    
+    if (hr >= 12 && hr < 18) {
+      greeting = dict.brief_greeting_afternoon || "Good Afternoon, Enes!";
+      greetingIcon = "☀️";
+      subgreeting = dict.brief_sub_afternoon || "Keep pushing hard towards your goals this afternoon.";
+    } else if (hr >= 18 && hr < 23) {
+      greeting = dict.brief_greeting_evening || "Good Evening, Enes!";
+      greetingIcon = "🌙";
+      subgreeting = dict.brief_sub_evening || "Remember to refresh your mind while unwinding.";
+    } else if (hr >= 23 || hr < 5) {
+      greeting = dict.brief_greeting_night || "Good Night, Enes!";
+      greetingIcon = "🌌";
+      subgreeting = dict.brief_sub_night || "A good sleep is the best preparation for tomorrow's success.";
+    }
+    
+    const greetingTextEl = document.getElementById('brief-greeting-text');
+    const greetingIconEl = document.querySelector('.brief-greeting-icon');
+    const subgreetingTextEl = document.getElementById('brief-subgreeting-text');
+    
+    if (greetingTextEl) greetingTextEl.textContent = greeting;
+    if (greetingIconEl) greetingIconEl.textContent = greetingIcon;
+    if (subgreetingTextEl) subgreetingTextEl.textContent = subgreeting;
+
+    // Render Custom or Default Video Recommendation
+    const customVideoId = localStorage.getItem('custom_focus_video_id');
+    const videoId = customVideoId || 'mgmVOuLgFB0';
+    const videoIframe = document.querySelector('.youtube-brief-container iframe');
+    const videoTitleEl = document.getElementById('brief-video-item-title');
+    const videoDescEl = document.getElementById('brief-video-item-desc');
+
+    if (videoIframe) {
+      const currentSrc = videoIframe.src || "";
+      if (!currentSrc.includes(`/embed/${videoId}`)) {
+        videoIframe.src = `https://www.youtube.com/embed/${videoId}`;
+      }
+      
+      if (customVideoId) {
+        if (videoTitleEl) {
+          videoTitleEl.removeAttribute('data-i18n');
+          videoTitleEl.textContent = dict.brief_video_custom_title || "Personalized Focus Video";
+        }
+        if (videoDescEl) {
+          videoDescEl.removeAttribute('data-i18n');
+          videoDescEl.textContent = dict.brief_video_custom_desc || "Playing custom video loaded from your settings.";
+        }
+      } else {
+        if (videoTitleEl) {
+          videoTitleEl.setAttribute('data-i18n', 'brief_video_item_title');
+          videoTitleEl.textContent = dict.brief_video_item_title;
+        }
+        if (videoDescEl) {
+          videoDescEl.setAttribute('data-i18n', 'brief_video_item_desc');
+          videoDescEl.textContent = dict.brief_video_item_desc;
+        }
+      }
+    }
+
+    // Render Ayah of the Day
+    const activeDateKey = formatDateKey(STATE.activeDate);
+    const ayah = getAyahOfTheDay(activeDateKey);
+    const arDisplay = document.getElementById('ayah-arabic');
+    const trDisplay = document.getElementById('ayah-translation');
+    const srcDisplay = document.getElementById('ayah-source');
+    
+    if (arDisplay) arDisplay.textContent = ayah.arabic;
+    if (trDisplay) {
+      if (STATE.language === 'tr') {
+        trDisplay.textContent = ayah.tr;
+      } else {
+        trDisplay.textContent = ayah.en; // Displays the Arabic Tafsir
+      }
+    }
+    if (srcDisplay) {
+      if (STATE.language === 'tr') {
+        srcDisplay.textContent = ayah.source_tr;
+      } else if (STATE.language === 'ar') {
+        srcDisplay.textContent = ayah.source_ar;
+      } else {
+        srcDisplay.textContent = ayah.source_en;
+      }
+    }
+        // Load History list
+    if (this.dom.journalHistoryList) {
+      this.dom.journalHistoryList.innerHTML = '';
+      const sortedKeys = Object.keys(STATE.journal).sort().reverse();
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+      
+      if (sortedKeys.length === 0) {
+        this.dom.journalHistoryList.innerHTML = `<div class="empty-state">${dict.journal_empty || 'No entries yet. Write your first log!'}</div>`;
+        return;
+      }
+
+      sortedKeys.forEach(k => {
+        const item = STATE.journal[k];
+        const row = document.createElement('div');
+        row.className = `journal-list-item ${k === activeDateKey ? 'active' : ''}`;
+        row.innerHTML = `
+          <div class="item-header">
+            <span>${k}</span>
+            <span class="item-mood">${item.mood}</span>
+          </div>
+          <h4>${item.content.substring(0, 30)}${item.content.length > 30 ? '...' : ''}</h4>
+          <p>${item.tags ? item.tags : (dict.journal_no_tags || 'No tags')}</p>
+        `;
+        row.addEventListener('click', () => {
+          STATE.activeDate = new Date(k);
+          this.renderJournal();
+        });
+        this.dom.journalHistoryList.appendChild(row);
+      });
+    }
+    if (tEventsEl) tEventsEl.textContent = `${todayEventsCount} ${dict.brief_today_events_label || 'Events'}`;
+
+    // Real-time weather from current location
+    this._fetchLiveWeather();
+  },
+
+  async _fetchLiveWeather() {
+    const tempValEl  = document.getElementById('weather-temp-val');
+    const weatherIconEl = document.getElementById('weather-icon');
+    const descEl     = document.getElementById('weather-desc');
+
+    // WMO weather condition codes → emoji + label
+    const WMO_MAP = {
+      0:  { icon: '☀️', label: 'Clear Sky' },
+      1:  { icon: '🌤️', label: 'Mostly Clear' },
+      2:  { icon: '⛅', label: 'Partly Cloudy' },
+      3:  { icon: '☁️', label: 'Overcast' },
+      45: { icon: '🌫️', label: 'Foggy' },
+      48: { icon: '🌫️', label: 'Icy Fog' },
+      51: { icon: '🌦️', label: 'Light Drizzle' },
+      53: { icon: '🌦️', label: 'Drizzle' },
+      55: { icon: '🌧️', label: 'Heavy Drizzle' },
+      61: { icon: '🌧️', label: 'Light Rain' },
+      63: { icon: '🌧️', label: 'Rain' },
+      65: { icon: '🌧️', label: 'Heavy Rain' },
+      71: { icon: '🌨️', label: 'Light Snow' },
+      73: { icon: '🌨️', label: 'Snow' },
+      75: { icon: '❄️', label: 'Heavy Snow' },
+      80: { icon: '🌦️', label: 'Showers' },
+      81: { icon: '🌧️', label: 'Rain Showers' },
+      82: { icon: '⛈️', label: 'Heavy Showers' },
+      95: { icon: '⛈️', label: 'Thunderstorm' },
+      96: { icon: '⛈️', label: 'Thunderstorm' },
+      99: { icon: '⛈️', label: 'Severe Storm' },
+    };
+
+    // Show loading state
+    if (tempValEl)  tempValEl.textContent  = '...';
+    if (weatherIconEl) weatherIconEl.textContent = '📡';
+    if (descEl) descEl.removeAttribute('data-i18n');
+
+    const setError = () => {
+      if (tempValEl)  tempValEl.textContent  = '--°C';
+      if (weatherIconEl) weatherIconEl.textContent = '❓ N/A';
+      if (descEl) descEl.textContent = 'Location unavailable';
+    };
+
+    if (!navigator.geolocation) { setError(); return; }
+
+    navigator.geolocation.getCurrentPosition(
+      async ({ coords }) => {
+        const { latitude: lat, longitude: lon } = coords;
+        try {
+          // 1. Reverse geocode city name (Open-Meteo geocoding)
+          const geoRes  = await fetch(
+            `https://nominatim.openstreetmap.org/reverse?lat=${lat}&lon=${lon}&format=json`
+          );
+          const geoData = await geoRes.json();
+          const city = geoData?.address?.city
+            || geoData?.address?.town
+            || geoData?.address?.village
+            || geoData?.address?.county
+            || 'Current Location';
+
+          // 2. Fetch weather (Open-Meteo — free, no key)
+          const wxRes  = await fetch(
+            `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}` +
+            `&current=temperature_2m,weathercode&temperature_unit=celsius&timezone=auto`
+          );
+          const wxData = await wxRes.json();
+          const temp   = Math.round(wxData.current.temperature_2m);
+          const code   = wxData.current.weathercode;
+          const { icon, label } = WMO_MAP[code] || { icon: '🌡️', label: 'Unknown' };
+
+          if (tempValEl)     tempValEl.textContent  = `${temp}°C`;
+          if (weatherIconEl) weatherIconEl.textContent = `${icon} ${label}`;
+          if (descEl)        descEl.textContent = city;
+
+          // Update card tint based on condition
+          const card = document.querySelector('.brief-weather-card');
+          if (card) {
+            if (code >= 61) {
+              // Rain: deeper blue tint
+              card.style.background = 'linear-gradient(135deg, rgba(30, 80, 180, 0.20) 0%, rgba(10, 25, 50, 0.88) 60%, rgba(8, 30, 70, 0.93) 100%)';
+              card.style.borderColor = 'rgba(80, 140, 255, 0.35)';
+            } else if (code >= 3) {
+              // Cloudy: muted navy
+              card.style.background = 'linear-gradient(135deg, rgba(60, 80, 120, 0.18) 0%, rgba(10, 25, 50, 0.88) 60%, rgba(15, 46, 74, 0.92) 100%)';
+              card.style.borderColor = 'rgba(100, 130, 200, 0.28)';
+            } else {
+              // Clear: default cyan tint
+              card.style.background = 'linear-gradient(135deg, rgba(0, 184, 212, 0.14) 0%, rgba(10, 25, 50, 0.85) 60%, rgba(15, 46, 74, 0.90) 100%)';
+              card.style.borderColor = 'rgba(0, 184, 212, 0.30)';
+            }
+          }
+        } catch (e) {
+          console.warn('Weather fetch failed:', e);
+          setError();
+        }
+      },
+      (err) => {
+        console.warn('Geolocation denied:', err);
+        setError();
+      },
+      { timeout: 8000 }
+    );
+  },
 
   setupJournalTab() {
     const moodMap = {
@@ -2964,14 +3399,6 @@ const UIController = {
       });
     });
 
-    // Picking another date loads that day's entry
-    this.dom.journalDateInput.addEventListener('change', () => {
-      if (!this.dom.journalDateInput.value) return;
-      STATE.activeDate = parseDateKey(this.dom.journalDateInput.value);
-      this.loadDateData();
-      this.renderJournal();
-    });
-
     // Handle new button
     if (this.dom.journalNewBtn) {
       this.dom.journalNewBtn.addEventListener('click', () => {
@@ -2981,7 +3408,7 @@ const UIController = {
         const defMood = document.querySelector('.mood-btn[data-mood="😐"]');
         if (defMood) defMood.classList.add('active');
         updateMoodTheme("😐");
-        this.dom.journalDeleteBtn.hidden = true;
+        this.dom.journalDeleteBtn.style.display = 'none';
       });
     }
 
@@ -2989,8 +3416,7 @@ const UIController = {
     if (this.dom.journalDeleteBtn) {
       this.dom.journalDeleteBtn.addEventListener('click', () => {
         const dateKey = this.dom.journalDateInput.value;
-        const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-        if (STATE.journal[dateKey] && confirm(dict.journal_delete_confirm)) {
+        if (STATE.journal[dateKey]) {
           delete STATE.journal[dateKey];
           StorageManager.saveJournal();
           AudioFeedback.playSuccess();
@@ -3032,57 +3458,108 @@ const UIController = {
   },
 
   renderJournal() {
-    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
     const activeDateKey = formatDateKey(STATE.activeDate);
-    this.dom.journalActiveDateDisplay.textContent = CalendarEngine.getGregorianString(STATE.activeDate);
-    this.dom.journalDateInput.value = activeDateKey;
-
-    const moodMap = { "🤩": "awesome", "🙂": "good", "😐": "neutral", "😴": "tired", "😔": "bad" };
-    const entry = STATE.journal[activeDateKey];
-    const activeMood = entry ? entry.mood : "😐";
-
-    this.dom.journalContentInput.value = entry ? entry.content : '';
-    this.dom.journalTagsInput.value = entry ? (entry.tags || '') : '';
-    this.dom.journalDeleteBtn.hidden = !entry;
-    document.querySelectorAll('.mood-btn').forEach(b => {
-      b.classList.toggle('active', b.getAttribute('data-mood') === activeMood);
-    });
-    document.querySelector('.journal-editor-panel').setAttribute('data-active-mood', moodMap[activeMood] || 'neutral');
-
-    const list = this.dom.journalHistoryList;
-    list.innerHTML = '';
-    const sortedKeys = Object.keys(STATE.journal).sort().reverse();
-    if (sortedKeys.length === 0) {
-      list.innerHTML = `<div class="empty-state">${dict.journal_empty}</div>`;
-      return;
+    if (this.dom.journalActiveDateDisplay) {
+      this.dom.journalActiveDateDisplay.textContent = CalendarEngine.getGregorianString(STATE.activeDate);
+    }
+    if (this.dom.journalDateInput) {
+      this.dom.journalDateInput.value = activeDateKey;
     }
 
-    sortedKeys.forEach(k => {
-      const item = STATE.journal[k];
-      const content = item.content || '';
-      const tags = (item.tags || '').split(',').map(t => t.trim()).filter(Boolean);
-      const tagsHtml = tags.length
-        ? tags.map(t => `<span class="journal-item-tag">${escapeHTML(t)}</span>`).join('')
-        : `<span class="journal-item-tag">${dict.journal_no_tags}</span>`;
+    const moodMap = {
+      "🤩": "awesome",
+      "🙂": "good",
+      "😐": "neutral",
+      "😴": "tired",
+      "😔": "bad"
+    };
 
-      const row = document.createElement('div');
-      row.className = `journal-list-item ${k === activeDateKey ? 'active' : ''}`;
-      row.setAttribute('data-mood-type', moodMap[item.mood] || 'neutral');
-      row.innerHTML = `
-        <div class="item-header">
-          <span>${parseDateKey(k).toLocaleDateString(appLocale(), { day: 'numeric', month: 'short', year: 'numeric' })}</span>
-          <span class="item-mood">${escapeHTML(item.mood || '')}</span>
-        </div>
-        <h4>${escapeHTML(content.substring(0, 60))}${content.length > 60 ? '…' : ''}</h4>
-        <div class="item-tags-container">${tagsHtml}</div>
-      `;
-      row.addEventListener('click', () => {
-        STATE.activeDate = parseDateKey(k);
-        this.loadDateData();
-        this.renderJournal();
+    const updateMoodTheme = (mood) => {
+      const editorPanel = document.querySelector('.journal-editor-panel');
+      if (editorPanel) {
+        editorPanel.setAttribute('data-active-mood', moodMap[mood] || 'neutral');
+      }
+    };
+
+    // Pre-fill if exists for active date
+    const entry = STATE.journal[activeDateKey];
+    const moodBtns = document.querySelectorAll('.mood-btn');
+    
+    if (entry) {
+      if (this.dom.journalContentInput) this.dom.journalContentInput.value = entry.content;
+      if (this.dom.journalTagsInput) this.dom.journalTagsInput.value = entry.tags;
+      if (this.dom.journalDeleteBtn) this.dom.journalDeleteBtn.style.display = 'block';
+      moodBtns.forEach(b => {
+        if (b.getAttribute('data-mood') === entry.mood) {
+          b.classList.add('active');
+        } else {
+          b.classList.remove('active');
+        }
       });
-      list.appendChild(row);
-    });
+      updateMoodTheme(entry.mood);
+    } else {
+      if (this.dom.journalContentInput) this.dom.journalContentInput.value = '';
+      if (this.dom.journalTagsInput) this.dom.journalTagsInput.value = '';
+      if (this.dom.journalDeleteBtn) this.dom.journalDeleteBtn.style.display = 'none';
+      moodBtns.forEach(b => b.classList.remove('active'));
+      const defMood = document.querySelector('.mood-btn[data-mood="😐"]');
+      if (defMood) defMood.classList.add('active');
+      updateMoodTheme("😐");
+    }
+
+    // Load History list
+    if (this.dom.journalHistoryList) {
+      this.dom.journalHistoryList.innerHTML = '';
+      const sortedKeys = Object.keys(STATE.journal).sort().reverse();
+      
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+      if (sortedKeys.length === 0) {
+        const emptyMsg = dict.journal_empty || "Henüz kayıt yok. İlk günlüğünü yaz!";
+        this.dom.journalHistoryList.innerHTML = `<div class="empty-state">${emptyMsg}</div>`;
+        return;
+      }
+
+      sortedKeys.forEach(k => {
+        const item = STATE.journal[k];
+        const row = document.createElement('div');
+        const moodType = moodMap[item.mood] || 'neutral';
+        row.className = `journal-list-item ${k === activeDateKey ? 'active' : ''}`;
+        row.setAttribute('data-mood-type', moodType);
+
+        const formatShortDate = (key, lang) => {
+          const [y, m, d] = key.split('-').map(Number);
+          const monthsTr = ["Oca", "Şub", "Mar", "Nis", "May", "Haz", "Tem", "Ağu", "Eyl", "Eki", "Kas", "Ara"];
+          const monthsEn = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+          const months = lang === 'tr' ? monthsTr : monthsEn;
+          return `${d} ${months[m - 1]} ${y}`;
+        };
+
+        let tagsHtml = '';
+        if (item.tags) {
+          const tagsList = item.tags.split(',').map(t => t.trim()).filter(t => t.length > 0);
+          tagsList.forEach(t => {
+            tagsHtml += `<span class="journal-item-tag">${t}</span>`;
+          });
+        } else {
+          const noTagsLabel = dict.journal_no_tags || (STATE.language === 'tr' ? 'Etiket yok' : 'No tags');
+          tagsHtml = `<span class="journal-item-tag empty-tags">${noTagsLabel}</span>`;
+        }
+
+        row.innerHTML = `
+          <div class="item-header">
+            <span>${formatShortDate(k, STATE.language)}</span>
+            <span class="item-mood">${item.mood}</span>
+          </div>
+          <h4>${item.content.substring(0, 30)}${item.content.length > 30 ? '...' : ''}</h4>
+          <div class="item-tags-container">${tagsHtml}</div>
+        `;
+        row.addEventListener('click', () => {
+          STATE.activeDate = new Date(k);
+          this.renderJournal();
+        });
+        this.dom.journalHistoryList.appendChild(row);
+      });
+    }
   },
 
   setupFinanceTab() {
@@ -3260,7 +3737,7 @@ const UIController = {
           category: category,
           account: account,
           targetAccount: selectedType === 'transfer' ? targetAccount : '',
-          description: description || (TRANSLATIONS[STATE.language] || TRANSLATIONS.en)[catInfo(category, selectedType).id] || category
+          description: description || category
         };
         
         STATE.finance.transactions.push(newTx);
@@ -3277,7 +3754,7 @@ const UIController = {
         closeModal();
         form.reset();
         this.renderFinance();
-        this.renderToday();
+        this.renderBrief();
       });
     }
 
@@ -3299,11 +3776,48 @@ const UIController = {
       });
     }
 
-    // 7. Amount keypad
+    // 7. Keypads and Adjust Balance modal listeners
     const txKeypadEl = document.getElementById('fin-tx-keypad');
     if (this.dom.finAmountInput && txKeypadEl) {
       setupKeypad(this.dom.finAmountInput, txKeypadEl, () => {
         if (this.dom.financeForm) this.dom.financeForm.requestSubmit();
+      });
+    }
+
+    const adjustKeypadEl = document.getElementById('fin-adjust-keypad');
+    if (this.dom.finAdjustAmountInput && adjustKeypadEl) {
+      setupKeypad(this.dom.finAdjustAmountInput, adjustKeypadEl, () => {
+        if (this.dom.financeAdjustForm) this.dom.financeAdjustForm.requestSubmit();
+      });
+    }
+
+    const closeAdjustModal = () => {
+      if (this.dom.finAdjustModal) this.dom.finAdjustModal.classList.remove('active');
+    };
+    if (this.dom.finAdjustModalClose) this.dom.finAdjustModalClose.addEventListener('click', closeAdjustModal);
+    if (this.dom.finAdjustCancelBtn) this.dom.finAdjustCancelBtn.addEventListener('click', closeAdjustModal);
+    if (this.dom.finAdjustModal) {
+      this.dom.finAdjustModal.addEventListener('click', (e) => {
+        if (e.target === this.dom.finAdjustModal) closeAdjustModal();
+      });
+    }
+
+    if (this.dom.financeAdjustForm) {
+      this.dom.financeAdjustForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const valStr = this.dom.finAdjustAmountInput.value;
+        const newVal = parseFloat(valStr);
+        if (!isNaN(newVal)) {
+          const accountKey = this.dom.financeAdjustForm.getAttribute('data-account-key');
+          if (accountKey && STATE.finance.accounts[accountKey]) {
+            STATE.finance.accounts[accountKey].balance = newVal;
+            StorageManager.saveFinance();
+            AudioFeedback.playSuccess();
+            this.renderFinance();
+            this.renderBrief();
+            closeAdjustModal();
+          }
+        }
       });
     }
 
@@ -3361,7 +3875,7 @@ const UIController = {
         const titleEl = document.getElementById('fin-account-modal-title');
         if (titleEl) titleEl.textContent = dict.fin_add_account || 'Add Account';
         
-        if (accountModalDelete) accountModalDelete.hidden = true;
+        if (accountModalDelete) accountModalDelete.style.display = 'none'; // hide delete button
         accountModal.classList.add('active');
         setTimeout(() => { if (accountNameInput) accountNameInput.focus(); }, 150);
       });
@@ -3404,7 +3918,7 @@ const UIController = {
         StorageManager.saveFinance();
         AudioFeedback.playSuccess();
         this.renderFinance();
-        this.renderToday();
+        this.renderBrief();
         closeAccountModal();
       });
     }
@@ -3422,7 +3936,7 @@ const UIController = {
           StorageManager.saveFinance();
           AudioFeedback.playSuccess();
           this.renderFinance();
-          this.renderToday();
+          this.renderBrief();
           closeAccountModal();
         }
       });
@@ -3494,7 +4008,7 @@ const UIController = {
       const accountsMarkup = Object.keys(STATE.finance.accounts).map(k => {
         const acc = STATE.finance.accounts[k];
         // acc.name is always the authoritative name (user-editable)
-        return `<option value="${escapeHTML(k)}">${escapeHTML(acc.name)} (${acc.balance.toFixed(0)} TL)</option>`;
+        return `<option value="${k}">${acc.name} (${acc.balance.toFixed(0)} TL)</option>`;
       }).join('');
       sourceSelect.innerHTML = accountsMarkup;
       targetSelect.innerHTML = accountsMarkup;
@@ -3532,14 +4046,14 @@ const UIController = {
     const totalExpense = monthlyTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
     const netTotal = totalIncome - totalExpense;
 
-    const localeCode = appLocale();
+    const localeCode = STATE.language === 'tr' ? 'tr-TR' : 'en-US';
     document.getElementById('fin-daily-summary-income').textContent = `${totalIncome.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
     document.getElementById('fin-daily-summary-expense').textContent = `${totalExpense.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
     document.getElementById('fin-daily-summary-total').textContent = `${netTotal.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
 
     const sortedDates = Object.keys(grouped).sort().reverse();
     if (sortedDates.length === 0) {
-      dailyList.innerHTML = `<div class="empty-state">${dict.finance_empty || 'No transactions recorded for this month.'}</div>`;
+      dailyList.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted); font-weight:600;">${dict.finance_empty || 'No transactions recorded for this month.'}</div>`;
       return;
     }
 
@@ -3549,7 +4063,7 @@ const UIController = {
       const dayExpense = txs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
 
       // Parse date to show day of week
-      const dateObj = parseDateKey(dateStr);
+      const dateObj = new Date(dateStr);
       const daysOfWeek = {
         en: ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         tr: ["Pazar", "Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi"],
@@ -3562,8 +4076,8 @@ const UIController = {
       groupEl.className = 'fin-daily-group';
 
       let headerSums = '';
-      if (dayIncome > 0) headerSums += `<span class="day-income">+${dayIncome.toLocaleString(appLocale(), { maximumFractionDigits: 0 })}</span>`;
-      if (dayExpense > 0) headerSums += `<span class="day-expense">-${dayExpense.toLocaleString(appLocale(), { maximumFractionDigits: 0 })}</span>`;
+      if (dayIncome > 0) headerSums += `<span class="day-income">+${dayIncome.toFixed(0)}</span>`;
+      if (dayExpense > 0) headerSums += `<span class="day-expense">-${dayExpense.toFixed(0)}</span>`;
 
       groupEl.innerHTML = `
         <div class="fin-daily-group-header">
@@ -3602,16 +4116,16 @@ const UIController = {
           <div class="fin-daily-tx-left">
             <div class="fin-daily-tx-icon-badge" style="background:${cat.color}15; color:${cat.color};">${cat.emoji}</div>
             <div class="fin-daily-tx-details">
-              <span class="fin-daily-tx-desc">${escapeHTML(tx.description)}</span>
+              <span class="fin-daily-tx-desc">${tx.description}</span>
               <div class="fin-daily-tx-sub">
-                <span class="acc-tag">${escapeHTML(localizedAccName)}${tx.targetAccount ? ' → ' + escapeHTML(localizedTargetName) : ''}</span>
-                <span>${escapeHTML(localizedCatLabel)}</span>
+                <span class="acc-tag">${localizedAccName}${tx.targetAccount ? ' → ' + localizedTargetName : ''}</span>
+                <span>${localizedCatLabel}</span>
               </div>
             </div>
           </div>
           <div class="fin-daily-tx-right">
-            <span class="fin-daily-tx-amount ${amtClass}" dir="ltr">${amtPrefix}${formatMoney(tx.amount)}</span>
-            <button type="button" class="fin-daily-tx-delete-btn" aria-label="${dict.journal_delete}">&times;</button>
+            <span class="fin-daily-tx-amount ${amtClass}">${amtPrefix}${tx.amount.toFixed(2)} TL</span>
+            <button class="fin-daily-tx-delete-btn" data-id="${tx.id}">&times;</button>
           </div>
         `;
 
@@ -3638,7 +4152,7 @@ const UIController = {
             StorageManager.saveFinance();
             AudioFeedback.playSuccess();
             this.renderFinance();
-            this.renderToday();
+            this.renderBrief();
           }
         });
 
@@ -3757,13 +4271,13 @@ const UIController = {
 
     const totalSum = targetTxs.reduce((sum, tx) => sum + tx.amount, 0);
     const centerPercent = document.getElementById('fin-donut-center-percent');
-    const localeCode = appLocale();
+    const localeCode = STATE.language === 'tr' ? 'tr-TR' : 'en-US';
     if (centerPercent) {
       centerPercent.textContent = `${totalSum.toLocaleString(localeCode, {maximumFractionDigits:0})} TL`;
     }
 
     if (totalSum === 0) {
-      categoryList.innerHTML = `<div class="empty-state">${dict.finance_empty || 'No transactions recorded.'}</div>`;
+      categoryList.innerHTML = `<div style="text-align:center; padding:3rem; color:var(--text-muted); font-weight:600;">${dict.finance_empty || 'No transactions recorded.'}</div>`;
       return;
     }
 
@@ -3834,7 +4348,7 @@ const UIController = {
 
     const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
     const totalBalance = Object.keys(STATE.finance.accounts).reduce((sum, k) => sum + STATE.finance.accounts[k].balance, 0);
-    const localeCode = appLocale();
+    const localeCode = STATE.language === 'tr' ? 'tr-TR' : 'en-US';
     
     document.getElementById('fin-accounts-total-balance').textContent = `${totalBalance.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
 
@@ -3860,8 +4374,8 @@ const UIController = {
       
       card.innerHTML = `
         <div class="account-card-header">
-          <span class="acc-title">${escapeHTML(localizedAccName)}</span>
-          <span class="acc-icon">${escapeHTML(emoji)}</span>
+          <span class="acc-title">${localizedAccName}</span>
+          <span class="acc-icon">${emoji}</span>
         </div>
         <div class="account-card-body">
           <span class="acc-balance">${acc.balance.toLocaleString(localeCode, {minimumFractionDigits:2})} TL</span>
@@ -3897,7 +4411,7 @@ const UIController = {
           else b.classList.remove('active');
         });
 
-        if (accountModalDelete) accountModalDelete.hidden = false;
+        if (accountModalDelete) accountModalDelete.style.display = 'block'; // show delete button
         if (accountModal) {
           accountModal.classList.add('active');
           setTimeout(() => accountNameInput.focus(), 150);
@@ -3908,86 +4422,13 @@ const UIController = {
     });
   },
 
-  // --- Google Calendar (Google Identity Services token flow: client ID only, no secret) ---
   setupGoogleSettings() {
-    const btn = document.getElementById('google-auth-btn');
-    if (!btn) return;
-    this.refreshGoogleButton();
-    btn.addEventListener('click', () => {
-      if (this.getGoogleAccessTokenSync()) {
-        this.disconnectGoogleCalendar();
-      } else {
-        this.connectGoogleCalendar();
-      }
-    });
+    // No longer needed as credentials are hardcoded directly
   },
 
-  refreshGoogleButton() {
-    const btn = document.getElementById('google-auth-btn');
-    if (!btn) return this.refreshDriveUI();
-    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-    const connected = !!this.getGoogleAccessTokenSync();
-    btn.textContent = connected ? dict.calendar_disconnect : dict.calendar_connect;
-    btn.classList.toggle('is-connected', connected);
-    this.refreshDriveUI();
-  },
-
-  getGoogleAccessTokenSync() {
-    const token = localStorage.getItem('google_access_token');
-    const expiry = parseInt(localStorage.getItem('google_token_expiry') || '0', 10);
-    return token && Date.now() < expiry ? token : null;
-  },
-
-  clearGoogleToken() {
-    localStorage.removeItem('google_access_token');
-    localStorage.removeItem('google_token_expiry');
-    localStorage.removeItem('google_token_scopes');
-    DriveBackup.setState('signin');
-    this.refreshGoogleButton();
-  },
-
-  // Kept async for existing callers; never talks to the network.
   async getGoogleAccessToken() {
-    return this.getGoogleAccessTokenSync();
-  },
-
-  connectGoogleCalendar() {
-    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-    if (!window.google || !google.accounts || !google.accounts.oauth2) {
-      alert(dict.alert_google_load_fail);
-      return;
-    }
-    const client = google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: `${GOOGLE_CALENDAR_SCOPE} ${GOOGLE_DRIVE_SCOPE}`,
-      callback: (resp) => {
-        if (resp.error || !resp.access_token) {
-          alert(dict.alert_google_auth_error + (resp.error_description || resp.error || ''));
-          return;
-        }
-        localStorage.setItem('google_access_token', resp.access_token);
-        localStorage.setItem('google_token_expiry', String(Date.now() + (Number(resp.expires_in) || 3600) * 1000));
-        localStorage.setItem('google_token_scopes', resp.scope || '');
-        this.refreshGoogleButton();
-        if ((resp.scope || '').includes(GOOGLE_CALENDAR_SCOPE)) this.syncGoogleCalendar(resp.access_token);
-        DriveBackup.checkRemote();
-      }
-    });
-    client.requestAccessToken();
-  },
-
-  disconnectGoogleCalendar() {
-    const token = localStorage.getItem('google_access_token');
-    if (token && window.google && google.accounts && google.accounts.oauth2) {
-      google.accounts.oauth2.revoke(token, () => {});
-    }
-    this.clearGoogleToken();
-    // Drop cached Google events; local events stay.
-    STATE.calendar = STATE.calendar.filter(evt => evt.isLocal);
-    StorageManager.saveCalendar();
-    this.refreshGoogleButton();
-    this.renderCalendar();
-    this.renderToday();
+    // Same Google sign-in as Drive sync (scopes include calendar.readonly)
+    return DriveSync.getToken();
   },
 
   setupCalendarTab() {
@@ -4019,7 +4460,7 @@ const UIController = {
         this.dom.eventEndTime.value = "10:00";
 
         this.renderCalendar();
-        this.renderToday();
+        this.renderBrief();
       });
     }
 
@@ -4038,8 +4479,20 @@ const UIController = {
     const showStatus = (msg, type) => {
       if (!statusEl) return;
       statusEl.textContent = msg;
-      statusEl.hidden = false;
-      statusEl.className = `status status-${type === 'info' ? 'loading' : type}`;
+      statusEl.style.display = 'block';
+      if (type === 'error') {
+        statusEl.style.color = '#ff6b6b';
+        statusEl.style.borderColor = 'rgba(255, 107, 107, 0.3)';
+        statusEl.style.background = 'rgba(255, 107, 107, 0.05)';
+      } else if (type === 'success') {
+        statusEl.style.color = '#51cf66';
+        statusEl.style.borderColor = 'rgba(81, 207, 102, 0.3)';
+        statusEl.style.background = 'rgba(81, 207, 102, 0.05)';
+      } else {
+        statusEl.style.color = '#e9ecef';
+        statusEl.style.borderColor = 'rgba(255, 255, 255, 0.1)';
+        statusEl.style.background = 'rgba(255, 255, 255, 0.03)';
+      }
     };
 
     const tSyncing = {
@@ -4068,8 +4521,26 @@ const UIController = {
       if (!response.ok) {
         if (response.status === 401) {
           localStorage.removeItem('google_access_token');
-          localStorage.removeItem('google_token_expiry');
-          this.refreshGoogleButton();
+          
+          if (!this._retryingGoogleSync) {
+            this._retryingGoogleSync = true;
+            console.log("Token expired during sync. Attempting auto-refresh...");
+            const newToken = await this.getGoogleAccessToken();
+            if (newToken) {
+              this._retryingGoogleSync = false;
+              await this.syncGoogleCalendar(newToken);
+              return;
+            }
+            this._retryingGoogleSync = false;
+          }
+          
+          const authBtn = document.getElementById('google-auth-btn');
+          if (authBtn) {
+            authBtn.innerHTML = (TRANSLATIONS[lang] || TRANSLATIONS.en).calendar_connect || "Google Hesabını Bağla";
+            authBtn.style.backgroundColor = "#4285f4";
+            authBtn.style.borderColor = "#4285f4";
+          }
+          console.log("Google token expired, auth reset.");
           const tExpired = {
             en: "Google Calendar session expired. Please reconnect.",
             tr: "Google Takvim oturumu sona erdi. Lütfen tekrar bağlanın.",
@@ -4117,10 +4588,10 @@ const UIController = {
 
         return {
           id: item.id,
-          title: item.summary || (TRANSLATIONS[lang] || TRANSLATIONS.en).calendar_untitled,
+          title: item.summary || 'Başlıksız Etkinlik',
           startTime: startTime,
           endTime: endTime,
-          desc: item.location || item.description || '',
+          desc: item.description || item.location || 'Google Takvim Etkinliği',
           date: activeDateKey,
           isLocal: false
         };
@@ -4129,7 +4600,7 @@ const UIController = {
       STATE.calendar = [...STATE.calendar, ...googleEvents];
       StorageManager.saveCalendar();
       this.renderCalendar();
-      this.renderToday();
+      this.renderBrief();
 
       const tSuccess = {
         en: `Google Calendar synced successfully! (${googleEvents.length} events loaded)`,
@@ -4150,68 +4621,125 @@ const UIController = {
   },
 
   renderCalendar() {
-    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
     const activeDateKey = formatDateKey(STATE.activeDate);
-
+    
     const dayLabel = document.getElementById('calendar-active-day');
-    if (dayLabel) dayLabel.textContent = CalendarEngine.getGregorianString(STATE.activeDate);
-
-    const container = this.dom.calendarTimelineEvents;
-    if (!container) return;
-    container.innerHTML = '';
-
-    const events = STATE.calendar
-      .filter(e => e.date === activeDateKey)
-      .sort((a, b) => a.startTime.localeCompare(b.startTime));
-
-    if (events.length === 0) {
-      container.innerHTML = `<p class="timeline-empty">${dict.calendar_empty}</p>`;
-      return;
+    if (dayLabel) {
+      dayLabel.textContent = CalendarEngine.getGregorianString(STATE.activeDate);
     }
 
-    // Show the span of hours from the first to the last event, whatever time of day they are.
-    const hours = events.map(e => parseInt(e.startTime, 10));
-    for (let h = Math.min(...hours); h <= Math.max(...hours); h++) {
-      const hourStr = String(h).padStart(2, '0');
-      const row = document.createElement('div');
-      row.className = 'timeline-hour-row';
-      row.innerHTML = `<div class="timeline-hour-label">${hourStr}:00</div><div class="timeline-events-placeholder"></div>`;
-      const slot = row.querySelector('.timeline-events-placeholder');
+    if (this.dom.calendarTimelineEvents) {
+      this.dom.calendarTimelineEvents.innerHTML = '';
+      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+      
+      // Sort and filter events by active date
+      const sortedEvents = [...STATE.calendar]
+        .filter(e => !e.date || e.date === activeDateKey)
+        .sort((a, b) => a.startTime.localeCompare(b.startTime));
 
-      events.filter(e => e.startTime.startsWith(hourStr)).forEach(e => {
-        const card = document.createElement('div');
-        card.className = 'timeline-event-card';
-        card.innerHTML = `
-          <div class="event-info">
-            <h4>${escapeHTML(e.title)}</h4>
-            ${e.desc ? `<p>${escapeHTML(e.desc)}</p>` : ''}
-          </div>
-          <div class="event-meta">
-            <span class="event-time" dir="ltr">${escapeHTML(e.startTime)} – ${escapeHTML(e.endTime)}</span>
-            ${e.isLocal ? `<button type="button" class="delete-event-btn" aria-label="${dict.journal_delete}">×</button>` : ''}
-          </div>
+      // Hours to render in the scrollable timeline: 08:00 to 22:00
+      for (let h = 8; h <= 22; h++) {
+        const hourStr = String(h).padStart(2, '0') + ':00';
+        const hourEvents = sortedEvents.filter(e => e.startTime.startsWith(String(h).padStart(2, '0')));
+        
+        const hourRow = document.createElement('div');
+        hourRow.className = 'timeline-hour-row';
+        hourRow.innerHTML = `
+          <div class="timeline-hour-label">${hourStr}</div>
+          <div class="timeline-events-placeholder"></div>
         `;
-        if (e.isLocal) {
-          card.querySelector('.delete-event-btn').addEventListener('click', () => {
-            STATE.calendar = STATE.calendar.filter(x => x.id !== e.id);
-            StorageManager.saveCalendar();
-            this.renderCalendar();
-            this.renderToday();
+
+        const placeholder = hourRow.querySelector('.timeline-events-placeholder');
+        if (hourEvents.length > 0) {
+          hourEvents.forEach(e => {
+            const card = document.createElement('div');
+            card.className = 'timeline-event-card';
+            card.innerHTML = `
+              <div class="event-info">
+                <h4>${e.title}</h4>
+                <p>${e.desc || (dict.calendar_notes_placeholder || 'Notes / Location')}</p>
+              </div>
+              <div style="display: flex; align-items: center; gap: 0.5rem;">
+                <span class="event-time">${e.startTime} - ${e.endTime}</span>
+                ${e.isLocal ? `<button class="delete-event-btn" data-id="${e.id}">×</button>` : ''}
+              </div>
+            `;
+
+            if (e.isLocal) {
+              card.querySelector('.delete-event-btn').addEventListener('click', (ev) => {
+                ev.stopPropagation();
+                STATE.calendar = STATE.calendar.filter(x => x.id !== e.id);
+                StorageManager.saveCalendar();
+                AudioFeedback.playSuccess();
+                this.renderCalendar();
+                this.renderBrief();
+              });
+            }
+
+            placeholder.appendChild(card);
           });
         }
-        slot.appendChild(card);
-      });
-      container.appendChild(row);
+        this.dom.calendarTimelineEvents.appendChild(hourRow);
+      }
     }
+  },
+
+  renderHabitsRanking(habitSuccessCounts, totalDays) {
+    const listContainer = this.dom.analyticsHabitList;
+    if (!listContainer) return;
+    listContainer.innerHTML = "";
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+
+    // Convert to sorted array of objects
+    const items = ROUTINE_KEYS.map(key => {
+      const completed = habitSuccessCounts[key] || 0;
+      const pct = Math.round((completed / totalDays) * 100);
+      const localizedName = dict[`habit_${key}_title`] || HABIT_DISPLAY_NAMES[key];
+      return {
+        key,
+        name: localizedName,
+        icon: HABIT_ICONS[key],
+        pct
+      };
+    });
+
+    // Sort from highest completion % to lowest
+    items.sort((a, b) => b.pct - a.pct);
+
+    items.forEach(item => {
+      const row = document.createElement('div');
+      row.className = "habit-rank-row animate-fade-in";
+
+      let rankClass = "rank-high";
+      if (item.pct < 50) {
+        rankClass = "rank-low";
+      } else if (item.pct < 80) {
+        rankClass = "rank-med";
+      }
+
+      row.innerHTML = `
+        <div class="habit-rank-details">
+          <span class="item-icon">${item.icon}</span>
+          <span class="habit-rank-name truncate-text" title="${item.name}">${item.name}</span>
+        </div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" style="width: 0%"></div>
+        </div>
+        <span class="habit-percent ${rankClass}">${item.pct}%</span>
+      `;
+
+      listContainer.appendChild(row);
+
+      // Trigger width animation on next frame for a smooth layout slide-in!
+      requestAnimationFrame(() => {
+        const fill = row.querySelector('.progress-bar-fill');
+        if (fill) fill.style.width = `${item.pct}%`;
+      });
+    });
   }
 };
 
 // Run when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   UIController.init();
-
-  // Offline shell for the web version; the Capacitor app already ships its files locally.
-  if ('serviceWorker' in navigator && !window.Capacitor && location.protocol === 'https:') {
-    navigator.serviceWorker.register('sw.js').catch(e => console.warn('Service worker registration failed:', e));
-  }
 });

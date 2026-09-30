@@ -1,737 +1,1579 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://accounts.google.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://www.googleapis.com https://accounts.google.com; img-src 'self' data: https:; frame-src https://accounts.google.com;">
-  <meta name="theme-color" content="#0f2e4a">
-  <title>Horizon Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https:; img-src 'self' data: https:; frame-src https://accounts.google.com https://www.youtube.com https://www.youtube-nocookie.com;">
+  <title>Horizon Routine Tracker</title>
+  <!-- Google Fonts: Outfit for UI -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5.1">
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css?v=4.2">
+  <!-- Tab Icon (Favicon) -->
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.4">
+  <link rel="shortcut icon" type="image/png" href="icon-192.png?v=4.4">
   <link rel="apple-touch-icon" href="icon-192.png?v=4.4">
+  <!-- PWA Manifest -->
   <link rel="manifest" href="manifest.json">
   <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
 
-  <!-- Icon sprite -->
-  <svg xmlns="http://www.w3.org/2000/svg" class="sprite" aria-hidden="true">
-    <symbol id="i-today" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
-    <symbol id="i-progress" viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-5 3 3 5-7"/></symbol>
-    <symbol id="i-journal" viewBox="0 0 24 24"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"/></symbol>
-    <symbol id="i-finance" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6.5 14.5h3"/></symbol>
-    <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></symbol>
-    <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
-    <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></symbol>
-    <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
-    <symbol id="i-chevron-start" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
-    <symbol id="i-chevron-end" viewBox="0 0 24 24"><path d="M9 18l6-6-6-6"/></symbol>
-    <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
-    <symbol id="i-close" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
-    <symbol id="i-eye" viewBox="0 0 24 24"><path d="M1.5 12S5.5 4.5 12 4.5 22.5 12 22.5 12 18.5 19.5 12 19.5 1.5 12 1.5 12Z"/><circle cx="12" cy="12" r="3"/></symbol>
-    <symbol id="i-flame" viewBox="0 0 24 24"><path d="M12 22c4 0 7-2.9 7-7 0-3.2-2-5.5-3.5-7.500-.5 2-1.7 3-3 3.500C13 8 12 4.500 9 2c.3 3.500-4 6.500-4 12.500C5 19 8 22 12 22Z"/></symbol>
-    <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4ZM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></symbol>
-    <symbol id="i-logo" viewBox="0 0 24 24"><path d="M3 17h18"/><path d="M6.500 17a5.500 5.500 0 0 1 11 0"/><path d="M12 5v2.500M4.600 8.600l1.800 1.800M19.400 8.600l-1.800 1.800"/></symbol>
-  </svg>
+  <!-- Glowing Background Orbs -->
+  <div class="bg-orb orb-1"></div>
+  <div class="bg-orb orb-2"></div>
+  <div class="bg-orb orb-3"></div>
+  <div class="bg-orb orb-4"></div>
 
-  <!-- Decorative backdrop (dot mesh + soft drifting orbs), purely visual -->
-  <div class="backdrop" aria-hidden="true">
-    <span class="orb orb--cyan"></span>
-    <span class="orb orb--navy"></span>
-    <span class="orb orb--teal"></span>
-    <span class="halo halo--1"></span>
-    <span class="halo halo--2"></span>
+  <!-- Floating Holographic Shapes -->
+  <div class="bg-shapes">
+    <div class="shape shape-ring-1"></div>
+    <div class="shape shape-ring-2"></div>
+    <div class="shape shape-diamond-1"></div>
+    <div class="shape shape-diamond-2"></div>
   </div>
 
-  <!-- ================= LOCK SCREEN ================= -->
-  <div id="auth-portal" class="auth">
+  <!-- ================= AUTHENTICATION PORTAL ================= -->
+  <div id="auth-portal" class="auth-container">
     <div class="auth-card">
-      <div class="auth-brand">
-        <span class="brand-mark"><svg class="icon"><use href="#i-logo"/></svg></span>
+      <div class="auth-logo">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="logo-icon">
+          <circle cx="12" cy="12" r="10"/>
+          <polyline points="12 6 12 12 16 14"/>
+        </svg>
         <h1 data-i18n="auth_title">Horizon Tracker</h1>
-        <p data-i18n="auth_sub">Private Single-User Dashboard</p>
+        <p class="auth-sub" data-i18n="auth_sub">Private Single-User Dashboard</p>
       </div>
-      <form id="auth-form" class="form">
-        <div class="field">
+      <form id="auth-form" class="auth-form">
+        <div class="input-group">
           <label for="passcode" data-i18n="auth_label">Access Passcode</label>
-          <div class="input-with-action">
-            <input type="password" id="passcode" required autocomplete="current-password">
-            <button type="button" id="toggle-password" class="icon-btn" data-i18n-aria="auth_toggle" aria-label="Show passcode">
-              <svg class="icon"><use href="#i-eye"/></svg>
+          <div class="password-wrapper">
+            <input type="password" id="passcode" required placeholder="••••••••" autocomplete="current-password">
+            <button type="button" id="toggle-password" class="icon-btn">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="eye-icon">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                <circle cx="12" cy="12" r="3"/>
+              </svg>
             </button>
           </div>
         </div>
         <button type="submit" class="btn btn-primary btn-block" data-i18n="auth_unlock">Unlock Dashboard</button>
-        <p id="auth-error" class="form-error" role="alert"></p>
+        <p id="auth-error" class="error-msg"></p>
       </form>
-      <p class="auth-footer" data-i18n="auth_footer">© 2026 Firnas Technologies</p>
+      <div class="auth-footer">
+        <p data-i18n="auth_footer">© 2026 Firnas Technologies</p>
+      </div>
     </div>
   </div>
 
-  <!-- ================= APP ================= -->
-  <div id="app-container" class="app hidden">
-
-    <!-- Desktop sidebar -->
+  <!-- ================= MAIN APP DASHBOARD ================= -->
+  <div id="app-container" class="dashboard-container">
+    <!-- DESKTOP SIDEBAR -->
     <aside class="sidebar">
-      <div class="brand">
-        <span class="brand-mark"><svg class="icon"><use href="#i-logo"/></svg></span>
+      <div class="sidebar-brand">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="sidebar-logo">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
         <div>
-          <strong>Horizon</strong>
-          <span>Enes Bakkar</span>
+          <h2>Horizon</h2>
+          <p class="user-badge">Enes Bakkar</p>
         </div>
       </div>
 
-      <div class="streaks">
-        <div class="streak streak--current">
-          <svg class="icon"><use href="#i-flame"/></svg>
-          <b id="sidebar-current-streak">0</b>
-          <span data-i18n="focus_current_streak">Current Streak</span>
+      <!-- Streaks Card Widget -->
+      <div class="sidebar-streaks">
+        <div class="sidebar-streak-item active-streak" title="Current consecutive perfect days streak">
+          <span class="streak-emoji">🔥</span>
+          <div class="streak-details">
+            <span class="value" id="sidebar-current-streak">0</span>
+            <span class="label" data-i18n="focus_current_streak">Current Streak</span>
+          </div>
         </div>
-        <div class="streak streak--best">
-          <svg class="icon"><use href="#i-trophy"/></svg>
-          <b id="sidebar-best-streak">0</b>
-          <span data-i18n="focus_personal_best">Personal Best</span>
+        <div class="sidebar-streak-item peak-streak" title="Historical personal best streak">
+          <span class="streak-emoji">🏆</span>
+          <div class="streak-details">
+            <span class="value" id="sidebar-best-streak">0</span>
+            <span class="label" data-i18n="focus_personal_best">Personal Best</span>
+          </div>
         </div>
       </div>
 
+      <!-- Sidebar Menu Links -->
       <nav class="sidebar-nav">
-        <button class="tab-btn active" data-tab="today-tab"><svg class="icon"><use href="#i-today"/></svg><span data-i18n="nav_today">Today</span></button>
-        <button class="tab-btn" data-tab="progress-tab"><svg class="icon"><use href="#i-progress"/></svg><span data-i18n="nav_progress">Progress</span></button>
-        <button class="tab-btn" data-tab="journal-tab"><svg class="icon"><use href="#i-journal"/></svg><span data-i18n="nav_journal">Mind Log</span></button>
-        <button class="tab-btn" data-tab="finance-tab"><svg class="icon"><use href="#i-finance"/></svg><span data-i18n="nav_finance">FinFlow+</span></button>
-        <button class="tab-btn" data-tab="calendar-tab"><svg class="icon"><use href="#i-calendar"/></svg><span data-i18n="nav_calendar">Scheduler</span></button>
-        <button class="tab-btn" data-tab="settings-tab"><svg class="icon"><use href="#i-settings"/></svg><span data-i18n="nav_settings">Settings</span></button>
+        <button class="tab-btn active" data-tab="brief-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          <span data-i18n="nav_brief">Dashboard</span>
+        </button>
+        <button class="tab-btn" data-tab="focus-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 11 12 14 22 4"/>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+          </svg>
+          <span data-i18n="nav_routines">Routines</span>
+        </button>
+        <button class="tab-btn" data-tab="grid-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="3" y1="9" x2="21" y2="9"/>
+            <line x1="9" y1="21" x2="9" y2="9"/>
+          </svg>
+          <span data-i18n="nav_monthly">Monthly Grid</span>
+        </button>
+        <button class="tab-btn" data-tab="journal-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 20h9"/>
+            <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+          </svg>
+          <span data-i18n="nav_journal">Mind Log</span>
+        </button>
+        <button class="tab-btn" data-tab="finance-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="12" y1="1" x2="12" y2="23"/>
+            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          <span data-i18n="nav_finance">FinFlow+</span>
+        </button>
+        <button class="tab-btn" data-tab="calendar-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          <span data-i18n="nav_calendar">Scheduler</span>
+        </button>
+        <button class="tab-btn" data-tab="analytics-tab">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+          <span data-i18n="nav_analytics">Analytics</span>
+        </button>
+        
+        <!-- General Settings button -->
+        <button id="sidebar-sync-settings-btn" class="tab-btn sync-settings-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="3"/>
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+          </svg>
+          <span data-i18n="nav_settings">Settings</span>
+        </button>
       </nav>
 
-      <button type="button" class="btn btn-ghost logout-btn sidebar-lock">
-        <svg class="icon"><use href="#i-lock"/></svg><span data-i18n="nav_lock">Lock Dashboard</span>
-      </button>
+      <!-- Logout Button (Sidebar Bottom) -->
+      <div class="sidebar-footer">
+        <button id="logout-btn" class="logout-btn flex-logout btn-block">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          <span data-i18n="nav_lock">Lock Dashboard</span>
+        </button>
+      </div>
     </aside>
 
-    <div class="main">
-      <!-- Mobile top bar -->
-      <header class="topbar">
+    <!-- MOBILE BOTTOM TABS NAVIGATION -->
+    <nav class="mobile-tabs">
+      <button class="tab-btn active" data-tab="brief-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+        </svg>
+        <span data-i18n="nav_brief">Dashboard</span>
+      </button>
+      <button class="tab-btn" data-tab="focus-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="9 11 12 14 22 4"/>
+          <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+        </svg>
+        <span data-i18n="nav_routines">Routines</span>
+      </button>
+      <button class="tab-btn" data-tab="journal-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 20h9"/>
+          <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+        </svg>
+        <span data-i18n="nav_journal">Mind Log</span>
+      </button>
+      <button class="tab-btn" data-tab="finance-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="12" y1="1" x2="12" y2="23"/>
+          <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+        </svg>
+        <span data-i18n="nav_finance">FinFlow+</span>
+      </button>
+      <button class="tab-btn" data-tab="calendar-tab">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+        </svg>
+        <span data-i18n="nav_calendar">Scheduler</span>
+      </button>
+    </nav>
+
+    <!-- MAIN MAIN CONTENT CONTAINER -->
+    <div class="main-layout-wrapper">
+      
+      <!-- MOBILE ONLY HEADER -->
+      <header class="mobile-header">
         <div class="brand">
-          <span class="brand-mark"><svg class="icon"><use href="#i-logo"/></svg></span>
-          <strong>Horizon</strong>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="header-logo">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+            <polyline points="22 4 12 14.01 9 11.01"/>
+          </svg>
+          <div>
+            <h1>Horizon</h1>
+            <p class="user-badge">Enes Bakkar</p>
+          </div>
         </div>
-        <div class="topbar-streaks">
-          <span class="streak-pill streak-pill--current" data-i18n-title="focus_current_streak"><svg class="icon"><use href="#i-flame"/></svg><b id="current-streak">0</b></span>
-          <span class="streak-pill streak-pill--best" data-i18n-title="focus_personal_best"><svg class="icon"><use href="#i-trophy"/></svg><b id="best-streak">0</b></span>
+        
+        <div class="mobile-header-right">
+          <!-- Streaks for Mobile -->
+          <div class="mobile-streaks">
+            <span title="Current Streak">🔥 <strong id="current-streak">0</strong></span>
+            <span title="Best Streak">🏆 <strong id="best-streak">0</strong></span>
+          </div>
+          <!-- General Settings button for mobile -->
+          <button id="mobile-sync-settings-btn" class="logout-btn sync-settings-btn" title="Settings" style="border: none; background: transparent; padding: 0.25rem; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; width: auto; height: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+              <circle cx="12" cy="12" r="3"/>
+              <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/>
+            </svg>
+          </button>
+          <!-- Analytics tab button for mobile -->
+          <button class="tab-btn" data-tab="analytics-tab" title="Analytics" style="border: none; background: transparent; padding: 0.25rem; cursor: pointer; color: var(--text-muted); display: flex; align-items: center; justify-content: center; width: auto; height: auto;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px;">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+          </button>
         </div>
       </header>
 
-      <main class="content">
-
-        <!-- ================= TODAY ================= -->
-        <section id="today-tab" class="tab-pane active-pane">
-          <div class="today-grid">
-
-            <div class="today-side">
-              <!-- Day navigator + progress -->
-              <div class="card day-card" id="day-card">
-                <div class="day-nav">
-                  <button id="prev-day-btn" class="icon-btn" data-i18n-aria="day_prev" aria-label="Previous day"><svg class="icon"><use href="#i-chevron-start"/></svg></button>
-                  <div class="day-date">
-                    <strong id="gregorian-date-display"></strong>
-                    <span id="hijri-date-display"></span>
-                  </div>
-                  <button id="next-day-btn" class="icon-btn" data-i18n-aria="day_next" aria-label="Next day"><svg class="icon"><use href="#i-chevron-end"/></svg></button>
-                </div>
-
-                <div class="day-summary">
-                  <div class="ring">
-                    <svg viewBox="0 0 80 80" aria-hidden="true">
-                      <circle class="ring-track" cx="40" cy="40" r="34"/>
-                      <circle class="ring-value" id="progress-circle" cx="40" cy="40" r="34"/>
-                    </svg>
-                    <span id="progress-percent-text">0%</span>
-                  </div>
-                  <div class="day-summary-text">
-                    <p id="daily-status-inspirational"></p>
-                    <span id="day-count-text" class="muted"></span>
-                  </div>
-                  <button id="today-btn" class="btn btn-secondary btn-sm" data-i18n="focus_today">Today</button>
-                </div>
-
-                <div class="mini-stats">
-                  <button type="button" class="mini-stat tab-trigger-btn" data-target-tab="progress-tab">
-                    <b id="brief-yesterday-score">–</b><span data-i18n="brief_yesterday_score">Yesterday's Routine</span>
-                  </button>
-                  <button type="button" class="mini-stat tab-trigger-btn" data-target-tab="finance-tab">
-                    <b id="brief-yesterday-spending">–</b><span data-i18n="brief_yesterday_spend">Yesterday's Spending</span>
-                  </button>
-                  <button type="button" class="mini-stat tab-trigger-btn" data-target-tab="calendar-tab">
-                    <b id="brief-today-events">0</b><span data-i18n="brief_today_events">Today's Events</span>
-                  </button>
+      <!-- VIEW PANELS -->
+      <main class="dashboard-content">
+        
+        <!-- ================= BRIEF VIEW (MORNING BRIEFING) ================= -->
+        <section id="brief-tab" class="tab-pane active-pane">
+          <div class="brief-layout-container animate-fade-in">
+            <!-- Dynamic welcome banner -->
+            <div class="welcome-banner glass-card">
+              <div class="welcome-left">
+                <span class="brief-greeting-icon">🌤️</span>
+                <div>
+                  <h1 id="brief-greeting-text">Good Morning, Enes!</h1>
+                  <p id="brief-subgreeting-text">Today is a great day to achieve new goals and grow.</p>
                 </div>
               </div>
-
-              <!-- Verse of the day -->
-              <figure class="card ayah">
-                <blockquote id="ayah-arabic" lang="ar" dir="rtl"></blockquote>
-                <p id="ayah-translation"></p>
-                <figcaption id="ayah-source"></figcaption>
-              </figure>
+              <div class="welcome-right">
+                <!-- Animated Weather Card -->
+                <div class="brief-weather-card">
+                  <div class="weather-card-header">
+                    <span id="weather-desc" data-i18n="brief_weather_desc">Istanbul - Clear &amp; Sunny</span>
+                    <span id="weather-temp-val" class="weather-temp-display">28°C</span>
+                  </div>
+                  <!-- Animated cloud + sun scene -->
+                  <div class="weather-scene-container">
+                    <div class="weather-sun">
+                      <div class="weather-sun-core"></div>
+                      <div class="weather-sun-shine"></div>
+                    </div>
+                    <div class="weather-cloud weather-cloud-front">
+                      <span class="weather-cloud-left-front"></span>
+                      <span class="weather-cloud-right-front"></span>
+                    </div>
+                    <div class="weather-cloud weather-cloud-back">
+                      <span class="weather-cloud-left-back"></span>
+                      <span class="weather-cloud-right-back"></span>
+                    </div>
+                  </div>
+                  <!-- Condition label -->
+                  <div class="weather-temp-scale">
+                    <span id="weather-icon">☀️ Sunny</span>
+                  </div>
+                </div>
+              </div>
             </div>
 
-            <div class="today-main">
-              <!-- Prayers -->
-              <section class="today-section today-section--prayers">
-              <div class="section-head">
-                <h2 data-i18n="section_prayers">Prayers</h2>
-                <span class="section-count" data-count-keys="fajr_sunnah,fajr_fard,duha_prayer,dhuhr_sunnah1,dhuhr_fard,dhuhr_sunnah2,asr_sunnah,asr_fard,maghrib_fard,maghrib_sunnah,isha_sunnah1,isha_fard,isha_sunnah2,witr_prayer"></span>
+
+            <!-- Ayah of the day -->
+            <div class="ayah-card glass-card">
+              <div class="ayah-title">
+                <span class="icon">📖</span>
+                <h3 data-i18n="brief_ayah_title">Daily Verse of Focus</h3>
               </div>
-              <div class="card list-card prayers">
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_fajr">Fajr</strong><small class="prayer-status" data-count-keys="fajr_sunnah,fajr_fard"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="fajr-sunnah" class="task-checkbox" data-key="fajr_sunnah" data-i18n-aria="habit_fajr_sunnah_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                    <label class="chip chip--fard"><input type="checkbox" id="fajr-fard" class="task-checkbox" data-key="fajr_fard" data-i18n-aria="habit_fajr_fard_title"><span><b>2</b><i data-i18n="abbr_fard">F</i></span></label>
-                  </div>
+              <blockquote class="ayah-blockquote">
+                <p class="arabic" id="ayah-arabic">فَإِنَّ مَعَ الْعُسْرِ يُسْرًا</p>
+                <p class="translation" id="ayah-translation">"For indeed, with hardship [will be] ease."</p>
+                <cite class="source" id="ayah-source">Surah Al-Inshirah, Verse 5</cite>
+              </blockquote>
+            </div>
+
+            <!-- Overview widgets -->
+            <div class="brief-widgets-grid">
+              
+              <!-- Widget 1: Yesterday's routines status -->
+              <div class="kpi-card glass-card clickable-brief-widget" data-target-tab="focus-tab">
+                <div class="kpi-icon-wrap bg-cyan-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+                  </svg>
                 </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_duha">Duha</strong><small class="prayer-status" data-count-keys="duha_prayer"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="duha-prayer" class="task-checkbox" data-key="duha_prayer" data-i18n-aria="habit_duha_prayer_title"><span><i data-i18n="abbr_nafl">N</i></span></label>
-                  </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="brief-yesterday-score">-%</span>
+                  <span class="kpi-label" data-i18n="brief_yesterday_score">Yesterday's Routine</span>
                 </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_dhuhr">Dhuhr</strong><small class="prayer-status" data-count-keys="dhuhr_sunnah1,dhuhr_fard,dhuhr_sunnah2"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="dhuhr-sunnah1" class="task-checkbox" data-key="dhuhr_sunnah1" data-i18n-aria="habit_dhuhr_sunnah1_title"><span><b>4</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                    <label class="chip chip--fard"><input type="checkbox" id="dhuhr-fard" class="task-checkbox" data-key="dhuhr_fard" data-i18n-aria="habit_dhuhr_fard_title"><span><b>4</b><i data-i18n="abbr_fard">F</i></span></label>
-                    <label class="chip chip--sunnah"><input type="checkbox" id="dhuhr-sunnah2" class="task-checkbox" data-key="dhuhr_sunnah2" data-i18n-aria="habit_dhuhr_sunnah2_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_asr">Asr</strong><small class="prayer-status" data-count-keys="asr_sunnah,asr_fard"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="asr-sunnah" class="task-checkbox" data-key="asr_sunnah" data-i18n-aria="habit_asr_sunnah_title"><span><b>4</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                    <label class="chip chip--fard"><input type="checkbox" id="asr-fard" class="task-checkbox" data-key="asr_fard" data-i18n-aria="habit_asr_fard_title"><span><b>4</b><i data-i18n="abbr_fard">F</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_maghrib">Maghrib</strong><small class="prayer-status" data-count-keys="maghrib_fard,maghrib_sunnah"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--fard"><input type="checkbox" id="maghrib-fard" class="task-checkbox" data-key="maghrib_fard" data-i18n-aria="habit_maghrib_fard_title"><span><b>3</b><i data-i18n="abbr_fard">F</i></span></label>
-                    <label class="chip chip--sunnah"><input type="checkbox" id="maghrib-sunnah" class="task-checkbox" data-key="maghrib_sunnah" data-i18n-aria="habit_maghrib_sunnah_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_isha">Isha</strong><small class="prayer-status" data-count-keys="isha_sunnah1,isha_fard,isha_sunnah2"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="isha-sunnah1" class="task-checkbox" data-key="isha_sunnah1" data-i18n-aria="habit_isha_sunnah1_title"><span><b>4</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                    <label class="chip chip--fard"><input type="checkbox" id="isha-fard" class="task-checkbox" data-key="isha_fard" data-i18n-aria="habit_isha_fard_title"><span><b>4</b><i data-i18n="abbr_fard">F</i></span></label>
-                    <label class="chip chip--sunnah"><input type="checkbox" id="isha-sunnah2" class="task-checkbox" data-key="isha_sunnah2" data-i18n-aria="habit_isha_sunnah2_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_witr">Witr</strong><small class="prayer-status" data-count-keys="witr_prayer"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--fard"><input type="checkbox" id="witr-prayer" class="task-checkbox" data-key="witr_prayer" data-i18n-aria="habit_witr_prayer_title"><span><b>3</b><i data-i18n="abbr_wajib">W</i></span></label>
-                  </div>
-                </div>
-                <p class="chip-legend" data-i18n="chip_legend">S: Sunnah · F: Fard · W: Wajib · N: Nafl</p>
               </div>
 
-              </section>
-
-              <!-- Dhikr & Quran -->
-              <section class="today-section">
-              <div class="section-head">
-                <h2 data-i18n="section_dhikr">Dhikr &amp; Quran</h2>
-                <span class="section-count" data-count-keys="morning_dhikr,quran_devotion,evening_dhikr"></span>
-              </div>
-              <div class="card list-card">
-                <label class="habit-row"><input type="checkbox" id="morning-dhikr" class="task-checkbox" data-key="morning_dhikr"><span class="check"></span><span class="habit-icon" aria-hidden="true">📿</span><span class="habit-text"><strong data-i18n="habit_morning_dhikr_title">Morning Dhikr</strong><small data-i18n="habit_morning_dhikr_desc">Morning Remembrance</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="quran-devotion" class="task-checkbox" data-key="quran_devotion"><span class="check"></span><span class="habit-icon" aria-hidden="true">📖</span><span class="habit-text"><strong data-i18n="habit_quran_devotion_title">Quran Devotion</strong><small data-i18n="habit_quran_devotion_desc">Daily Wird</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="evening-dhikr" class="task-checkbox" data-key="evening_dhikr"><span class="check"></span><span class="habit-icon" aria-hidden="true">📿</span><span class="habit-text"><strong data-i18n="habit_evening_dhikr_title">Evening Dhikr</strong><small data-i18n="habit_evening_dhikr_desc">Evening Remembrance</small></span></label>
-              </div>
-
-              </section>
-
-              <!-- Growth -->
-              <section class="today-section">
-              <div class="section-head">
-                <h2 data-i18n="section_growth">Growth</h2>
-                <span class="section-count" data-count-keys="intellectual_growth,physical_training,nutritional_fuel,horizon_sync"></span>
-              </div>
-              <div class="card list-card">
-                <label class="habit-row"><input type="checkbox" id="intellectual-growth" class="task-checkbox" data-key="intellectual_growth"><span class="check"></span><span class="habit-icon" aria-hidden="true">📚</span><span class="habit-text"><strong data-i18n="habit_intellectual_growth_title">Intellectual Growth</strong><small data-i18n="habit_intellectual_growth_desc">Book Reading</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="physical-training" class="task-checkbox" data-key="physical_training"><span class="check"></span><span class="habit-icon" aria-hidden="true">🏋️</span><span class="habit-text"><strong data-i18n="habit_physical_training_title">Physical Training</strong><small data-i18n="habit_physical_training_desc">Workout / Sport</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="nutritional-fuel" class="task-checkbox" data-key="nutritional_fuel"><span class="check"></span><span class="habit-icon" aria-hidden="true">🍳</span><span class="habit-text"><strong data-i18n="habit_nutritional_fuel_title">Nutritional Fuel</strong><small data-i18n="habit_nutritional_fuel_desc">Healthy Breakfast</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="horizon-sync" class="task-checkbox" data-key="horizon_sync"><span class="check"></span><span class="habit-icon" aria-hidden="true">🎯</span><span class="habit-text"><strong data-i18n="habit_horizon_sync_title">Horizon Sync</strong><small data-i18n="habit_horizon_sync_desc">Daily Planning</small></span></label>
+              <!-- Widget 2: FinFlow expenses summary -->
+              <div class="kpi-card glass-card clickable-brief-widget" data-target-tab="finance-tab">
+                <div class="kpi-icon-wrap bg-gold-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23"/>
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="brief-yesterday-spending">0 TL</span>
+                  <span class="kpi-label" data-i18n="brief_yesterday_spend">Yesterday's Spending</span>
+                </div>
               </div>
 
-              </section>
+              <!-- Widget 3: Today's agenda snippet -->
+              <div class="kpi-card glass-card clickable-brief-widget" data-target-tab="calendar-tab">
+                <div class="kpi-icon-wrap bg-green-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="brief-today-events">0 Events</span>
+                  <span class="kpi-label" data-i18n="brief_today_events">Today's Events</span>
+                </div>
+              </div>
 
-              <!-- Day close -->
-              <section class="today-section">
-              <div class="section-head">
-                <h2 data-i18n="section_close">Day Close</h2>
-                <span class="section-count" data-count-keys="mind_log,fin_flow"></span>
+            </div>
+
+            <!-- YouTube recommendation section (Gemini brief layout style) -->
+            <div class="brief-recommendation-card glass-card">
+              <div class="card-header">
+                <h3 data-i18n="brief_video_title">Recommended Focus Video</h3>
+                <span class="legend" data-i18n="brief_video_subtitle">Motivational support to start the day</span>
               </div>
-              <div class="card list-card">
-                <label class="habit-row"><input type="checkbox" id="mind-log" class="task-checkbox" data-key="mind_log"><span class="check"></span><span class="habit-icon" aria-hidden="true">📝</span><span class="habit-text"><strong data-i18n="habit_mind_log_title">Mind Log</strong><small data-i18n="habit_mind_log_desc">Daily Journaling Complete</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
-                <label class="habit-row"><input type="checkbox" id="fin-flow" class="task-checkbox" data-key="fin_flow"><span class="check"></span><span class="habit-icon" aria-hidden="true">💰</span><span class="habit-text"><strong data-i18n="habit_fin_flow_title">FinFlow</strong><small data-i18n="habit_fin_flow_desc">Daily Expenses Logged</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
+              <div class="youtube-brief-container">
+                <div class="youtube-iframe-wrapper">
+                  <iframe src="https://www.youtube.com/embed/mgmVOuLgFB0" title="Focus Motivation Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+                <div class="youtube-brief-info">
+                  <h4 id="brief-video-item-title" data-i18n="brief_video_item_title">Resolve and Willpower - Rebuilding Yourself</h4>
+                  <p id="brief-video-item-desc" data-i18n="brief_video_item_desc">Contains advice on maintaining spiritual and mental discipline throughout the day.</p>
+                </div>
               </div>
-              </section>
             </div>
 
           </div>
         </section>
 
-        <!-- ================= PROGRESS ================= -->
-        <section id="progress-tab" class="tab-pane">
-          <div class="page-head">
-            <div>
-              <h1 data-i18n="analytics_title">Performance Analytics</h1>
-              <p data-i18n="analytics_subtitle">Monthly scores, trends and habit consistency.</p>
+        <!-- ================= FOCUS VIEW (CHECKLIST) ================= -->
+        <section id="focus-tab" class="tab-pane">
+          
+          <div class="focus-layout-grid">
+            <!-- Mobile-only trigger to open Monthly Grid -->
+            <div class="mobile-only" style="order: 0; width: 100%;">
+              <button type="button" class="btn btn-secondary tab-trigger-btn" data-target-tab="grid-tab" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 0.5rem; padding: 0.85rem; border-radius: var(--radius-md); font-family: inherit; font-size: 0.95rem; font-weight: 500; background-color: rgba(3, 7, 18, 0.4); border: 1px solid var(--border-color); color: var(--text-main);">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px; color: var(--primary-light);">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                  <line x1="3" y1="9" x2="21" y2="9"/>
+                  <line x1="9" y1="21" x2="9" y2="9"/>
+                </svg>
+                <span data-i18n="nav_monthly">Monthly Grid</span>
+              </button>
             </div>
-            <label class="select-wrap">
-              <span class="sr-only" data-i18n="month_select_label">Select month</span>
-              <select id="month-selector" class="month-sync-select"></select>
-            </label>
-          </div>
+            
+            <!-- Checklist Column -->
+            <div class="checklist-column">
+              <div class="blocks-grid">
+                
+                <!-- Left Column: Morning (01) & Dusk (03) -->
+                <div class="blocks-column">
+                  
+                  <!-- Block 1: Morning Core -->
+                  <div class="time-block-card morning-border">
+                    <div class="block-header block-morning">
+                      <span class="block-num">01</span>
+                      <div>
+                        <h2 data-i18n="block_morning_title">Morning Core</h2>
+                        <span class="block-span" data-i18n="block_morning_desc">Dawn to Forenoon</span>
+                      </div>
+                    </div>
+                    
+                    <div class="block-items">
+                      <!-- Fajr Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="fajr-sunnah" class="task-checkbox" data-key="fajr_sunnah">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_fajr_sunnah_title">Fajr 2 Rakah Sunnah</h3>
+                              <p data-i18n="habit_fajr_sunnah_desc">Dawn Optional Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
 
-          <div class="kpi-grid">
-            <div class="card kpi"><span data-i18n="analytics_kpi_avg">Avg Daily Score</span><b id="kpi-avg-score">0%</b></div>
-            <div class="card kpi"><span data-i18n="analytics_kpi_perfect">Perfect Days</span><b id="kpi-perfect-days">0 / 0</b></div>
-            <div class="card kpi kpi--good"><span data-i18n="analytics_kpi_top">Most Consistent</span><b id="kpi-top-habit">–</b></div>
-            <div class="card kpi kpi--warn"><span data-i18n="analytics_kpi_focus">Needs Consistency</span><b id="kpi-focus-habit">–</b></div>
-          </div>
+                      <!-- Fajr Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="fajr-fard" class="task-checkbox" data-key="fajr_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_fajr_fard_title">Fajr 2 Rakah Fard</h3>
+                              <p data-i18n="habit_fajr_fard_desc">Dawn Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
 
-          <div class="card">
-            <div class="card-head">
-              <h2 data-i18n="grid_title">Monthly Log</h2>
-              <p data-i18n="grid_subtitle">Select a day to open its checklist.</p>
+                      <!-- Morning Dhikr -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="morning-dhikr" class="task-checkbox" data-key="morning_dhikr">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📿</span>
+                            <div>
+                              <h3 data-i18n="habit_morning_dhikr_title">Morning Dhikr</h3>
+                              <p data-i18n="habit_morning_dhikr_desc">Morning Remembrance</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Quran Devotion -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="quran-devotion" class="task-checkbox" data-key="quran_devotion">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📖</span>
+                            <div>
+                              <h3 data-i18n="habit_quran_devotion_title">Quran Devotion</h3>
+                              <p data-i18n="habit_quran_devotion_desc">Daily Wird / Tilavet</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Intellectual Growth -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="intellectual-growth" class="task-checkbox" data-key="intellectual_growth">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📚</span>
+                            <div>
+                              <h3 data-i18n="habit_intellectual_growth_title">Intellectual Growth</h3>
+                              <p data-i18n="habit_intellectual_growth_desc">Book Reading</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Physical Training -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="physical-training" class="task-checkbox" data-key="physical_training">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🏋️</span>
+                            <div>
+                              <h3 data-i18n="habit_physical_training_title">Physical Training</h3>
+                              <p data-i18n="habit_physical_training_desc">Workout / Sport</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Nutritional Fuel -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="nutritional-fuel" class="task-checkbox" data-key="nutritional_fuel">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🍳</span>
+                            <div>
+                              <h3 data-i18n="habit_nutritional_fuel_title">Nutritional Fuel</h3>
+                              <p data-i18n="habit_nutritional_fuel_desc">Healthy Breakfast</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Horizon Sync -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="horizon-sync" class="task-checkbox" data-key="horizon_sync">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🎯</span>
+                            <div>
+                              <h3 data-i18n="habit_horizon_sync_title">Horizon Sync</h3>
+                              <p data-i18n="habit_horizon_sync_desc">Daily Planning & Vision Alignment</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Duha Prayer -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="duha-prayer" class="task-checkbox" data-key="duha_prayer">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">☀️</span>
+                            <div>
+                              <h3 data-i18n="habit_duha_prayer_title">Duha Prayer</h3>
+                              <p data-i18n="habit_duha_prayer_desc">Forenoon Prayer</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Block 3: Dusk & Evening -->
+                  <div class="time-block-card dusk-border">
+                    <div class="block-header block-dusk">
+                      <span class="block-num">03</span>
+                      <div>
+                        <h2 data-i18n="block_dusk_title">Dusk & Evening</h2>
+                        <span class="block-span" data-i18n="block_dusk_desc">Sunset to Night</span>
+                      </div>
+                    </div>
+                    
+                    <div class="block-items">
+                      <!-- Evening Dhikr -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="evening-dhikr" class="task-checkbox" data-key="evening_dhikr">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📿</span>
+                            <div>
+                              <h3 data-i18n="habit_evening_dhikr_title">Evening Dhikr</h3>
+                              <p data-i18n="habit_evening_dhikr_desc">Evening Remembrance</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Maghrib 3 Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="maghrib-fard" class="task-checkbox" data-key="maghrib_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_maghrib_fard_title">Maghrib 3 Rakah Fard</h3>
+                              <p data-i18n="habit_maghrib_fard_desc">Sunset Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Maghrib 2 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="maghrib-sunnah" class="task-checkbox" data-key="maghrib_sunnah">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_maghrib_sunnah_title">Maghrib 2 Rakah Sunnah</h3>
+                              <p data-i18n="habit_maghrib_sunnah_desc">Post-Sunset Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Isha 4 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="isha-sunnah1" class="task-checkbox" data-key="isha_sunnah1">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_isha_sunnah1_title">Isha 4 Rakah Sunnah</h3>
+                              <p data-i18n="habit_isha_sunnah1_desc">Pre-Obligation Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Isha Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="isha-fard" class="task-checkbox" data-key="isha_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_isha_fard_title">Isha 4 Rakah Fard</h3>
+                              <p data-i18n="habit_isha_fard_desc">Night Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Isha 2 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="isha-sunnah2" class="task-checkbox" data-key="isha_sunnah2">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_isha_sunnah2_title">Isha 2 Rakah Sunnah</h3>
+                              <p data-i18n="habit_isha_sunnah2_desc">Post-Obligation Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Witr Prayer -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="witr-prayer" class="task-checkbox" data-key="witr_prayer">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_witr_prayer_title">Witr 3 Rakah Prayer</h3>
+                              <p data-i18n="habit_witr_prayer_desc">Hanefi Wajib</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+
+                <!-- Right Column: Midday (02) & Night (04) -->
+                <div class="blocks-column">
+                  
+                  <!-- Block 2: Midday & Afternoon -->
+                  <div class="time-block-card midday-border">
+                    <div class="block-header block-midday">
+                      <span class="block-num">02</span>
+                      <div>
+                        <h2 data-i18n="block_midday_title">Midday & Afternoon</h2>
+                        <span class="block-span" data-i18n="block_midday_desc">Noon to Sunset</span>
+                      </div>
+                    </div>
+                    
+                    <div class="block-items">
+                      <!-- Dhuhr 4 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="dhuhr-sunnah1" class="task-checkbox" data-key="dhuhr_sunnah1">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_dhuhr_sunnah1_title">Dhuhr 4 Rakah Sunnah</h3>
+                              <p data-i18n="habit_dhuhr_sunnah1_desc">Pre-Obligation Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Dhuhr Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="dhuhr-fard" class="task-checkbox" data-key="dhuhr_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_dhuhr_fard_title">Dhuhr 4 Rakah Fard</h3>
+                              <p data-i18n="habit_dhuhr_fard_desc">Noon Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Dhuhr 2 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="dhuhr-sunnah2" class="task-checkbox" data-key="dhuhr_sunnah2">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_dhuhr_sunnah2_title">Dhuhr 2 Rakah Sunnah</h3>
+                              <p data-i18n="habit_dhuhr_sunnah2_desc">Post-Obligation Devotion</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Asr 4 Sunnah -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="asr-sunnah" class="task-checkbox" data-key="asr_sunnah">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_asr_sunnah_title">Asr 4 Rakah Sunnah</h3>
+                              <p data-i18n="habit_asr_sunnah_desc">Hanefi Sunnah</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- Asr Fard -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="asr-fard" class="task-checkbox" data-key="asr_fard">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">🕌</span>
+                            <div>
+                              <h3 data-i18n="habit_asr_fard_title">Asr 4 Rakah Fard</h3>
+                              <p data-i18n="habit_asr_fard_desc">Afternoon Obligation</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Block 4: Night Closeout -->
+                  <div class="time-block-card night-border">
+                    <div class="block-header block-night">
+                      <span class="block-num">04</span>
+                      <div>
+                        <h2 data-i18n="block_night_title">Night Closeout</h2>
+                        <span class="block-span" data-i18n="block_night_desc">Before Sleep</span>
+                      </div>
+                    </div>
+                    
+                    <div class="block-items">
+                      <!-- Mind Log Checklist -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="mind-log" class="task-checkbox" data-key="mind_log">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">📝</span>
+                            <div>
+                              <h3 data-i18n="habit_mind_log_title">Mind Log</h3>
+                              <p data-i18n="habit_mind_log_desc">Daily Journaling Complete</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <!-- FinFlow Checklist -->
+                      <div class="habit-item-card">
+                        <label class="custom-checkbox full-width-label">
+                          <input type="checkbox" id="fin-flow" class="task-checkbox" data-key="fin_flow">
+                          <span class="checkmark"></span>
+                          <div class="label-content">
+                            <span class="item-icon">💰</span>
+                            <div>
+                              <h3 data-i18n="habit_fin_flow_title">FinFlow</h3>
+                              <p data-i18n="habit_fin_flow_desc">Daily Expenses Logged</p>
+                            </div>
+                          </div>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  
+                </div>
+
+              </div>
             </div>
 
-            <div class="table-scroll">
+            <!-- Focus Status Sidebar Column (Unified Date Controller & Ring) -->
+            <div class="status-sidebar-column">
+              <div class="daily-navigator-card glass-card">
+                <div class="navigator-card-header">
+                  <h3 data-i18n="focus_day_navigator">Day Navigator</h3>
+                  <button id="today-btn" class="btn btn-secondary btn-sm" data-i18n="focus_today">Today</button>
+                </div>
+                
+                <div class="date-carousel">
+                  <button id="prev-day-btn" class="nav-arrow-btn" title="Previous Day">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="15 18 9 12 15 6"/>
+                    </svg>
+                  </button>
+                  
+                  <div class="date-info">
+                    <div class="gregorian-date" id="gregorian-date-display"></div>
+                    <div class="hijri-date" id="hijri-date-display">1447 Hijri</div>
+                  </div>
+                  
+                  <button id="next-day-btn" class="nav-arrow-btn" title="Next Day">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="9 18 15 12 9 6"/>
+                    </svg>
+                  </button>
+                </div>
+
+                <div class="progress-showcase">
+                  <div class="progress-ring-outer">
+                    <svg class="progress-ring-svg" width="160" height="160" viewBox="0 0 160 160">
+                      <!-- Base circle -->
+                      <circle class="progress-ring-bg" stroke="rgba(255, 255, 255, 0.05)" stroke-width="8" fill="transparent" r="64" cx="80" cy="80"/>
+                      <!-- Active stroke circle -->
+                      <circle class="progress-ring-stroke" id="progress-circle" stroke="var(--primary)" stroke-width="8" fill="transparent" r="64" cx="80" cy="80" stroke-linecap="round"/>
+                    </svg>
+                    <div class="progress-text-box">
+                      <span class="percent-val" id="progress-percent-text">0%</span>
+                      <span class="percent-label" data-i18n="focus_completed">Completed</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="daily-status-inspirational" id="daily-status-inspirational">
+                  Complete all 23 routines for a perfect score!
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+
+        <!-- ================= MONTHLY GRID (NOTION VIEW) ================= -->
+        <section id="grid-tab" class="tab-pane">
+          <div class="notion-grid-card glass-card animate-fade-in">
+            <!-- Mobile-only back button -->
+            <div class="mobile-only" style="margin-bottom: 1rem;">
+              <button type="button" class="btn btn-secondary tab-trigger-btn" data-target-tab="focus-tab" style="display: flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.85rem; border-radius: var(--radius-md); font-family: inherit; font-size: 0.85rem; font-weight: 500; background-color: rgba(3, 7, 18, 0.4); border: 1px solid var(--border-color); color: var(--text-main);">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; vertical-align: middle;">
+                  <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                <span data-i18n="back_to_routines">Back to Routines</span>
+              </button>
+            </div>
+            <div class="grid-controls-row">
+              <div class="controls-left">
+                <h2 data-i18n="grid_title">Monthly Log Grid</h2>
+                <p class="grid-sub" data-i18n="grid_subtitle">Click a day to load its routine checklist details.</p>
+              </div>
+              <div class="controls-right">
+                <label for="month-selector" class="sr-only">Select Month</label>
+                <select id="month-selector" class="grid-select month-sync-select">
+                  <!-- Dynamically generated list of months -->
+                </select>
+              </div>
+            </div>
+
+            <div class="table-responsive-wrapper">
               <table class="notion-table" id="notion-master-table">
                 <thead>
                   <tr>
                     <th class="col-date" data-i18n="grid_col_date">Date</th>
-                    <th data-i18n="prayer_fajr">Fajr</th>
-                    <th data-i18n="prayer_dhuhr">Dhuhr</th>
-                    <th data-i18n="prayer_asr">Asr</th>
-                    <th data-i18n="prayer_maghrib">Maghrib</th>
-                    <th data-i18n="prayer_isha">Isha</th>
-                    <th data-i18n="prayer_witr">Witr</th>
-                    <th data-i18n="grid_col_dhikr">Dhikr</th>
-                    <th data-i18n="grid_col_quran">Quran</th>
-                    <th data-i18n="prayer_duha">Duha</th>
-                    <th data-i18n="grid_col_read">Read</th>
-                    <th data-i18n="grid_col_sport">Sport</th>
-                    <th data-i18n="grid_col_fuel">Fuel</th>
-                    <th data-i18n="grid_col_plan">Plan</th>
-                    <th data-i18n="grid_col_journal">Journal</th>
-                    <th data-i18n="grid_col_expense">Expense</th>
-                    <th data-i18n="grid_col_score">Score</th>
+                    <th class="col-habit text-center" title="Fajr (Sunnah + Fard)">Fajr</th>
+                    <th class="col-habit text-center" title="Dhuhr (Sunnah + Fard)">Dhuhr</th>
+                    <th class="col-habit text-center" title="Asr (Sunnah + Fard)">Asr</th>
+                    <th class="col-habit text-center" title="Maghrib (Fard + Sunnah)">Maghrib</th>
+                    <th class="col-habit text-center" title="Isha (Sunnah + Fard)">Isha</th>
+                    <th class="col-habit text-center" title="Witr">Witr</th>
+                    <th class="col-habit text-center" title="Dhikr (Morning + Evening)">Dhikr</th>
+                    <th class="col-habit text-center" title="Quran">Quran</th>
+                    <th class="col-habit text-center" title="Duha">Duha</th>
+                    <th class="col-habit text-center" title="Read (Intellectual)">Read</th>
+                    <th class="col-habit text-center" title="Work (Workout)">Work</th>
+                    <th class="col-habit text-center" title="Fuel (Nutrition)">Fuel</th>
+                    <th class="col-habit text-center" title="Horizon Sync">Sync</th>
+                    <th class="col-habit text-center" title="Mind Log">Journal</th>
+                    <th class="col-habit text-center" title="FinFlow">Expense</th>
+                    <th class="col-percent text-center" title="Daily Score" data-i18n="grid_col_score">Score</th>
                   </tr>
                 </thead>
-                <tbody id="notion-table-body"></tbody>
+                <tbody id="notion-table-body">
+                  <!-- Rows dynamically loaded by app.js -->
+                </tbody>
               </table>
             </div>
 
-            <div class="month-calendar">
-              <div class="month-calendar-weekdays">
-                <span data-i18n="weekday_mon">Mon</span><span data-i18n="weekday_tue">Tue</span><span data-i18n="weekday_wed">Wed</span><span data-i18n="weekday_thu">Thu</span><span data-i18n="weekday_fri">Fri</span><span data-i18n="weekday_sat">Sat</span><span data-i18n="weekday_sun">Sun</span>
+            <!-- Mobile Calendar View (shown only on mobile via CSS) -->
+            <div class="mobile-calendar-container">
+              <div class="mobile-calendar-weekdays">
+                <div data-i18n="weekday_mon">Mon</div>
+                <div data-i18n="weekday_tue">Tue</div>
+                <div data-i18n="weekday_wed">Wed</div>
+                <div data-i18n="weekday_thu">Thu</div>
+                <div data-i18n="weekday_fri">Fri</div>
+                <div data-i18n="weekday_sat">Sat</div>
+                <div data-i18n="weekday_sun">Sun</div>
               </div>
-              <div class="month-calendar-days" id="mobile-calendar-days-grid"></div>
-              <div class="legend">
-                <span><i class="legend-dot score-0"></i>0%</span>
-                <span><i class="legend-dot score-low"></i>1–49%</span>
-                <span><i class="legend-dot score-med"></i>50–99%</span>
-                <span><i class="legend-dot score-100"></i>100%</span>
+              <div class="mobile-calendar-days" id="mobile-calendar-days-grid">
+                <!-- Dynamically populated by app.js -->
               </div>
-            </div>
-          </div>
-
-          <div class="split">
-            <div class="card">
-              <div class="card-head">
-                <h2 data-i18n="analytics_chart_title">Daily Score Trend</h2>
-                <p data-i18n="analytics_chart_legend">Score % for each day of the month</p>
+              
+              <div class="mobile-calendar-legend">
+                <span class="legend-item"><span class="legend-dot score-0"></span> 0%</span>
+                <span class="legend-item"><span class="legend-dot score-low"></span> 1-49%</span>
+                <span class="legend-item"><span class="legend-dot score-med"></span> 50-99%</span>
+                <span class="legend-item"><span class="legend-dot score-100"></span> 100%</span>
               </div>
-              <div class="chart" id="trend-chart-container"></div>
-            </div>
-            <div class="card">
-              <div class="card-head">
-                <h2 data-i18n="analytics_ranks_title">Habit Consistency</h2>
-                <p data-i18n="analytics_ranks_legend">How often each habit was completed this month</p>
-              </div>
-              <div class="rank-list" id="analytics-habit-list"></div>
-            </div>
-          </div>
-
-          <div class="card">
-            <div class="card-head">
-              <h2 data-i18n="analytics_heatmap_title">Annual Discipline Calendar</h2>
-              <p data-i18n="analytics_heatmap_legend">The past 365 days. Select a day to open its checklist.</p>
-            </div>
-            <div class="heatmap-scroll">
-              <div class="heatmap-grid" id="heatmap-grid"></div>
-            </div>
-            <div class="legend legend--end">
-              <span data-i18n="analytics_heatmap_less">Less</span>
-              <i class="legend-dot score-0"></i><i class="legend-dot score-low"></i><i class="legend-dot score-med"></i><i class="legend-dot score-100"></i>
-              <span data-i18n="analytics_heatmap_more">More</span>
             </div>
           </div>
         </section>
 
-        <!-- ================= JOURNAL ================= -->
-        <section id="journal-tab" class="tab-pane">
-          <div class="journal-grid">
-            <div class="card journal-editor-panel">
-              <div class="card-head card-head--row">
-                <h1 data-i18n="journal_title">Mind Log</h1>
-                <span class="badge" id="journal-active-date-display"></span>
+        <!-- ================= MONTHLY PERFORMANCE ANALYTICS ================= -->
+        <section id="analytics-tab" class="tab-pane">
+          <div class="analytics-layout-container animate-fade-in">
+            <!-- Mobile-only back button -->
+            <div class="mobile-only" style="margin-bottom: 1rem;">
+              <button type="button" class="btn btn-secondary tab-trigger-btn" data-target-tab="brief-tab" style="display: flex; align-items: center; gap: 0.35rem; padding: 0.5rem 0.85rem; border-radius: var(--radius-md); font-family: inherit; font-size: 0.85rem; font-weight: 500; background-color: rgba(3, 7, 18, 0.4); border: 1px solid var(--border-color); color: var(--text-main);">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; vertical-align: middle;">
+                  <polyline points="15 18 9 12 15 6"/>
+                </svg>
+                <span data-i18n="back_to_dashboard">Back to Dashboard</span>
+              </button>
+            </div>
+            
+            <!-- Controls row with active month summary -->
+            <div class="analytics-header-row glass-card">
+              <div class="header-left">
+                <h2 data-i18n="analytics_title">Performance Analytics</h2>
+                <p class="section-sub" data-i18n="analytics_subtitle">Historical progress data, trend chart, and habit consistency.</p>
               </div>
-              <form id="journal-form" class="form">
-                <div class="field">
-                  <label for="journal-date-input" data-i18n="journal_date">Date</label>
-                  <input type="date" id="journal-date-input" required>
-                </div>
-                <div class="field">
-                  <span class="label" data-i18n="journal_mood">Your Mood Today</span>
-                  <div class="mood-row" role="group">
-                    <button type="button" class="mood-btn" data-mood="🤩" data-mood-type="awesome"><span aria-hidden="true">🤩</span><small data-i18n="mood_awesome">Awesome</small></button>
-                    <button type="button" class="mood-btn" data-mood="🙂" data-mood-type="good"><span aria-hidden="true">🙂</span><small data-i18n="mood_good">Good</small></button>
-                    <button type="button" class="mood-btn" data-mood="😐" data-mood-type="neutral"><span aria-hidden="true">😐</span><small data-i18n="mood_neutral">Neutral</small></button>
-                    <button type="button" class="mood-btn" data-mood="😴" data-mood-type="tired"><span aria-hidden="true">😴</span><small data-i18n="mood_tired">Tired</small></button>
-                    <button type="button" class="mood-btn" data-mood="😔" data-mood-type="bad"><span aria-hidden="true">😔</span><small data-i18n="mood_bad">Bad</small></button>
-                  </div>
-                </div>
-                <div class="field">
-                  <label for="journal-content-input" data-i18n="journal_summary">Daily Summary</label>
-                  <textarea id="journal-content-input" rows="8" data-i18n-placeholder="journal_placeholder" required></textarea>
-                </div>
-                <div class="field">
-                  <label for="journal-tags-input" data-i18n="journal_tags">Tags (comma separated)</label>
-                  <input type="text" id="journal-tags-input" data-i18n-placeholder="journal_tags_placeholder">
-                </div>
-                <div class="form-actions">
-                  <button type="submit" class="btn btn-primary" data-i18n="journal_save">Save</button>
-                  <button type="button" id="journal-delete-btn" class="btn btn-danger-ghost" data-i18n="journal_delete" hidden>Delete</button>
-                </div>
-              </form>
-            </div>
-
-            <div class="card journal-history-panel">
-              <div class="card-head card-head--row">
-                <h2 data-i18n="journal_history">History</h2>
-                <button id="journal-new-btn" class="btn btn-secondary btn-sm"><svg class="icon"><use href="#i-plus"/></svg><span data-i18n="journal_new">New</span></button>
+              <div class="header-right">
+                <label for="analytics-month-selector" class="sr-only">Select Month</label>
+                <select id="analytics-month-selector" class="grid-select month-sync-select">
+                  <!-- Dynamically synced selector -->
+                </select>
               </div>
-              <div class="journal-list" id="journal-history-list"></div>
             </div>
-          </div>
-        </section>
 
-        <!-- ================= FINANCE ================= -->
-        <section id="finance-tab" class="tab-pane">
-          <div class="fin-toolbar">
-            <div class="month-stepper">
-              <button id="fin-prev-month" class="icon-btn" data-i18n-aria="month_prev" aria-label="Previous month"><svg class="icon"><use href="#i-chevron-start"/></svg></button>
-              <strong id="fin-current-month"></strong>
-              <button id="fin-next-month" class="icon-btn" data-i18n-aria="month_next" aria-label="Next month"><svg class="icon"><use href="#i-chevron-end"/></svg></button>
-            </div>
-            <button id="fin-add-tx-trigger" class="btn btn-primary"><svg class="icon"><use href="#i-plus"/></svg><span data-i18n="finance_new_tx">Add Transaction</span></button>
-          </div>
-
-          <div class="segmented" role="tablist">
-            <button class="fin-subtab-btn active" data-subtab="daily" data-i18n="fin_subtab_daily">Daily</button>
-            <button class="fin-subtab-btn" data-subtab="calendar" data-i18n="fin_subtab_calendar">Calendar</button>
-            <button class="fin-subtab-btn" data-subtab="summary" data-i18n="fin_subtab_summary">Summary</button>
-            <button class="fin-subtab-btn" data-subtab="accounts" data-i18n="fin_subtab_accounts">Accounts</button>
-          </div>
-
-          <div id="fin-view-daily" class="finflow-view-pane active">
-            <div class="card fin-totals">
-              <div class="fin-total fin-total--income"><span data-i18n="finance_monthly_income">Income</span><b id="fin-daily-summary-income">0</b></div>
-              <div class="fin-total fin-total--expense"><span data-i18n="finance_monthly_expense">Expenses</span><b id="fin-daily-summary-expense">0</b></div>
-              <div class="fin-total"><span data-i18n="fin_net_balance">Net</span><b id="fin-daily-summary-total">0</b></div>
-            </div>
-            <div id="fin-daily-grouped-list" class="fin-daily-list"></div>
-          </div>
-
-          <div id="fin-view-calendar" class="finflow-view-pane">
-            <div class="card">
-              <div class="fin-calendar-weekdays">
-                <span data-i18n="weekday_mon">Mon</span><span data-i18n="weekday_tue">Tue</span><span data-i18n="weekday_wed">Wed</span><span data-i18n="weekday_thu">Thu</span><span data-i18n="weekday_fri">Fri</span><span data-i18n="weekday_sat">Sat</span><span data-i18n="weekday_sun">Sun</span>
-              </div>
-              <div id="fin-calendar-days" class="fin-calendar-days"></div>
-            </div>
-          </div>
-
-          <div id="fin-view-summary" class="finflow-view-pane">
-            <div class="split">
-              <div class="card">
-                <div class="card-head card-head--row">
-                  <h2 data-i18n="finance_category_title">Category Breakdown</h2>
-                  <div class="segmented segmented--sm">
-                    <button id="fin-summary-toggle-expense" class="toggle-btn active" data-type="expense" data-i18n="finance_tx_expense">Expense</button>
-                    <button id="fin-summary-toggle-income" class="toggle-btn" data-type="income" data-i18n="finance_tx_income">Income</button>
-                  </div>
-                </div>
-                <div class="donut">
-                  <svg viewBox="0 0 200 200" id="fin-donut-chart-svg" aria-hidden="true">
-                    <circle class="donut-track" cx="100" cy="100" r="70"></circle>
+            <!-- KPI Summary Cards Row -->
+            <div class="kpi-cards-grid">
+              
+              <!-- Card 1: Monthly Score -->
+              <div class="kpi-card glass-card">
+                <div class="kpi-icon-wrap bg-cyan-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
                   </svg>
-                  <div class="donut-center">
-                    <b id="fin-donut-center-percent">0</b>
-                    <span id="fin-donut-center-label" data-i18n="finance_tx_expense">Expense</span>
-                  </div>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="kpi-avg-score">0%</span>
+                  <span class="kpi-label" data-i18n="analytics_kpi_avg">Avg Daily Score</span>
                 </div>
               </div>
-              <div class="card">
-                <div class="card-head">
-                  <h2 id="fin-summary-category-header" data-i18n="finance_category_title">Expenses by Category</h2>
-                </div>
-                <div id="fin-summary-category-list" class="fin-category-list"></div>
-              </div>
-            </div>
-          </div>
 
-          <div id="fin-view-accounts" class="finflow-view-pane">
-            <div class="card fin-assets">
-              <div><span data-i18n="finance_total_balance">Total Assets</span><b id="fin-accounts-total-balance">0</b></div>
-              <button type="button" id="fin-add-account-btn" class="btn btn-secondary"><svg class="icon"><use href="#i-plus"/></svg><span data-i18n="fin_add_account">Add Account</span></button>
+              <!-- Card 2: Perfect Days -->
+              <div class="kpi-card glass-card">
+                <div class="kpi-icon-wrap bg-gold-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="8" r="7"/>
+                    <polyline points="8.21 13.89 7 23 12 20 17 23 15.79 13.88"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value" id="kpi-perfect-days">0/0</span>
+                  <span class="kpi-label" data-i18n="analytics_kpi_perfect">Perfect Days (100%)</span>
+                </div>
+              </div>
+
+              <!-- Card 3: Top Habit -->
+              <div class="kpi-card glass-card">
+                <div class="kpi-icon-wrap bg-green-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value truncate-text" id="kpi-top-habit">-</span>
+                  <span class="kpi-label" data-i18n="analytics_kpi_top">Most Consistent</span>
+                </div>
+              </div>
+
+              <!-- Card 4: Needs Focus -->
+              <div class="kpi-card glass-card">
+                <div class="kpi-icon-wrap bg-red-glow">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <line x1="12" y1="8" x2="12" y2="12"/>
+                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                  </svg>
+                </div>
+                <div class="kpi-details">
+                  <span class="kpi-value truncate-text" id="kpi-focus-habit">-</span>
+                  <span class="kpi-label" data-i18n="analytics_kpi_focus">Needs Consistency</span>
+                </div>
+              </div>
+
             </div>
-            <div class="accounts-grid" id="fin-accounts-grid"></div>
+
+            <!-- Visualization Grid: Graph + Habit Rankings -->
+            <div class="visuals-grid">
+              
+              <!-- Left: SVG Daily Trend Graph -->
+              <div class="visual-card glass-card trend-graph-card">
+                <div class="visual-card-header">
+                  <h3 data-i18n="analytics_chart_title">Daily Score Trend</h3>
+                  <span class="chart-legend" data-i18n="analytics_chart_legend">Score % over active month days</span>
+                </div>
+                <div class="chart-container" id="trend-chart-container">
+                  <!-- Custom SVG line graph is drawn here by app.js -->
+                </div>
+              </div>
+
+              <!-- Right: Detailed Habit Success list -->
+              <div class="visual-card glass-card habit-rankings-card">
+                <div class="visual-card-header">
+                  <h3 data-i18n="analytics_ranks_title">Habit-by-Habit Consistency</h3>
+                  <span class="chart-legend" data-i18n="analytics_ranks_legend">Frequency of completion this month</span>
+                </div>
+                <div class="habit-rankings-list" id="analytics-habit-list">
+                  <!-- Habit rows with percentages and progress bars loaded by app.js -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Interactive 365-Day Discipline Heatmap -->
+            <div class="visual-card glass-card heatmap-card" style="margin-top: 1.5rem;">
+              <div class="visual-card-header">
+                <h3 data-i18n="analytics_heatmap_title">Annual Discipline Calendar</h3>
+                <span class="chart-legend" data-i18n="analytics_heatmap_legend">Consistency heatmap over the past 365 days. Click any day to jump to its checklist.</span>
+              </div>
+              <div class="heatmap-scroll-container" style="overflow-x: auto; margin-top: 1.25rem; padding-bottom: 0.5rem;">
+                <div class="heatmap-grid" id="heatmap-grid">
+                  <!-- Generated by app.js -->
+                </div>
+              </div>
+              <div class="heatmap-legend-row" style="display: flex; gap: 0.5rem; font-size: 0.7rem; color: var(--text-muted); margin-top: 1rem; align-items: center; justify-content: flex-end;">
+                <span data-i18n="analytics_heatmap_less">Less</span>
+                <span class="legend-cell cell-0" style="width: 10px; height: 10px; background-color: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255, 255, 255, 0.05); border-radius: 2px;"></span>
+                <span class="legend-cell cell-low" style="width: 10px; height: 10px; background-color: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 2px;"></span>
+                <span class="legend-cell cell-med" style="width: 10px; height: 10px; background-color: rgba(6, 182, 212, 0.45); border: 1px solid rgba(6, 182, 212, 0.5); border-radius: 2px;"></span>
+                <span class="legend-cell cell-100" style="width: 10px; height: 10px; background-color: var(--primary); border: 1px solid var(--primary); border-radius: 2px; box-shadow: 0 0 5px var(--primary-glow);"></span>
+                <span data-i18n="analytics_heatmap_more">More</span>
+              </div>
+            </div>
+
+            <!-- Inline Cloud Sync Settings (Accessible on mobile) -->
+            <div class="visual-card glass-card sync-settings-card" style="margin-top: 1.5rem;">
+              <div class="visual-card-header">
+                <h3 data-i18n="analytics_sync_title">Google Drive Sync</h3>
+                <span class="chart-legend" data-i18n="analytics_sync_subtitle">Keep every device in sync through your Google account</span>
+              </div>
+              <div class="sync-card-body" style="margin-top: 1.25rem;">
+                <p data-i18n="drive_desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin: 0 0 1rem;">Sign in with Google once on each device.</p>
+                  <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-primary drive-connect-btn" data-i18n="drive_connect" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem; margin-top: 0;">Sign in with Google</button>
+                    <button type="button" class="btn btn-primary drive-sync-now-btn" data-i18n="drive_sync_now" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem; margin-top: 0;">Sync Now</button>
+                    <button type="button" class="btn btn-secondary drive-disconnect-btn" data-i18n="drive_disconnect" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem; margin-top: 0; color: var(--danger);">Disconnect</button>
+                  </div>
+                  <p class="sync-status-msg drive-sync-status"></p>
+              </div>
+            </div>
+
+
+
           </div>
         </section>
 
-        <!-- ================= CALENDAR ================= -->
+        <!-- ================= JOURNAL VIEW (GÜNLÜK) ================= -->
+        <section id="journal-tab" class="tab-pane">
+          <div class="journal-layout-container animate-fade-in">
+            <div class="journal-grid">
+              
+              <!-- Journal sidebar: history -->
+              <div class="journal-history-panel glass-card">
+                <div class="panel-header">
+                  <h3 data-i18n="journal_history">Mind Log History</h3>
+                  <button id="journal-new-btn" class="btn btn-primary btn-sm" data-i18n="journal_new">+ New</button>
+                </div>
+                <div class="journal-list" id="journal-history-list">
+                  <!-- Dynamically loaded journal entries -->
+                  <div class="empty-state" data-i18n="journal_empty">No entries yet. Write your first log!</div>
+                </div>
+              </div>
+
+              <!-- Journal main: editor -->
+              <div class="journal-editor-panel glass-card">
+                <div class="panel-header">
+                  <h2 data-i18n="journal_title">Mind Log & Observations</h2>
+                  <span class="date-badge" id="journal-active-date-display"></span>
+                </div>
+                
+                <form id="journal-form" class="journal-form-layout">
+                  <div class="form-row">
+                    <!-- Date Selector -->
+                    <div class="input-group flex-1">
+                      <label for="journal-date-input">
+                        <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        <span data-i18n="journal_date">Date</span>
+                      </label>
+                      <input type="date" id="journal-date-input" required>
+                    </div>
+                    
+                    <!-- Mood Selector -->
+                    <div class="input-group flex-1">
+                      <label>
+                        <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M8 14s1.5 2 4 2 4-2 4-2"></path><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg>
+                        <span data-i18n="journal_mood">Your Mood Today</span>
+                      </label>
+                      <div class="mood-selector-container">
+                        <button type="button" class="mood-btn" data-mood="🤩" title="Mükemmel" data-mood-type="awesome">
+                          <span class="mood-emoji">🤩</span>
+                          <span class="mood-text" data-i18n="mood_awesome">Mükemmel</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="🙂" title="İyi" data-mood-type="good">
+                          <span class="mood-emoji">🙂</span>
+                          <span class="mood-text" data-i18n="mood_good">İyi</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="😐" title="Normal" data-mood-type="neutral">
+                          <span class="mood-emoji">😐</span>
+                          <span class="mood-text" data-i18n="mood_neutral">Normal</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="😴" title="Yorgun" data-mood-type="tired">
+                          <span class="mood-emoji">😴</span>
+                          <span class="mood-text" data-i18n="mood_tired">Yorgun</span>
+                        </button>
+                        <button type="button" class="mood-btn" data-mood="😔" title="Kötü" data-mood-type="bad">
+                          <span class="mood-emoji">😔</span>
+                          <span class="mood-text" data-i18n="mood_bad">Kötü</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="input-group" style="flex: 1; display: flex; flex-direction: column;">
+                    <label for="journal-content-input">
+                      <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                      <span data-i18n="journal_summary">Daily Summary & Mental State</span>
+                    </label>
+                    <textarea id="journal-content-input" data-i18n-placeholder="journal_placeholder" placeholder="What did you achieve today? What challenges did you face? Any thoughts occupying your mind?..." required></textarea>
+                  </div>
+
+                  <div class="input-group">
+                    <label for="journal-tags-input">
+                      <svg class="field-icon" xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                      <span data-i18n="journal_tags">Tags (comma separated)</span>
+                    </label>
+                    <input type="text" id="journal-tags-input" data-i18n-placeholder="journal_tags_placeholder" placeholder="e.g. work, gym, devotion, family">
+                  </div>
+
+                  <div class="form-actions">
+                    <button type="submit" class="btn btn-primary" data-i18n="journal_save">Save & Synchronize</button>
+                    <button type="button" id="journal-delete-btn" class="btn btn-secondary" style="color: var(--danger); border-color: rgba(239, 68, 68, 0.2); display: none;" data-i18n="journal_delete">Delete</button>
+                  </div>
+                </form>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ================= FINANCE VIEW (FINFLOW+) ================= -->
+        <section id="finance-tab" class="tab-pane">
+          <div class="finance-layout-container animate-fade-in">
+            
+            <!-- FinFlow Navigation and Month Picker -->
+            <div class="finflow-nav-container glass-card">
+              <div class="fin-month-selector">
+                <button id="fin-prev-month" class="fin-nav-btn">◀</button>
+                <span id="fin-current-month" class="fin-month-title">June 2026</span>
+                <button id="fin-next-month" class="fin-nav-btn">▶</button>
+              </div>
+              <div class="finflow-subtabs">
+                <button class="fin-subtab-btn active" data-subtab="daily" data-i18n="fin_subtab_daily">Daily</button>
+                <button class="fin-subtab-btn" data-subtab="calendar" data-i18n="fin_subtab_calendar">Calendar</button>
+                <button class="fin-subtab-btn" data-subtab="summary" data-i18n="fin_subtab_summary">Summary</button>
+                <button class="fin-subtab-btn" data-subtab="accounts" data-i18n="fin_subtab_accounts">Accounts</button>
+              </div>
+              <button id="fin-add-tx-trigger" class="btn btn-primary fin-floating-add-btn">
+                <span class="plus-icon">+</span> <span data-i18n="finance_new_tx">Add Transaction</span>
+              </button>
+            </div>
+
+            <!-- Views Wrapper -->
+            <div class="finflow-views-wrapper">
+              
+              <!-- 1. Daily Tab View -->
+              <div id="fin-view-daily" class="finflow-view-pane active">
+                <!-- Summary bar at the top of Daily view -->
+                <div class="fin-daily-summary-bar glass-card">
+                  <div class="summary-item income">
+                    <span class="label" data-i18n="finance_monthly_income">Monthly Inflow</span>
+                    <span class="value" id="fin-daily-summary-income">0.00 TL</span>
+                  </div>
+                  <div class="summary-item expense">
+                    <span class="label" data-i18n="finance_monthly_expense">Monthly Outflow</span>
+                    <span class="value" id="fin-daily-summary-expense">0.00 TL</span>
+                  </div>
+                  <div class="summary-item total">
+                    <span class="label" data-i18n="fin_net_balance">Net Balance</span>
+                    <span class="value" id="fin-daily-summary-total">0.00 TL</span>
+                  </div>
+                </div>
+                <!-- Grouped list of transactions -->
+                <div id="fin-daily-grouped-list" class="fin-daily-list-container">
+                  <!-- Loaded dynamically by JS -->
+                </div>
+              </div>
+
+              <!-- 2. Calendar Tab View -->
+              <div id="fin-view-calendar" class="finflow-view-pane">
+                <div class="fin-calendar-container glass-card">
+                  <!-- Calendar Header: Weekdays -->
+                  <div class="fin-calendar-weekdays">
+                    <span data-i18n="day_mon">Mon</span>
+                    <span data-i18n="day_tue">Tue</span>
+                    <span data-i18n="day_wed">Wed</span>
+                    <span data-i18n="day_thu">Thu</span>
+                    <span data-i18n="day_fri">Fri</span>
+                    <span data-i18n="day_sat">Sat</span>
+                    <span data-i18n="day_sun">Sun</span>
+                  </div>
+                  <!-- Calendar Days Grid -->
+                  <div id="fin-calendar-days" class="fin-calendar-days-grid">
+                    <!-- Populated dynamically by JS -->
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Summary (Charts) Tab View -->
+              <div id="fin-view-summary" class="finflow-view-pane">
+                <div class="fin-summary-layout">
+                  <!-- Chart Panel -->
+                  <div class="fin-chart-panel glass-card">
+                    <div class="chart-header">
+                      <h3 data-i18n="finance_category_title">Category Breakdown</h3>
+                      <div class="summary-type-toggle">
+                        <button id="fin-summary-toggle-expense" class="toggle-btn active" data-type="expense" data-i18n="finance_tx_expense">Expense</button>
+                        <button id="fin-summary-toggle-income" class="toggle-btn" data-type="income" data-i18n="finance_tx_income">Income</button>
+                      </div>
+                    </div>
+                    
+                    <div class="chart-container-wrapper">
+                      <!-- Custom donut chart drawing area -->
+                      <div class="donut-chart-box">
+                        <svg width="200" height="200" viewBox="0 0 200 200" id="fin-donut-chart-svg">
+                          <circle cx="100" cy="100" r="70" fill="transparent" stroke="rgba(255,255,255,0.05)" stroke-width="20"></circle>
+                          <!-- Dynamic segments will be drawn here -->
+                        </svg>
+                        <div class="donut-chart-text">
+                          <span class="percent" id="fin-donut-center-percent">0%</span>
+                          <span class="label" id="fin-donut-center-label" data-i18n="finance_tx_expense">Expense</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Category progress list -->
+                  <div class="fin-category-list-panel glass-card">
+                    <div class="card-header">
+                      <h3 id="fin-summary-category-header" data-i18n="finance_category_title">Expenses by Category</h3>
+                    </div>
+                    <div id="fin-summary-category-list" class="fin-category-progress-list">
+                      <!-- Loaded dynamically by JS -->
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 4. Accounts Tab View -->
+              <div id="fin-view-accounts" class="finflow-view-pane">
+                <div class="fin-accounts-overview">
+                  <div class="total-assets-card-row" style="display: flex; justify-content: space-between; align-items: stretch; gap: 1rem; margin-bottom: 1.5rem; width: 100%; flex-wrap: wrap;">
+                    <div class="total-assets-card glass-card" style="margin-bottom: 0; flex: 1 1 200px;">
+                      <span class="label" data-i18n="finance_total_balance">Total Assets</span>
+                      <span class="value" id="fin-accounts-total-balance">0.00 TL</span>
+                    </div>
+                    <button type="button" id="fin-add-account-btn" class="btn btn-primary" style="flex: 1 1 auto; padding: 1rem 1.5rem; display: flex; align-items: center; justify-content: center; gap: 0.5rem; border-radius: var(--radius-lg); font-size: 0.95rem; min-height: 4.5rem;">
+                      <span style="font-size: 1.2rem; font-weight: bold;">+</span> <span data-i18n="fin_add_account">Add Account</span>
+                    </button>
+                  </div>
+                  <div class="accounts-grid" id="fin-accounts-grid">
+                    <!-- Populated dynamically: Cash, Bank, Credit Card, Business -->
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+
+        </section>
+
+        <!-- ================= CALENDAR VIEW (TAKVİM) ================= -->
         <section id="calendar-tab" class="tab-pane">
-          <div class="page-head">
-            <div>
-              <h1 data-i18n="calendar_title">Agenda</h1>
-              <p id="calendar-active-day"></p>
-            </div>
-            <button type="button" id="google-auth-btn" class="btn btn-secondary">Connect Google Calendar</button>
-          </div>
-          <p id="calendar-sync-status" class="status" role="status" hidden></p>
-
-          <div class="calendar-grid">
-            <div class="card">
-              <div class="card-head">
-                <h2 data-i18n="calendar_timeline_title">Daily Agenda</h2>
+          <div class="calendar-layout-container animate-fade-in">
+            <div class="calendar-header-row glass-card">
+              <div class="header-left">
+                <h2 data-i18n="calendar_title">Google Calendar & Agenda</h2>
+                <p class="section-sub" data-i18n="calendar_subtitle">View daily program and add new events.</p>
+                <div id="calendar-sync-status" class="calendar-sync-status" style="font-size: 0.8rem; margin-top: 0.5rem; display: none; padding: 0.4rem 0.8rem; border-radius: var(--radius-sm); background: rgba(255, 255, 255, 0.03); border: 1px dashed rgba(255, 255, 255, 0.1);"></div>
               </div>
-              <div class="timeline" id="calendar-timeline-events"></div>
+              <div class="header-right">
+              </div>
             </div>
 
-            <div class="card">
-              <div class="card-head">
-                <h2 data-i18n="calendar_add_title">Plan New Event</h2>
-              </div>
-              <form id="calendar-event-form" class="form">
-                <div class="field">
-                  <label for="event-title" data-i18n="calendar_event_title">Event Title</label>
-                  <input type="text" id="event-title" required data-i18n-placeholder="calendar_event_placeholder">
+            <div class="calendar-grid">
+              
+              <!-- Left side: Today's agenda timeline -->
+              <div class="calendar-timeline-panel glass-card">
+                <div class="timeline-header">
+                  <h3 data-i18n="calendar_timeline_title">Daily Agenda Flow</h3>
+                  <span id="calendar-active-day" data-i18n="calendar_active_day">Today</span>
                 </div>
-                <div class="field-row">
-                  <div class="field">
-                    <label for="event-start-time" data-i18n="calendar_start_time">Start Time</label>
-                    <input type="time" id="event-start-time" required value="09:00">
+                
+                <div class="timeline-container" id="calendar-timeline-events">
+                  <!-- Filled dynamically with hourly agenda grid -->
+                </div>
+              </div>
+
+              <!-- Right side: Add new Event form -->
+              <div class="calendar-add-event-panel glass-card">
+                <div class="card-header">
+                  <h3 data-i18n="calendar_add_title">Plan New Event</h3>
+                </div>
+                <form id="calendar-event-form" class="calendar-form-layout">
+                  <div class="input-group">
+                    <label for="event-title" data-i18n="calendar_event_title">Event Title</label>
+                    <input type="text" id="event-title" required data-i18n-placeholder="calendar_event_placeholder" placeholder="Meeting, class, workout...">
                   </div>
-                  <div class="field">
-                    <label for="event-end-time" data-i18n="calendar_end_time">End Time</label>
-                    <input type="time" id="event-end-time" required value="10:00">
+
+                  <div class="form-row">
+                    <div class="input-group flex-1">
+                      <label for="event-start-time" data-i18n="calendar_start_time">Start Time</label>
+                      <input type="time" id="event-start-time" required value="09:00">
+                    </div>
+                    <div class="input-group flex-1">
+                      <label for="event-end-time" data-i18n="calendar_end_time">End Time</label>
+                      <input type="time" id="event-end-time" required value="10:00">
+                    </div>
                   </div>
-                </div>
-                <div class="field">
-                  <label for="event-desc" data-i18n="calendar_notes">Notes / Location</label>
-                  <input type="text" id="event-desc" data-i18n-placeholder="calendar_notes_placeholder">
-                </div>
-                <button type="submit" class="btn btn-primary btn-block" data-i18n="calendar_add_btn">Add to Agenda</button>
-              </form>
+
+                  <div class="input-group">
+                    <label for="event-desc" data-i18n="calendar_notes">Notes / Location</label>
+                    <input type="text" id="event-desc" data-i18n-placeholder="calendar_notes_placeholder" placeholder="Enter description or location...">
+                  </div>
+
+                  <button type="submit" class="btn btn-primary btn-block" data-i18n="calendar_add_btn">Add to Timeline</button>
+                </form>
+              </div>
+
             </div>
-          </div>
-        </section>
-
-        <!-- ================= SETTINGS / MORE ================= -->
-        <section id="settings-tab" class="tab-pane">
-          <div class="page-head">
-            <div>
-              <h1 data-i18n="settings_title">Settings</h1>
-              <p data-i18n="settings_subtitle">Language, passcode and backups</p>
-            </div>
-          </div>
-
-          <div class="settings-grid">
-            <div class="card more-links">
-              <button type="button" class="link-row tab-trigger-btn" data-target-tab="calendar-tab"><svg class="icon"><use href="#i-calendar"/></svg><span data-i18n="nav_calendar">Scheduler</span><svg class="icon chevron"><use href="#i-chevron-end"/></svg></button>
-              <button type="button" class="link-row logout-btn"><svg class="icon"><use href="#i-lock"/></svg><span data-i18n="nav_lock">Lock Dashboard</span><svg class="icon chevron"><use href="#i-chevron-end"/></svg></button>
-            </div>
-
-            <section class="card settings-section">
-              <h2 data-i18n="settings_appearance">Appearance</h2>
-              <div class="field">
-                <label for="language-select" data-i18n="language_label">Language</label>
-                <select id="language-select">
-                  <option value="en">English</option>
-                  <option value="tr">Türkçe</option>
-                  <option value="ar">العربية</option>
-                </select>
-              </div>
-              <div class="field">
-                <label for="theme-select" data-i18n="theme_label">Theme</label>
-                <select id="theme-select">
-                  <option value="light" data-i18n="theme_light">Light</option>
-                  <option value="night" data-i18n="theme_night">Night</option>
-                </select>
-              </div>
-            </section>
-
-            <form id="passcode-change-form" class="card settings-section form" autocomplete="off">
-              <h2 data-i18n="settings_security_title">Passcode</h2>
-              <div class="field">
-                <label for="passcode-current" data-i18n="passcode_current">Current passcode</label>
-                <input type="password" id="passcode-current" autocomplete="current-password" required>
-              </div>
-              <div class="field">
-                <label for="passcode-new" data-i18n="passcode_new">New passcode</label>
-                <input type="password" id="passcode-new" autocomplete="new-password" minlength="4" required>
-              </div>
-              <div class="field">
-                <label for="passcode-confirm" data-i18n="passcode_confirm">Repeat new passcode</label>
-                <input type="password" id="passcode-confirm" autocomplete="new-password" minlength="4" required>
-              </div>
-              <button type="submit" class="btn btn-secondary" data-i18n="passcode_change_btn">Change passcode</button>
-              <p id="passcode-change-status" class="status" role="status"></p>
-            </form>
-
-            <section class="card settings-section" id="drive-section">
-              <h2 data-i18n="drive_title">Google Drive backup</h2>
-              <p class="muted" data-i18n="drive_desc">Keeps one backup file in your own Google Drive.</p>
-              <p id="drive-status" class="status" role="status"></p>
-              <button type="button" id="drive-connect-btn" class="btn btn-primary" data-i18n="drive_connect">Connect Google account</button>
-              <div id="drive-controls" class="stack" hidden>
-                <label class="toggle-row">
-                  <input type="checkbox" id="drive-auto-toggle">
-                  <span class="check"></span>
-                  <span data-i18n="drive_auto">Back up automatically after changes</span>
-                </label>
-                <div class="btn-row">
-                  <button type="button" id="drive-backup-now-btn" class="btn btn-primary" data-i18n="drive_backup_now">Back up now</button>
-                  <button type="button" id="drive-restore-btn" class="btn btn-secondary" data-i18n="drive_restore">Restore from Drive</button>
-                </div>
-              </div>
-            </section>
-
-            <section class="card settings-section" id="backup-section">
-              <h2 data-i18n="backup_title">Backup &amp; restore</h2>
-              <p class="muted" data-i18n="backup_desc">Save all data as a JSON file.</p>
-              <div class="btn-row">
-                <button type="button" id="backup-download-btn" class="btn btn-secondary" data-i18n="backup_download">Download backup</button>
-                <button type="button" id="backup-copy-btn" class="btn btn-secondary" data-i18n="backup_copy">Copy to clipboard</button>
-                <label class="btn btn-secondary">
-                  <span data-i18n="backup_restore_file">Restore from file…</span>
-                  <input type="file" id="backup-file-input" accept="application/json,.json" hidden>
-                </label>
-              </div>
-              <details class="disclosure">
-                <summary data-i18n="backup_paste_toggle">Or paste backup JSON</summary>
-                <div class="stack">
-                  <textarea id="backup-paste-input" rows="4" spellcheck="false" dir="ltr"></textarea>
-                  <button type="button" id="backup-paste-btn" class="btn btn-secondary" data-i18n="backup_restore_btn">Restore</button>
-                </div>
-              </details>
-              <button type="button" id="backup-undo-btn" class="btn btn-secondary" data-i18n="backup_undo" hidden>Undo last restore</button>
-              <p id="backup-status" class="status" role="status"></p>
-            </section>
           </div>
         </section>
 
       </main>
     </div>
 
-    <!-- Mobile tab bar -->
-    <nav class="tabbar">
-      <button class="tab-btn active" data-tab="today-tab"><svg class="icon"><use href="#i-today"/></svg><span data-i18n="nav_today">Today</span></button>
-      <button class="tab-btn" data-tab="progress-tab"><svg class="icon"><use href="#i-progress"/></svg><span data-i18n="nav_progress">Progress</span></button>
-      <button class="tab-btn" data-tab="journal-tab"><svg class="icon"><use href="#i-journal"/></svg><span data-i18n="nav_journal_short">Journal</span></button>
-      <button class="tab-btn" data-tab="finance-tab"><svg class="icon"><use href="#i-finance"/></svg><span data-i18n="nav_finance_short">Finance</span></button>
-      <button class="tab-btn" data-tab="settings-tab"><svg class="icon"><use href="#i-more"/></svg><span data-i18n="nav_more">More</span></button>
-    </nav>
   </div>
 
-  <!-- ================= TRANSACTION MODAL ================= -->
-  <div id="fin-tx-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="fin-modal-title">
-    <div class="modal-card modal-card--wide">
-      <div class="modal-head">
-        <h2 id="fin-modal-title" data-i18n="finance_new_tx">Add Transaction</h2>
-        <button type="button" id="fin-modal-close" class="icon-btn" data-i18n-aria="cancel" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button>
+  <!-- ================= SETTINGS & CLOUD SYNC MODAL ================= -->
+  <div id="sync-modal" class="modal-overlay hidden">
+    <div class="modal-card glass-card">
+      <div class="modal-header">
+        <h2 data-i18n="settings_title">Application Settings</h2>
+        <button id="close-sync-modal" class="icon-btn close-modal-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18"/>
+            <line x1="6" y1="6" x2="18" y2="18"/>
+          </svg>
+        </button>
       </div>
-      <form id="finance-transaction-form" class="form">
-        <div class="tx-columns">
-          <div class="tx-col">
-            <div class="segmented fin-modal-type-switcher">
+      <div class="modal-body">
+        <!-- Language Selection Section -->
+        <div class="input-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+          <label for="language-select" data-i18n="language_label" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Application Language</label>
+          <select id="language-select" style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
+            <option value="en">English (Default)</option>
+            <option value="tr">Türkçe</option>
+            <option value="ar">العربية (Arabic)</option>
+          </select>
+        </div>
+
+        <!-- Focus Video Customization Section -->
+        <div class="input-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+          <label for="custom-video-url" data-i18n="focus_video_url_label" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Custom Focus Video URL (YouTube)</label>
+          <div style="display: flex; gap: 0.5rem;">
+            <input type="url" id="custom-video-url" placeholder="https://www.youtube.com/watch?v=..." style="flex: 1; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
+            <button type="button" id="save-custom-video-btn" class="btn btn-primary" data-i18n="focus_video_save_btn" style="padding: 0 1.25rem; font-size: 0.85rem; height: auto; border-radius: var(--radius-md); margin-top: 0;">Save</button>
+          </div>
+          <span id="custom-video-status" style="font-size: 0.75rem; margin-top: 0.45rem; display: block; display: none;"></span>
+        </div>
+
+        <!-- Data Backup Section -->
+        <div class="input-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+          <label data-i18n="backup_title" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Data Backup</label>
+          <p data-i18n="backup_desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin: 0 0 0.75rem;">Download all local data (routines, journal, finance, calendar) as JSON, or restore from a backup.</p>
+          <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+            <button type="button" id="export-json-btn" class="btn btn-primary" data-i18n="backup_export" style="flex: 1; margin-top: 0;">Export JSON</button>
+            <button type="button" id="import-json-btn" class="btn btn-secondary" data-i18n="backup_import" style="flex: 1; margin-top: 0;">Import JSON</button>
+            <input type="file" id="import-json-input" accept="application/json,.json" hidden>
+          </div>
+          <span id="data-tools-status" style="font-size: 0.75rem; margin-top: 0.45rem; display: block;"></span>
+        </div>
+
+        <!-- Passcode Change Section -->
+        <form id="passcode-change-form" class="input-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
+          <label data-i18n="passcode_title" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Change Passcode</label>
+          <input type="password" id="passcode-current" autocomplete="current-password" required data-i18n-placeholder="passcode_current" placeholder="Current passcode" style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem; margin-top: 0.5rem;">
+          <input type="password" id="passcode-new" autocomplete="new-password" minlength="6" required data-i18n-placeholder="passcode_new" placeholder="New passcode (min. 6 characters)" style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem; margin-top: 0.5rem;">
+          <input type="password" id="passcode-confirm" autocomplete="new-password" minlength="6" required data-i18n-placeholder="passcode_confirm" placeholder="Repeat new passcode" style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem; margin-top: 0.5rem;">
+          <button type="submit" class="btn btn-secondary btn-block" data-i18n="passcode_save" style="margin-top: 0.75rem;">Update Passcode</button>
+          <span id="passcode-status" style="font-size: 0.75rem; margin-top: 0.45rem; display: block;"></span>
+        </form>
+
+        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; color: var(--primary-light);">
+            <path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-3-3.1-5.2-6.1-5.4-3-.2-5.6 1.5-6.7 4.1C6.2 9.5 3 12 3 15c0 3.3 2.7 6 6 6h10c2.2 0 4-1.8 4-4 0-1-.3-1.9-.8-2.6z"/>
+          </svg>
+          <h3 data-i18n="drive_title" style="font-size: 1rem; font-weight: 600; margin: 0; color: var(--text-main);">Google Drive Sync</h3>
+        </div>
+        <p class="modal-info-text" data-i18n="drive_desc" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
+          Sign in with Google once on each device.
+        </p>
+        <div id="sync-settings-form">
+          <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                    <button type="button" class="btn btn-primary drive-connect-btn" data-i18n="drive_connect" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem; margin-top: 0;">Sign in with Google</button>
+                    <button type="button" class="btn btn-primary drive-sync-now-btn" data-i18n="drive_sync_now" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem; margin-top: 0;">Sync Now</button>
+                    <button type="button" class="btn btn-secondary drive-disconnect-btn" data-i18n="drive_disconnect" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem; margin-top: 0; color: var(--danger);">Disconnect</button>
+                  </div>
+                  <p class="sync-status-msg drive-sync-status"></p>
+
+          <div class="modal-actions" style="margin-top: 1.5rem;">
+            <button type="button" class="btn btn-secondary btn-block logout-btn" style="margin-top: 0.5rem; color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 0.5rem;" data-i18n="nav_lock">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+              </svg>
+              <span data-i18n="nav_lock">Lock Dashboard</span>
+            </button>
+          </div>
+          
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Add/Edit Transaction Modal -->
+  <div id="fin-tx-modal" class="fin-modal-overlay">
+    <div class="fin-modal-content glass-card animate-scale-in">
+      <div class="fin-modal-header">
+        <h3 id="fin-modal-title" data-i18n="finance_new_tx">Log Transaction</h3>
+        <button id="fin-modal-close" class="fin-close-btn">&times;</button>
+      </div>
+      <form id="finance-transaction-form" class="fin-modal-form">
+        <div class="fin-modal-columns">
+          <!-- Left Column: Type Switcher, Amount, and Keypad -->
+          <div class="fin-modal-left-col">
+            <!-- Type Switcher -->
+            <div class="fin-modal-type-switcher">
               <button type="button" class="type-btn active" data-type="expense" data-i18n="fin_add_expense">Expense</button>
               <button type="button" class="type-btn" data-type="income" data-i18n="fin_add_income">Income</button>
               <button type="button" class="type-btn" data-type="transfer" data-i18n="fin_add_transfer">Transfer</button>
             </div>
-            <div class="field">
-              <label for="fin-amount-input" data-i18n="fin_amount_label">Amount</label>
-              <div class="amount-input">
-                <input type="text" id="fin-amount-input" required placeholder="0.00" inputmode="none" dir="ltr">
-                <span>TL</span>
+
+            <!-- Amount Input -->
+            <div class="form-group amount-group">
+              <label for="fin-amount-input" data-i18n="finance_amount">Amount</label>
+              <div class="amount-input-wrapper">
+                <input type="text" id="fin-amount-input" required placeholder="0.00" inputmode="none">
+                <span class="currency">TL</span>
               </div>
             </div>
-            <div class="keypad" id="fin-tx-keypad" dir="ltr">
+
+            <!-- Custom Keypad for Transaction Amount -->
+            <div class="fin-keypad" id="fin-tx-keypad">
               <button type="button" class="key-btn" data-val="7">7</button>
               <button type="button" class="key-btn" data-val="8">8</button>
               <button type="button" class="key-btn" data-val="9">9</button>
-              <button type="button" class="key-btn key-btn--action" data-val="backspace" aria-label="Backspace">⌫</button>
+              <button type="button" class="key-btn action-key" data-val="backspace">⌫</button>
+              
               <button type="button" class="key-btn" data-val="4">4</button>
               <button type="button" class="key-btn" data-val="5">5</button>
               <button type="button" class="key-btn" data-val="6">6</button>
-              <button type="button" class="key-btn key-btn--action" data-val="clear">C</button>
+              <button type="button" class="key-btn action-key" data-val="clear">C</button>
+              
               <button type="button" class="key-btn" data-val="1">1</button>
               <button type="button" class="key-btn" data-val="2">2</button>
               <button type="button" class="key-btn" data-val="3">3</button>
-              <button type="button" class="key-btn key-btn--action" data-val="00">00</button>
-              <button type="button" class="key-btn" data-val="-">−</button>
+              <button type="button" class="key-btn action-key" data-val="00">00</button>
+              
+              <button type="button" class="key-btn" data-val="-">-</button>
               <button type="button" class="key-btn" data-val="0">0</button>
               <button type="button" class="key-btn" data-val=".">.</button>
-              <button type="button" class="key-btn key-btn--ok" data-val="ok">OK</button>
+              <button type="button" class="key-btn action-key" data-val="ok">OK</button>
             </div>
           </div>
 
-          <div class="tx-col">
-            <div class="field" id="fin-modal-category-group">
-              <span class="label" data-i18n="finance_category">Category</span>
-              <div class="category-grid" id="fin-modal-category-grid"></div>
-            </div>
-            <div class="field-row">
-              <div class="field" id="fin-modal-source-account-group">
-                <label for="fin-account-select" data-i18n="finance_account">Account</label>
-                <select id="fin-account-select" required></select>
+          <!-- Right Column: Category, Account, Date, and Note -->
+          <div class="fin-modal-right-col">
+            <!-- Category Picker Grid -->
+            <div class="form-group" id="fin-modal-category-group">
+              <label data-i18n="finance_category">Category</label>
+              <div class="category-grid" id="fin-modal-category-grid">
+                <!-- Loaded dynamically by JS -->
               </div>
-              <div class="field hidden" id="fin-target-account-group">
+            </div>
+
+            <!-- Account Selection -->
+            <div class="form-row">
+              <div class="form-group flex-1" id="fin-modal-source-account-group">
+                <label for="fin-account-select" id="fin-modal-source-account-label" data-i18n="fin_source_account">Account</label>
+                <select id="fin-account-select" required>
+                  <!-- Dynamically populated -->
+                </select>
+              </div>
+              <div class="form-group flex-1 hidden" id="fin-target-account-group">
                 <label for="fin-target-account-select" data-i18n="fin_target_account">To Account</label>
-                <select id="fin-target-account-select"></select>
+                <select id="fin-target-account-select">
+                  <!-- Dynamically populated -->
+                </select>
               </div>
             </div>
-            <div class="field-row">
-              <div class="field">
+
+            <!-- Date and Note -->
+            <div class="form-row">
+              <div class="form-group flex-1">
                 <label for="fin-date-input" data-i18n="fin_date_label">Date</label>
                 <input type="date" id="fin-date-input" required>
               </div>
-              <div class="field field--grow">
-                <label for="fin-desc-input" data-i18n="fin_desc_label">Note</label>
-                <input type="text" id="fin-desc-input" data-i18n-placeholder="finance_desc_placeholder">
+              <div class="form-group flex-2">
+                <label for="fin-desc-input" data-i18n="fin_desc_label">Note / Description</label>
+                <input type="text" id="fin-desc-input" data-i18n-placeholder="finance_desc_placeholder" placeholder="Enter transaction details..." required>
               </div>
             </div>
           </div>
         </div>
-        <div class="modal-actions">
+
+        <!-- Action Buttons -->
+        <div class="fin-modal-actions">
           <button type="button" id="fin-modal-cancel-btn" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
           <button type="submit" class="btn btn-primary" data-i18n="finance_save">Save</button>
         </div>
@@ -739,30 +1581,78 @@
     </div>
   </div>
 
-  <!-- ================= ACCOUNT MODAL ================= -->
-  <div id="fin-account-modal" class="modal" role="dialog" aria-modal="true" aria-labelledby="fin-account-modal-title">
-    <div class="modal-card">
-      <div class="modal-head">
-        <h2 id="fin-account-modal-title" data-i18n="fin_add_account">Add Account</h2>
-        <button type="button" id="fin-account-modal-close" class="icon-btn" data-i18n-aria="cancel" aria-label="Close"><svg class="icon"><use href="#i-close"/></svg></button>
+  <!-- Adjust Balance Modal -->
+  <div id="fin-adjust-modal" class="fin-modal-overlay">
+    <div class="fin-modal-content glass-card animate-scale-in" style="max-width: 380px;">
+      <div class="fin-modal-header">
+        <h3 id="fin-adjust-modal-title" data-i18n="fin_adjust_balance">Adjust Balance</h3>
+        <button id="fin-adjust-modal-close" class="fin-close-btn">&times;</button>
       </div>
-      <form id="finance-account-form" class="form">
-        <input type="hidden" id="fin-account-key-hidden">
-        <div class="field">
-          <label for="fin-account-name-input" data-i18n="fin_account_name">Account Name</label>
-          <input type="text" id="fin-account-name-input" required>
-        </div>
-        <div class="field">
-          <label for="fin-account-balance-input" data-i18n="fin_initial_balance">Balance</label>
-          <div class="amount-input amount-input--sm">
-            <input type="number" step="0.01" id="fin-account-balance-input" required placeholder="0.00" dir="ltr">
-            <span>TL</span>
+      <form id="finance-adjust-form" class="fin-modal-form">
+        <div class="form-group amount-group">
+          <label for="fin-adjust-amount-input" id="fin-adjust-label">New Balance</label>
+          <div class="amount-input-wrapper">
+            <input type="text" id="fin-adjust-amount-input" required placeholder="0.00" inputmode="none">
+            <span class="currency">TL</span>
           </div>
         </div>
-        <div class="field">
-          <span class="label" data-i18n="fin_select_icon">Icon</span>
+        <!-- Custom Keypad for Adjust Balance -->
+        <div class="fin-keypad" id="fin-adjust-keypad">
+          <button type="button" class="key-btn" data-val="7">7</button>
+          <button type="button" class="key-btn" data-val="8">8</button>
+          <button type="button" class="key-btn" data-val="9">9</button>
+          <button type="button" class="key-btn action-key" data-val="backspace">⌫</button>
+          
+          <button type="button" class="key-btn" data-val="4">4</button>
+          <button type="button" class="key-btn" data-val="5">5</button>
+          <button type="button" class="key-btn" data-val="6">6</button>
+          <button type="button" class="key-btn action-key" data-val="clear">C</button>
+          
+          <button type="button" class="key-btn" data-val="1">1</button>
+          <button type="button" class="key-btn" data-val="2">2</button>
+          <button type="button" class="key-btn" data-val="3">3</button>
+          <button type="button" class="key-btn action-key" data-val="00">00</button>
+          
+          <button type="button" class="key-btn" data-val="-">-</button>
+          <button type="button" class="key-btn" data-val="0">0</button>
+          <button type="button" class="key-btn" data-val=".">.</button>
+          <button type="button" class="key-btn action-key" data-val="ok">OK</button>
+        </div>
+        <div class="fin-modal-actions">
+          <button type="button" id="fin-adjust-cancel-btn" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
+          <button type="submit" class="btn btn-primary" data-i18n="fin_adjust_save">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Add/Edit Account Modal -->
+  <div id="fin-account-modal" class="fin-modal-overlay">
+    <div class="fin-modal-content glass-card animate-scale-in" style="max-width: 400px;">
+      <div class="fin-modal-header">
+        <h3 id="fin-account-modal-title" data-i18n="fin_add_account">Add Account</h3>
+        <button id="fin-account-modal-close" class="fin-close-btn">&times;</button>
+      </div>
+      <form id="finance-account-form" class="fin-modal-form">
+        <input type="hidden" id="fin-account-key-hidden">
+        
+        <div class="form-group">
+          <label for="fin-account-name-input" data-i18n="fin_account_name">Account Name</label>
+          <input type="text" id="fin-account-name-input" required placeholder="e.g., Credit Card">
+        </div>
+
+        <div class="form-group">
+          <label for="fin-account-balance-input" data-i18n="fin_initial_balance">Balance</label>
+          <div style="position:relative;">
+            <input type="number" step="0.01" id="fin-account-balance-input" required placeholder="0.00">
+            <span style="position:absolute;right:1rem;top:50%;transform:translateY(-50%);font-weight:700;color:var(--primary);pointer-events:none;">TL</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label data-i18n="fin_select_icon">Icon / Emoji</label>
           <input type="hidden" id="fin-account-icon-input" value="💰">
-          <div class="emoji-grid">
+          <div class="emoji-selector-grid">
             <button type="button" class="emoji-btn active" data-emoji="💰">💰</button>
             <button type="button" class="emoji-btn" data-emoji="👛">👛</button>
             <button type="button" class="emoji-btn" data-emoji="🏦">🏦</button>
@@ -776,15 +1666,20 @@
             <button type="button" class="emoji-btn" data-emoji="🏠">🏠</button>
           </div>
         </div>
-        <div class="modal-actions">
-          <button type="button" id="fin-account-delete-btn" class="btn btn-danger-ghost" data-i18n="fin_delete_account" hidden>Delete Account</button>
-          <button type="button" id="fin-account-cancel-btn" class="btn btn-secondary" data-i18n="cancel">Cancel</button>
-          <button type="submit" class="btn btn-primary" data-i18n="finance_save">Save</button>
+
+        <div class="fin-modal-actions" style="margin-top: 1.5rem; display: flex; flex-direction: column; gap: 0.75rem;">
+          <div style="display: flex; gap: 0.75rem; width: 100%;">
+            <button type="button" id="fin-account-cancel-btn" class="btn btn-secondary" style="flex: 1;" data-i18n="cancel">Cancel</button>
+            <button type="submit" class="btn btn-primary" style="flex: 1;" data-i18n="finance_save">Save</button>
+          </div>
+          <button type="button" id="fin-account-delete-btn" class="btn btn-danger" style="width: 100%; display: none;" data-i18n="fin_delete_account">Delete Account</button>
         </div>
       </form>
     </div>
   </div>
 
-  <script src="app.js?v=5.1" defer></script>
+
+  <script src="google_credentials.js" defer></script>
+  <script src="app.js?v=4.2" defer></script>
 </body>
 </html>
