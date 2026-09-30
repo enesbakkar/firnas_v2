@@ -41,6 +41,12 @@
   --font-display: "Outfit", "Inter", system-ui, sans-serif;
   --font-quran: "Amiri", "Traditional Arabic", serif;
   --tabbar-h: 64px;
+
+  --mesh: rgba(15, 46, 74, 0.1);
+  --orb-cyan: rgba(0, 184, 212, 0.2);
+  --orb-navy: rgba(15, 46, 74, 0.13);
+  --orb-teal: rgba(16, 185, 160, 0.1);
+  --ring: rgba(0, 184, 212, 0.24);
   color-scheme: light;
 }
 
@@ -65,6 +71,11 @@
   --danger-soft: rgba(245, 135, 145, 0.14);
   --bar: #051421;
   --shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
+  --mesh: rgba(125, 211, 232, 0.07);
+  --orb-cyan: rgba(0, 184, 212, 0.16);
+  --orb-navy: rgba(5, 20, 33, 0.5);
+  --orb-teal: rgba(16, 185, 160, 0.08);
+  --ring: rgba(125, 211, 232, 0.16);
   color-scheme: dark;
 }
 
@@ -216,7 +227,7 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .page-head p { color: var(--muted); font-size: 0.875rem; }
 .select-wrap select { min-width: 170px; font-weight: 600; }
 
-.section-head { display: flex; align-items: baseline; justify-content: space-between; margin: 20px 4px 8px; }
+.section-head { display: flex; align-items: baseline; justify-content: space-between; margin: 0 4px 8px; }
 .section-head h2 { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
 :root[lang="ar"] .section-head h2 { text-transform: none; letter-spacing: 0; font-size: 0.95rem; }
 .section-count { font-size: 0.8rem; color: var(--faint); font-weight: 600; }
@@ -245,7 +256,44 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .auth-brand .brand-mark { width: 52px; height: 52px; border-radius: 16px; }
 .auth-brand .brand-mark .icon { width: 26px; height: 26px; }
 
+/* ================= BACKDROP ================= */
+/* Firnas-style dot mesh with a few soft orbs drifting slowly. Decorative only. */
+.backdrop {
+  position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none;
+  background-image: radial-gradient(var(--mesh) 1.5px, transparent 1.5px);
+  background-size: 26px 26px;
+}
+.orb { position: absolute; border-radius: 50%; will-change: transform; }
+.orb--cyan {
+  width: 52vmax; height: 52vmax; inset-block-start: -18vmax; inset-inline-end: -12vmax;
+  background: radial-gradient(circle, var(--orb-cyan) 0%, transparent 68%);
+  animation: drift-a 38s ease-in-out infinite alternate;
+}
+.orb--navy {
+  width: 46vmax; height: 46vmax; inset-block-end: -20vmax; inset-inline-start: 6vmax;
+  background: radial-gradient(circle, var(--orb-navy) 0%, transparent 68%);
+  animation: drift-b 46s ease-in-out infinite alternate;
+}
+.orb--teal {
+  width: 30vmax; height: 30vmax; inset-block-start: 34%; inset-inline-start: 42%;
+  background: radial-gradient(circle, var(--orb-teal) 0%, transparent 68%);
+  animation: drift-c 54s ease-in-out infinite alternate;
+}
+.halo { display: none; position: absolute; border-radius: 50%; border: 1.5px solid var(--ring); }
+.halo::after {
+  content: ""; position: absolute; inset: 16%; border-radius: 50%;
+  border: 1px dashed var(--ring); animation: spin 90s linear infinite;
+}
+.halo--1 { width: 360px; height: 360px; inset-block-end: -90px; inset-inline-end: 5%; animation: drift-c 40s ease-in-out infinite alternate; }
+.halo--2 { width: 190px; height: 190px; inset-block-start: 9%; inset-inline-start: 44%; animation: drift-a 48s ease-in-out infinite alternate; }
+
+@keyframes drift-a { to { transform: translate3d(-5vmax, 4vmax, 0) scale(1.08); } }
+@keyframes drift-b { to { transform: translate3d(6vmax, -4vmax, 0) scale(1.1); } }
+@keyframes drift-c { to { transform: translate3d(-3vmax, -5vmax, 0) scale(0.94); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+
 /* ================= APP SHELL ================= */
+.app, .auth { position: relative; z-index: 1; }
 .app { min-height: 100vh; min-height: 100dvh; }
 .sidebar { display: none; }
 .main { min-width: 0; }
@@ -274,7 +322,7 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .content {
   padding: 16px;
   padding-bottom: calc(var(--tabbar-h) + 24px + env(safe-area-inset-bottom));
-  max-width: 1180px; margin-inline: auto;
+  max-width: 1640px; margin-inline: auto;
 }
 .tab-pane { display: none; }
 .tab-pane.active-pane { display: block; }
@@ -298,7 +346,8 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 
 /* ================= TODAY ================= */
 .today-grid, .today-side { display: grid; gap: 16px; }
-.today-main > .section-head:first-child { margin-top: 4px; }
+.today-main { display: grid; gap: 20px; align-content: start; }
+.today-section { min-width: 0; }
 
 .day-card { display: grid; gap: 14px; }
 .day-nav { display: flex; align-items: center; gap: 10px; }
@@ -665,7 +714,8 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
   .kpi-grid { grid-template-columns: repeat(4, 1fr); }
   .split, .calendar-grid { grid-template-columns: 1fr 1fr; }
   .calendar-grid { grid-template-columns: 1.5fr 1fr; align-items: start; }
-  .settings-grid { grid-template-columns: 1fr 1fr; }
+  .settings-grid { grid-template-columns: repeat(auto-fit, minmax(330px, 1fr)); }
+  .halo { display: block; }
   .journal-grid { grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr); align-items: start; }
   .tx-columns { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: 20px; }
   .modal { align-items: center; padding: 20px; }
@@ -708,6 +758,22 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 
   .table-scroll { display: block; }
   .month-calendar { display: none; }
+
+  #journal-content-input { min-height: 44vh; }
+  .journal-list { max-height: calc(100vh - 190px); }
+  .rank-list { max-height: 420px; }
+  .timeline { max-height: calc(100vh - 260px); }
+}
+
+/* ================= WIDE DESKTOP ================= */
+@media (min-width: 1440px) {
+  .content { padding-inline: 44px; }
+  /* Prayers | other sections | day summary */
+  .today-grid { grid-template-columns: minmax(0, 2.1fr) minmax(360px, 1fr); gap: 24px; }
+  .today-main { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; }
+  .today-section--prayers { grid-row: span 3; }
+  .split { gap: 24px; }
+  .accounts-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 }
 
 @media (prefers-reduced-motion: reduce) {

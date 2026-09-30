@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5.0">
+  <link rel="stylesheet" href="style.css?v=5.1">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.4">
   <link rel="apple-touch-icon" href="icon-192.png?v=4.4">
   <link rel="manifest" href="manifest.json">
@@ -36,6 +36,15 @@
     <symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4ZM7 6H4v1a3 3 0 0 0 3 3M17 6h3v1a3 3 0 0 1-3 3"/></symbol>
     <symbol id="i-logo" viewBox="0 0 24 24"><path d="M3 17h18"/><path d="M6.500 17a5.500 5.500 0 0 1 11 0"/><path d="M12 5v2.500M4.600 8.600l1.800 1.800M19.400 8.600l-1.800 1.800"/></symbol>
   </svg>
+
+  <!-- Decorative backdrop (dot mesh + soft drifting orbs), purely visual -->
+  <div class="backdrop" aria-hidden="true">
+    <span class="orb orb--cyan"></span>
+    <span class="orb orb--navy"></span>
+    <span class="orb orb--teal"></span>
+    <span class="halo halo--1"></span>
+    <span class="halo halo--2"></span>
+  </div>
 
   <!-- ================= LOCK SCREEN ================= -->
   <div id="auth-portal" class="auth">
@@ -171,6 +180,7 @@
 
             <div class="today-main">
               <!-- Prayers -->
+              <section class="today-section today-section--prayers">
               <div class="section-head">
                 <h2 data-i18n="section_prayers">Prayers</h2>
                 <span class="section-count" data-count-keys="fajr_sunnah,fajr_fard,duha_prayer,dhuhr_sunnah1,dhuhr_fard,dhuhr_sunnah2,asr_sunnah,asr_fard,maghrib_fard,maghrib_sunnah,isha_sunnah1,isha_fard,isha_sunnah2,witr_prayer"></span>
@@ -228,7 +238,10 @@
                 <p class="chip-legend" data-i18n="chip_legend">S: Sunnah · F: Fard · W: Wajib · N: Nafl</p>
               </div>
 
+              </section>
+
               <!-- Dhikr & Quran -->
+              <section class="today-section">
               <div class="section-head">
                 <h2 data-i18n="section_dhikr">Dhikr &amp; Quran</h2>
                 <span class="section-count" data-count-keys="morning_dhikr,quran_devotion,evening_dhikr"></span>
@@ -239,7 +252,10 @@
                 <label class="habit-row"><input type="checkbox" id="evening-dhikr" class="task-checkbox" data-key="evening_dhikr"><span class="check"></span><span class="habit-icon" aria-hidden="true">📿</span><span class="habit-text"><strong data-i18n="habit_evening_dhikr_title">Evening Dhikr</strong><small data-i18n="habit_evening_dhikr_desc">Evening Remembrance</small></span></label>
               </div>
 
+              </section>
+
               <!-- Growth -->
+              <section class="today-section">
               <div class="section-head">
                 <h2 data-i18n="section_growth">Growth</h2>
                 <span class="section-count" data-count-keys="intellectual_growth,physical_training,nutritional_fuel,horizon_sync"></span>
@@ -251,7 +267,10 @@
                 <label class="habit-row"><input type="checkbox" id="horizon-sync" class="task-checkbox" data-key="horizon_sync"><span class="check"></span><span class="habit-icon" aria-hidden="true">🎯</span><span class="habit-text"><strong data-i18n="habit_horizon_sync_title">Horizon Sync</strong><small data-i18n="habit_horizon_sync_desc">Daily Planning</small></span></label>
               </div>
 
+              </section>
+
               <!-- Day close -->
+              <section class="today-section">
               <div class="section-head">
                 <h2 data-i18n="section_close">Day Close</h2>
                 <span class="section-count" data-count-keys="mind_log,fin_flow"></span>
@@ -260,6 +279,7 @@
                 <label class="habit-row"><input type="checkbox" id="mind-log" class="task-checkbox" data-key="mind_log"><span class="check"></span><span class="habit-icon" aria-hidden="true">📝</span><span class="habit-text"><strong data-i18n="habit_mind_log_title">Mind Log</strong><small data-i18n="habit_mind_log_desc">Daily Journaling Complete</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
                 <label class="habit-row"><input type="checkbox" id="fin-flow" class="task-checkbox" data-key="fin_flow"><span class="check"></span><span class="habit-icon" aria-hidden="true">💰</span><span class="habit-text"><strong data-i18n="habit_fin_flow_title">FinFlow</strong><small data-i18n="habit_fin_flow_desc">Daily Expenses Logged</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
               </div>
+              </section>
             </div>
 
           </div>
@@ -765,6 +785,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=5.0" defer></script>
+  <script src="app.js?v=5.1" defer></script>
 </body>
 </html>

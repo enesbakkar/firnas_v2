@@ -2737,7 +2737,7 @@ const UIController = {
       this.dom.kpiTopHabit.textContent = dict.kpi_top_none || "None yet";
     }
 
-    if (focusHabitKey) {
+    if (focusHabitKey && maxPct > 0) {
       const localizedName = dict[`habit_${focusHabitKey}_title`] || HABIT_DISPLAY_NAMES[focusHabitKey];
       this.dom.kpiFocusHabit.textContent = `${HABIT_ICONS[focusHabitKey]} ${localizedName} (${minPct}%)`;
     } else {
