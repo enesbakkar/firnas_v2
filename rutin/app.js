@@ -1,18 +1,10 @@
-// ================= UTILITIES & HELPERS =================
-async function sha256(message) {
-  const msgBuffer = new TextEncoder().encode(message);
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashArray = Array.from(new Uint8Array(hashBuffer));
-  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-}
-
 // ================= PASSCODE (PBKDF2) =================
-// Stored as hrt_passcode = {v, alg, iter, salt, hash} (base64). Until a record exists, the legacy
-// SHA-256 default passcode is accepted once and immediately migrated to PBKDF2.
+// Stored only on the device as hrt_passcode = {v, alg, iter, salt, hash} (base64). No hash of any
+// passcode ships with the app: a device without a stored passcode asks the user to create one.
 const PasscodeManager = {
   STORAGE_KEY: 'hrt_passcode',
+  LEGACY_KEY: 'hrt_passcode_hash', // "pbkdf2$saltHex$hashHex", written by the first DriveSync build
   ITERATIONS: 310000,
-  LEGACY_SHA256: "42e6799f8c934e1b419b495723b3f2dec475c46e3418953b971bae790d2c5207",
 
   toB64(bytes) {
     return btoa(String.fromCharCode(...new Uint8Array(bytes)));
@@ -20,6 +12,10 @@ const PasscodeManager = {
 
   fromB64(str) {
     return Uint8Array.from(atob(str), c => c.charCodeAt(0));
+  },
+
+  toHex(bytes) {
+    return Array.from(new Uint8Array(bytes)).map(b => b.toString(16).padStart(2, '0')).join('');
   },
 
   async derive(passcode, salt, iterations) {
@@ -36,27 +32,40 @@ const PasscodeManager = {
     }
   },
 
+  legacyRecord() {
+    const m = (localStorage.getItem(this.LEGACY_KEY) || '').match(/^pbkdf2\$([0-9a-f]+)\$([0-9a-f]+)$/);
+    return m ? { salt: m[1], hash: m[2] } : null;
+  },
+
+  hasPasscode() {
+    return !!(this.getRecord() || this.legacyRecord());
+  },
+
   async set(passcode) {
     const salt = crypto.getRandomValues(new Uint8Array(16));
     const hash = await this.derive(passcode, salt, this.ITERATIONS);
     localStorage.setItem(this.STORAGE_KEY, JSON.stringify({
       v: 1, alg: 'PBKDF2-SHA256', iter: this.ITERATIONS, salt: this.toB64(salt), hash: this.toB64(hash)
     }));
+    localStorage.removeItem(this.LEGACY_KEY);
   },
 
   async verify(passcode) {
     const rec = this.getRecord();
-    if (!rec) {
-      const ok = (await sha256(passcode)) === this.LEGACY_SHA256;
-      if (ok) await this.set(passcode);
-      return ok;
+    if (rec) {
+      const actual = new Uint8Array(await this.derive(passcode, this.fromB64(rec.salt), rec.iter));
+      const expected = this.fromB64(rec.hash);
+      if (actual.length !== expected.length) return false;
+      let diff = 0;
+      for (let i = 0; i < actual.length; i++) diff |= actual[i] ^ expected[i];
+      return diff === 0;
     }
-    const actual = new Uint8Array(await this.derive(passcode, this.fromB64(rec.salt), rec.iter));
-    const expected = this.fromB64(rec.hash);
-    if (actual.length !== expected.length) return false;
-    let diff = 0;
-    for (let i = 0; i < actual.length; i++) diff |= actual[i] ^ expected[i];
-    return diff === 0;
+    const legacy = this.legacyRecord();
+    if (!legacy) return false;
+    const salt = new Uint8Array(legacy.salt.match(/../g).map(h => parseInt(h, 16)));
+    const ok = this.toHex(await this.derive(passcode, salt, 150000)) === legacy.hash;
+    if (ok) await this.set(passcode);
+    return ok;
   }
 };
 
@@ -147,8 +156,8 @@ const BackupManager = {
 // Google OAuth client IDs are public by design; never put a client secret or refresh token in this file.
 const GOOGLE_CLIENT_ID = "335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.googleusercontent.com";
 const GOOGLE_CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";
-// drive.file: the app can only see files it created itself.
-const GOOGLE_DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
+// drive.appdata: a hidden per-app folder; the app cannot see any other Drive files.
+const GOOGLE_DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.appdata";
 
 // ================= APPLICATION STATE =================
 const STATE = {
@@ -379,7 +388,6 @@ const TRANSLATIONS = {
     finance_category_title: "By category",
     finance_empty: "No transactions this month.",
     calendar_title: "Agenda",
-    calendar_connect: "Connect Google Calendar",
     calendar_add_title: "New event",
     calendar_event_title: "Event Title",
     calendar_start_time: "Start Time",
@@ -458,8 +466,6 @@ const TRANSLATIONS = {
     habit_fin_flow_title: "FinFlow",
     habit_fin_flow_desc: "Daily Expenses Logged",
     alert_same_accounts: "Source and target accounts cannot be the same!",
-    alert_google_load_fail: "Google API library could not be loaded. Please check your internet connection and refresh the page.",
-    alert_google_auth_error: "Google auth error: ",
     cat_food: "Groceries",
     cat_transport: "Transport",
     cat_tech: "Tech",
@@ -501,12 +507,11 @@ const TRANSLATIONS = {
     fin_initial_balance: "Balance",
     fin_select_icon: "Icon / Emoji",
     fin_confirm_delete_account: "Are you sure you want to delete this account? This action cannot be undone.",
-    calendar_disconnect: "Disconnect Google Calendar",
     auth_error: "Incorrect passcode. Please try again.",
     settings_security_title: "Passcode",
     passcode_current: "Current passcode",
     passcode_new: "New passcode",
-    passcode_confirm: "Repeat new passcode",
+    passcode_confirm: "Repeat passcode",
     passcode_change_btn: "Change passcode",
     passcode_changed: "Passcode updated.",
     passcode_wrong_current: "Current passcode is incorrect.",
@@ -526,21 +531,6 @@ const TRANSLATIONS = {
     backup_invalid: "This is not a valid Horizon backup.",
     backup_confirm: "Replace current data with this backup?\n\nDays: {days}\nJournal entries: {journal}\nTransactions: {transactions}\nEvents: {events}\n\nYour current data is kept so you can undo.",
     backup_undo_confirm: "Return to the data you had before the last restore?",
-    drive_title: "Google Drive backup",
-    drive_desc: "Keeps one backup file in your own Google Drive. The app can only see the file it created, nothing else in your Drive.",
-    drive_connect: "Connect Google account",
-    drive_auto: "Back up automatically after changes",
-    drive_backup_now: "Back up now",
-    drive_restore: "Restore from Drive",
-    drive_never: "never",
-    drive_status_signin: "Not connected. Connect your Google account to back up to Drive.",
-    drive_no_scope: "Connected, but Drive permission was not granted. Connect again and tick the Drive box.",
-    drive_status_ready: "Connected. Last backup: {time}",
-    drive_status_saving: "Backing up…",
-    drive_status_conflict: "Drive has a backup from another device. Restore it, or press \"Back up now\" to replace it.",
-    drive_status_error: "Could not reach Google Drive. Try again.",
-    drive_no_backup: "No backup found in Drive yet.",
-    drive_overwrite_confirm: "Replace the backup in Drive with the data on this device?",
     nav_today: "Today",
     nav_progress: "Progress",
     nav_journal_short: "Journal",
@@ -595,7 +585,25 @@ const TRANSLATIONS = {
     theme_label: "Theme",
     theme_light: "Light",
     theme_night: "Night",
-    cancel: "Cancel"
+    cancel: "Cancel",
+    sync_title: "Sync across devices",
+    sync_desc: "Routines, Mind Log, finance and agenda sync automatically through one hidden file in your Google Drive. The app cannot see anything else in your Drive.",
+    sync_connect: "Connect Google account",
+    sync_now: "Sync now",
+    sync_disconnect: "Disconnect",
+    sync_disconnect_confirm: "Stop syncing this device? Data on this device stays.",
+    sync_state_waiting: "Connected, waiting for first sync",
+    sync_error_auth: "Google sign-in was cancelled or failed",
+    sync_error_scope: "Drive permission was not granted. Connect again and allow Google Drive.",
+    sync_error_gis: "Google sign-in could not load. Check your connection and reload.",
+    auth_setup_label: "Create a passcode",
+    auth_setup_btn: "Save and unlock",
+    auth_setup_hint: "No passcode is stored on this device yet. Choose one (at least 4 characters); it stays on this device only.",
+    sync_state_off: "Not connected",
+    sync_state_syncing: "Syncing…",
+    sync_state_ok: "Synced · {time}",
+    sync_state_error: "Sync failed: {error}. It will retry on the next change.",
+    sync_state_renew: "Google session expired. Tap anywhere to renew."
   },
   tr: {
     nav_journal: "Günlük",
@@ -639,7 +647,6 @@ const TRANSLATIONS = {
     finance_category_title: "Kategoriye göre",
     finance_empty: "Bu ay işlem yok.",
     calendar_title: "Takvim",
-    calendar_connect: "Google Takvim'i Bağla",
     calendar_add_title: "Yeni etkinlik",
     calendar_event_title: "Etkinlik Başlığı",
     calendar_start_time: "Başlangıç Saati",
@@ -718,8 +725,6 @@ const TRANSLATIONS = {
     habit_fin_flow_title: "FinFlow Eşitlemesi",
     habit_fin_flow_desc: "Günlük Harcamalar Kaydedildi",
     alert_same_accounts: "Kaynak ve hedef hesaplar aynı olamaz!",
-    alert_google_load_fail: "Google API kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.",
-    alert_google_auth_error: "Google yetkilendirme hatası: ",
     cat_food: "Market",
     cat_transport: "Ulaşım",
     cat_tech: "Teknoloji",
@@ -761,12 +766,11 @@ const TRANSLATIONS = {
     fin_initial_balance: "Bakiye",
     fin_select_icon: "Simge / Emoji",
     fin_confirm_delete_account: "Bu hesabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
-    calendar_disconnect: "Google Takvim Bağlantısını Kes",
     auth_error: "Şifre hatalı. Lütfen tekrar deneyin.",
     settings_security_title: "Giriş şifresi",
     passcode_current: "Mevcut şifre",
     passcode_new: "Yeni şifre",
-    passcode_confirm: "Yeni şifre (tekrar)",
+    passcode_confirm: "Şifre (tekrar)",
     passcode_change_btn: "Şifreyi değiştir",
     passcode_changed: "Şifre güncellendi.",
     passcode_wrong_current: "Mevcut şifre yanlış.",
@@ -786,21 +790,6 @@ const TRANSLATIONS = {
     backup_invalid: "Bu geçerli bir Horizon yedeği değil.",
     backup_confirm: "Mevcut veriler bu yedekle değiştirilsin mi?\n\nGün: {days}\nGünlük kaydı: {journal}\nİşlem: {transactions}\nEtkinlik: {events}\n\nMevcut verileriniz saklanır, geri alabilirsiniz.",
     backup_undo_confirm: "Son geri yüklemeden önceki verilere dönülsün mü?",
-    drive_title: "Google Drive yedeği",
-    drive_desc: "Kendi Google Drive'ınızda tek bir yedek dosyası tutar. Uygulama yalnızca kendi oluşturduğu dosyayı görebilir, Drive'ınızdaki başka hiçbir şeyi göremez.",
-    drive_connect: "Google hesabını bağla",
-    drive_auto: "Değişikliklerden sonra otomatik yedekle",
-    drive_backup_now: "Şimdi yedekle",
-    drive_restore: "Drive'dan geri yükle",
-    drive_never: "hiç",
-    drive_status_signin: "Bağlı değil. Drive'a yedeklemek için Google hesabınızı bağlayın.",
-    drive_no_scope: "Bağlandı ama Drive izni verilmedi. Yeniden bağlanın ve Drive kutusunu işaretleyin.",
-    drive_status_ready: "Bağlı. Son yedek: {time}",
-    drive_status_saving: "Yedekleniyor…",
-    drive_status_conflict: "Drive'da başka bir cihazdan alınmış yedek var. Onu geri yükleyin ya da değiştirmek için \"Şimdi yedekle\"ye basın.",
-    drive_status_error: "Google Drive'a ulaşılamadı. Tekrar deneyin.",
-    drive_no_backup: "Drive'da henüz yedek yok.",
-    drive_overwrite_confirm: "Drive'daki yedek bu cihazdaki verilerle değiştirilsin mi?",
     nav_today: "Bugün",
     nav_progress: "İlerleme",
     nav_journal_short: "Günlük",
@@ -855,7 +844,25 @@ const TRANSLATIONS = {
     theme_label: "Tema",
     theme_light: "Açık",
     theme_night: "Gece",
-    cancel: "Vazgeç"
+    cancel: "Vazgeç",
+    sync_title: "Cihazlar arası eşitleme",
+    sync_desc: "Rutinler, günlük, finans ve takvim, Google Drive'ınızdaki gizli bir dosya üzerinden otomatik eşitlenir. Uygulama Drive'ınızdaki başka hiçbir şeyi göremez.",
+    sync_connect: "Google hesabını bağla",
+    sync_now: "Şimdi eşitle",
+    sync_disconnect: "Bağlantıyı kes",
+    sync_disconnect_confirm: "Bu cihazda eşitleme durdurulsun mu? Bu cihazdaki veriler kalır.",
+    sync_state_waiting: "Bağlandı, ilk eşitleme bekleniyor",
+    sync_error_auth: "Google girişi iptal edildi ya da başarısız oldu",
+    sync_error_scope: "Drive izni verilmedi. Yeniden bağlanıp Google Drive'a izin verin.",
+    sync_error_gis: "Google girişi yüklenemedi. Bağlantınızı kontrol edip sayfayı yenileyin.",
+    auth_setup_label: "Şifre oluştur",
+    auth_setup_btn: "Kaydet ve aç",
+    auth_setup_hint: "Bu cihazda henüz kayıtlı şifre yok. En az 4 karakterli bir şifre seçin; yalnızca bu cihazda saklanır.",
+    sync_state_off: "Bağlı değil",
+    sync_state_syncing: "Eşitleniyor…",
+    sync_state_ok: "Eşitlendi · {time}",
+    sync_state_error: "Eşitleme başarısız: {error}. Bir sonraki değişiklikte tekrar denenecek.",
+    sync_state_renew: "Google oturumu sona erdi. Yenilemek için herhangi bir yere dokunun."
   },
   ar: {
     nav_journal: "اليوميات",
@@ -894,7 +901,6 @@ const TRANSLATIONS = {
     finance_category_title: "حسب الفئة",
     finance_empty: "لا توجد معاملات هذا الشهر.",
     calendar_title: "التقويم",
-    calendar_connect: "ربط تقويم جوجل",
     calendar_add_title: "حدث جديد",
     calendar_event_title: "عنوان الموعد",
     calendar_start_time: "وقت البدء",
@@ -973,8 +979,6 @@ const TRANSLATIONS = {
     habit_fin_flow_title: "تعقب الميزانية",
     habit_fin_flow_desc: "تسجيل النفقات اليومية كاملة",
     alert_same_accounts: "لا يمكن أن يكون حساب المصدر وحساب الهدف متطابقين!",
-    alert_google_load_fail: "تعذر تحميل مكتبة Google API. يرجى التحقق من اتصالك بالإنترنت وتحديث الصفحة.",
-    alert_google_auth_error: "خطأ في مصادقة جوجل: ",
     cat_food: "البقالة",
     cat_transport: "المواصلات",
     cat_tech: "التقنية",
@@ -1016,12 +1020,11 @@ const TRANSLATIONS = {
     fin_initial_balance: "الرصيد",
     fin_select_icon: "الرمز",
     fin_confirm_delete_account: "هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء.",
-    calendar_disconnect: "فصل تقويم جوجل",
     auth_error: "رمز الدخول غير صحيح. حاول مرة أخرى.",
     settings_security_title: "رمز الدخول",
     passcode_current: "الرمز الحالي",
     passcode_new: "الرمز الجديد",
-    passcode_confirm: "أعد إدخال الرمز الجديد",
+    passcode_confirm: "أعد إدخال الرمز",
     passcode_change_btn: "تغيير الرمز",
     passcode_changed: "تم تحديث رمز الدخول.",
     passcode_wrong_current: "الرمز الحالي غير صحيح.",
@@ -1041,21 +1044,6 @@ const TRANSLATIONS = {
     backup_invalid: "هذه ليست نسخة احتياطية صالحة من Horizon.",
     backup_confirm: "هل تريد استبدال البيانات الحالية بهذه النسخة؟\n\nالأيام: {days}\nاليوميات: {journal}\nالمعاملات: {transactions}\nالأحداث: {events}\n\nستُحفظ بياناتك الحالية ويمكنك التراجع.",
     backup_undo_confirm: "هل تريد العودة إلى البيانات السابقة لآخر استعادة؟",
-    drive_title: "نسخة احتياطية على Google Drive",
-    drive_desc: "يحفظ ملف نسخة احتياطية واحداً في Google Drive الخاص بك. لا يرى التطبيق إلا الملف الذي أنشأه، ولا شيء آخر في Drive.",
-    drive_connect: "ربط حساب جوجل",
-    drive_auto: "نسخ احتياطي تلقائي بعد التغييرات",
-    drive_backup_now: "انسخ الآن",
-    drive_restore: "استعادة من Drive",
-    drive_never: "أبداً",
-    drive_status_signin: "غير متصل. اربط حساب جوجل للنسخ الاحتياطي إلى Drive.",
-    drive_no_scope: "تم الاتصال لكن لم يُمنح إذن Drive. اتصل مجدداً وحدّد خانة Drive.",
-    drive_status_ready: "متصل. آخر نسخة احتياطية: {time}",
-    drive_status_saving: "جارٍ النسخ الاحتياطي…",
-    drive_status_conflict: "توجد في Drive نسخة من جهاز آخر. استعدها أو اضغط «انسخ الآن» لاستبدالها.",
-    drive_status_error: "تعذّر الوصول إلى Google Drive. حاول مرة أخرى.",
-    drive_no_backup: "لا توجد نسخة احتياطية في Drive بعد.",
-    drive_overwrite_confirm: "هل تريد استبدال النسخة الموجودة في Drive ببيانات هذا الجهاز؟",
     nav_today: "اليوم",
     nav_progress: "التقدّم",
     nav_journal_short: "اليوميات",
@@ -1115,7 +1103,25 @@ const TRANSLATIONS = {
     theme_label: "السمة",
     theme_light: "فاتح",
     theme_night: "ليلي",
-    cancel: "إلغاء"
+    cancel: "إلغاء",
+    sync_title: "المزامنة بين الأجهزة",
+    sync_desc: "تتم مزامنة العادات واليوميات والمالية والتقويم تلقائياً عبر ملف مخفي في Google Drive. لا يرى التطبيق أي شيء آخر في Drive.",
+    sync_connect: "ربط حساب جوجل",
+    sync_now: "زامِن الآن",
+    sync_disconnect: "قطع الاتصال",
+    sync_disconnect_confirm: "إيقاف المزامنة على هذا الجهاز؟ تبقى البيانات على هذا الجهاز.",
+    sync_state_waiting: "متصل، بانتظار أول مزامنة",
+    sync_error_auth: "أُلغي تسجيل الدخول إلى جوجل أو فشل",
+    sync_error_scope: "لم يُمنح إذن Drive. اتصل مجدداً واسمح بـ Google Drive.",
+    sync_error_gis: "تعذّر تحميل تسجيل دخول جوجل. تحقّق من الاتصال وأعد التحميل.",
+    auth_setup_label: "إنشاء رمز دخول",
+    auth_setup_btn: "حفظ وفتح",
+    auth_setup_hint: "لا يوجد رمز محفوظ على هذا الجهاز بعد. اختر رمزاً من 4 أحرف على الأقل؛ يبقى على هذا الجهاز فقط.",
+    sync_state_off: "غير متصل",
+    sync_state_syncing: "جارٍ المزامنة…",
+    sync_state_ok: "تمت المزامنة · {time}",
+    sync_state_error: "فشلت المزامنة: {error}. ستتم إعادة المحاولة عند التغيير التالي.",
+    sync_state_renew: "انتهت جلسة جوجل. المس أي مكان للتجديد."
   }
 };
 
@@ -1291,7 +1297,7 @@ const StorageManager = {
 
   saveDatabase() {
     localStorage.setItem('hrt_db', JSON.stringify(STATE.db));
-    DriveBackup.schedule();
+    SyncEngine.markChanged();
   },
 
   loadJournal() {
@@ -1301,7 +1307,7 @@ const StorageManager = {
 
   saveJournal() {
     localStorage.setItem('hrt_journal', JSON.stringify(STATE.journal));
-    DriveBackup.schedule();
+    SyncEngine.markChanged();
   },
 
   loadFinance() {
@@ -1338,7 +1344,7 @@ const StorageManager = {
 
   saveFinance() {
     localStorage.setItem('hrt_finance', JSON.stringify(STATE.finance));
-    DriveBackup.schedule();
+    SyncEngine.markChanged();
   },
 
   loadCalendar() {
@@ -1368,7 +1374,7 @@ const StorageManager = {
 
   saveCalendar() {
     localStorage.setItem('hrt_calendar', JSON.stringify(STATE.calendar));
-    DriveBackup.schedule();
+    SyncEngine.markChanged();
   },
 
   getDayState(dateKey) {
@@ -1610,134 +1616,479 @@ const StreakEngine = {
   }
 };
 
-// ================= GOOGLE DRIVE BACKUP =================
-// One JSON file (BackupManager format) in the user's own Drive, via the drive.file scope.
-// LAST_KEY holds the file's modifiedTime as of our last upload or restore; if Drive reports a
-// different time, another device wrote it, and we never overwrite that without asking.
-const DriveBackup = {
-  FILE_NAME: 'horizon-backup.json',
-  FILE_ID_KEY: 'hrt_drive_file_id',
-  LAST_KEY: 'hrt_drive_last_backup',
-  AUTO_KEY: 'hrt_drive_auto',
-  DELAY_MS: 5000,
-  timer: null,
-  lastUploaded: null,
-  state: 'idle', // idle | saving | conflict | error | signin
+// ================= GOOGLE DRIVE SYNC =================
+// Routines, Mind Log, finance and local calendar events are kept in one JSON file in the user's
+// hidden Drive appDataFolder and merged record by record: every day, journal entry, transaction,
+// account and event carries the time it last changed on any device, and the newest one wins.
+// Equal times (data from before sync existed) are combined: for a day, a routine checked on either
+// device stays checked. Records that were only auto-created (blank days, first-run accounts) carry
+// no time, so they never override real data coming from another device.
+const SYNC_FILE_NAME = "horizon-sync.json";
+const SYNC_COLLECTIONS = ['db', 'journal', 'tx', 'acc', 'cal'];
+// Seeded by old versions on first run; never treated as real data.
+const DEMO_EVENT_IDS = ['cal-1', 'cal-2', 'cal-3'];
+const DEMO_ACCOUNT_BALANCES = [1500, 8450, -450, 24500];
+
+// JSON.stringify with sorted keys, so equal data always compares equal.
+function stableStringify(value) {
+  if (Array.isArray(value)) return `[${value.map(stableStringify).join(',')}]`;
+  if (value && typeof value === 'object') {
+    return `{${Object.keys(value).sort().map(k => `${JSON.stringify(k)}:${stableStringify(value[k])}`).join(',')}}`;
+  }
+  return JSON.stringify(value);
+}
+
+const SyncEngine = {
+  ENABLED_KEY: 'hrt_sync_enabled',
+  META_KEY: 'hrt_sync_meta',
+  FILE_ID_KEY: 'hrt_sync_file_id',
+  LAST_KEY: 'hrt_sync_last',
+  DELAY_MS: 2000,
+
+  state: 'off', // off | syncing | ok | error | renew
   message: '',
+  onApplied: null,
+  _tokenClient: null,
+  _snapshot: null,
+  _timer: null,
+  _syncing: false,
+  _again: false,
+  _waitingGesture: false,
 
-  token() {
-    const token = UIController.getGoogleAccessTokenSync();
-    const scopes = localStorage.getItem('google_token_scopes') || '';
-    return token && scopes.includes(GOOGLE_DRIVE_SCOPE) ? token : null;
-  },
-
-  isAuto() {
-    return localStorage.getItem(this.AUTO_KEY) !== '0';
+  isEnabled() {
+    return localStorage.getItem(this.ENABLED_KEY) === '1';
   },
 
   setState(state, message = '') {
     this.state = state;
     this.message = message;
-    UIController.refreshDriveUI();
+    UIController.renderSyncStatus();
   },
 
-  async api(path, options = {}) {
-    const response = await fetch(`https://www.googleapis.com${path}`, {
-      ...options,
-      headers: { 'Authorization': `Bearer ${this.token()}`, ...(options.headers || {}) }
+  // ---------- Google sign-in (Identity Services token client) ----------
+  cachedToken() {
+    const token = localStorage.getItem('google_access_token');
+    const expiry = parseInt(localStorage.getItem('google_token_expiry') || '0', 10);
+    return token && Date.now() < expiry - 60000 ? token : null;
+  },
+
+  hasCalendarScope() {
+    return (localStorage.getItem('google_token_scopes') || '').includes(GOOGLE_CALENDAR_SCOPE);
+  },
+
+  // Must run inside a user gesture, otherwise the browser blocks Google's popup.
+  requestToken(prompt) {
+    return new Promise((resolve) => {
+      if (!window.google || !google.accounts || !google.accounts.oauth2) return resolve(null);
+      if (!this._tokenClient) {
+        this._tokenClient = google.accounts.oauth2.initTokenClient({
+          client_id: GOOGLE_CLIENT_ID,
+          scope: `${GOOGLE_DRIVE_SCOPE} ${GOOGLE_CALENDAR_SCOPE}`,
+          callback: () => {}
+        });
+      }
+      this._tokenClient.callback = (resp) => {
+        if (!resp || !resp.access_token) return resolve(null);
+        localStorage.setItem('google_access_token', resp.access_token);
+        localStorage.setItem('google_token_expiry', String(Date.now() + (Number(resp.expires_in) || 3600) * 1000));
+        localStorage.setItem('google_token_scopes', resp.scope || '');
+        resolve(resp.access_token);
+      };
+      this._tokenClient.error_callback = () => resolve(null);
+      try {
+        this._tokenClient.requestAccessToken({ prompt });
+      } catch (e) {
+        resolve(null);
+      }
     });
-    if (response.status === 401) UIController.clearGoogleToken();
-    return response;
   },
 
-  // Returns { id, modifiedTime } for the backup file, or null when there is none.
-  async findRemote() {
-    const cachedId = localStorage.getItem(this.FILE_ID_KEY);
-    if (cachedId) {
-      const res = await this.api(`/drive/v3/files/${cachedId}?fields=id,modifiedTime,trashed`);
-      if (res.ok) {
-        const file = await res.json();
-        if (!file.trashed) return file;
-      } else if (res.status !== 404) {
-        throw new Error('drive_status_error');
-      }
-      localStorage.removeItem(this.FILE_ID_KEY);
+  // Interactive connect, called from a click.
+  async connect() {
+    const token = await this.requestToken('');
+    if (!token) throw new Error('sync_error_auth');
+    if (!(localStorage.getItem('google_token_scopes') || '').includes(GOOGLE_DRIVE_SCOPE)) {
+      throw new Error('sync_error_scope');
     }
-    const q = encodeURIComponent(`name='${this.FILE_NAME}' and trashed=false`);
-    const res = await this.api(`/drive/v3/files?q=${q}&orderBy=modifiedTime%20desc&pageSize=1&fields=files(id,modifiedTime)`);
-    if (!res.ok) throw new Error('drive_status_error');
-    const file = ((await res.json()).files || [])[0] || null;
-    if (file) localStorage.setItem(this.FILE_ID_KEY, file.id);
-    return file;
+    localStorage.setItem(this.ENABLED_KEY, '1');
+    await this.sync();
+    return token;
   },
 
-  async upload({ force = false } = {}) {
-    if (!this.token()) return this.setState('signin');
-    const body = BackupManager.toJSON();
-    const fingerprint = JSON.stringify(BackupManager.build().data);
-    if (!force && fingerprint === this.lastUploaded) return;
-    this.setState('saving');
+  // A valid token without any popup, or null. An expired token is renewed silently on the user's
+  // next tap or click, because browsers only allow Google's popup inside a gesture.
+  getToken() {
+    const cached = this.cachedToken();
+    if (cached) return cached;
+    if (!this.isEnabled()) return null;
+    if (!this._waitingGesture) {
+      this._waitingGesture = true;
+      this.setState('renew');
+      const renew = async () => {
+        document.removeEventListener('click', renew, true);
+        document.removeEventListener('touchend', renew, true);
+        this._waitingGesture = false;
+        if (await this.requestToken('')) this.sync();
+        else this.setState('error', 'sync_error_auth');
+      };
+      document.addEventListener('click', renew, true);
+      document.addEventListener('touchend', renew, true);
+    }
+    return null;
+  },
+
+  disconnect() {
+    const token = localStorage.getItem('google_access_token');
+    if (token && window.google && google.accounts && google.accounts.oauth2) {
+      try { google.accounts.oauth2.revoke(token, () => {}); } catch (e) {}
+    }
+    [this.ENABLED_KEY, this.FILE_ID_KEY, this.LAST_KEY, 'google_access_token', 'google_token_expiry', 'google_token_scopes']
+      .forEach(k => localStorage.removeItem(k));
+    this.setState('off');
+  },
+
+  // ---------- Local records and change tracking ----------
+  readJSON(key, fallback) {
     try {
-      const remote = await this.findRemote();
-      if (remote && !force && remote.modifiedTime !== localStorage.getItem(this.LAST_KEY)) {
-        return this.setState('conflict');
-      }
-      let res;
-      if (remote) {
-        res = await this.api(`/upload/drive/v3/files/${remote.id}?uploadType=media&fields=id,modifiedTime`, {
-          method: 'PATCH',
-          headers: { 'Content-Type': 'application/json' },
-          body
-        });
-      } else {
-        const boundary = 'horizon' + Date.now();
-        const meta = JSON.stringify({ name: this.FILE_NAME, mimeType: 'application/json' });
-        res = await this.api('/upload/drive/v3/files?uploadType=multipart&fields=id,modifiedTime', {
-          method: 'POST',
-          headers: { 'Content-Type': `multipart/related; boundary=${boundary}` },
-          body: `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${boundary}--`
-        });
-      }
-      if (!res.ok) throw new Error('drive_status_error');
-      const file = await res.json();
-      localStorage.setItem(this.FILE_ID_KEY, file.id);
-      localStorage.setItem(this.LAST_KEY, file.modifiedTime);
-      this.lastUploaded = fingerprint;
-      this.setState('idle');
+      const raw = localStorage.getItem(key);
+      return raw ? JSON.parse(raw) : fallback;
     } catch (e) {
-      if (this.token()) this.setState('error');
+      return fallback;
     }
   },
 
-  // Debounced automatic backup after any data change.
+  // All syncable records, keyed by id, straight from storage.
+  collections() {
+    const finance = this.readJSON('hrt_finance', { accounts: {}, transactions: [] });
+    const tx = {};
+    (finance.transactions || []).forEach(t => { if (t && t.id) tx[t.id] = t; });
+    const cal = {};
+    this.readJSON('hrt_calendar', []).forEach(e => {
+      if (e && e.id && e.isLocal && !DEMO_EVENT_IDS.includes(e.id)) cal[e.id] = e;
+    });
+    return {
+      db: this.readJSON('hrt_db', {}),
+      journal: this.readJSON('hrt_journal', {}),
+      tx,
+      acc: finance.accounts || {},
+      cal
+    };
+  },
+
+  meta() {
+    const m = this.readJSON(this.META_KEY, {});
+    SYNC_COLLECTIONS.forEach(c => { if (!m[c] || typeof m[c] !== 'object') m[c] = {}; });
+    return m;
+  },
+
+  saveMeta(meta) {
+    localStorage.setItem(this.META_KEY, JSON.stringify(meta));
+  },
+
+  // Auto-created records that must not count as a change: blank days, and the zero-balance
+  // accounts a fresh install starts with.
+  isPlaceholder(collection, value) {
+    if (collection === 'db') return !Object.values(value || {}).some(v => v === true);
+    if (collection === 'acc') {
+      if (!value || value.icon) return false;
+      const balance = Number(value.balance);
+      return balance === 0 || DEMO_ACCOUNT_BALANCES.includes(balance);
+    }
+    return false;
+  },
+
+  // Remember current storage as the baseline, without stamping anything.
+  primeSnapshot() {
+    const snap = {};
+    const all = this.collections();
+    SYNC_COLLECTIONS.forEach(c => {
+      snap[c] = {};
+      Object.keys(all[c]).forEach(k => { snap[c][k] = stableStringify(all[c][k]); });
+    });
+    this._snapshot = snap;
+  },
+
+  // Called after every local save: stamps what changed since the baseline, then syncs soon.
+  markChanged() {
+    if (!this._snapshot) this.primeSnapshot();
+    const now = Date.now();
+    const meta = this.meta();
+    const all = this.collections();
+    SYNC_COLLECTIONS.forEach(c => {
+      const before = this._snapshot[c];
+      const after = {};
+      Object.keys(all[c]).forEach(k => {
+        const json = stableStringify(all[c][k]);
+        after[k] = json;
+        if (before[k] === json) return;
+        // New blank days are not edits. Seeded accounts never are, even when a migration renames them;
+        // a real edit always sets an icon, which makes the account real.
+        if ((!(k in before) || c === 'acc') && this.isPlaceholder(c, all[c][k])) return;
+        meta[c][k] = { t: now };
+      });
+      Object.keys(before).forEach(k => {
+        if (!(k in after)) meta[c][k] = { t: now, d: 1 };
+      });
+      this._snapshot[c] = after;
+    });
+    this.saveMeta(meta);
+    if (this.isEnabled()) this.schedule();
+  },
+
+  // After a JSON restore: every restored record becomes the newest version everywhere.
+  stampAll() {
+    const now = Date.now();
+    const meta = this.meta();
+    const all = this.collections();
+    SYNC_COLLECTIONS.forEach(c => {
+      Object.keys(all[c]).forEach(k => {
+        if (!this.isPlaceholder(c, all[c][k])) meta[c][k] = { t: now };
+      });
+    });
+    this.saveMeta(meta);
+  },
+
   schedule() {
-    if (!this.isAuto() || !this.token() || this.state === 'conflict') return;
-    clearTimeout(this.timer);
-    this.timer = setTimeout(() => this.upload(), this.DELAY_MS);
+    clearTimeout(this._timer);
+    this._timer = setTimeout(() => this.sync(), this.DELAY_MS);
   },
 
-  async download() {
-    if (!this.token()) throw new Error('drive_status_signin');
-    const remote = await this.findRemote();
-    if (!remote) throw new Error('drive_no_backup');
-    const res = await this.api(`/drive/v3/files/${remote.id}?alt=media`);
-    if (!res.ok) throw new Error('drive_status_error');
-    return { text: await res.text(), modifiedTime: remote.modifiedTime };
+  // ---------- Payload and merge ----------
+  localPayload() {
+    const meta = this.meta();
+    const all = this.collections();
+    const payload = { app: 'horizon-tracker', v: 2 };
+    SYNC_COLLECTIONS.forEach(c => {
+      const out = {};
+      Object.keys(all[c]).forEach(k => {
+        const t = (meta[c][k] && meta[c][k].t) || 0;
+        // Untouched placeholders stay on this device only.
+        if (t === 0 && this.isPlaceholder(c, all[c][k])) return;
+        out[k] = { t, v: all[c][k] };
+      });
+      Object.keys(meta[c]).forEach(k => {
+        if (meta[c][k].d && !(k in all[c])) out[k] = { t: meta[c][k].t, d: 1 };
+      });
+      payload[c] = out;
+    });
+    payload.best_streak = parseInt(localStorage.getItem('hrt_best_streak') || '0', 10);
+    return payload;
   },
 
-  // On load / connect: flag a backup written elsewhere so it is not silently overwritten.
-  async checkRemote() {
-    if (!this.token()) return;
-    try {
-      const remote = await this.findRemote();
-      if (remote && remote.modifiedTime !== localStorage.getItem(this.LAST_KEY)) {
-        this.setState('conflict');
-      } else {
-        this.setState('idle');
-      }
-    } catch (e) {
-      if (this.token()) this.setState('error');
+  // Files written by the first DriveSync version stored finance and calendar as single blobs.
+  upgradeRemote(remote) {
+    if (!remote || remote.app !== 'horizon-tracker') return null;
+    if (remote.v >= 2) return remote;
+    const toRecords = (list, t) => {
+      const out = {};
+      list.forEach(item => { if (item && item.id) out[item.id] = { t, v: item }; });
+      return out;
+    };
+    const fin = (remote.finance && remote.finance.v) || { accounts: {}, transactions: [] };
+    const finT = (remote.finance && remote.finance.t) || 0;
+    const acc = {};
+    Object.keys(fin.accounts || {}).forEach(k => { acc[k] = { t: finT, v: fin.accounts[k] }; });
+    const calList = ((remote.calendar && remote.calendar.v) || []).filter(e => e.isLocal && !DEMO_EVENT_IDS.includes(e.id));
+    return {
+      app: 'horizon-tracker', v: 2,
+      db: remote.db || {}, journal: remote.journal || {},
+      tx: toRecords(fin.transactions || [], finT), acc,
+      cal: toRecords(calList, (remote.calendar && remote.calendar.t) || 0),
+      best_streak: remote.best_streak || 0
+    };
+  },
+
+  mergeRecord(collection, a, b) {
+    if (!a) return b;
+    if (!b) return a;
+    if (a.t !== b.t) return a.t > b.t ? a : b;
+    if (a.d && !b.d) return b;
+    if (b.d && !a.d) return a;
+    if (collection === 'db' && a.v && b.v) {
+      const v = { ...a.v };
+      Object.keys(b.v).forEach(k => { v[k] = a.v[k] === true || b.v[k] === true ? true : b.v[k]; });
+      return { t: a.t, v };
     }
+    return b;
+  },
+
+  merge(local, remote) {
+    if (!remote) return local;
+    const merged = { app: 'horizon-tracker', v: 2 };
+    SYNC_COLLECTIONS.forEach(c => {
+      const a = local[c] || {};
+      const b = remote[c] || {};
+      merged[c] = {};
+      new Set([...Object.keys(a), ...Object.keys(b)]).forEach(k => {
+        merged[c][k] = this.mergeRecord(c, a[k], b[k]);
+      });
+    });
+    merged.best_streak = Math.max(local.best_streak || 0, remote.best_streak || 0);
+    return merged;
+  },
+
+  // Write a merged payload back to the normal storage keys and rebuild the metadata.
+  applyLocal(payload) {
+    const meta = { db: {}, journal: {}, tx: {}, acc: {}, cal: {} };
+    const current = this.collections();
+    const values = {};
+    SYNC_COLLECTIONS.forEach(c => {
+      values[c] = {};
+      Object.entries(payload[c] || {}).forEach(([k, r]) => {
+        if (r.d) {
+          meta[c][k] = { t: r.t, d: 1 };
+        } else {
+          values[c][k] = r.v;
+          if (r.t) meta[c][k] = { t: r.t };
+        }
+      });
+      // Placeholders that were never sent stay as they are.
+      Object.keys(current[c]).forEach(k => {
+        if (!(k in values[c]) && !(meta[c][k] && meta[c][k].d)) values[c][k] = current[c][k];
+      });
+    });
+
+    localStorage.setItem('hrt_db', JSON.stringify(values.db));
+    localStorage.setItem('hrt_journal', JSON.stringify(values.journal));
+    const transactions = Object.values(values.tx).sort((x, y) => (x.date || '').localeCompare(y.date || '') || String(x.id).localeCompare(String(y.id)));
+    localStorage.setItem('hrt_finance', JSON.stringify({ accounts: values.acc, transactions }));
+    // Google Calendar events stay per device; only local events sync.
+    const googleEvents = this.readJSON('hrt_calendar', []).filter(e => e && !e.isLocal);
+    localStorage.setItem('hrt_calendar', JSON.stringify([...Object.values(values.cal), ...googleEvents]));
+    const best = Math.max(payload.best_streak || 0, parseInt(localStorage.getItem('hrt_best_streak') || '0', 10));
+    localStorage.setItem('hrt_best_streak', String(best));
+
+    this.saveMeta(meta);
+    this.primeSnapshot();
+  },
+
+  // ---------- Drive file I/O ----------
+  async api(token, path, options = {}) {
+    const res = await fetch(`https://www.googleapis.com${path}`, {
+      ...options,
+      headers: { 'Authorization': `Bearer ${token}`, ...(options.headers || {}) }
+    });
+    if (res.status === 401) {
+      localStorage.removeItem('google_access_token');
+      throw new Error('401');
+    }
+    return res;
+  },
+
+  async findFile(token) {
+    const cached = localStorage.getItem(this.FILE_ID_KEY);
+    if (cached) return cached;
+    const q = encodeURIComponent(`name='${SYNC_FILE_NAME}' and trashed=false`);
+    const res = await this.api(token, `/drive/v3/files?spaces=appDataFolder&q=${q}&orderBy=modifiedTime%20desc&pageSize=1&fields=files(id,modifiedTime)`);
+    if (!res.ok) throw new Error(`Drive ${res.status}`);
+    const file = ((await res.json()).files || [])[0];
+    if (file) localStorage.setItem(this.FILE_ID_KEY, file.id);
+    return file ? file.id : null;
+  },
+
+  async download(token, id) {
+    const res = await this.api(token, `/drive/v3/files/${id}?alt=media`);
+    if (res.status === 404) {
+      localStorage.removeItem(this.FILE_ID_KEY);
+      return undefined; // file vanished: search again
+    }
+    if (!res.ok) throw new Error(`Drive ${res.status}`);
+    try {
+      return await res.json();
+    } catch (e) {
+      return null;
+    }
+  },
+
+  async upload(token, id, payload) {
+    const body = JSON.stringify(payload);
+    if (id) {
+      const res = await this.api(token, `/upload/drive/v3/files/${id}?uploadType=media`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body
+      });
+      if (!res.ok) throw new Error(`Drive ${res.status}`);
+      return;
+    }
+    const boundary = 'horizon' + Date.now();
+    const metadata = JSON.stringify({ name: SYNC_FILE_NAME, parents: ['appDataFolder'], mimeType: 'application/json' });
+    const res = await this.api(token, '/upload/drive/v3/files?uploadType=multipart&fields=id', {
+      method: 'POST',
+      headers: { 'Content-Type': `multipart/related; boundary=${boundary}` },
+      body: `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${metadata}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${boundary}--`
+    });
+    if (!res.ok) throw new Error(`Drive ${res.status}`);
+    localStorage.setItem(this.FILE_ID_KEY, (await res.json()).id);
+  },
+
+  // ---------- Full sync: download, merge, apply locally, upload ----------
+  async sync() {
+    if (!this.isEnabled()) return;
+    if (this._syncing) {
+      this._again = true;
+      return;
+    }
+    clearTimeout(this._timer);
+    this._syncing = true;
+    try {
+      const token = this.getToken();
+      if (!token) return;
+      this.setState('syncing');
+
+      let id = await this.findFile(token);
+      let remote = id ? await this.download(token, id) : null;
+      if (remote === undefined) {
+        id = await this.findFile(token);
+        remote = id ? await this.download(token, id) : null;
+      }
+      remote = this.upgradeRemote(remote);
+
+      const local = this.localPayload();
+      const merged = this.merge(local, remote);
+      const mergedJson = stableStringify(merged);
+      if (mergedJson !== stableStringify(local)) {
+        this.applyLocal(merged);
+        if (this.onApplied) this.onApplied();
+      }
+      if (!remote || mergedJson !== stableStringify(remote)) {
+        await this.upload(token, id, merged);
+      }
+      localStorage.setItem(this.LAST_KEY, String(Date.now()));
+      this.setState('ok');
+    } catch (e) {
+      if (e.message === '401') this.getToken();
+      else this.setState('error', e.message);
+    } finally {
+      this._syncing = false;
+      if (this._again) {
+        this._again = false;
+        this.schedule();
+      }
+    }
+  },
+
+  // Keys from the first DriveSync build and from the earlier Drive backup feature.
+  migrateLegacyKeys() {
+    if (localStorage.getItem('drive_sync_enabled') === '1') localStorage.setItem(this.ENABLED_KEY, '1');
+    ['drive_sync_enabled', 'drive_file_id', 'drive_last_sync', 'hrt_drive_file_id', 'hrt_drive_last_backup', 'hrt_drive_auto']
+      .forEach(k => localStorage.removeItem(k));
+    // That build stamped finance and calendar as a whole: spread the stamp over their records.
+    const old = this.readJSON(this.META_KEY, null);
+    if (old && (typeof old.finance === 'number' || typeof old.calendar === 'number')) {
+      const meta = { db: old.db || {}, journal: old.journal || {}, tx: {}, acc: {}, cal: {} };
+      const all = this.collections();
+      if (old.finance) {
+        Object.keys(all.tx).forEach(k => { meta.tx[k] = { t: old.finance }; });
+        Object.keys(all.acc).forEach(k => { meta.acc[k] = { t: old.finance }; });
+      }
+      if (old.calendar) Object.keys(all.cal).forEach(k => { meta.cal[k] = { t: old.calendar }; });
+      this.saveMeta(meta);
+    }
+  },
+
+  // Sync when the app comes back into view, at most every few seconds.
+  syncOnReturn() {
+    const last = parseInt(localStorage.getItem(this.LAST_KEY) || '0', 10);
+    if (STATE.authenticated && this.isEnabled() && Date.now() - last > 5000) this.sync();
   }
 };
 
@@ -1962,6 +2313,17 @@ const UIController = {
   init() {
     this.setupTheme();
     this.setupLanguage();
+
+    // Sync: baseline for change tracking, re-render when another device's changes arrive,
+    // and pull again whenever the app comes back into view.
+    SyncEngine.migrateLegacyKeys();
+    SyncEngine.primeSnapshot();
+    SyncEngine.onApplied = () => this.refreshAfterSync();
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') SyncEngine.syncOnReturn();
+    });
+    window.addEventListener('focus', () => SyncEngine.syncOnReturn());
+
     this.setupAuthentication();
     this.setupNavigation();
     this.setupDateNavigator();
@@ -1970,7 +2332,7 @@ const UIController = {
     this.setupPasscodeSettings();
     this.setupBackupSettings();
     this.setupGoogleSettings();
-    this.setupDriveSettings();
+    this.setupSyncSettings();
     this.setupJournalTab();
     this.setupFinanceTab();
     this.setupCalendarTab();
@@ -2016,12 +2378,31 @@ const UIController = {
     select.addEventListener('change', () => {
       localStorage.setItem('hrt_theme', select.value);
       apply(select.value);
-      DriveBackup.schedule();
+      SyncEngine.markChanged();
     });
   },
 
   async setupAuthentication() {
     sessionStorage.removeItem('hrt_session_hash'); // legacy session marker
+    const confirmField = document.getElementById('passcode-setup-field');
+    const confirmInput = document.getElementById('passcode-setup-confirm');
+    const label = document.querySelector('label[for="passcode"]');
+    const submit = this.dom.authForm.querySelector('button[type="submit"]');
+    const hint = document.getElementById('auth-setup-hint');
+    const dict = () => TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+
+    // No stored passcode on this device: the lock screen becomes "create a passcode".
+    const renderMode = () => {
+      const setup = !PasscodeManager.hasPasscode();
+      confirmField.hidden = !setup;
+      confirmInput.required = setup;
+      hint.hidden = !setup;
+      label.setAttribute('data-i18n', setup ? 'auth_setup_label' : 'auth_label');
+      submit.setAttribute('data-i18n', setup ? 'auth_setup_btn' : 'auth_unlock');
+      label.textContent = dict()[label.getAttribute('data-i18n')];
+      submit.textContent = dict()[submit.getAttribute('data-i18n')];
+      this.dom.passcode.setAttribute('autocomplete', setup ? 'new-password' : 'current-password');
+    };
 
     const unlock = () => {
       STATE.authenticated = true;
@@ -2031,6 +2412,7 @@ const UIController = {
       this.loadDashboard();
     };
 
+    renderMode();
     if (sessionStorage.getItem('hrt_session') === 'unlocked') {
       unlock();
     } else {
@@ -2046,13 +2428,30 @@ const UIController = {
 
     this.dom.authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
-      if (await PasscodeManager.verify(this.dom.passcode.value)) {
+      const entered = this.dom.passcode.value;
+      let ok = false;
+      if (!PasscodeManager.hasPasscode()) {
+        if (entered.length < 4) {
+          this.dom.authError.textContent = dict().passcode_too_short;
+          return;
+        }
+        if (entered !== confirmInput.value) {
+          this.dom.authError.textContent = dict().passcode_mismatch;
+          return;
+        }
+        await PasscodeManager.set(entered);
+        ok = true;
+      } else {
+        ok = await PasscodeManager.verify(entered);
+      }
+      this.dom.passcode.value = "";
+      confirmInput.value = "";
+      if (ok) {
         sessionStorage.setItem('hrt_session', 'unlocked');
-        this.dom.passcode.value = "";
+        renderMode();
         unlock();
       } else {
-        this.dom.authError.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).auth_error;
-        this.dom.passcode.value = "";
+        this.dom.authError.textContent = dict().auth_error;
         this.dom.passcode.focus();
       }
     });
@@ -2061,6 +2460,7 @@ const UIController = {
       btn.addEventListener('click', () => {
         STATE.authenticated = false;
         sessionStorage.removeItem('hrt_session');
+        renderMode();
         this.dom.appContainer.classList.add('hidden');
         this.dom.authPortal.classList.remove('hidden');
         this.dom.passcode.focus();
@@ -2079,7 +2479,26 @@ const UIController = {
     this.renderNotionGrid();
     this.renderAnalytics();
     this.renderHeatmap();
-    DriveBackup.checkRemote();
+    SyncEngine.sync();
+  },
+
+  // Re-read storage after a sync brought in changes from another device.
+  refreshAfterSync() {
+    StorageManager.loadDatabase();
+    StorageManager.loadJournal();
+    StorageManager.loadFinance();
+    StorageManager.loadCalendar();
+    this.setupMonthSelector();
+    this.updateStreakDisplay();
+    this.loadDateData();
+    this.renderNotionGrid();
+    this.renderAnalytics();
+    this.renderHeatmap();
+    this.renderFinance();
+    this.renderCalendar();
+    // Do not overwrite a journal entry that is being typed.
+    const active = document.activeElement;
+    if (!(active && active.closest && active.closest('#journal-form'))) this.renderJournal();
   },
 
   updateStreakDisplay() {
@@ -2130,7 +2549,7 @@ const UIController = {
         this.syncGoogleCalendar(token).finally(() => { this._isSyncingCalendar = false; });
       }
     } else if (targetTab === 'settings-tab') {
-      this.refreshDriveUI();
+      this.renderSyncStatus();
     }
   },
 
@@ -2308,79 +2727,52 @@ const UIController = {
   },
 
 
-  setupDriveSettings() {
-    const connectBtn = document.getElementById('drive-connect-btn');
-    if (!connectBtn) return;
-    const t = () => TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+  setupSyncSettings() {
+    const dict = () => TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
 
-    connectBtn.addEventListener('click', () => this.connectGoogleCalendar());
-
-    document.getElementById('drive-auto-toggle').addEventListener('change', (e) => {
-      localStorage.setItem(DriveBackup.AUTO_KEY, e.target.checked ? '1' : '0');
-      if (e.target.checked) DriveBackup.schedule();
-    });
-
-    document.getElementById('drive-backup-now-btn').addEventListener('click', async () => {
-      if (DriveBackup.state === 'conflict' && !confirm(t().drive_overwrite_confirm)) return;
-      await DriveBackup.upload({ force: true });
-    });
-
-    document.getElementById('drive-restore-btn').addEventListener('click', async () => {
-      let remote;
+    document.getElementById('sync-connect-btn').addEventListener('click', async () => {
       try {
-        remote = await DriveBackup.download();
+        await this.connectGoogleCalendar();
       } catch (e) {
-        return DriveBackup.setState('error', t()[e.message] || t().drive_status_error);
+        SyncEngine.setState('error', e.message);
       }
-      let parsed;
-      try {
-        parsed = BackupManager.parse(remote.text);
-      } catch (e) {
-        return DriveBackup.setState('error', t().backup_invalid);
-      }
-      const s = parsed.summary;
-      const msg = t().backup_confirm
-        .replace('{days}', s.days).replace('{journal}', s.journal)
-        .replace('{transactions}', s.transactions).replace('{events}', s.events);
-      if (!confirm(msg)) return;
-      BackupManager.restore(parsed.backup);
-      localStorage.setItem(DriveBackup.LAST_KEY, remote.modifiedTime);
-      location.reload();
+    });
+    document.getElementById('sync-now-btn').addEventListener('click', () => SyncEngine.sync());
+    document.getElementById('sync-disconnect-btn').addEventListener('click', () => {
+      if (!confirm(dict().sync_disconnect_confirm)) return;
+      SyncEngine.disconnect();
+      // Cached Google Calendar events belong to the account; local data stays.
+      STATE.calendar = STATE.calendar.filter(evt => evt.isLocal);
+      StorageManager.saveCalendar();
+      this.refreshGoogleButton();
+      this.renderCalendar();
+      this.renderToday();
     });
 
-    this.refreshDriveUI();
+    this.renderSyncStatus();
   },
 
-  refreshDriveUI() {
-    const status = document.getElementById('drive-status');
-    if (!status) return;
+  renderSyncStatus() {
+    const text = document.getElementById('sync-status-text');
+    if (!text) return;
     const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-    const connected = !!DriveBackup.token();
-    const last = localStorage.getItem(DriveBackup.LAST_KEY);
-    const locale = appLocale();
-    const lastText = last ? new Date(last).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' }) : dict.drive_never;
+    const enabled = SyncEngine.isEnabled();
+    const last = parseInt(localStorage.getItem(SyncEngine.LAST_KEY) || '0', 10);
 
-    let text = dict.drive_status_ready.replace('{time}', lastText);
-    let cls = 'status-success';
-    if (!connected) {
-      text = UIController.getGoogleAccessTokenSync() ? dict.drive_no_scope : dict.drive_status_signin;
-      cls = 'status-loading';
-    } else if (DriveBackup.state === 'saving') {
-      text = dict.drive_status_saving;
-      cls = 'status-loading';
-    } else if (DriveBackup.state === 'conflict') {
-      text = dict.drive_status_conflict;
-      cls = 'status-error';
-    } else if (DriveBackup.state === 'error') {
-      text = DriveBackup.message || dict.drive_status_error;
-      cls = 'status-error';
+    let state = enabled ? SyncEngine.state : 'off';
+    if (enabled && state === 'off') state = last ? 'ok' : 'syncing';
+    let message = dict[`sync_state_${state}`] || '';
+    if (state === 'ok') {
+      const time = new Date(last).toLocaleString(appLocale(), { dateStyle: 'medium', timeStyle: 'short' });
+      message = last ? message.replace('{time}', time) : dict.sync_state_waiting;
+    } else if (state === 'error') {
+      message = message.replace('{error}', dict[SyncEngine.message] || SyncEngine.message || '');
     }
-    status.textContent = text;
-    status.className = `sync-status-msg ${cls}`;
 
-    document.getElementById('drive-connect-btn').hidden = connected;
-    document.getElementById('drive-controls').hidden = !connected;
-    document.getElementById('drive-auto-toggle').checked = DriveBackup.isAuto();
+    text.textContent = message;
+    document.getElementById('sync-status').className = `sync-state sync-state--${state}`;
+    document.getElementById('sync-connect-btn').hidden = enabled;
+    document.getElementById('sync-controls').hidden = !enabled;
   },
 
   setupPasscodeSettings() {
@@ -2448,6 +2840,7 @@ const UIController = {
         .replace('{transactions}', s.transactions).replace('{events}', s.events);
       if (!confirm(msg)) return;
       BackupManager.restore(parsed.backup);
+      SyncEngine.stampAll();
       location.reload();
     };
 
@@ -2465,6 +2858,7 @@ const UIController = {
     undoBtn.addEventListener('click', () => {
       if (!confirm(t().backup_undo_confirm)) return;
       BackupManager.undo();
+      SyncEngine.stampAll();
       location.reload();
     });
   },
@@ -3908,41 +4302,37 @@ const UIController = {
     });
   },
 
-  // --- Google Calendar (Google Identity Services token flow: client ID only, no secret) ---
+  // --- Google account: one sign-in for Drive sync and Google Calendar ---
   setupGoogleSettings() {
     const btn = document.getElementById('google-auth-btn');
     if (!btn) return;
     this.refreshGoogleButton();
-    btn.addEventListener('click', () => {
-      if (this.getGoogleAccessTokenSync()) {
-        this.disconnectGoogleCalendar();
-      } else {
-        this.connectGoogleCalendar();
+    btn.addEventListener('click', async () => {
+      try {
+        await this.connectGoogleCalendar();
+      } catch (e) {
+        SyncEngine.setState('error', e.message);
+        alert((TRANSLATIONS[STATE.language] || TRANSLATIONS.en)[e.message] || e.message);
       }
     });
   },
 
   refreshGoogleButton() {
     const btn = document.getElementById('google-auth-btn');
-    if (!btn) return this.refreshDriveUI();
-    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-    const connected = !!this.getGoogleAccessTokenSync();
-    btn.textContent = connected ? dict.calendar_disconnect : dict.calendar_connect;
-    btn.classList.toggle('is-connected', connected);
-    this.refreshDriveUI();
+    if (btn) {
+      btn.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).sync_connect;
+      btn.hidden = SyncEngine.isEnabled();
+    }
+    this.renderSyncStatus();
   },
 
   getGoogleAccessTokenSync() {
-    const token = localStorage.getItem('google_access_token');
-    const expiry = parseInt(localStorage.getItem('google_token_expiry') || '0', 10);
-    return token && Date.now() < expiry ? token : null;
+    return SyncEngine.hasCalendarScope() ? SyncEngine.cachedToken() : null;
   },
 
   clearGoogleToken() {
     localStorage.removeItem('google_access_token');
     localStorage.removeItem('google_token_expiry');
-    localStorage.removeItem('google_token_scopes');
-    DriveBackup.setState('signin');
     this.refreshGoogleButton();
   },
 
@@ -3951,44 +4341,17 @@ const UIController = {
     return this.getGoogleAccessTokenSync();
   },
 
-  connectGoogleCalendar() {
-    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+  // Connect Google once (must be called from a click); enables Drive sync and Calendar.
+  async connectGoogleCalendar() {
     if (!window.google || !google.accounts || !google.accounts.oauth2) {
-      alert(dict.alert_google_load_fail);
-      return;
+      throw new Error('sync_error_gis');
     }
-    const client = google.accounts.oauth2.initTokenClient({
-      client_id: GOOGLE_CLIENT_ID,
-      scope: `${GOOGLE_CALENDAR_SCOPE} ${GOOGLE_DRIVE_SCOPE}`,
-      callback: (resp) => {
-        if (resp.error || !resp.access_token) {
-          alert(dict.alert_google_auth_error + (resp.error_description || resp.error || ''));
-          return;
-        }
-        localStorage.setItem('google_access_token', resp.access_token);
-        localStorage.setItem('google_token_expiry', String(Date.now() + (Number(resp.expires_in) || 3600) * 1000));
-        localStorage.setItem('google_token_scopes', resp.scope || '');
-        this.refreshGoogleButton();
-        if ((resp.scope || '').includes(GOOGLE_CALENDAR_SCOPE)) this.syncGoogleCalendar(resp.access_token);
-        DriveBackup.checkRemote();
-      }
-    });
-    client.requestAccessToken();
+    await SyncEngine.connect();
+    this.refreshGoogleButton();
+    const token = this.getGoogleAccessTokenSync();
+    if (token) this.syncGoogleCalendar(token);
   },
 
-  disconnectGoogleCalendar() {
-    const token = localStorage.getItem('google_access_token');
-    if (token && window.google && google.accounts && google.accounts.oauth2) {
-      google.accounts.oauth2.revoke(token, () => {});
-    }
-    this.clearGoogleToken();
-    // Drop cached Google events; local events stay.
-    STATE.calendar = STATE.calendar.filter(evt => evt.isLocal);
-    StorageManager.saveCalendar();
-    this.refreshGoogleButton();
-    this.renderCalendar();
-    this.renderToday();
-  },
 
   setupCalendarTab() {
     if (this.dom.calendarEventForm) {

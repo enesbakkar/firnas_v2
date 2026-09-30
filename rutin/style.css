@@ -665,6 +665,15 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .link-row span { flex: 1; }
 .link-row .chevron { color: var(--faint); width: 18px; height: 18px; }
 .link-row:hover { background: var(--surface-2); }
+.sync-state { display: flex; align-items: center; gap: 8px; font-size: 0.875rem; font-weight: 600; color: var(--muted); }
+.sync-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--faint); flex: none; }
+.sync-state--ok { color: var(--success); }
+.sync-state--ok .sync-dot { background: var(--success); }
+.sync-state--syncing .sync-dot { background: var(--accent); animation: pulse-dot 1s ease-in-out infinite alternate; }
+.sync-state--error, .sync-state--renew { color: var(--warn); }
+.sync-state--error .sync-dot { background: var(--danger); }
+.sync-state--renew .sync-dot { background: var(--warn); }
+@keyframes pulse-dot { to { opacity: 0.3; } }
 .disclosure summary { cursor: pointer; color: var(--accent-text); font-weight: 600; font-size: 0.875rem; min-height: 36px; display: flex; align-items: center; }
 .disclosure .stack { margin-top: 8px; }
 

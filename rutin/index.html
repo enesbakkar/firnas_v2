@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5.1">
+  <link rel="stylesheet" href="style.css?v=5.2">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.4">
   <link rel="apple-touch-icon" href="icon-192.png?v=4.4">
   <link rel="manifest" href="manifest.json">
@@ -64,6 +64,11 @@
             </button>
           </div>
         </div>
+        <div class="field" id="passcode-setup-field" hidden>
+          <label for="passcode-setup-confirm" data-i18n="passcode_confirm">Repeat passcode</label>
+          <input type="password" id="passcode-setup-confirm" autocomplete="new-password">
+        </div>
+        <p class="muted" id="auth-setup-hint" data-i18n="auth_setup_hint" hidden>Create a passcode for this device.</p>
         <button type="submit" class="btn btn-primary btn-block" data-i18n="auth_unlock">Unlock Dashboard</button>
         <p id="auth-error" class="form-error" role="alert"></p>
       </form>
@@ -607,21 +612,14 @@
               <p id="passcode-change-status" class="status" role="status"></p>
             </form>
 
-            <section class="card settings-section" id="drive-section">
-              <h2 data-i18n="drive_title">Google Drive backup</h2>
-              <p class="muted" data-i18n="drive_desc">Keeps one backup file in your own Google Drive.</p>
-              <p id="drive-status" class="status" role="status"></p>
-              <button type="button" id="drive-connect-btn" class="btn btn-primary" data-i18n="drive_connect">Connect Google account</button>
-              <div id="drive-controls" class="stack" hidden>
-                <label class="toggle-row">
-                  <input type="checkbox" id="drive-auto-toggle">
-                  <span class="check"></span>
-                  <span data-i18n="drive_auto">Back up automatically after changes</span>
-                </label>
-                <div class="btn-row">
-                  <button type="button" id="drive-backup-now-btn" class="btn btn-primary" data-i18n="drive_backup_now">Back up now</button>
-                  <button type="button" id="drive-restore-btn" class="btn btn-secondary" data-i18n="drive_restore">Restore from Drive</button>
-                </div>
+            <section class="card settings-section" id="sync-section">
+              <h2 data-i18n="sync_title">Sync across devices</h2>
+              <p class="muted" data-i18n="sync_desc">Routines, Mind Log, finance and agenda sync through a hidden file in your Google Drive.</p>
+              <p id="sync-status" class="sync-state sync-state--off" role="status"><span class="sync-dot" aria-hidden="true"></span><span id="sync-status-text"></span></p>
+              <button type="button" id="sync-connect-btn" class="btn btn-primary" data-i18n="sync_connect">Connect Google account</button>
+              <div id="sync-controls" class="btn-row" hidden>
+                <button type="button" id="sync-now-btn" class="btn btn-secondary" data-i18n="sync_now">Sync now</button>
+                <button type="button" id="sync-disconnect-btn" class="btn btn-danger-ghost" data-i18n="sync_disconnect">Disconnect</button>
               </div>
             </section>
 
@@ -785,6 +783,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=5.1" defer></script>
+  <script src="app.js?v=5.2" defer></script>
 </body>
 </html>
