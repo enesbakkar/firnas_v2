@@ -4,8 +4,8 @@
   "description": "Horizon Routine Tracker Mobile PWA & Android Application",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0b0f19",
-  "theme_color": "#0b0f19",
+  "background_color": "#f0f7fb",
+  "theme_color": "#0f2e4a",
   "orientation": "portrait",
   "icons": [
     {
