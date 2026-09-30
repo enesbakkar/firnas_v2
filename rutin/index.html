@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5.2">
+  <link rel="stylesheet" href="style.css?v=5.3">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.4">
   <link rel="apple-touch-icon" href="icon-192.png?v=4.4">
   <link rel="manifest" href="manifest.json">
@@ -111,6 +111,10 @@
         <button class="tab-btn" data-tab="settings-tab"><svg class="icon"><use href="#i-settings"/></svg><span data-i18n="nav_settings">Settings</span></button>
       </nav>
 
+      <button type="button" class="sidebar-sync tab-trigger-btn" data-target-tab="settings-tab" id="sidebar-sync" hidden>
+        <span class="sync-dot"></span><span class="sidebar-sync-text"></span>
+      </button>
+
       <button type="button" class="btn btn-ghost logout-btn sidebar-lock">
         <svg class="icon"><use href="#i-lock"/></svg><span data-i18n="nav_lock">Lock Dashboard</span>
       </button>
@@ -124,6 +128,7 @@
           <strong>Horizon</strong>
         </div>
         <div class="topbar-streaks">
+          <button type="button" class="sync-pill tab-trigger-btn" data-target-tab="settings-tab" id="topbar-sync" hidden><span class="sync-dot"></span></button>
           <span class="streak-pill streak-pill--current" data-i18n-title="focus_current_streak"><svg class="icon"><use href="#i-flame"/></svg><b id="current-streak">0</b></span>
           <span class="streak-pill streak-pill--best" data-i18n-title="focus_personal_best"><svg class="icon"><use href="#i-trophy"/></svg><b id="best-streak">0</b></span>
         </div>
@@ -181,6 +186,15 @@
                 <p id="ayah-translation"></p>
                 <figcaption id="ayah-source"></figcaption>
               </figure>
+
+              <!-- Agenda for the selected day -->
+              <div class="card agenda-card">
+                <div class="card-head card-head--row">
+                  <h2 data-i18n="today_agenda_title">Agenda</h2>
+                  <button type="button" class="btn btn-secondary btn-sm tab-trigger-btn" data-target-tab="calendar-tab" data-i18n="today_agenda_open">Open</button>
+                </div>
+                <ul class="agenda-list" id="today-agenda-list"></ul>
+              </div>
             </div>
 
             <div class="today-main">
@@ -246,7 +260,7 @@
               </section>
 
               <!-- Dhikr & Quran -->
-              <section class="today-section">
+              <section class="today-section today-section--dhikr">
               <div class="section-head">
                 <h2 data-i18n="section_dhikr">Dhikr &amp; Quran</h2>
                 <span class="section-count" data-count-keys="morning_dhikr,quran_devotion,evening_dhikr"></span>
@@ -260,7 +274,7 @@
               </section>
 
               <!-- Growth -->
-              <section class="today-section">
+              <section class="today-section today-section--growth">
               <div class="section-head">
                 <h2 data-i18n="section_growth">Growth</h2>
                 <span class="section-count" data-count-keys="intellectual_growth,physical_training,nutritional_fuel,horizon_sync"></span>
@@ -275,7 +289,7 @@
               </section>
 
               <!-- Day close -->
-              <section class="today-section">
+              <section class="today-section today-section--close">
               <div class="section-head">
                 <h2 data-i18n="section_close">Day Close</h2>
                 <span class="section-count" data-count-keys="mind_log,fin_flow"></span>
@@ -284,6 +298,17 @@
                 <label class="habit-row"><input type="checkbox" id="mind-log" class="task-checkbox" data-key="mind_log"><span class="check"></span><span class="habit-icon" aria-hidden="true">📝</span><span class="habit-text"><strong data-i18n="habit_mind_log_title">Mind Log</strong><small data-i18n="habit_mind_log_desc">Daily Journaling Complete</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
                 <label class="habit-row"><input type="checkbox" id="fin-flow" class="task-checkbox" data-key="fin_flow"><span class="check"></span><span class="habit-icon" aria-hidden="true">💰</span><span class="habit-text"><strong data-i18n="habit_fin_flow_title">FinFlow</strong><small data-i18n="habit_fin_flow_desc">Daily Expenses Logged</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
               </div>
+              </section>
+
+              <!-- This week -->
+              <section class="today-section today-section--week">
+                <div class="section-head">
+                  <h2 data-i18n="section_week">This week</h2>
+                  <span class="section-count" id="week-avg"></span>
+                </div>
+                <div class="card week-card">
+                  <div class="week-strip" id="week-strip"></div>
+                </div>
               </section>
             </div>
 
@@ -783,6 +808,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=5.2" defer></script>
+  <script src="app.js?v=5.3" defer></script>
 </body>
 </html>

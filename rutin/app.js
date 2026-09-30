@@ -603,7 +603,12 @@ const TRANSLATIONS = {
     sync_state_syncing: "Syncing…",
     sync_state_ok: "Synced · {time}",
     sync_state_error: "Sync failed: {error}. It will retry on the next change.",
-    sync_state_renew: "Google session expired. Tap anywhere to renew."
+    sync_state_renew: "Google session expired. Tap anywhere to renew.",
+    section_week: "This week",
+    week_avg: "avg {n}%",
+    today_agenda_title: "Agenda",
+    today_agenda_open: "Open",
+    sync_short_ok: "Synced"
   },
   tr: {
     nav_journal: "Günlük",
@@ -862,7 +867,12 @@ const TRANSLATIONS = {
     sync_state_syncing: "Eşitleniyor…",
     sync_state_ok: "Eşitlendi · {time}",
     sync_state_error: "Eşitleme başarısız: {error}. Bir sonraki değişiklikte tekrar denenecek.",
-    sync_state_renew: "Google oturumu sona erdi. Yenilemek için herhangi bir yere dokunun."
+    sync_state_renew: "Google oturumu sona erdi. Yenilemek için herhangi bir yere dokunun.",
+    section_week: "Bu hafta",
+    week_avg: "ort. %{n}",
+    today_agenda_title: "Program",
+    today_agenda_open: "Aç",
+    sync_short_ok: "Eşitlendi"
   },
   ar: {
     nav_journal: "اليوميات",
@@ -1121,7 +1131,12 @@ const TRANSLATIONS = {
     sync_state_syncing: "جارٍ المزامنة…",
     sync_state_ok: "تمت المزامنة · {time}",
     sync_state_error: "فشلت المزامنة: {error}. ستتم إعادة المحاولة عند التغيير التالي.",
-    sync_state_renew: "انتهت جلسة جوجل. المس أي مكان للتجديد."
+    sync_state_renew: "انتهت جلسة جوجل. المس أي مكان للتجديد.",
+    section_week: "هذا الأسبوع",
+    week_avg: "المعدل {n}%",
+    today_agenda_title: "البرنامج",
+    today_agenda_open: "فتح",
+    sync_short_ok: "تمت المزامنة"
   }
 };
 
@@ -2620,6 +2635,53 @@ const UIController = {
       dict.day_count.replace('{done}', done).replace('{total}', ROUTINE_KEYS.length);
 
     this.updateSectionCounts(dayData);
+    this.renderWeek();
+  },
+
+  // Monday-to-Sunday strip for the week of the selected day; tapping a day opens it.
+  renderWeek() {
+    const strip = document.getElementById('week-strip');
+    if (!strip) return;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const monday = new Date(STATE.activeDate.getFullYear(), STATE.activeDate.getMonth(), STATE.activeDate.getDate());
+    monday.setDate(monday.getDate() - (monday.getDay() + 6) % 7);
+    const todayKey = formatDateKey(STATE.todayDate);
+    const activeKey = formatDateKey(STATE.activeDate);
+
+    strip.innerHTML = '';
+    const scores = [];
+    for (let i = 0; i < 7; i++) {
+      const day = new Date(monday);
+      day.setDate(monday.getDate() + i);
+      const key = formatDateKey(day);
+      const pct = STATE.db[key] ? StreakEngine.calculateDailyPercentage(STATE.db[key]) : 0;
+      if (key <= todayKey) scores.push(pct);
+
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'week-day' + (key === activeKey ? ' is-active' : '') + (key === todayKey ? ' is-today' : '') + (key > todayKey ? ' is-future' : '');
+      btn.setAttribute('aria-label', `${day.toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric', month: 'long' })}: ${pct}%`);
+      btn.innerHTML = `<span>${day.toLocaleDateString(appLocale(), { weekday: 'narrow' })}</span><span class="week-bar${pct === 100 ? ' is-perfect' : ''}"><i style="height:${pct}%"></i></span><b>${day.getDate()}</b>`;
+      btn.addEventListener('click', () => {
+        STATE.activeDate = day;
+        this.loadDateData();
+      });
+      strip.appendChild(btn);
+    }
+    const avg = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
+    document.getElementById('week-avg').textContent = dict.week_avg.replace('{n}', avg);
+  },
+
+  // Events of the selected day, shown on Today.
+  renderTodayAgenda() {
+    const list = document.getElementById('today-agenda-list');
+    if (!list) return;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const key = formatDateKey(STATE.activeDate);
+    const events = STATE.calendar.filter(e => e.date === key).sort((a, b) => a.startTime.localeCompare(b.startTime));
+    list.innerHTML = events.length
+      ? events.slice(0, 6).map(e => `<li><span class="agenda-time">${escapeHTML(e.startTime)}</span><span class="agenda-title">${escapeHTML(e.title)}</span></li>`).join('')
+      : `<li class="agenda-empty">${dict.calendar_empty}</li>`;
   },
 
   // Section counters ("3 / 14") and per-prayer status ("done" / "1 left").
@@ -2771,6 +2833,17 @@ const UIController = {
 
     text.textContent = message;
     document.getElementById('sync-status').className = `sync-state sync-state--${state}`;
+    const shortTime = last ? new Date(last).toLocaleTimeString(appLocale(), { hour: '2-digit', minute: '2-digit' }) : '';
+    ['topbar-sync', 'sidebar-sync'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.hidden = !enabled;
+      el.className = `${id === 'topbar-sync' ? 'sync-pill' : 'sidebar-sync'} tab-trigger-btn sync-state--${state}`;
+      el.setAttribute('aria-label', message);
+      el.title = message;
+      const label = el.querySelector('.sidebar-sync-text');
+      if (label) label.textContent = state === 'ok' ? `${dict.sync_short_ok} · ${shortTime}` : message;
+    });
     document.getElementById('sync-connect-btn').hidden = enabled;
     document.getElementById('sync-controls').hidden = !enabled;
   },
@@ -3328,6 +3401,7 @@ const UIController = {
 
     const todayKey = formatDateKey(STATE.todayDate);
     document.getElementById('brief-today-events').textContent = STATE.calendar.filter(e => e.date === todayKey).length;
+    this.renderTodayAgenda();
   },
 
 

@@ -420,6 +420,38 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .habit-text small { color: var(--faint); font-size: 0.78rem; }
 .habit-row:has(input:checked) .habit-text strong { color: var(--muted); }
 
+.week-card { padding: 12px; }
+#week-avg { direction: inherit; unicode-bidi: normal; }
+.week-strip { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); gap: 4px; }
+.week-day {
+  display: grid; justify-items: center; gap: 6px; padding: 8px 0 6px; border-radius: 12px;
+  color: var(--muted); font-size: 0.72rem; font-weight: 600;
+}
+.week-day:hover { background: var(--surface-2); }
+.week-day.is-active { background: var(--accent-soft); color: var(--accent-text); }
+.week-day.is-future { opacity: 0.45; }
+.week-bar { width: 12px; height: 56px; border-radius: 6px; background: var(--surface-2); display: flex; align-items: flex-end; overflow: hidden; }
+.week-bar i { display: block; width: 100%; border-radius: 6px; background: var(--accent); transition: height 0.3s ease; }
+.week-bar.is-perfect i { background: var(--success); }
+.week-day b { font-size: 0.85rem; color: var(--text); }
+.week-day.is-today b { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
+
+.agenda-card .card-head { margin-bottom: 8px; }
+.agenda-list { list-style: none; display: grid; }
+.agenda-list li { display: flex; gap: 12px; align-items: baseline; padding: 8px 0; border-top: 1px solid var(--border); min-width: 0; }
+.agenda-list li:first-child { border-top: 0; }
+.agenda-time { font-weight: 700; font-size: 0.85rem; color: var(--accent-text); flex: none; direction: ltr; unicode-bidi: isolate; }
+.agenda-title { font-weight: 500; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.agenda-list .agenda-empty { color: var(--faint); font-size: 0.875rem; }
+
+.sync-pill { display: inline-grid; place-items: center; width: 32px; height: 32px; border-radius: 999px; background: var(--bar-hover); }
+.sync-pill .sync-dot, .sidebar-sync .sync-dot { width: 9px; height: 9px; }
+.sync-pill.sync-state--ok .sync-dot, .sidebar-sync.sync-state--ok .sync-dot { background: #4ade80; }
+.sync-pill.sync-state--syncing .sync-dot, .sidebar-sync.sync-state--syncing .sync-dot { background: var(--accent); animation: pulse-dot 1s ease-in-out infinite alternate; }
+.sync-pill.sync-state--error .sync-dot, .sidebar-sync.sync-state--error .sync-dot { background: #f58791; }
+.sync-pill.sync-state--renew .sync-dot, .sidebar-sync.sync-state--renew .sync-dot { background: #fbbf24; }
+.sidebar-sync { display: none; }
+
 /* ================= PROGRESS ================= */
 .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; margin-bottom: 16px; }
 .kpi { display: grid; gap: 4px; padding: 14px; min-width: 0; }
@@ -718,6 +750,51 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .emoji-btn { width: 44px; height: 44px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-size: 1.25rem; }
 .emoji-btn.active { border-color: var(--accent); background: var(--accent-soft); }
 
+/* ================= PHONE & SMALL TABLET ================= */
+@media (max-width: 1023px) {
+  /* Cards from both Today columns become one list, ordered by what is used most */
+  .today-side, .today-main { display: contents; }
+  #day-card { order: 1; }
+  .today-section--prayers { order: 2; }
+  .today-section--dhikr { order: 3; }
+  .today-section--growth { order: 4; }
+  .today-section--close { order: 5; }
+  .today-section--week { order: 6; }
+  .agenda-card { order: 7; }
+  .ayah { order: 8; }
+  .today-grid { gap: 18px; }
+
+  .day-card { gap: 12px; padding: 14px; }
+  .ring { width: 60px; height: 60px; }
+  .ring > span { font-size: 0.9rem; }
+  .day-summary-text p { font-size: 0.9rem; }
+  .mini-stat { padding: 8px; }
+  .ayah blockquote { font-size: 1.45rem; }
+
+  /* Floating "add transaction" above the tab bar */
+  #fin-add-tx-trigger {
+    position: fixed; z-index: 25; inset-inline-end: 16px;
+    bottom: calc(var(--tabbar-h) + 16px + env(safe-area-inset-bottom));
+    min-height: 52px; padding: 0 20px; border-radius: 999px;
+    box-shadow: 0 10px 24px rgba(0, 184, 212, 0.35), 0 2px 6px rgba(5, 20, 33, 0.2);
+  }
+  .fin-toolbar { justify-content: center; }
+  #finance-tab { padding-bottom: 72px; }
+  .fin-daily-tx-desc { white-space: normal; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .fin-daily-tx-item { align-items: flex-start; }
+  .fin-daily-tx-right { padding-top: 2px; }
+}
+
+@media (max-width: 420px) {
+  .content { padding-inline: 12px; }
+  .prayer-row, .habit-row { padding-inline: 12px; gap: 10px; }
+  .chip > span { min-width: 44px; padding: 0 6px; }
+  .mood-btn small { font-size: 0.62rem; }
+  .mood-btn { padding-inline: 0; }
+  .segmented button { font-size: 0.8rem; padding: 0 4px; }
+  .mini-stat span { font-size: 0.68rem; }
+}
+
 /* ================= TABLET ================= */
 @media (min-width: 720px) {
   .kpi-grid { grid-template-columns: repeat(4, 1fr); }
@@ -759,7 +836,14 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
   }
   .sidebar .tab-btn:hover, .sidebar-lock:hover { background: var(--bar-hover); color: var(--bar-text); }
   .sidebar .tab-btn.active { background: var(--accent); color: var(--accent-ink); font-weight: 600; }
-  .sidebar-lock { margin-top: auto; }
+  .sidebar-lock { margin-top: 0; }
+  .sidebar-sync {
+    display: flex; align-items: center; gap: 8px; margin-top: auto; padding: 8px 12px;
+    border-radius: var(--radius-sm); color: var(--bar-muted); font-size: 0.78rem; text-align: start;
+  }
+  .sidebar-sync[hidden] { display: none; }
+  .sidebar-sync[hidden] + .sidebar-lock { margin-top: auto; }
+  .sidebar-sync:hover { background: var(--bar-hover); color: var(--bar-text); }
 
   .today-grid { grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); align-items: start; }
   .today-side { order: 2; position: sticky; top: 28px; }
@@ -779,8 +863,8 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
   .content { padding-inline: 44px; }
   /* Prayers | other sections | day summary */
   .today-grid { grid-template-columns: minmax(0, 2.1fr) minmax(360px, 1fr); gap: 24px; }
-  .today-main { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 24px; }
-  .today-section--prayers { grid-row: span 3; }
+  .today-main { display: block; column-count: 2; column-gap: 24px; }
+  .today-section { break-inside: avoid; margin-bottom: 20px; display: block; }
   .split { gap: 24px; }
   .accounts-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 }
