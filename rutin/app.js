@@ -61,7 +61,7 @@ const PasscodeManager = {
 };
 
 // ================= JSON BACKUP / RESTORE =================
-// Only user data keys are exported; passcode, Supabase and Google credentials never leave the device.
+// Only user data keys are exported; passcode and Google credentials never leave the device.
 const BackupManager = {
   KEYS: ['hrt_db', 'hrt_journal', 'hrt_finance', 'hrt_calendar', 'hrt_best_streak', 'hrt_lang', 'hrt_theme'],
   UNDO_KEY: 'hrt_restore_undo',
@@ -147,6 +147,8 @@ const BackupManager = {
 // Google OAuth client IDs are public by design; never put a client secret or refresh token in this file.
 const GOOGLE_CLIENT_ID = "335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.googleusercontent.com";
 const GOOGLE_CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";
+// drive.file: the app can only see files it created itself.
+const GOOGLE_DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.file";
 
 // ================= APPLICATION STATE =================
 const STATE = {
@@ -412,16 +414,8 @@ const TRANSLATIONS = {
     calendar_notes: "Notes / Location",
     calendar_add_btn: "Add to Timeline",
     settings_title: "Application Settings",
-    settings_subtitle: "Configure language and database credentials",
+    settings_subtitle: "Language, passcode and backups",
     language_label: "Application Language",
-    supabase_title: "Supabase Cloud Sync",
-    supabase_subtitle: "Connect a Supabase project to automatically sync and backup your routines",
-    supabase_url: "Supabase Project URL",
-    supabase_key: "Supabase Anon Key",
-    supabase_db_guide: "Database Setup Guide",
-    supabase_db_query: "Run rutin/supabase/schema.sql in the Supabase SQL editor. It creates the routines table with Row Level Security so only your signed-in account can read or write it.",
-    supabase_save: "Save & Sync Now",
-    supabase_disconnect: "Disconnect Cloud Sync",
     
     // Extended keys
     focus_current_streak: "Current Streak",
@@ -454,9 +448,6 @@ const TRANSLATIONS = {
     analytics_heatmap_legend: "Consistency heatmap over the past 365 days. Click any day to jump to its checklist.",
     analytics_heatmap_less: "Less",
     analytics_heatmap_more: "More",
-    analytics_sync_title: "Cloud Sync & Database Backup",
-    analytics_sync_subtitle: "Connect a Supabase project to automatically sync and backup your routines",
-    supabase_connect_btn: "Connect & Sync",
     journal_tags_placeholder: "e.g. work, gym, devotion, family",
     journal_no_tags: "No tags",
     finance_health_status: "Financial Health: Stable",
@@ -524,7 +515,6 @@ const TRANSLATIONS = {
     alert_google_load_fail: "Google API library could not be loaded. Please check your internet connection and refresh the page.",
     alert_google_auth_error: "Google auth error: ",
     alert_google_sync_success: "Google Calendar connected successfully! Synchronizing your data.",
-    confirm_disconnect: "Disconnect Supabase Sync? Your data will remain stored locally.",
     cat_food: "🍔 Food & Groceries",
     cat_transport: "🚗 Transport & Fuel",
     cat_tech: "💻 Software & Devices",
@@ -607,16 +597,21 @@ const TRANSLATIONS = {
     backup_invalid: "This is not a valid Horizon backup.",
     backup_confirm: "Replace current data with this backup?\n\nDays: {days}\nJournal entries: {journal}\nTransactions: {transactions}\nEvents: {events}\n\nYour current data is kept so you can undo.",
     backup_undo_confirm: "Return to the data you had before the last restore?",
-    supabase_email: "Account email",
-    supabase_password: "Account password",
-    sync_status_local: "Local only. Data stays on this device.",
-    sync_status_active: "Cloud sync on · {email}",
-    sync_status_signin: "Sign in to turn on cloud sync.",
-    sync_connecting: "Signing in and syncing…",
-    sync_connected: "Signed in. Cloud sync is on.",
-    supabase_login_required: "Email and password are required: cloud sync only works for a signed-in account.",
-    supabase_login_failed: "Sign-in failed. Check email and password.",
-    supabase_table_error: "Signed in, but the routines table could not be read. Run supabase/schema.sql first."
+    drive_title: "Google Drive backup",
+    drive_desc: "Keeps one backup file in your own Google Drive. The app can only see the file it created, nothing else in your Drive.",
+    drive_connect: "Connect Google account",
+    drive_auto: "Back up automatically after changes",
+    drive_backup_now: "Back up now",
+    drive_restore: "Restore from Drive",
+    drive_never: "never",
+    drive_status_signin: "Not connected. Connect your Google account to back up to Drive.",
+    drive_no_scope: "Connected, but Drive permission was not granted. Connect again and tick the Drive box.",
+    drive_status_ready: "Connected. Last backup: {time}",
+    drive_status_saving: "Backing up…",
+    drive_status_conflict: "Drive has a backup from another device. Restore it, or press \"Back up now\" to replace it.",
+    drive_status_error: "Could not reach Google Drive. Try again.",
+    drive_no_backup: "No backup found in Drive yet.",
+    drive_overwrite_confirm: "Replace the backup in Drive with the data on this device?"
   },
   tr: {
     nav_brief: "Ana Panel",
@@ -703,16 +698,8 @@ const TRANSLATIONS = {
     calendar_notes: "Notlar / Konum",
     calendar_add_btn: "Takvime Ekle",
     settings_title: "Uygulama Ayarları",
-    settings_subtitle: "Dil ve veri tabanı yedekleme ayarları",
+    settings_subtitle: "Dil, şifre ve yedekleme",
     language_label: "Uygulama Dili",
-    supabase_title: "Supabase Bulut Eşitleme",
-    supabase_subtitle: "Rutinleri yedeklemek için bir Supabase projesi bağlayın",
-    supabase_url: "Supabase Proje URL",
-    supabase_key: "Supabase Anon Key",
-    supabase_db_guide: "Veritabanı Kurulum Kılavuzu",
-    supabase_db_query: "rutin/supabase/schema.sql dosyasını Supabase SQL editöründe çalıştırın. Tabloyu Satır Düzeyi Güvenlik (RLS) ile oluşturur; yalnızca giriş yapan hesabınız okuyup yazabilir.",
-    supabase_save: "Kaydet ve Eşitle",
-    supabase_disconnect: "Bulut Bağlantısını Kes",
     
     // Extended keys
     focus_current_streak: "Mevcut Seri",
@@ -745,9 +732,6 @@ const TRANSLATIONS = {
     analytics_heatmap_legend: "Son 365 gündeki kararlılık ısı haritası. Detaylar için bir güne tıklayın.",
     analytics_heatmap_less: "Az",
     analytics_heatmap_more: "Çok",
-    analytics_sync_title: "Bulut Eşitleme & Veritabanı Yedekleme",
-    analytics_sync_subtitle: "Rutinleri yedeklemek için bir Supabase projesi bağlayın",
-    supabase_connect_btn: "Bağlan ve Eşitle",
     journal_tags_placeholder: "örn: iş, spor, ibadet, aile",
     journal_no_tags: "Etiket yok",
     finance_health_status: "Finansal Sağlık Durumu: Stabil",
@@ -815,7 +799,6 @@ const TRANSLATIONS = {
     alert_google_load_fail: "Google API kütüphanesi yüklenemedi. Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.",
     alert_google_auth_error: "Google yetkilendirme hatası: ",
     alert_google_sync_success: "Google Takvim başarıyla bağlandı! Verileriniz senkronize ediliyor.",
-    confirm_disconnect: "Bulut bağlantısını kesmek istiyor musunuz? Verileriniz yerel olarak saklanmaya devam edecektir.",
     cat_food: "🍔 Gıda & Market",
     cat_transport: "🚗 Ulaşım & Yakıt",
     cat_tech: "💻 Yazılım & Cihazlar",
@@ -898,16 +881,21 @@ const TRANSLATIONS = {
     backup_invalid: "Bu geçerli bir Horizon yedeği değil.",
     backup_confirm: "Mevcut veriler bu yedekle değiştirilsin mi?\n\nGün: {days}\nGünlük kaydı: {journal}\nİşlem: {transactions}\nEtkinlik: {events}\n\nMevcut verileriniz saklanır, geri alabilirsiniz.",
     backup_undo_confirm: "Son geri yüklemeden önceki verilere dönülsün mü?",
-    supabase_email: "Hesap e-postası",
-    supabase_password: "Hesap şifresi",
-    sync_status_local: "Yalnızca yerel. Veriler bu cihazda kalır.",
-    sync_status_active: "Bulut senkronu açık · {email}",
-    sync_status_signin: "Bulut senkronu için giriş yapın.",
-    sync_connecting: "Giriş yapılıyor ve senkronize ediliyor…",
-    sync_connected: "Giriş yapıldı. Bulut senkronu açık.",
-    supabase_login_required: "E-posta ve şifre gerekli: bulut senkronu yalnızca giriş yapmış hesapla çalışır.",
-    supabase_login_failed: "Giriş başarısız. E-posta ve şifreyi kontrol edin.",
-    supabase_table_error: "Giriş yapıldı ama routines tablosu okunamadı. Önce supabase/schema.sql dosyasını çalıştırın."
+    drive_title: "Google Drive yedeği",
+    drive_desc: "Kendi Google Drive'ınızda tek bir yedek dosyası tutar. Uygulama yalnızca kendi oluşturduğu dosyayı görebilir, Drive'ınızdaki başka hiçbir şeyi göremez.",
+    drive_connect: "Google hesabını bağla",
+    drive_auto: "Değişikliklerden sonra otomatik yedekle",
+    drive_backup_now: "Şimdi yedekle",
+    drive_restore: "Drive'dan geri yükle",
+    drive_never: "hiç",
+    drive_status_signin: "Bağlı değil. Drive'a yedeklemek için Google hesabınızı bağlayın.",
+    drive_no_scope: "Bağlandı ama Drive izni verilmedi. Yeniden bağlanın ve Drive kutusunu işaretleyin.",
+    drive_status_ready: "Bağlı. Son yedek: {time}",
+    drive_status_saving: "Yedekleniyor…",
+    drive_status_conflict: "Drive'da başka bir cihazdan alınmış yedek var. Onu geri yükleyin ya da değiştirmek için \"Şimdi yedekle\"ye basın.",
+    drive_status_error: "Google Drive'a ulaşılamadı. Tekrar deneyin.",
+    drive_no_backup: "Drive'da henüz yedek yok.",
+    drive_overwrite_confirm: "Drive'daki yedek bu cihazdaki verilerle değiştirilsin mi?"
   },
   ar: {
     nav_brief: "اللوحة الرئيسية",
@@ -989,16 +977,8 @@ const TRANSLATIONS = {
     calendar_notes: "ملاحظات / الموقع",
     calendar_add_btn: "إضافة إلى الجدول",
     settings_title: "إعدادات التطبيق",
-    settings_subtitle: "إعدادات اللغة والنسخ الاحتياطي لقاعدة البيانات",
+    settings_subtitle: "اللغة ورمز الدخول والنسخ الاحتياطي",
     language_label: "لغة التطبيق",
-    supabase_title: "مزامنة سوبابيس السحابية",
-    supabase_subtitle: "اربط مشروع سوبابيس لمزامنة وحفظ عاداتك تلقائياً",
-    supabase_url: "رابط مشروع سوبابيس (URL)",
-    supabase_key: "مفتاح سوبابيس (Anon Key)",
-    supabase_db_guide: "دليل إعداد قاعدة البيانات",
-    supabase_db_query: "شغّل الملف rutin/supabase/schema.sql في محرر SQL في Supabase. ينشئ الجدول مع أمان مستوى الصف بحيث لا يقرأ البيانات أو يكتبها إلا حسابك المسجَّل.",
-    supabase_save: "حفظ ومزامنة الآن",
-    supabase_disconnect: "فصل الاتصال السحابي",
     
     // Extended keys
     focus_current_streak: "السلسلة الحالية",
@@ -1031,9 +1011,6 @@ const TRANSLATIONS = {
     analytics_heatmap_legend: "خريطة الانضباط الحرارية لآخر ٣٦٥ يومًا. انقر على أي يوم للانتقال إلى قائمته.",
     analytics_heatmap_less: "أقل",
     analytics_heatmap_more: "أكثر",
-    analytics_sync_title: "المزامنة السحابية والنسخ الاحتياطي",
-    analytics_sync_subtitle: "اربط مشروع سوبابيس لمزامنة وحفظ عاداتك تلقائياً وبأمان",
-    supabase_connect_btn: "اتصال ومزامنة",
     journal_tags_placeholder: "مثال: العمل، النادي، العبادة، العائلة",
     journal_no_tags: "لا توجد وسوم",
     finance_health_status: "الحالة المالية: مستقرة",
@@ -1101,7 +1078,6 @@ const TRANSLATIONS = {
     alert_google_load_fail: "تعذر تحميل مكتبة Google API. يرجى التحقق من اتصالك بالإنترنت وتحديث الصفحة.",
     alert_google_auth_error: "خطأ في مصادقة جوجل: ",
     alert_google_sync_success: "تم ربط تقويم جوجل بنجاح! يتم الآن مزامنة بياناتك.",
-    confirm_disconnect: "هل أنت متأكد من رغبتك في فصل المزامنة السحابية؟ ستبقى بياناتك محفوظة محلياً.",
     cat_food: "🍔 الغذاء والبقالة",
     cat_transport: "🚗 النقل والوقود",
     cat_tech: "💻 البرمجيات والأجهزة",
@@ -1184,16 +1160,21 @@ const TRANSLATIONS = {
     backup_invalid: "هذه ليست نسخة احتياطية صالحة من Horizon.",
     backup_confirm: "هل تريد استبدال البيانات الحالية بهذه النسخة؟\n\nالأيام: {days}\nاليوميات: {journal}\nالمعاملات: {transactions}\nالأحداث: {events}\n\nستُحفظ بياناتك الحالية ويمكنك التراجع.",
     backup_undo_confirm: "هل تريد العودة إلى البيانات السابقة لآخر استعادة؟",
-    supabase_email: "البريد الإلكتروني للحساب",
-    supabase_password: "كلمة مرور الحساب",
-    sync_status_local: "محلي فقط. تبقى البيانات على هذا الجهاز.",
-    sync_status_active: "المزامنة السحابية مفعّلة · {email}",
-    sync_status_signin: "سجّل الدخول لتفعيل المزامنة السحابية.",
-    sync_connecting: "جارٍ تسجيل الدخول والمزامنة…",
-    sync_connected: "تم تسجيل الدخول. المزامنة السحابية مفعّلة.",
-    supabase_login_required: "البريد الإلكتروني وكلمة المرور مطلوبان: المزامنة السحابية تعمل فقط لحساب مسجَّل الدخول.",
-    supabase_login_failed: "فشل تسجيل الدخول. تحقّق من البريد وكلمة المرور.",
-    supabase_table_error: "تم تسجيل الدخول لكن تعذّرت قراءة جدول routines. شغّل supabase/schema.sql أولاً."
+    drive_title: "نسخة احتياطية على Google Drive",
+    drive_desc: "يحفظ ملف نسخة احتياطية واحداً في Google Drive الخاص بك. لا يرى التطبيق إلا الملف الذي أنشأه، ولا شيء آخر في Drive.",
+    drive_connect: "ربط حساب جوجل",
+    drive_auto: "نسخ احتياطي تلقائي بعد التغييرات",
+    drive_backup_now: "انسخ الآن",
+    drive_restore: "استعادة من Drive",
+    drive_never: "أبداً",
+    drive_status_signin: "غير متصل. اربط حساب جوجل للنسخ الاحتياطي إلى Drive.",
+    drive_no_scope: "تم الاتصال لكن لم يُمنح إذن Drive. اتصل مجدداً وحدّد خانة Drive.",
+    drive_status_ready: "متصل. آخر نسخة احتياطية: {time}",
+    drive_status_saving: "جارٍ النسخ الاحتياطي…",
+    drive_status_conflict: "توجد في Drive نسخة من جهاز آخر. استعدها أو اضغط «انسخ الآن» لاستبدالها.",
+    drive_status_error: "تعذّر الوصول إلى Google Drive. حاول مرة أخرى.",
+    drive_no_backup: "لا توجد نسخة احتياطية في Drive بعد.",
+    drive_overwrite_confirm: "هل تريد استبدال النسخة الموجودة في Drive ببيانات هذا الجهاز؟"
   }
 };
 
@@ -1350,6 +1331,7 @@ const StorageManager = {
 
   saveDatabase() {
     localStorage.setItem('hrt_db', JSON.stringify(STATE.db));
+    DriveBackup.schedule();
   },
 
   loadJournal() {
@@ -1359,6 +1341,7 @@ const StorageManager = {
 
   saveJournal() {
     localStorage.setItem('hrt_journal', JSON.stringify(STATE.journal));
+    DriveBackup.schedule();
   },
 
   loadFinance() {
@@ -1397,6 +1380,7 @@ const StorageManager = {
 
   saveFinance() {
     localStorage.setItem('hrt_finance', JSON.stringify(STATE.finance));
+    DriveBackup.schedule();
   },
 
   loadCalendar() {
@@ -1432,6 +1416,7 @@ const StorageManager = {
 
   saveCalendar() {
     localStorage.setItem('hrt_calendar', JSON.stringify(STATE.calendar));
+    DriveBackup.schedule();
   },
 
   getDayState(dateKey) {
@@ -1477,9 +1462,6 @@ const StorageManager = {
   saveDayState(dateKey, dayData) {
     STATE.db[dateKey] = dayData;
     this.saveDatabase();
-    if (SupabaseManager.isEnabled()) {
-      SupabaseManager.upsert(dateKey, dayData);
-    }
   },
 
   getPersonalBest() {
@@ -1685,181 +1667,134 @@ const StreakEngine = {
   }
 };
 
-// ================= SUPABASE CLOUD SYNC MANAGER =================
-// Requires the RLS schema in supabase/schema.sql. Sync only runs with a signed-in session;
-// the publishable key alone never reads or writes data.
-const SupabaseManager = {
-  DEFAULT_URL: "https://yhyxvhbknyuurppahznm.supabase.co",
-  DEFAULT_KEY: "sb_publishable_I1wY5Tc0FEVxSElsAipCJg_7xwJgb9P",
-  url: "",
-  key: "",
+// ================= GOOGLE DRIVE BACKUP =================
+// One JSON file (BackupManager format) in the user's own Drive, via the drive.file scope.
+// LAST_KEY holds the file's modifiedTime as of our last upload or restore; if Drive reports a
+// different time, another device wrote it, and we never overwrite that without asking.
+const DriveBackup = {
+  FILE_NAME: 'horizon-backup.json',
+  FILE_ID_KEY: 'hrt_drive_file_id',
+  LAST_KEY: 'hrt_drive_last_backup',
+  AUTO_KEY: 'hrt_drive_auto',
+  DELAY_MS: 5000,
+  timer: null,
+  lastUploaded: null,
+  state: 'idle', // idle | saving | conflict | error | signin
+  message: '',
 
-  init() {
-    // An empty string means the user disconnected; null means never configured (use defaults).
-    const url = localStorage.getItem('supabase_url');
-    const key = localStorage.getItem('supabase_key');
-    this.url = url !== null ? url : this.DEFAULT_URL;
-    this.key = key !== null ? key : this.DEFAULT_KEY;
+  token() {
+    const token = UIController.getGoogleAccessTokenSync();
+    const scopes = localStorage.getItem('google_token_scopes') || '';
+    return token && scopes.includes(GOOGLE_DRIVE_SCOPE) ? token : null;
   },
 
-  isEnabled() {
-    return this.url !== "" && this.key !== "";
+  isAuto() {
+    return localStorage.getItem(this.AUTO_KEY) !== '0';
   },
 
-  hasSession() {
-    return !!localStorage.getItem('supabase_session_token');
+  setState(state, message = '') {
+    this.state = state;
+    this.message = message;
+    UIController.refreshDriveUI();
   },
 
-  canSync() {
-    return this.isEnabled() && this.hasSession();
-  },
-
-  getHeaders() {
-    return {
-      'apikey': this.key,
-      'Authorization': `Bearer ${localStorage.getItem('supabase_session_token')}`,
-      'Content-Type': 'application/json'
-    };
-  },
-
-  // fetch with the session token; on 401 refresh the session once and retry.
-  async authedFetch(path, options = {}) {
-    const doFetch = () => fetch(`${this.url}${path}`, { ...options, headers: { ...this.getHeaders(), ...(options.headers || {}) } });
-    let response = await doFetch();
-    if (response.status === 401 && await this.refreshSession()) {
-      response = await doFetch();
-    }
+  async api(path, options = {}) {
+    const response = await fetch(`https://www.googleapis.com${path}`, {
+      ...options,
+      headers: { 'Authorization': `Bearer ${this.token()}`, ...(options.headers || {}) }
+    });
+    if (response.status === 401) UIController.clearGoogleToken();
     return response;
   },
 
-  async upsert(dateKey, dayData) {
-    if (!this.canSync()) return;
-    try {
-      const response = await this.authedFetch('/rest/v1/routines?on_conflict=user_id,date', {
-        method: 'POST',
-        headers: { 'Prefer': 'resolution=merge-duplicates,return=minimal' },
-        body: JSON.stringify({ date: dateKey, data: dayData, updated_at: new Date().toISOString() })
-      });
-      if (!response.ok) throw new Error(`Sync error: ${response.status}`);
-    } catch (e) {
-      console.error("Supabase background upload failed:", e);
+  // Returns { id, modifiedTime } for the backup file, or null when there is none.
+  async findRemote() {
+    const cachedId = localStorage.getItem(this.FILE_ID_KEY);
+    if (cachedId) {
+      const res = await this.api(`/drive/v3/files/${cachedId}?fields=id,modifiedTime,trashed`);
+      if (res.ok) {
+        const file = await res.json();
+        if (!file.trashed) return file;
+      } else if (res.status !== 404) {
+        throw new Error('drive_status_error');
+      }
+      localStorage.removeItem(this.FILE_ID_KEY);
     }
+    const q = encodeURIComponent(`name='${this.FILE_NAME}' and trashed=false`);
+    const res = await this.api(`/drive/v3/files?q=${q}&orderBy=modifiedTime%20desc&pageSize=1&fields=files(id,modifiedTime)`);
+    if (!res.ok) throw new Error('drive_status_error');
+    const file = ((await res.json()).files || [])[0] || null;
+    if (file) localStorage.setItem(this.FILE_ID_KEY, file.id);
+    return file;
   },
 
-  async fetchInitialSync() {
-    if (!this.canSync()) return;
+  async upload({ force = false } = {}) {
+    if (!this.token()) return this.setState('signin');
+    const body = BackupManager.toJSON();
+    const fingerprint = JSON.stringify(BackupManager.build().data);
+    if (!force && fingerprint === this.lastUploaded) return;
+    this.setState('saving');
     try {
-      const response = await this.authedFetch('/rest/v1/routines?select=date,data', { method: 'GET' });
-      if (!response.ok) throw new Error(`Fetch error: ${response.status}`);
-      const rows = await response.json();
-      if (Array.isArray(rows)) {
-        rows.forEach(row => {
-          if (row.date && row.data) STATE.db[row.date] = row.data;
+      const remote = await this.findRemote();
+      if (remote && !force && remote.modifiedTime !== localStorage.getItem(this.LAST_KEY)) {
+        return this.setState('conflict');
+      }
+      let res;
+      if (remote) {
+        res = await this.api(`/upload/drive/v3/files/${remote.id}?uploadType=media&fields=id,modifiedTime`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body
         });
-        StorageManager.saveDatabase();
+      } else {
+        const boundary = 'horizon' + Date.now();
+        const meta = JSON.stringify({ name: this.FILE_NAME, mimeType: 'application/json' });
+        res = await this.api('/upload/drive/v3/files?uploadType=multipart&fields=id,modifiedTime', {
+          method: 'POST',
+          headers: { 'Content-Type': `multipart/related; boundary=${boundary}` },
+          body: `--${boundary}\r\nContent-Type: application/json; charset=UTF-8\r\n\r\n${meta}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${boundary}--`
+        });
+      }
+      if (!res.ok) throw new Error('drive_status_error');
+      const file = await res.json();
+      localStorage.setItem(this.FILE_ID_KEY, file.id);
+      localStorage.setItem(this.LAST_KEY, file.modifiedTime);
+      this.lastUploaded = fingerprint;
+      this.setState('idle');
+    } catch (e) {
+      if (this.token()) this.setState('error');
+    }
+  },
+
+  // Debounced automatic backup after any data change.
+  schedule() {
+    if (!this.isAuto() || !this.token() || this.state === 'conflict') return;
+    clearTimeout(this.timer);
+    this.timer = setTimeout(() => this.upload(), this.DELAY_MS);
+  },
+
+  async download() {
+    if (!this.token()) throw new Error('drive_status_signin');
+    const remote = await this.findRemote();
+    if (!remote) throw new Error('drive_no_backup');
+    const res = await this.api(`/drive/v3/files/${remote.id}?alt=media`);
+    if (!res.ok) throw new Error('drive_status_error');
+    return { text: await res.text(), modifiedTime: remote.modifiedTime };
+  },
+
+  // On load / connect: flag a backup written elsewhere so it is not silently overwritten.
+  async checkRemote() {
+    if (!this.token()) return;
+    try {
+      const remote = await this.findRemote();
+      if (remote && remote.modifiedTime !== localStorage.getItem(this.LAST_KEY)) {
+        this.setState('conflict');
+      } else {
+        this.setState('idle');
       }
     } catch (e) {
-      console.error("Supabase initial sync fetch failed:", e);
+      if (this.token()) this.setState('error');
     }
-  },
-
-  storeSession(session) {
-    localStorage.setItem('supabase_session_token', session.access_token);
-    if (session.refresh_token) localStorage.setItem('supabase_refresh_token', session.refresh_token);
-  },
-
-  async signIn(url, key, email, password) {
-    const response = await fetch(`${url}/auth/v1/token?grant_type=password`, {
-      method: 'POST',
-      headers: { 'apikey': key, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    if (!response.ok) throw new Error('supabase_login_failed');
-    return response.json();
-  },
-
-  // Verify credentials by signing in and reading one row, then persist and pull data.
-  async saveCredentials(url, key, email = "", password = "") {
-    const cleanUrl = url.trim().replace(/\/$/, "");
-    const cleanKey = key.trim();
-    if (!email.trim() || !password) throw new Error('supabase_login_required');
-
-    const session = await this.signIn(cleanUrl, cleanKey, email.trim(), password);
-    const test = await fetch(`${cleanUrl}/rest/v1/routines?select=date&limit=1`, {
-      headers: { 'apikey': cleanKey, 'Authorization': `Bearer ${session.access_token}` }
-    });
-    if (!test.ok) throw new Error('supabase_table_error');
-
-    localStorage.setItem('supabase_url', cleanUrl);
-    localStorage.setItem('supabase_key', cleanKey);
-    localStorage.setItem('supabase_email', email.trim());
-    this.url = cleanUrl;
-    this.key = cleanKey;
-    this.storeSession(session);
-
-    await this.fetchInitialSync();
-    return true;
-  },
-
-  async refreshSession() {
-    const refreshToken = localStorage.getItem('supabase_refresh_token');
-    if (!this.isEnabled() || !refreshToken) return false;
-    try {
-      const response = await fetch(`${this.url}/auth/v1/token?grant_type=refresh_token`, {
-        method: 'POST',
-        headers: { 'apikey': this.key, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ refresh_token: refreshToken })
-      });
-      if (response.ok) {
-        const data = await response.json();
-        if (data.access_token) {
-          this.storeSession(data);
-          return true;
-        }
-      }
-    } catch (e) {
-      console.error("Supabase token refresh failed:", e);
-    }
-    return false;
-  },
-
-  // Verify stored session token or refresh if expired
-  async verifyToken() {
-    if (!this.canSync()) return false;
-    try {
-      const response = await fetch(`${this.url}/auth/v1/user`, {
-        headers: { 'apikey': this.key, 'Authorization': `Bearer ${localStorage.getItem('supabase_session_token')}` }
-      });
-      if (response.ok) return true;
-      if (await this.refreshSession()) return true;
-    } catch (e) {
-      console.error("Supabase token verification error:", e);
-    }
-    localStorage.removeItem('supabase_session_token');
-    localStorage.removeItem('supabase_refresh_token');
-    return false;
-  },
-
-  // Lock screen fallback: the passcode doubles as the Supabase password for the saved email.
-  async loginWithPasscode(passcode) {
-    const email = localStorage.getItem('supabase_email');
-    if (!this.isEnabled() || !email) return false;
-    try {
-      this.storeSession(await this.signIn(this.url, this.key, email, passcode));
-      return true;
-    } catch (e) {
-      return false;
-    }
-  },
-
-  clearCredentials() {
-    localStorage.setItem('supabase_url', '');
-    localStorage.setItem('supabase_key', '');
-    localStorage.removeItem('supabase_session_token');
-    localStorage.removeItem('supabase_refresh_token');
-    localStorage.removeItem('supabase_email');
-    this.url = "";
-    this.key = "";
   }
 };
 
@@ -1995,16 +1930,6 @@ const UIController = {
     trendChartContainer: document.getElementById('trend-chart-container'),
     analyticsHabitList: document.getElementById('analytics-habit-list'),
 
-    // Inline cloud sync elements
-    inlineSyncForm: document.getElementById('inline-sync-settings-form'),
-    inlineSupabaseUrl: document.getElementById('inline-supabase-url'),
-    inlineSupabaseKey: document.getElementById('inline-supabase-key'),
-    inlineClearSyncBtn: document.getElementById('inline-clear-sync-btn'),
-    inlineSyncStatus: document.getElementById('inline-sync-status'),
-    inlineSupabaseEmail: document.getElementById('inline-supabase-email'),
-    inlineSupabasePassword: document.getElementById('inline-supabase-password'),
-    supabaseEmail: document.getElementById('supabase-email'),
-    supabasePassword: document.getElementById('supabase-password'),
 
     // Journal DOM elements
     journalForm: document.getElementById('journal-form'),
@@ -2107,16 +2032,16 @@ const UIController = {
 
   init() {
     this.setupLanguage();
-    SupabaseManager.init(); // Initialize credentials
     this.setupAuthentication();
     this.setupNavigation();
     this.setupDateNavigator();
     this.setupChecklist();
     this.setupMonthSelector();
-    this.setupSyncSettings(); // Setup Supabase modal & inline controls
+    this.setupSettingsModal();
     this.setupPasscodeSettings();
     this.setupBackupSettings();
-    this.setupGoogleSettings(); // Setup Google Calendar credential forms
+    this.setupGoogleSettings();
+    this.setupDriveSettings();
     
     // Setup Life OS Subsystems
     this.setupBriefTab();
@@ -2133,21 +2058,6 @@ const UIController = {
     document.addEventListener('click', unlockAudio);
     document.addEventListener('touchstart', unlockAudio);
     
-    // Auto-sync check on tab focus (for multi-device real-time updates)
-    window.addEventListener('focus', () => {
-      if (STATE.authenticated && SupabaseManager.isEnabled()) {
-        console.log("Tab focused: Fetching updates from Supabase...");
-        SupabaseManager.fetchInitialSync().then(() => {
-          this.updateStreakDisplay();
-          this.loadDateData();
-          this.renderNotionGrid();
-          this.renderAnalytics();
-          this.renderHeatmap(); // Refresh heatmap grid
-          this.renderBrief();
-        });
-      }
-    });
-
     setInterval(() => {
       const now = new Date();
       if (formatDateKey(now) !== formatDateKey(STATE.todayDate)) {
@@ -2176,11 +2086,6 @@ const UIController = {
       isAuthed = true;
     }
 
-    // 2. Or check if Supabase Sync is active and verified
-    if (!isAuthed && SupabaseManager.isEnabled()) {
-      isAuthed = await SupabaseManager.verifyToken();
-    }
-
     if (isAuthed) {
       STATE.authenticated = true;
       this.dom.authPortal.classList.add('hidden');
@@ -2207,25 +2112,9 @@ const UIController = {
       const entered = this.dom.passcode.value;
       let success = false;
 
-      // 1. Check local passcode first (always allowed for local access)
       if (await PasscodeManager.verify(entered)) {
         success = true;
         sessionStorage.setItem('hrt_session', 'unlocked');
-        // Re-open the cloud session in the background when the passcode is also the Supabase password.
-        if (SupabaseManager.isEnabled() && !SupabaseManager.hasSession()) {
-          SupabaseManager.loginWithPasscode(entered).then(ok => {
-            if (!ok) return;
-            if (this.refreshSyncUI) this.refreshSyncUI();
-            SupabaseManager.fetchInitialSync().then(() => this.loadDashboard());
-          });
-        }
-      }
-      // 2. Fallback to Supabase authentication if local check failed and Supabase is active
-      else if (SupabaseManager.isEnabled()) {
-        const supSuccess = await SupabaseManager.loginWithPasscode(entered);
-        if (supSuccess) {
-          success = true;
-        }
       }
 
       if (success) {
@@ -2248,8 +2137,6 @@ const UIController = {
       btn.addEventListener('click', () => {
         STATE.authenticated = false;
         sessionStorage.removeItem('hrt_session');
-        localStorage.removeItem('supabase_session_token');
-        localStorage.removeItem('supabase_refresh_token');
         this.dom.appContainer.classList.add('hidden');
         this.dom.authPortal.classList.remove('hidden');
         this.dom.passcode.value = "";
@@ -2269,18 +2156,7 @@ const UIController = {
     this.renderHeatmap(); // Render yearly heatmap grid
     this.renderBrief();
 
-    // Trigger background sync if Supabase is active
-    if (SupabaseManager.isEnabled()) {
-      SupabaseManager.fetchInitialSync().then(() => {
-        // Re-render views with freshly pulled records
-        this.updateStreakDisplay();
-        this.loadDateData();
-        this.renderNotionGrid();
-        this.renderAnalytics();
-        this.renderHeatmap(); // Re-render heatmap after sync
-        this.renderBrief();
-      });
-    }
+    DriveBackup.checkRemote();
   },
 
   updateStreakDisplay() {
@@ -2524,161 +2400,23 @@ const UIController = {
     }
   },
 
-  // --- Supabase Cloud Sync Settings Controller ---
-  setupSyncSettings() {
+  // --- Settings modal ---
+  setupSettingsModal() {
     const modal = document.getElementById('sync-modal');
-    const form = document.getElementById('sync-settings-form');
     const closeBtn = document.getElementById('close-sync-modal');
-    const clearBtn = document.getElementById('clear-sync-btn');
-    const urlInput = document.getElementById('supabase-url');
-    const keyInput = document.getElementById('supabase-key');
-    const statusMsg = document.getElementById('sync-status');
 
-    // Helper to refresh UI states on both modal and inline sync cards
-    const refreshSyncUI = () => {
-      const url = SupabaseManager.url;
-      const key = SupabaseManager.key;
-      const email = localStorage.getItem('supabase_email') || "";
-      const enabled = SupabaseManager.isEnabled();
-
-      // Sync input values
-      urlInput.value = url;
-      keyInput.value = key;
-      if (this.dom.supabaseEmail) this.dom.supabaseEmail.value = email;
-      if (this.dom.supabasePassword) this.dom.supabasePassword.value = "";
-      if (this.dom.inlineSupabaseUrl) this.dom.inlineSupabaseUrl.value = url;
-      if (this.dom.inlineSupabaseKey) this.dom.inlineSupabaseKey.value = key;
-      if (this.dom.inlineSupabaseEmail) this.dom.inlineSupabaseEmail.value = email;
-      if (this.dom.inlineSupabasePassword) this.dom.inlineSupabasePassword.value = "";
-
-      // Sync status indicators
-      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-      let text = dict.sync_status_local;
-      let cls = 'status-loading';
-      if (SupabaseManager.canSync()) {
-        text = dict.sync_status_active.replace('{email}', email);
-        cls = 'status-success';
-      } else if (enabled) {
-        text = dict.sync_status_signin;
-        cls = 'status-error';
-      }
-      [statusMsg, this.dom.inlineSyncStatus].forEach(el => {
-        if (!el) return;
-        el.className = `sync-status-msg ${cls}`;
-        el.textContent = text;
-      });
-      clearBtn.style.display = enabled ? "block" : "none";
-      if (this.dom.inlineClearSyncBtn) this.dom.inlineClearSyncBtn.style.display = enabled ? "block" : "none";
-    };
-    this.refreshSyncUI = refreshSyncUI;
-
-    // Initial load
-    refreshSyncUI();
-
-    // Show modal trigger for all buttons with class .sync-settings-btn
     document.querySelectorAll('.sync-settings-btn').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
-        refreshSyncUI();
+        this.refreshDriveUI();
         modal.classList.remove('hidden');
       });
     });
 
-    // Close modal triggers
-    closeBtn.addEventListener('click', () => {
-      modal.classList.add('hidden');
-    });
-
+    closeBtn.addEventListener('click', () => modal.classList.add('hidden'));
     modal.addEventListener('click', (e) => {
-      if (e.target === modal) {
-        modal.classList.add('hidden');
-      }
+      if (e.target === modal) modal.classList.add('hidden');
     });
-
-    // Modal form submit
-    form.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      
-      statusMsg.className = "sync-status-msg status-loading";
-      statusMsg.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).sync_connecting;
-      
-      const url = urlInput.value;
-      const key = keyInput.value;
-      const email = this.dom.supabaseEmail ? this.dom.supabaseEmail.value : "";
-      const password = this.dom.supabasePassword ? this.dom.supabasePassword.value : "";
-      
-      try {
-        await SupabaseManager.saveCredentials(url, key, email, password);
-        refreshSyncUI();
-        
-        statusMsg.className = "sync-status-msg status-success";
-        statusMsg.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).sync_connected;
-        
-        // Refresh views
-        this.updateStreakDisplay();
-        this.loadDateData();
-        this.renderNotionGrid();
-        this.renderAnalytics();
-        
-        // Close modal after delay
-        setTimeout(() => {
-          modal.classList.add('hidden');
-        }, 1500);
-      } catch (err) {
-        statusMsg.className = "sync-status-msg status-error";
-        const d = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-        statusMsg.textContent = d[err.message] || err.message || d.supabase_table_error;
-      }
-    });
-
-    // Inline form submit (mobile-accessible)
-    if (this.dom.inlineSyncForm) {
-      this.dom.inlineSyncForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        
-        const inlineStatus = this.dom.inlineSyncStatus;
-        inlineStatus.className = "sync-status-msg status-loading";
-        inlineStatus.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).sync_connecting;
-        
-        const url = this.dom.inlineSupabaseUrl.value;
-        const key = this.dom.inlineSupabaseKey.value;
-        const email = this.dom.inlineSupabaseEmail ? this.dom.inlineSupabaseEmail.value : "";
-        const password = this.dom.inlineSupabasePassword ? this.dom.inlineSupabasePassword.value : "";
-        
-        try {
-          await SupabaseManager.saveCredentials(url, key, email, password);
-          refreshSyncUI();
-          
-          inlineStatus.className = "sync-status-msg status-success";
-          inlineStatus.textContent = (TRANSLATIONS[STATE.language] || TRANSLATIONS.en).sync_connected;
-          
-          // Refresh views
-          this.updateStreakDisplay();
-          this.loadDateData();
-          this.renderNotionGrid();
-          this.renderAnalytics();
-          this.renderHeatmap(); // Refresh heatmap grid
-        } catch (err) {
-          inlineStatus.className = "sync-status-msg status-error";
-          const d = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-          inlineStatus.textContent = d[err.message] || err.message || d.supabase_table_error;
-        }
-      });
-    }
-
-    // Unified disconnect trigger
-    const handleDisconnect = () => {
-      const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-      if (confirm(dict.confirm_disconnect || "Disconnect Supabase Sync? Your data will remain stored locally.")) {
-        SupabaseManager.clearCredentials();
-        refreshSyncUI();
-      }
-    };
-
-    clearBtn.addEventListener('click', handleDisconnect);
-    if (this.dom.inlineClearSyncBtn) {
-      this.dom.inlineClearSyncBtn.addEventListener('click', handleDisconnect);
-    }
 
     // Custom Video settings controllers
     const customVideoInput = document.getElementById('custom-video-url');
@@ -2722,6 +2460,81 @@ const UIController = {
         }
       });
     }
+  },
+
+  setupDriveSettings() {
+    const connectBtn = document.getElementById('drive-connect-btn');
+    if (!connectBtn) return;
+    const t = () => TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+
+    connectBtn.addEventListener('click', () => this.connectGoogleCalendar());
+
+    document.getElementById('drive-auto-toggle').addEventListener('change', (e) => {
+      localStorage.setItem(DriveBackup.AUTO_KEY, e.target.checked ? '1' : '0');
+      if (e.target.checked) DriveBackup.schedule();
+    });
+
+    document.getElementById('drive-backup-now-btn').addEventListener('click', async () => {
+      if (DriveBackup.state === 'conflict' && !confirm(t().drive_overwrite_confirm)) return;
+      await DriveBackup.upload({ force: true });
+    });
+
+    document.getElementById('drive-restore-btn').addEventListener('click', async () => {
+      let remote;
+      try {
+        remote = await DriveBackup.download();
+      } catch (e) {
+        return DriveBackup.setState('error', t()[e.message] || t().drive_status_error);
+      }
+      let parsed;
+      try {
+        parsed = BackupManager.parse(remote.text);
+      } catch (e) {
+        return DriveBackup.setState('error', t().backup_invalid);
+      }
+      const s = parsed.summary;
+      const msg = t().backup_confirm
+        .replace('{days}', s.days).replace('{journal}', s.journal)
+        .replace('{transactions}', s.transactions).replace('{events}', s.events);
+      if (!confirm(msg)) return;
+      BackupManager.restore(parsed.backup);
+      localStorage.setItem(DriveBackup.LAST_KEY, remote.modifiedTime);
+      location.reload();
+    });
+
+    this.refreshDriveUI();
+  },
+
+  refreshDriveUI() {
+    const status = document.getElementById('drive-status');
+    if (!status) return;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const connected = !!DriveBackup.token();
+    const last = localStorage.getItem(DriveBackup.LAST_KEY);
+    const locale = { en: 'en-US', tr: 'tr-TR', ar: 'ar-EG' }[STATE.language] || 'en-US';
+    const lastText = last ? new Date(last).toLocaleString(locale, { dateStyle: 'medium', timeStyle: 'short' }) : dict.drive_never;
+
+    let text = dict.drive_status_ready.replace('{time}', lastText);
+    let cls = 'status-success';
+    if (!connected) {
+      text = UIController.getGoogleAccessTokenSync() ? dict.drive_no_scope : dict.drive_status_signin;
+      cls = 'status-loading';
+    } else if (DriveBackup.state === 'saving') {
+      text = dict.drive_status_saving;
+      cls = 'status-loading';
+    } else if (DriveBackup.state === 'conflict') {
+      text = dict.drive_status_conflict;
+      cls = 'status-error';
+    } else if (DriveBackup.state === 'error') {
+      text = DriveBackup.message || dict.drive_status_error;
+      cls = 'status-error';
+    }
+    status.textContent = text;
+    status.className = `sync-status-msg ${cls}`;
+
+    document.getElementById('drive-connect-btn').hidden = connected;
+    document.getElementById('drive-controls').hidden = !connected;
+    document.getElementById('drive-auto-toggle').checked = DriveBackup.isAuto();
   },
 
   setupPasscodeSettings() {
@@ -4631,17 +4444,26 @@ const UIController = {
 
   refreshGoogleButton() {
     const btn = document.getElementById('google-auth-btn');
-    if (!btn) return;
+    if (!btn) return this.refreshDriveUI();
     const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
     const connected = !!this.getGoogleAccessTokenSync();
     btn.textContent = connected ? dict.calendar_disconnect : dict.calendar_connect;
     btn.classList.toggle('is-connected', connected);
+    this.refreshDriveUI();
   },
 
   getGoogleAccessTokenSync() {
     const token = localStorage.getItem('google_access_token');
     const expiry = parseInt(localStorage.getItem('google_token_expiry') || '0', 10);
     return token && Date.now() < expiry ? token : null;
+  },
+
+  clearGoogleToken() {
+    localStorage.removeItem('google_access_token');
+    localStorage.removeItem('google_token_expiry');
+    localStorage.removeItem('google_token_scopes');
+    DriveBackup.setState('signin');
+    this.refreshGoogleButton();
   },
 
   // Kept async for existing callers; never talks to the network.
@@ -4657,7 +4479,7 @@ const UIController = {
     }
     const client = google.accounts.oauth2.initTokenClient({
       client_id: GOOGLE_CLIENT_ID,
-      scope: GOOGLE_CALENDAR_SCOPE,
+      scope: `${GOOGLE_CALENDAR_SCOPE} ${GOOGLE_DRIVE_SCOPE}`,
       callback: (resp) => {
         if (resp.error || !resp.access_token) {
           alert(dict.alert_google_auth_error + (resp.error_description || resp.error || ''));
@@ -4665,8 +4487,10 @@ const UIController = {
         }
         localStorage.setItem('google_access_token', resp.access_token);
         localStorage.setItem('google_token_expiry', String(Date.now() + (Number(resp.expires_in) || 3600) * 1000));
+        localStorage.setItem('google_token_scopes', resp.scope || '');
         this.refreshGoogleButton();
-        this.syncGoogleCalendar(resp.access_token);
+        if ((resp.scope || '').includes(GOOGLE_CALENDAR_SCOPE)) this.syncGoogleCalendar(resp.access_token);
+        DriveBackup.checkRemote();
       }
     });
     client.requestAccessToken();
@@ -4677,8 +4501,7 @@ const UIController = {
     if (token && window.google && google.accounts && google.accounts.oauth2) {
       google.accounts.oauth2.revoke(token, () => {});
     }
-    localStorage.removeItem('google_access_token');
-    localStorage.removeItem('google_token_expiry');
+    this.clearGoogleToken();
     // Drop cached Google events; local events stay.
     STATE.calendar = STATE.calendar.filter(evt => evt.isLocal);
     StorageManager.saveCalendar();

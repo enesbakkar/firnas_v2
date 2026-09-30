@@ -1078,38 +1078,6 @@
               </div>
             </div>
 
-            <!-- Inline Cloud Sync Settings (Accessible on mobile) -->
-            <div class="visual-card glass-card sync-settings-card" style="margin-top: 1.5rem;">
-              <div class="visual-card-header">
-                <h3 data-i18n="analytics_sync_title">Cloud Sync & Database Backup</h3>
-                <span class="chart-legend" data-i18n="analytics_sync_subtitle">Connect a Supabase project to automatically sync and backup your routines</span>
-              </div>
-              <div class="sync-card-body" style="margin-top: 1.25rem;">
-                <form id="inline-sync-settings-form" class="auth-form" style="gap: 1rem;">
-                  <div class="input-group">
-                    <label for="inline-supabase-url" data-i18n="supabase_url">Supabase Project URL</label>
-                    <input type="url" id="inline-supabase-url" placeholder="https://your-project.supabase.co" autocomplete="off" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
-                  </div>
-                  <div class="input-group">
-                    <label for="inline-supabase-key" data-i18n="supabase_key">Supabase Anon Key</label>
-                    <input type="password" id="inline-supabase-key" placeholder="eyJhbGciOi..." autocomplete="off" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
-                  </div>
-                  <div class="input-group" style="margin-top: 1rem;">
-                    <label for="inline-supabase-email" data-i18n="supabase_email">Email</label>
-                    <input type="email" id="inline-supabase-email" placeholder="email@example.com" autocomplete="username" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
-                  </div>
-                  <div class="input-group" style="margin-top: 1rem;">
-                    <label for="inline-supabase-password" data-i18n="supabase_password">Password</label>
-                    <input type="password" id="inline-supabase-password" placeholder="••••••••" autocomplete="current-password" required style="width: 100%; padding: 0.85rem 1.15rem; background-color: rgba(3, 7, 18, 0.6); border: 1px solid var(--border-color); border-radius: var(--radius-md); color: var(--text-main); font-family: inherit; font-size: 0.95rem;">
-                  </div>
-                  <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem; flex-wrap: wrap;">
-                    <button type="submit" class="btn btn-primary" style="flex: 1; min-width: 120px; padding: 0.8rem 1.25rem;" data-i18n="supabase_connect_btn">Connect & Sync</button>
-                    <button type="button" id="inline-clear-sync-btn" class="btn btn-secondary" style="flex: 1; min-width: 120px; color: var(--danger); border-color: rgba(239, 68, 68, 0.2); padding: 0.8rem 1.25rem;" data-i18n="supabase_disconnect">Disconnect Cloud Sync</button>
-                  </div>
-                  <p id="inline-sync-status" class="sync-status-msg"></p>
-                </form>
-              </div>
-            </div>
 
 
 
@@ -1473,6 +1441,24 @@
           <p id="backup-status" class="sync-status-msg" role="status"></p>
         </section>
 
+        <!-- Google Drive Backup Section -->
+        <section class="settings-section" id="drive-section">
+          <h3 data-i18n="drive_title">Google Drive backup</h3>
+          <p class="modal-info-text" data-i18n="drive_desc">Keeps one backup file in your own Google Drive. The app can only see the file it created.</p>
+          <p id="drive-status" class="sync-status-msg" role="status"></p>
+          <button type="button" id="drive-connect-btn" class="btn btn-primary" data-i18n="drive_connect">Connect Google account</button>
+          <div id="drive-controls" hidden>
+            <label class="toggle-row">
+              <input type="checkbox" id="drive-auto-toggle">
+              <span data-i18n="drive_auto">Back up automatically after changes</span>
+            </label>
+            <div class="settings-actions">
+              <button type="button" id="drive-backup-now-btn" class="btn btn-primary" data-i18n="drive_backup_now">Back up now</button>
+              <button type="button" id="drive-restore-btn" class="btn btn-secondary" data-i18n="drive_restore">Restore from Drive</button>
+            </div>
+          </div>
+        </section>
+
         <!-- Focus Video Customization Section -->
         <div class="input-group" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1.25rem;">
           <label for="custom-video-url" data-i18n="focus_video_url_label" style="font-weight: 600; font-size: 0.85rem; display: block; margin-bottom: 0.5rem; color: var(--text-muted);">Custom Focus Video URL (YouTube)</label>
@@ -1483,51 +1469,13 @@
           <span id="custom-video-status" style="font-size: 0.75rem; margin-top: 0.45rem; display: block; display: none;"></span>
         </div>
 
-        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.5rem;">
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; color: var(--primary-light);">
-            <path d="M21.2 15c.7-1.2 1-2.5.7-3.9-.6-3-3.1-5.2-6.1-5.4-3-.2-5.6 1.5-6.7 4.1C6.2 9.5 3 12 3 15c0 3.3 2.7 6 6 6h10c2.2 0 4-1.8 4-4 0-1-.3-1.9-.8-2.6z"/>
+        <button type="button" class="btn btn-secondary btn-block logout-btn">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
           </svg>
-          <h3 data-i18n="supabase_title" style="font-size: 1rem; font-weight: 600; margin: 0; color: var(--text-main);">Supabase Cloud Sync</h3>
-        </div>
-        <p class="modal-info-text" data-i18n="supabase_subtitle" style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4; margin-bottom: 1rem;">
-          Sync your routine tracker across all devices by connecting a free Supabase project database.
-        </p>
-        <form id="sync-settings-form">
-          <div class="input-group">
-            <label for="supabase-url" data-i18n="supabase_url">Supabase Project URL</label>
-            <input type="url" id="supabase-url" placeholder="https://your-project.supabase.co" autocomplete="off" required>
-          </div>
-          <div class="input-group" style="margin-top: 1rem;">
-            <label for="supabase-key" data-i18n="supabase_key">Supabase Anon Key</label>
-            <input type="password" id="supabase-key" placeholder="eyJhbGciOi..." autocomplete="off" required>
-          </div>
-          <div class="input-group" style="margin-top: 1rem;">
-            <label for="supabase-email" data-i18n="supabase_email">Email</label>
-            <input type="email" id="supabase-email" placeholder="email@example.com" autocomplete="username" required>
-          </div>
-          <div class="input-group" style="margin-top: 1rem;">
-            <label for="supabase-password" data-i18n="supabase_password">Password</label>
-            <input type="password" id="supabase-password" placeholder="••••••••" autocomplete="current-password" required>
-          </div>
-          
-          <div class="sql-instructions">
-            <h4 data-i18n="supabase_db_guide">Database Setup Guide:</h4>
-            <p data-i18n="supabase_db_query">Run rutin/supabase/schema.sql in the Supabase SQL editor. It creates the routines table with Row Level Security so only your signed-in account can read or write it.</p>
-          </div>
-
-          <div class="modal-actions" style="margin-top: 1.5rem;">
-            <button type="submit" class="btn btn-primary btn-block" data-i18n="supabase_save">Save & Sync Now</button>
-            <button type="button" id="clear-sync-btn" class="btn btn-secondary btn-block" style="margin-top: 0.5rem; color: var(--danger);" data-i18n="supabase_disconnect">Disconnect Cloud Sync</button>
-            <button type="button" class="btn btn-secondary btn-block logout-btn" style="margin-top: 0.5rem; color: var(--text-main); display: flex; align-items: center; justify-content: center; gap: 0.5rem;" data-i18n="nav_lock">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px;">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
-              </svg>
-              <span data-i18n="nav_lock">Lock Dashboard</span>
-            </button>
-          </div>
-          <p id="sync-status" class="sync-status-msg"></p>
-        </form>
+          <span data-i18n="nav_lock">Lock Dashboard</span>
+        </button>
 
       </div>
     </div>
