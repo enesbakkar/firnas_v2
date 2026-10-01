@@ -1,7 +1,7 @@
 {
-  "name": "Horizon Tracker",
-  "short_name": "Horizon",
-  "description": "Horizon Routine Tracker Mobile PWA & Android Application",
+  "name": "İstikâmet",
+  "short_name": "İstikâmet",
+  "description": "İstikâmet: namaz, zikir, Kur'an ve günlük rutin takibi",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#f0f7fb",
@@ -19,6 +19,12 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    },
+    {
+      "src": "logo.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
     }
   ]
 }

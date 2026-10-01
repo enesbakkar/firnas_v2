@@ -1,4 +1,4 @@
-name: Build Rutin Tracker APK
+name: Build Istiqamah APK
 
 on:
   push:
@@ -36,7 +36,7 @@ jobs:
         run: |
           cd rutin
           mkdir -p www
-          cp index.html style.css app.js daily.js manifest.json icon-192.png icon-512.png www/
+          cp index.html style.css app.js daily.js logo.svg manifest.json icon-192.png icon-512.png www/
 
       - name: Initialize Capacitor & Add Android
         run: |

@@ -247,8 +247,6 @@ const TRANSLATIONS = {
     nav_calendar: "Agenda",
     nav_settings: "Settings",
     nav_lock: "Lock",
-    auth_title: "Horizon Tracker",
-    auth_sub: "Private dashboard",
     auth_label: "Access Passcode",
     auth_unlock: "Unlock",
     auth_footer: "© 2026 Firnas Technologies",
@@ -423,7 +421,7 @@ const TRANSLATIONS = {
     backup_downloaded: "Backup file created.",
     backup_copied: "Backup copied to clipboard.",
     backup_copy_failed: "Could not access the clipboard.",
-    backup_invalid: "This is not a valid Horizon backup.",
+    backup_invalid: "This is not a valid İstikâmet backup.",
     backup_confirm: "Replace current data with this backup?\n\nDays: {days}\nJournal entries: {journal}\nTransactions: {transactions}\nEvents: {events}\n\nYour current data is kept so you can undo.",
     backup_undo_confirm: "Return to the data you had before the last restore?",
     nav_progress: "Progress",
@@ -514,7 +512,10 @@ const TRANSLATIONS = {
     section_month: "This month",
     section_last_journal: "Latest journal",
     see_all: "See all",
-    ov_open_journal: "Write"
+    ov_open_journal: "Write",
+    brand_name: "Istiqamah",
+    brand_tagline: "So remain on a right course as you have been commanded.",
+    brand_tagline_src: "Surah Hud, 11:112"
   },
   tr: {
     nav_journal: "Günlük",
@@ -522,8 +523,6 @@ const TRANSLATIONS = {
     nav_calendar: "Takvim",
     nav_settings: "Ayarlar",
     nav_lock: "Kilitle",
-    auth_title: "Horizon Tracker",
-    auth_sub: "Kişisel panel",
     auth_label: "Erişim Şifresi",
     auth_unlock: "Kilidi aç",
     auth_footer: "© 2026 Firnas Technologies",
@@ -698,7 +697,7 @@ const TRANSLATIONS = {
     backup_downloaded: "Yedek dosyası oluşturuldu.",
     backup_copied: "Yedek panoya kopyalandı.",
     backup_copy_failed: "Panoya erişilemedi.",
-    backup_invalid: "Bu geçerli bir Horizon yedeği değil.",
+    backup_invalid: "Bu geçerli bir İstikâmet yedeği değil.",
     backup_confirm: "Mevcut veriler bu yedekle değiştirilsin mi?\n\nGün: {days}\nGünlük kaydı: {journal}\nİşlem: {transactions}\nEtkinlik: {events}\n\nMevcut verileriniz saklanır, geri alabilirsiniz.",
     backup_undo_confirm: "Son geri yüklemeden önceki verilere dönülsün mü?",
     nav_progress: "İlerleme",
@@ -789,7 +788,10 @@ const TRANSLATIONS = {
     section_month: "Bu ay",
     section_last_journal: "Son günlük",
     see_all: "Tümü",
-    ov_open_journal: "Yaz"
+    ov_open_journal: "Yaz",
+    brand_name: "İstikâmet",
+    brand_tagline: "Emrolunduğun gibi dosdoğru ol.",
+    brand_tagline_src: "Hûd Sûresi, 112. âyet"
   },
   ar: {
     nav_journal: "اليوميات",
@@ -797,11 +799,9 @@ const TRANSLATIONS = {
     nav_calendar: "التقويم",
     nav_settings: "الإعدادات",
     nav_lock: "قفل",
-    auth_title: "تعقب هورايزون",
-    auth_sub: "لوحة شخصية",
     auth_label: "رمز الدخول",
     auth_unlock: "فتح القفل",
-    auth_footer: "© ٢٠٢٦ شركة فيرناس للتقنيات",
+    auth_footer: "© 2026 Firnas Technologies",
     brief_yesterday_score: "نتيجة أمس",
     brief_yesterday_spend: "مصروف أمس",
     brief_today_events: "أحداث اليوم",
@@ -968,7 +968,7 @@ const TRANSLATIONS = {
     backup_downloaded: "تم إنشاء ملف النسخة الاحتياطية.",
     backup_copied: "تم نسخ النسخة الاحتياطية إلى الحافظة.",
     backup_copy_failed: "تعذّر الوصول إلى الحافظة.",
-    backup_invalid: "هذه ليست نسخة احتياطية صالحة من Horizon.",
+    backup_invalid: "هذه ليست نسخة احتياطية صالحة من استقامة.",
     backup_confirm: "هل تريد استبدال البيانات الحالية بهذه النسخة؟\n\nالأيام: {days}\nاليوميات: {journal}\nالمعاملات: {transactions}\nالأحداث: {events}\n\nستُحفظ بياناتك الحالية ويمكنك التراجع.",
     backup_undo_confirm: "هل تريد العودة إلى البيانات السابقة لآخر استعادة؟",
     nav_progress: "التقدّم",
@@ -1064,7 +1064,10 @@ const TRANSLATIONS = {
     section_month: "هذا الشهر",
     section_last_journal: "آخر يومية",
     see_all: "عرض الكل",
-    ov_open_journal: "اكتب"
+    ov_open_journal: "اكتب",
+    brand_name: "استقامة",
+    brand_tagline: "فاستقم كما أمرت",
+    brand_tagline_src: "سورة هود، الآية 112"
   }
 };
 
@@ -2227,6 +2230,7 @@ const UIController = {
     document.documentElement.lang = lang;
     document.documentElement.dir = (lang === 'ar') ? 'rtl' : 'ltr';
     const dict = TRANSLATIONS[lang] || TRANSLATIONS.en;
+    document.title = dict.brand_name;
 
     const apply = (attr, fn) => {
       document.querySelectorAll(`[${attr}]`).forEach(el => {

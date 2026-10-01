@@ -1,4 +1,4 @@
-/* Horizon Tracker: design system based on the Firnas Technologies palette.
+/* İstikâmet: design system based on the Firnas Technologies palette.
    Mobile first. Logical properties only, so RTL (Arabic) needs no overrides. */
 
 /* ================= TOKENS ================= */
@@ -249,12 +249,16 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .auth-footer { text-align: center; font-size: 0.78rem; color: var(--faint); }
 .auth .icon-btn { border-color: var(--border-strong); }
 
-.brand-mark {
-  display: grid; place-items: center; width: 40px; height: 40px; border-radius: 12px;
-  background: var(--accent); color: var(--accent-ink); flex: none;
-}
-.auth-brand .brand-mark { width: 52px; height: 52px; border-radius: 16px; }
-.auth-brand .brand-mark .icon { width: 26px; height: 26px; }
+.brand-logo { width: 42px; height: 42px; border-radius: 12px; flex: none; display: block; box-shadow: 0 2px 8px rgba(5, 20, 33, 0.25); }
+.brand-logo--sm { width: 34px; height: 34px; border-radius: 10px; }
+.brand-logo--lg { width: 76px; height: 76px; border-radius: 20px; box-shadow: 0 10px 30px rgba(5, 20, 33, 0.35); }
+.brand-ar { font-family: var(--font-quran); font-size: 0.95rem !important; color: var(--bar-muted); line-height: 1.2; }
+:root[lang="ar"] .brand-ar { display: none !important; }
+.auth-verse { display: grid; gap: 4px; text-align: center; }
+.auth-verse blockquote { font-family: var(--font-quran); font-size: 1.5rem; color: var(--accent-text); line-height: 1.7; }
+.auth-verse figcaption { font-size: 0.85rem; color: var(--muted); }
+.auth-verse small { display: block; font-size: 0.72rem; color: var(--faint); margin-top: 2px; }
+:root[lang="ar"] .auth-verse figcaption span { display: none; }
 
 /* ================= BACKDROP ================= */
 /* Firnas-style dot mesh with a few soft orbs drifting slowly. Decorative only. */
@@ -306,9 +310,7 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 }
 .brand { display: flex; align-items: center; gap: 10px; min-width: 0; }
 .brand strong { font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; }
-.brand span:not(.brand-mark) { display: block; font-size: 0.78rem; color: var(--bar-muted); }
-.topbar .brand-mark { width: 32px; height: 32px; border-radius: 10px; }
-.topbar .brand-mark .icon { width: 18px; height: 18px; }
+.brand span { display: block; font-size: 0.78rem; color: var(--bar-muted); }
 
 .topbar-actions { display: flex; align-items: center; gap: 4px; }
 .topbar-btn {
