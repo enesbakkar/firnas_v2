@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5.5">
+  <link rel="stylesheet" href="style.css?v=5.7">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.4">
   <link rel="apple-touch-icon" href="icon-192.png?v=4.4">
   <link rel="manifest" href="manifest.json">
@@ -25,6 +25,7 @@
     <symbol id="i-finance" viewBox="0 0 24 24"><rect x="2.5" y="5.5" width="19" height="13" rx="2.5"/><path d="M2.5 10h19M6.5 14.5h3"/></symbol>
     <symbol id="i-calendar" viewBox="0 0 24 24"><rect x="3" y="4.5" width="18" height="16.5" rx="2.5"/><path d="M8 2.5v4M16 2.5v4M3 10h18"/></symbol>
     <symbol id="i-settings" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 0 1-4 0v-.1A1.7 1.7 0 0 0 9 19.4a1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 0 1 0-4h.1A1.7 1.7 0 0 0 4.6 9a1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 0 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 0 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z"/></symbol>
+    <symbol id="i-check" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="m8 12 3 3 5-6"/></symbol>
     <symbol id="i-more" viewBox="0 0 24 24"><circle cx="5" cy="12" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="19" cy="12" r="1.4"/></symbol>
     <symbol id="i-lock" viewBox="0 0 24 24"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></symbol>
     <symbol id="i-chevron-start" viewBox="0 0 24 24"><path d="M15 18l-6-6 6-6"/></symbol>
@@ -103,7 +104,8 @@
       </div>
 
       <nav class="sidebar-nav">
-        <button class="tab-btn active" data-tab="today-tab"><svg class="icon"><use href="#i-today"/></svg><span data-i18n="nav_today">Today</span></button>
+        <button class="tab-btn active" data-tab="overview-tab"><svg class="icon"><use href="#i-today"/></svg><span data-i18n="nav_overview">Overview</span></button>
+        <button class="tab-btn" data-tab="today-tab"><svg class="icon"><use href="#i-check"/></svg><span data-i18n="nav_routines">Routines</span></button>
         <button class="tab-btn" data-tab="progress-tab"><svg class="icon"><use href="#i-progress"/></svg><span data-i18n="nav_progress">Progress</span></button>
         <button class="tab-btn" data-tab="journal-tab"><svg class="icon"><use href="#i-journal"/></svg><span data-i18n="nav_journal">Mind Log</span></button>
         <button class="tab-btn" data-tab="finance-tab"><svg class="icon"><use href="#i-finance"/></svg><span data-i18n="nav_finance">FinFlow+</span></button>
@@ -127,23 +129,153 @@
           <span class="brand-mark"><svg class="icon"><use href="#i-logo"/></svg></span>
           <strong>Horizon</strong>
         </div>
-        <div class="topbar-streaks">
+        <div class="topbar-actions">
           <button type="button" class="sync-pill tab-trigger-btn" data-target-tab="settings-tab" id="topbar-sync" hidden><span class="sync-dot"></span></button>
-          <span class="streak-pill streak-pill--current" data-i18n-title="focus_current_streak"><svg class="icon"><use href="#i-flame"/></svg><b id="current-streak">0</b></span>
-          <span class="streak-pill streak-pill--best" data-i18n-title="focus_personal_best"><svg class="icon"><use href="#i-trophy"/></svg><b id="best-streak">0</b></span>
+          <button type="button" class="topbar-btn tab-btn" data-tab="calendar-tab" data-i18n-aria="nav_calendar" aria-label="Agenda"><svg class="icon"><use href="#i-calendar"/></svg></button>
+          <button type="button" class="topbar-btn tab-btn" data-tab="settings-tab" data-i18n-aria="nav_settings" aria-label="Settings"><svg class="icon"><use href="#i-settings"/></svg></button>
         </div>
       </header>
 
       <main class="content">
 
-        <!-- ================= TODAY ================= -->
-        <section id="today-tab" class="tab-pane active-pane">
-          <!-- One flow of cards: a single column on phones, balanced columns on wider screens -->
+        <!-- ================= OVERVIEW (first page) ================= -->
+        <section id="overview-tab" class="tab-pane active-pane">
           <div class="today-flow">
-            <!-- Summary of the selected day -->
-            <section class="today-section today-section--summary">
+            <!-- Overall summary of the selected day -->
+            <section class="today-section today-section--overview">
               <div class="section-head">
                 <h2 data-i18n="section_summary">Summary</h2>
+              </div>
+              <div class="card overview-card">
+                <div class="overview-top">
+                  <div class="overview-date">
+                    <strong id="ov-date"></strong>
+                    <span id="ov-hijri"></span>
+                  </div>
+                  <div class="overview-streaks">
+                    <span class="streak-chip streak-chip--current" data-i18n-title="focus_current_streak"><svg class="icon"><use href="#i-flame"/></svg><b id="current-streak">0</b></span>
+                    <span class="streak-chip streak-chip--best" data-i18n-title="focus_personal_best"><svg class="icon"><use href="#i-trophy"/></svg><b id="best-streak">0</b></span>
+                  </div>
+                </div>
+                <div class="day-summary">
+                  <div class="ring">
+                    <svg viewBox="0 0 80 80" aria-hidden="true">
+                      <circle class="ring-track" cx="40" cy="40" r="34"/>
+                      <circle class="ring-value" id="ov-progress-circle" cx="40" cy="40" r="34"/>
+                    </svg>
+                    <span id="ov-percent">0%</span>
+                  </div>
+                  <div class="day-summary-text">
+                    <p id="ov-status"></p>
+                    <span id="ov-count" class="muted"></span>
+                  </div>
+                </div>
+<div class="mini-stats">
+                  <button type="button" class="mini-stat tab-trigger-btn" data-target-tab="progress-tab">
+                    <b id="brief-yesterday-score">–</b><span data-i18n="brief_yesterday_score">Yesterday's Routine</span>
+                  </button>
+                  <button type="button" class="mini-stat tab-trigger-btn" data-target-tab="finance-tab">
+                    <b id="brief-yesterday-spending">–</b><span data-i18n="brief_yesterday_spend">Yesterday's Spending</span>
+                  </button>
+                  <button type="button" class="mini-stat tab-trigger-btn" data-target-tab="calendar-tab">
+                    <b id="brief-today-events">0</b><span data-i18n="brief_today_events">Today's Events</span>
+                  </button>
+                </div>
+                <button type="button" class="btn btn-primary btn-block tab-trigger-btn" data-target-tab="today-tab">
+                  <span data-i18n="ov_go_routines">Mark routines</span>
+                  <svg class="icon chevron"><use href="#i-chevron-end"/></svg>
+                </button>
+              </div>
+            </section>
+
+            <!-- This week -->
+            <section class="today-section today-section--week">
+              <div class="section-head">
+                <h2 data-i18n="section_week">This week</h2>
+                <span class="section-count" id="week-avg"></span>
+              </div>
+              <div class="card week-card">
+                <div class="week-strip" id="week-strip"></div>
+              </div>
+            </section>
+
+            <!-- This month at a glance -->
+            <section class="today-section today-section--month">
+              <div class="section-head">
+                <h2 data-i18n="section_month">This month</h2>
+                <button type="button" class="link-btn tab-trigger-btn" data-target-tab="progress-tab" data-i18n="see_all">See all</button>
+              </div>
+              <div class="card month-card">
+                <div class="mini-stats mini-stats--2">
+                  <div class="mini-stat"><b id="ov-month-avg">–</b><span data-i18n="analytics_kpi_avg">Average daily score</span></div>
+                  <div class="mini-stat"><b id="ov-month-perfect">–</b><span data-i18n="analytics_kpi_perfect">Perfect days</span></div>
+                  <div class="mini-stat mini-stat--good"><b id="ov-month-top">–</b><span data-i18n="analytics_kpi_top">Most consistent</span></div>
+                  <div class="mini-stat mini-stat--warn"><b id="ov-month-focus">–</b><span data-i18n="analytics_kpi_focus">Needs attention</span></div>
+                </div>
+              </div>
+            </section>
+
+            <!-- Verse of the day, with an excerpt of Tafsir Ibn Kathir -->
+            <section class="today-section today-section--verse">
+              <div class="section-head">
+                <h2 data-i18n="section_verse">Verse of the day</h2>
+              </div>
+              <figure class="card ayah">
+                <blockquote id="ayah-arabic" lang="ar" dir="rtl"></blockquote>
+                <p id="ayah-translation"></p>
+                <figcaption id="ayah-source"></figcaption>
+                <div class="tafsir" lang="ar" dir="rtl">
+                  <span class="tafsir-label">تفسير ابن كثير</span>
+                  <p id="ayah-tafsir"></p>
+                </div>
+              </figure>
+            </section>
+
+            <!-- Hadith of the day -->
+            <section class="today-section today-section--hadith">
+              <div class="section-head">
+                <h2 data-i18n="section_hadith">Hadith of the day</h2>
+              </div>
+              <figure class="card hadith">
+                <blockquote id="hadith-text"></blockquote>
+                <details class="hadith-original" id="hadith-original">
+                  <summary data-i18n="hadith_show_arabic">Arabic text</summary>
+                  <p id="hadith-arabic" lang="ar" dir="rtl"></p>
+                </details>
+                <figcaption id="hadith-source"></figcaption>
+              </figure>
+            </section>
+
+            <!-- Latest Mind Log entry -->
+            <section class="today-section today-section--journal">
+              <div class="section-head">
+                <h2 data-i18n="section_last_journal">Latest journal</h2>
+                <button type="button" class="link-btn tab-trigger-btn" data-target-tab="journal-tab" data-i18n="ov_open_journal">Write</button>
+              </div>
+              <div class="card last-journal" id="ov-journal"></div>
+            </section>
+
+            <!-- Agenda for the selected day -->
+            <section class="today-section today-section--agenda">
+              <div class="section-head">
+                <h2 data-i18n="today_agenda_title">Agenda</h2>
+                <button type="button" class="link-btn tab-trigger-btn" data-target-tab="calendar-tab" data-i18n="today_agenda_open">Open</button>
+              </div>
+              <div class="card agenda-card">
+                <ul class="agenda-list" id="today-agenda-list"></ul>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <!-- ================= ROUTINES (checklist) ================= -->
+        <section id="today-tab" class="tab-pane">
+          <!-- One flow of cards: a single column on phones, balanced columns on wider screens -->
+          <div class="today-flow">
+            <!-- Day navigator and progress for the day being marked -->
+            <section class="today-section today-section--summary">
+              <div class="section-head">
+                <h2 data-i18n="section_day">Day</h2>
               </div>
               <div class="card day-card" id="day-card">
                 <div class="day-nav">
@@ -168,18 +300,6 @@
                     <span id="day-count-text" class="muted"></span>
                   </div>
                   <button id="today-btn" class="btn btn-secondary btn-sm" data-i18n="focus_today">Today</button>
-                </div>
-
-                <div class="mini-stats">
-                  <button type="button" class="mini-stat tab-trigger-btn" data-target-tab="progress-tab">
-                    <b id="brief-yesterday-score">–</b><span data-i18n="brief_yesterday_score">Yesterday's Routine</span>
-                  </button>
-                  <button type="button" class="mini-stat tab-trigger-btn" data-target-tab="finance-tab">
-                    <b id="brief-yesterday-spending">–</b><span data-i18n="brief_yesterday_spend">Yesterday's Spending</span>
-                  </button>
-                  <button type="button" class="mini-stat tab-trigger-btn" data-target-tab="calendar-tab">
-                    <b id="brief-today-events">0</b><span data-i18n="brief_today_events">Today's Events</span>
-                  </button>
                 </div>
               </div>
             </section>
@@ -286,58 +406,6 @@
             </div>
             </section>
 
-            <!-- This week -->
-            <section class="today-section today-section--week">
-              <div class="section-head">
-                <h2 data-i18n="section_week">This week</h2>
-                <span class="section-count" id="week-avg"></span>
-              </div>
-              <div class="card week-card">
-                <div class="week-strip" id="week-strip"></div>
-              </div>
-            </section>
-
-            <!-- Verse of the day, with an excerpt of Tafsir Ibn Kathir -->
-            <section class="today-section today-section--verse">
-              <div class="section-head">
-                <h2 data-i18n="section_verse">Verse of the day</h2>
-              </div>
-              <figure class="card ayah">
-                <blockquote id="ayah-arabic" lang="ar" dir="rtl"></blockquote>
-                <p id="ayah-translation"></p>
-                <figcaption id="ayah-source"></figcaption>
-                <div class="tafsir" lang="ar" dir="rtl">
-                  <span class="tafsir-label">تفسير ابن كثير</span>
-                  <p id="ayah-tafsir"></p>
-                </div>
-              </figure>
-            </section>
-
-            <!-- Hadith of the day -->
-            <section class="today-section today-section--hadith">
-              <div class="section-head">
-                <h2 data-i18n="section_hadith">Hadith of the day</h2>
-              </div>
-              <figure class="card hadith">
-                <blockquote id="hadith-text"></blockquote>
-                <details class="hadith-original" id="hadith-original">
-                  <summary data-i18n="hadith_show_arabic">Arabic text</summary>
-                  <p id="hadith-arabic" lang="ar" dir="rtl"></p>
-                </details>
-                <figcaption id="hadith-source"></figcaption>
-              </figure>
-            </section>
-
-            <!-- Agenda for the selected day -->
-            <section class="today-section today-section--agenda">
-              <div class="section-head">
-                <h2 data-i18n="today_agenda_title">Agenda</h2>
-                <button type="button" class="link-btn tab-trigger-btn" data-target-tab="calendar-tab" data-i18n="today_agenda_open">Open</button>
-              </div>
-              <div class="card agenda-card">
-                <ul class="agenda-list" id="today-agenda-list"></ul>
-              </div>
-            </section>
           </div>
         </section>
 
@@ -703,11 +771,11 @@
 
     <!-- Mobile tab bar -->
     <nav class="tabbar">
-      <button class="tab-btn active" data-tab="today-tab"><svg class="icon"><use href="#i-today"/></svg><span data-i18n="nav_today">Today</span></button>
+      <button class="tab-btn active" data-tab="overview-tab"><svg class="icon"><use href="#i-today"/></svg><span data-i18n="nav_overview">Overview</span></button>
+      <button class="tab-btn" data-tab="today-tab"><svg class="icon"><use href="#i-check"/></svg><span data-i18n="nav_routines">Routines</span></button>
       <button class="tab-btn" data-tab="progress-tab"><svg class="icon"><use href="#i-progress"/></svg><span data-i18n="nav_progress">Progress</span></button>
       <button class="tab-btn" data-tab="journal-tab"><svg class="icon"><use href="#i-journal"/></svg><span data-i18n="nav_journal_short">Journal</span></button>
       <button class="tab-btn" data-tab="finance-tab"><svg class="icon"><use href="#i-finance"/></svg><span data-i18n="nav_finance_short">Finance</span></button>
-      <button class="tab-btn" data-tab="settings-tab"><svg class="icon"><use href="#i-more"/></svg><span data-i18n="nav_more">More</span></button>
     </nav>
   </div>
 
@@ -835,6 +903,6 @@
   </div>
 
   <script src="daily.js?v=1" defer></script>
-  <script src="app.js?v=5.4" defer></script>
+  <script src="app.js?v=5.6" defer></script>
 </body>
 </html>

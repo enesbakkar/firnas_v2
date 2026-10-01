@@ -426,11 +426,9 @@ const TRANSLATIONS = {
     backup_invalid: "This is not a valid Horizon backup.",
     backup_confirm: "Replace current data with this backup?\n\nDays: {days}\nJournal entries: {journal}\nTransactions: {transactions}\nEvents: {events}\n\nYour current data is kept so you can undo.",
     backup_undo_confirm: "Return to the data you had before the last restore?",
-    nav_today: "Today",
     nav_progress: "Progress",
     nav_journal_short: "Journal",
     nav_finance_short: "Finance",
-    nav_more: "More",
     auth_toggle: "Show or hide passcode",
     day_prev: "Previous day",
     day_next: "Next day",
@@ -508,7 +506,15 @@ const TRANSLATIONS = {
     section_verse: "Verse of the day",
     section_hadith: "Hadith of the day",
     hadith_show_arabic: "Arabic text",
-    hadith_source: "Al-Nawawi's Forty Hadith, no. {no} · {source}"
+    hadith_source: "Al-Nawawi's Forty Hadith, no. {no} · {source}",
+    nav_overview: "Overview",
+    nav_routines: "Routines",
+    section_day: "Day",
+    ov_go_routines: "Mark today's routines",
+    section_month: "This month",
+    section_last_journal: "Latest journal",
+    see_all: "See all",
+    ov_open_journal: "Write"
   },
   tr: {
     nav_journal: "Günlük",
@@ -647,8 +653,8 @@ const TRANSLATIONS = {
     inspire_solid: "İyi gidiyor. Devam et.",
     inspire_small: "Güzel başlangıç. Küçük adımlar birikir.",
     inspire_welcome: "Güne ilk rutinini işaretleyerek başla.",
-    kpi_top_none: "Henüz Yok",
-    kpi_focus_none: "Henüz Yok",
+    kpi_top_none: "Henüz yok",
+    kpi_focus_none: "Henüz yok",
     fin_subtab_daily: "Günlük",
     fin_subtab_calendar: "Takvim",
     fin_subtab_summary: "İstatistik",
@@ -695,11 +701,9 @@ const TRANSLATIONS = {
     backup_invalid: "Bu geçerli bir Horizon yedeği değil.",
     backup_confirm: "Mevcut veriler bu yedekle değiştirilsin mi?\n\nGün: {days}\nGünlük kaydı: {journal}\nİşlem: {transactions}\nEtkinlik: {events}\n\nMevcut verileriniz saklanır, geri alabilirsiniz.",
     backup_undo_confirm: "Son geri yüklemeden önceki verilere dönülsün mü?",
-    nav_today: "Bugün",
     nav_progress: "İlerleme",
     nav_journal_short: "Günlük",
     nav_finance_short: "Finans",
-    nav_more: "Daha",
     auth_toggle: "Şifreyi göster veya gizle",
     day_prev: "Önceki gün",
     day_next: "Sonraki gün",
@@ -777,7 +781,15 @@ const TRANSLATIONS = {
     section_verse: "Günün âyeti",
     section_hadith: "Günün hadisi",
     hadith_show_arabic: "Arapça metin",
-    hadith_source: "Nevevî, Kırk Hadis, No. {no} · {source}"
+    hadith_source: "Nevevî, Kırk Hadis, No. {no} · {source}",
+    nav_overview: "Özet",
+    nav_routines: "Rutinler",
+    section_day: "Gün",
+    ov_go_routines: "Rutinleri işaretle",
+    section_month: "Bu ay",
+    section_last_journal: "Son günlük",
+    see_all: "Tümü",
+    ov_open_journal: "Yaz"
   },
   ar: {
     nav_journal: "اليوميات",
@@ -959,11 +971,9 @@ const TRANSLATIONS = {
     backup_invalid: "هذه ليست نسخة احتياطية صالحة من Horizon.",
     backup_confirm: "هل تريد استبدال البيانات الحالية بهذه النسخة؟\n\nالأيام: {days}\nاليوميات: {journal}\nالمعاملات: {transactions}\nالأحداث: {events}\n\nستُحفظ بياناتك الحالية ويمكنك التراجع.",
     backup_undo_confirm: "هل تريد العودة إلى البيانات السابقة لآخر استعادة؟",
-    nav_today: "اليوم",
     nav_progress: "التقدّم",
     nav_journal_short: "اليوميات",
     nav_finance_short: "المالية",
-    nav_more: "المزيد",
     auth_toggle: "إظهار أو إخفاء الرمز",
     day_prev: "اليوم السابق",
     day_next: "اليوم التالي",
@@ -1046,7 +1056,15 @@ const TRANSLATIONS = {
     section_verse: "آية اليوم",
     section_hadith: "حديث اليوم",
     hadith_show_arabic: "النص العربي",
-    hadith_source: "الأربعون النووية، الحديث {no} · {source}"
+    hadith_source: "الأربعون النووية، الحديث {no} · {source}",
+    nav_overview: "الملخص",
+    nav_routines: "العادات",
+    section_day: "اليوم",
+    ov_go_routines: "سجّل عادات اليوم",
+    section_month: "هذا الشهر",
+    section_last_journal: "آخر يومية",
+    see_all: "عرض الكل",
+    ov_open_journal: "اكتب"
   }
 };
 
@@ -2446,14 +2464,10 @@ const UIController = {
     document.querySelectorAll('.tab-btn').forEach(b => {
       b.classList.toggle('active', b.getAttribute('data-tab') === targetTab);
     });
-    // On mobile the calendar is reached through "More".
-    if (targetTab === 'calendar-tab') {
-      document.querySelectorAll('.tabbar .tab-btn[data-tab="settings-tab"]').forEach(b => b.classList.add('active'));
-    }
     this.dom.tabPanes.forEach(pane => pane.classList.toggle('active-pane', pane.id === targetTab));
     window.scrollTo(0, 0);
 
-    if (targetTab === 'today-tab') {
+    if (targetTab === 'overview-tab' || targetTab === 'today-tab') {
       this.renderToday();
     } else if (targetTab === 'progress-tab') {
       this.renderNotionGrid();
@@ -2540,9 +2554,20 @@ const UIController = {
     else if (percentage >= 70) message = dict.inspire_almost;
     else if (percentage >= 40) message = dict.inspire_solid;
     else if (percentage > 0) message = dict.inspire_small;
+    const countText = dict.day_count.replace('{done}', done).replace('{total}', ROUTINE_KEYS.length);
     document.getElementById('daily-status-inspirational').textContent = message;
-    document.getElementById('day-count-text').textContent =
-      dict.day_count.replace('{done}', done).replace('{total}', ROUTINE_KEYS.length);
+    document.getElementById('day-count-text').textContent = countText;
+
+    // The overview page shows the same progress
+    const ovCircle = document.getElementById('ov-progress-circle');
+    if (ovCircle) {
+      ovCircle.style.strokeDasharray = `${circ} ${circ}`;
+      ovCircle.style.strokeDashoffset = circ - (percentage / 100) * circ;
+      ovCircle.classList.toggle('is-perfect', percentage === 100);
+      document.getElementById('ov-percent').textContent = `${percentage}%`;
+      document.getElementById('ov-status').textContent = message;
+      document.getElementById('ov-count').textContent = countText;
+    }
 
     this.updateSectionCounts(dayData);
     this.renderWeek();
@@ -2580,6 +2605,51 @@ const UIController = {
     }
     const avg = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : 0;
     document.getElementById('week-avg').textContent = dict.week_avg.replace('{n}', avg);
+  },
+
+  // Current month at a glance on the overview (same figures as Progress, up to today).
+  renderMonthSummary() {
+    const avgEl = document.getElementById('ov-month-avg');
+    if (!avgEl) return;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const todayKey = formatDateKey(STATE.todayDate);
+    const days = CalendarEngine.getDaysInMonth(STATE.todayDate.getFullYear(), STATE.todayDate.getMonth())
+      .filter(d => formatDateKey(d) <= todayKey);
+    const counts = {};
+    ROUTINE_KEYS.forEach(k => { counts[k] = 0; });
+    let total = 0, perfect = 0;
+    days.forEach(d => {
+      const data = STATE.db[formatDateKey(d)] || {};
+      const pct = StreakEngine.calculateDailyPercentage(data);
+      total += pct;
+      if (pct === 100) perfect++;
+      ROUTINE_KEYS.forEach(k => { if (data[k] === true) counts[k]++; });
+    });
+    const n = days.length || 1;
+    const ranked = ROUTINE_KEYS.map(k => ({ k, pct: Math.round((counts[k] / n) * 100) })).sort((a, b) => b.pct - a.pct);
+    const name = k => dict[`habit_${k}_title`] || HABIT_DISPLAY_NAMES[k];
+    avgEl.textContent = `${Math.round(total / n)}%`;
+    document.getElementById('ov-month-perfect').textContent = `${perfect} / ${days.length}`;
+    const any = ranked[0].pct > 0;
+    document.getElementById('ov-month-top').textContent = any ? `${name(ranked[0].k)} (${ranked[0].pct}%)` : dict.kpi_top_none;
+    const low = ranked[ranked.length - 1];
+    document.getElementById('ov-month-focus').textContent = any ? `${name(low.k)} (${low.pct}%)` : dict.kpi_focus_none;
+  },
+
+  // Most recent Mind Log entry up to the selected day.
+  renderLastJournal() {
+    const box = document.getElementById('ov-journal');
+    if (!box) return;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const activeKey = formatDateKey(STATE.activeDate);
+    const key = Object.keys(STATE.journal).filter(k => k <= activeKey).sort().pop();
+    if (!key) {
+      box.innerHTML = `<p class="empty-state">${dict.journal_empty}</p>`;
+      return;
+    }
+    const entry = STATE.journal[key];
+    const date = parseDateKey(key).toLocaleDateString(appLocale(), { weekday: 'long', day: 'numeric', month: 'long' });
+    box.innerHTML = `<div class="last-journal-head"><span>${escapeHTML(date)}</span><span aria-hidden="true">${escapeHTML(entry.mood || '')}</span></div><p>${escapeHTML(entry.content || '')}</p>`;
   },
 
   // Events of the selected day, shown on Today.
@@ -3293,6 +3363,8 @@ const UIController = {
   renderToday() {
     const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
     const lang = STATE.language;
+    document.getElementById('ov-date').textContent = CalendarEngine.getGregorianString(STATE.activeDate);
+    document.getElementById('ov-hijri').textContent = CalendarEngine.getHijriString(STATE.activeDate);
     const verse = dailyItem(typeof DAILY_VERSES !== 'undefined' ? DAILY_VERSES : null, STATE.activeDate);
     if (verse) {
       document.getElementById('ayah-arabic').textContent = verse.arabic;
@@ -3331,6 +3403,8 @@ const UIController = {
     const todayKey = formatDateKey(STATE.todayDate);
     document.getElementById('brief-today-events').textContent = STATE.calendar.filter(e => e.date === todayKey).length;
     this.renderTodayAgenda();
+    this.renderMonthSummary();
+    this.renderLastJournal();
   },
 
 

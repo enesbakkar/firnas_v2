@@ -310,14 +310,29 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .topbar .brand-mark { width: 32px; height: 32px; border-radius: 10px; }
 .topbar .brand-mark .icon { width: 18px; height: 18px; }
 
-.topbar-streaks { display: flex; gap: 6px; }
-.streak-pill {
+.topbar-actions { display: flex; align-items: center; gap: 4px; }
+.topbar-btn {
+  display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 12px;
+  color: var(--bar-text); background: transparent;
+}
+.topbar-btn:hover, .topbar-btn.active { background: var(--bar-hover); }
+.topbar-btn .icon { width: 21px; height: 21px; }
+.streak-chip, .streak-pill {
   display: inline-flex; align-items: center; gap: 5px; padding: 5px 10px; border-radius: 999px;
   background: var(--bar-hover); font-size: 0.85rem; font-weight: 700;
 }
-.streak-pill .icon { width: 15px; height: 15px; }
-.streak-pill--current .icon { color: #ffb454; }
-.streak-pill--best .icon { color: #7dd3e8; }
+.streak-pill .icon, .streak-chip .icon { width: 15px; height: 15px; }
+.streak-pill--current .icon, .streak-chip--current .icon { color: #f59e0b; }
+.streak-pill--best .icon, .streak-chip--best .icon { color: var(--accent-text); }
+.streak-chip { background: var(--surface-2); color: var(--text); }
+
+.overview-card { display: grid; gap: 14px; }
+.overview-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.overview-date strong { display: block; font-family: var(--font-display); font-size: 1.1rem; font-weight: 600; }
+.overview-date span { font-size: 0.85rem; color: var(--accent-text); font-weight: 500; }
+.overview-streaks { display: flex; gap: 6px; flex: none; }
+.overview-card .btn .chevron { width: 18px; height: 18px; }
+[dir="rtl"] .overview-card .btn .chevron { transform: scaleX(-1); }
 
 .content {
   padding: 16px;
@@ -377,6 +392,16 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 }
 .mini-stat b { font-size: 1rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mini-stat span { font-size: 0.72rem; color: var(--muted); line-height: 1.25; }
+.mini-stats--2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mini-stat--good b { color: var(--success); font-size: 0.9rem; white-space: normal; }
+.mini-stat--warn b { color: var(--warn); font-size: 0.9rem; white-space: normal; }
+.month-card { padding: 12px; }
+
+.last-journal { display: grid; gap: 6px; }
+.last-journal-head { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; color: var(--muted); font-weight: 600; }
+.last-journal-head span:last-child { font-size: 1.25rem; }
+.last-journal p { font-size: 0.92rem; line-height: 1.55; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.last-journal .empty-state { padding: 8px 0; }
 
 .ayah { text-align: center; display: grid; gap: 8px; }
 .ayah blockquote { font-family: var(--font-quran); font-size: 1.6rem; line-height: 1.9; }
@@ -762,7 +787,14 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 /* ================= PHONE & SMALL TABLET ================= */
 @media (max-width: 1023px) {
   /* Cards from both Today columns become one list, ordered by what is used most */
-  .today-section--summary > .section-head { display: none; }
+  .today-section--summary > .section-head, .today-section--overview > .section-head { display: none; }
+  .today-section--overview { order: 1; }
+  .today-section--verse { order: 2; }
+  .today-section--hadith { order: 3; }
+  .today-section--week { order: 4; }
+  .today-section--month { order: 5; }
+  .today-section--journal { order: 6; }
+  .today-section--agenda { order: 7; }
 
   .day-card { gap: 12px; padding: 14px; }
   .ring { width: 60px; height: 60px; }
@@ -863,7 +895,6 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 @media (min-width: 1440px) {
   .content { padding-inline: 44px; }
   /* Prayers | other sections | day summary */
-  .today-flow { column-count: 3; }
   .split { gap: 24px; }
   .accounts-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 }
