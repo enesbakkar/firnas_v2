@@ -178,117 +178,12 @@ const STATE = {
   language: 'en' // Default starting language
 };
 
-// ================= SPIRITUAL BRIEFINGS =================
-const AYAHS = [
-  { 
-    arabic: "فَإِنَّ مَعَ الْعُسْرِ يُسْرًا", 
-    tr: '"Şüphesiz güçlükle beraber bir kolaylık vardır."', 
-    en: "\"Indeed, with hardship comes ease.\"",
-    tafsir: 'فإن مع الضيق والشدة فرجاً ومخرجاً ويسراً عظيماً',
-    ar: '"فإن مع العسر يسراً"',
-    source_tr: "İnşirâh Suresi, 5. Ayet",
-    source_en: "Surah Al-Inshirah, Verse 5",
-    source_ar: "سورة الشرح، الآية ٥"
-  },
-  { 
-    arabic: "لَا يُكَلِّفُ اللَّهُ نَفْسًا إِلَّا وُسْعَهَا", 
-    tr: '"Allah, hiç kimseye gücünün üstünde bir yük yüklemez."', 
-    en: "\"Allah does not burden any soul beyond what it can bear.\"",
-    tafsir: 'لا يطالب الله نفساً من التكاليف إلا بما تطيقه وتسعد به',
-    ar: '"لا يكلف الله نفساً إلا وسعها"',
-    source_tr: "Bakara Suresi, 286. Ayet",
-    source_en: "Surah Al-Baqarah, Verse 286",
-    source_ar: "سورة البقرة، الآية ٢٨٦"
-  },
-  { 
-    arabic: "مَا وَدَّعَكَ رَبُّكَ وَمَا قَلَىٰ", 
-    tr: '"Rabbin seni terk etmedi ve sana darılmadı."', 
-    en: "\"Your Lord has not forsaken you, nor is He displeased.\"",
-    tafsir: 'ما تركك ربك يا محمد وما أبغضك منذ اختارك لرسالته',
-    ar: '"ما ودعك ربك وما قلى"',
-    source_tr: "Duhâ Suresi, 3. Ayet",
-    source_en: "Surah Ad-Duha, Verse 3",
-    source_ar: "سورة الضحى، الآية ٣"
-  },
-  { 
-    arabic: "وَأَن لَّيْسَ لِلْإِنسَانِ إِلَّا مَا سَعَىٰ", 
-    tr: '"İnsan için ancak çalıştığının karşılığı vardır."', 
-    en: "\"A person will have only what they strive for.\"",
-    tafsir: 'ليس للإنسان من الثواب والأجر إلا ما سعى وعمل بنفسه',
-    ar: '"وأن ليس للإنسان إلا ما سعى"',
-    source_tr: "Necm Suresi, 39. Ayet",
-    source_en: "Surah An-Najm, Verse 39",
-    source_ar: "سورة النجم، الآية ٣٩"
-  },
-  { 
-    arabic: "وَمَا تَوْفِيقِي إِلَّا بِاللَّهِ عَلَيْهِ تَوَكَّلْتُ", 
-    tr: '"Benim başarım ancak Allah\'ın yardımıyladır. Yalnız O\'na tevekkül ettim."', 
-    en: "\"My success comes only through Allah. In Him I put my trust.\"",
-    tafsir: 'وما توفيقي لإصابة الحق والعمل الصالح إلا بمعونة الله وتوفيقه',
-    ar: '"وما توفيقي إلا بالله عليه توكلت"',
-    source_tr: "Hûd Suresi, 88. Ayet",
-    source_en: "Surah Hud, Verse 88",
-    source_ar: "سورة هود، الآية ٨٨"
-  },
-  { 
-    arabic: "وَاصْبِرْ فَإِنَّ اللَّهَ لَا يُضِيعُ أَجْرَ الْمُحْسِنِينَ", 
-    tr: '"Sabret! Çünkü Allah iyilik yapanların mükafatını zayi etmez."', 
-    en: "\"Be patient, for Allah does not let the reward of those who do good go to waste.\"",
-    tafsir: 'واصبر على الطاعات وعن المحرمات، فإن الله لا يضيع ثواب المحسنين',
-    ar: '"واصبر فإن الله لا يضيع أجر المحسنين"',
-    source_tr: "Hûd Suresi, 115. Ayet",
-    source_en: "Surah Hud, Verse 115",
-    source_ar: "سورة هود، الآية ١١٥"
-  },
-  { 
-    arabic: "أَلَا بِذِكْرِ اللَّهِ تَطْمَئِنُّ الْقُلُوبُ", 
-    tr: '"Bilesiniz ki, kalpler ancak Allah\'ı anmakla huzur bulur."', 
-    en: "\"Surely, in the remembrance of Allah do hearts find rest.\"",
-    tafsir: 'ألا بذكر الله وطاعته تسكن القلوب وتزول وحشتها وحيرتها',
-    ar: '"ألا بذكر الله تطمئن القلوب"',
-    source_tr: "Ra\'d Suresi, 28. Ayet",
-    source_en: "Surah Ar-Ra'd, Verse 28",
-    source_ar: "سورة الرعد، الآية ٢٨"
-  },
-  { 
-    arabic: "لَئِن شَكَرْتُمْ لَأَزِيدَنَّكُمْ", 
-    tr: '"Eğer şükrederseniz, elbette size (nimetimi) artırırım."', 
-    en: "\"If you are grateful, I will surely give you more.\"",
-    tafsir: 'لئن شكرتم الله على نعمه لأزيدنكم من فضله وإحسانه',
-    ar: '"لئن شكرتم لأزيدنكم"',
-    source_tr: "İbrâhîm Suresi, 7. Ayet",
-    source_en: "Surah Ibrahim, Verse 7",
-    source_ar: "سورة إبراهيم، الآية ٧"
-  },
-  { 
-    arabic: "ادْعُونِي أَسْتَجِبْ لَكُمْ", 
-    tr: '"Bana dua edin, size icabet edeyim."', 
-    en: "\"Call upon Me and I will answer you.\"",
-    tafsir: 'اعبدوني وأخلصوا لي العبادة، واستعينوا بي أستجب لكم وأعطكم مرادكم',
-    ar: '"ادعوني أستجب لكم"',
-    source_tr: "Mü\'min Suresi, 60. Ayet",
-    source_en: "Surah Ghafir, Verse 60",
-    source_ar: "سورة غافر، الآية ٦٠"
-  },
-  { 
-    arabic: "إِنَّ اللَّهَ مَعَ الصَّابِرِينَ", 
-    tr: '"Şüphesiz Allah sabredenlerle beraberdir."', 
-    en: "\"Indeed, Allah is with the patient.\"",
-    tafsir: 'إن الله مع الصابرين بالمعونة والتسديد والتأييد في دنياهم وأخراهم',
-    ar: '"إن الله مع الصابرين"',
-    source_tr: "Bakara Suresi, 153. Ayet",
-    source_en: "Surah Al-Baqarah, Verse 153",
-    source_ar: "سورة البقرة، الآية ١٥٣"
-  }
-];
-
-function getAyahOfTheDay(dateKey) {
-  let hash = 0;
-  for (let i = 0; i < dateKey.length; i++) {
-    hash = dateKey.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const idx = Math.abs(hash) % AYAHS.length;
-  return AYAHS[idx];
+// Verse and hadith of the day come from daily.js (DAILY_VERSES, DAILY_HADITHS). The index advances
+// by one every calendar day, so two consecutive days never show the same item.
+function dailyItem(list, date) {
+  if (!Array.isArray(list) || list.length === 0) return null;
+  const dayNumber = Math.floor(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()) / 86400000);
+  return list[dayNumber % list.length];
 }
 
 const ROUTINE_KEYS = [
@@ -608,7 +503,12 @@ const TRANSLATIONS = {
     week_avg: "avg {n}%",
     today_agenda_title: "Agenda",
     today_agenda_open: "Open",
-    sync_short_ok: "Synced"
+    sync_short_ok: "Synced",
+    section_summary: "Summary",
+    section_verse: "Verse of the day",
+    section_hadith: "Hadith of the day",
+    hadith_show_arabic: "Arabic text",
+    hadith_source: "Al-Nawawi's Forty Hadith, no. {no} · {source}"
   },
   tr: {
     nav_journal: "Günlük",
@@ -872,7 +772,12 @@ const TRANSLATIONS = {
     week_avg: "ort. %{n}",
     today_agenda_title: "Program",
     today_agenda_open: "Aç",
-    sync_short_ok: "Eşitlendi"
+    sync_short_ok: "Eşitlendi",
+    section_summary: "Özet",
+    section_verse: "Günün âyeti",
+    section_hadith: "Günün hadisi",
+    hadith_show_arabic: "Arapça metin",
+    hadith_source: "Nevevî, Kırk Hadis, No. {no} · {source}"
   },
   ar: {
     nav_journal: "اليوميات",
@@ -1136,7 +1041,12 @@ const TRANSLATIONS = {
     week_avg: "المعدل {n}%",
     today_agenda_title: "البرنامج",
     today_agenda_open: "فتح",
-    sync_short_ok: "تمت المزامنة"
+    sync_short_ok: "تمت المزامنة",
+    section_summary: "الملخص",
+    section_verse: "آية اليوم",
+    section_hadith: "حديث اليوم",
+    hadith_show_arabic: "النص العربي",
+    hadith_source: "الأربعون النووية، الحديث {no} · {source}"
   }
 };
 
@@ -3381,11 +3291,30 @@ const UIController = {
 
   // Verse of the day and the three quick stats on the Today screen.
   renderToday() {
-    const activeKey = formatDateKey(STATE.activeDate);
-    const ayah = getAyahOfTheDay(activeKey);
-    document.getElementById('ayah-arabic').textContent = ayah.arabic;
-    document.getElementById('ayah-translation').textContent = { tr: ayah.tr, ar: ayah.tafsir }[STATE.language] || ayah.en;
-    document.getElementById('ayah-source').textContent = ayah[`source_${STATE.language}`] || ayah.source_en;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const lang = STATE.language;
+    const verse = dailyItem(typeof DAILY_VERSES !== 'undefined' ? DAILY_VERSES : null, STATE.activeDate);
+    if (verse) {
+      document.getElementById('ayah-arabic').textContent = verse.arabic;
+      const translation = document.getElementById('ayah-translation');
+      translation.textContent = lang === 'tr' ? verse.tr : verse.en;
+      translation.hidden = lang === 'ar'; // Arabic readers get the tafsir below instead
+      document.getElementById('ayah-source').textContent = verse[`source_${lang}`] || verse.source_en;
+      document.getElementById('ayah-tafsir').textContent = verse.tafsir;
+    }
+    const hadith = dailyItem(typeof DAILY_HADITHS !== 'undefined' ? DAILY_HADITHS : null, STATE.activeDate);
+    if (hadith) {
+      const text = document.getElementById('hadith-text');
+      const arabicOnly = lang === 'ar';
+      text.textContent = arabicOnly ? hadith.ar : hadith[lang] || hadith.en;
+      text.classList.toggle('is-arabic', arabicOnly);
+      text.setAttribute('lang', arabicOnly ? 'ar' : lang);
+      text.setAttribute('dir', arabicOnly ? 'rtl' : 'auto');
+      document.getElementById('hadith-original').hidden = arabicOnly;
+      document.getElementById('hadith-arabic').textContent = hadith.ar;
+      document.getElementById('hadith-source').textContent = dict.hadith_source
+        .replace('{no}', hadith.no).replace('{source}', hadith[`source_${lang}`] || hadith.source_en);
+    }
 
     const yesterday = new Date(STATE.todayDate);
     yesterday.setDate(yesterday.getDate() - 1);

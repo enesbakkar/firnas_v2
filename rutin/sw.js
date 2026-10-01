@@ -1,7 +1,7 @@
 // Offline support for the web version. Network first, so a new deploy is picked up on the
 // next load; the cache is only the fallback when there is no connection.
-const CACHE = 'horizon-shell-v1';
-const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'manifest.json', 'icon-192.png', 'icon-512.png'];
+const CACHE = 'horizon-shell-v2';
+const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'daily.js', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));

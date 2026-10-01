@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Amiri:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css?v=5.3">
+  <link rel="stylesheet" href="style.css?v=5.5">
   <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png?v=4.4">
   <link rel="apple-touch-icon" href="icon-192.png?v=4.4">
   <link rel="manifest" href="manifest.json">
@@ -138,10 +138,13 @@
 
         <!-- ================= TODAY ================= -->
         <section id="today-tab" class="tab-pane active-pane">
-          <div class="today-grid">
-
-            <div class="today-side">
-              <!-- Day navigator + progress -->
+          <!-- One flow of cards: a single column on phones, balanced columns on wider screens -->
+          <div class="today-flow">
+            <!-- Summary of the selected day -->
+            <section class="today-section today-section--summary">
+              <div class="section-head">
+                <h2 data-i18n="section_summary">Summary</h2>
+              </div>
               <div class="card day-card" id="day-card">
                 <div class="day-nav">
                   <button id="prev-day-btn" class="icon-btn" data-i18n-aria="day_prev" aria-label="Previous day"><svg class="icon"><use href="#i-chevron-start"/></svg></button>
@@ -179,139 +182,162 @@
                   </button>
                 </div>
               </div>
+            </section>
 
-              <!-- Verse of the day -->
+            <!-- Prayers -->
+            <section class="today-section today-section--prayers">
+            <div class="section-head">
+              <h2 data-i18n="section_prayers">Prayers</h2>
+              <span class="section-count" data-count-keys="fajr_sunnah,fajr_fard,duha_prayer,dhuhr_sunnah1,dhuhr_fard,dhuhr_sunnah2,asr_sunnah,asr_fard,maghrib_fard,maghrib_sunnah,isha_sunnah1,isha_fard,isha_sunnah2,witr_prayer"></span>
+            </div>
+            <div class="card list-card prayers">
+              <div class="prayer-row">
+                <div class="prayer-name"><strong data-i18n="prayer_fajr">Fajr</strong><small class="prayer-status" data-count-keys="fajr_sunnah,fajr_fard"></small></div>
+                <div class="chips">
+                  <label class="chip chip--sunnah"><input type="checkbox" id="fajr-sunnah" class="task-checkbox" data-key="fajr_sunnah" data-i18n-aria="habit_fajr_sunnah_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
+                  <label class="chip chip--fard"><input type="checkbox" id="fajr-fard" class="task-checkbox" data-key="fajr_fard" data-i18n-aria="habit_fajr_fard_title"><span><b>2</b><i data-i18n="abbr_fard">F</i></span></label>
+                </div>
+              </div>
+              <div class="prayer-row">
+                <div class="prayer-name"><strong data-i18n="prayer_duha">Duha</strong><small class="prayer-status" data-count-keys="duha_prayer"></small></div>
+                <div class="chips">
+                  <label class="chip chip--sunnah"><input type="checkbox" id="duha-prayer" class="task-checkbox" data-key="duha_prayer" data-i18n-aria="habit_duha_prayer_title"><span><i data-i18n="abbr_nafl">N</i></span></label>
+                </div>
+              </div>
+              <div class="prayer-row">
+                <div class="prayer-name"><strong data-i18n="prayer_dhuhr">Dhuhr</strong><small class="prayer-status" data-count-keys="dhuhr_sunnah1,dhuhr_fard,dhuhr_sunnah2"></small></div>
+                <div class="chips">
+                  <label class="chip chip--sunnah"><input type="checkbox" id="dhuhr-sunnah1" class="task-checkbox" data-key="dhuhr_sunnah1" data-i18n-aria="habit_dhuhr_sunnah1_title"><span><b>4</b><i data-i18n="abbr_sunnah">S</i></span></label>
+                  <label class="chip chip--fard"><input type="checkbox" id="dhuhr-fard" class="task-checkbox" data-key="dhuhr_fard" data-i18n-aria="habit_dhuhr_fard_title"><span><b>4</b><i data-i18n="abbr_fard">F</i></span></label>
+                  <label class="chip chip--sunnah"><input type="checkbox" id="dhuhr-sunnah2" class="task-checkbox" data-key="dhuhr_sunnah2" data-i18n-aria="habit_dhuhr_sunnah2_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
+                </div>
+              </div>
+              <div class="prayer-row">
+                <div class="prayer-name"><strong data-i18n="prayer_asr">Asr</strong><small class="prayer-status" data-count-keys="asr_sunnah,asr_fard"></small></div>
+                <div class="chips">
+                  <label class="chip chip--sunnah"><input type="checkbox" id="asr-sunnah" class="task-checkbox" data-key="asr_sunnah" data-i18n-aria="habit_asr_sunnah_title"><span><b>4</b><i data-i18n="abbr_sunnah">S</i></span></label>
+                  <label class="chip chip--fard"><input type="checkbox" id="asr-fard" class="task-checkbox" data-key="asr_fard" data-i18n-aria="habit_asr_fard_title"><span><b>4</b><i data-i18n="abbr_fard">F</i></span></label>
+                </div>
+              </div>
+              <div class="prayer-row">
+                <div class="prayer-name"><strong data-i18n="prayer_maghrib">Maghrib</strong><small class="prayer-status" data-count-keys="maghrib_fard,maghrib_sunnah"></small></div>
+                <div class="chips">
+                  <label class="chip chip--fard"><input type="checkbox" id="maghrib-fard" class="task-checkbox" data-key="maghrib_fard" data-i18n-aria="habit_maghrib_fard_title"><span><b>3</b><i data-i18n="abbr_fard">F</i></span></label>
+                  <label class="chip chip--sunnah"><input type="checkbox" id="maghrib-sunnah" class="task-checkbox" data-key="maghrib_sunnah" data-i18n-aria="habit_maghrib_sunnah_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
+                </div>
+              </div>
+              <div class="prayer-row">
+                <div class="prayer-name"><strong data-i18n="prayer_isha">Isha</strong><small class="prayer-status" data-count-keys="isha_sunnah1,isha_fard,isha_sunnah2"></small></div>
+                <div class="chips">
+                  <label class="chip chip--sunnah"><input type="checkbox" id="isha-sunnah1" class="task-checkbox" data-key="isha_sunnah1" data-i18n-aria="habit_isha_sunnah1_title"><span><b>4</b><i data-i18n="abbr_sunnah">S</i></span></label>
+                  <label class="chip chip--fard"><input type="checkbox" id="isha-fard" class="task-checkbox" data-key="isha_fard" data-i18n-aria="habit_isha_fard_title"><span><b>4</b><i data-i18n="abbr_fard">F</i></span></label>
+                  <label class="chip chip--sunnah"><input type="checkbox" id="isha-sunnah2" class="task-checkbox" data-key="isha_sunnah2" data-i18n-aria="habit_isha_sunnah2_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
+                </div>
+              </div>
+              <div class="prayer-row">
+                <div class="prayer-name"><strong data-i18n="prayer_witr">Witr</strong><small class="prayer-status" data-count-keys="witr_prayer"></small></div>
+                <div class="chips">
+                  <label class="chip chip--fard"><input type="checkbox" id="witr-prayer" class="task-checkbox" data-key="witr_prayer" data-i18n-aria="habit_witr_prayer_title"><span><b>3</b><i data-i18n="abbr_wajib">W</i></span></label>
+                </div>
+              </div>
+              <p class="chip-legend" data-i18n="chip_legend">S: Sunnah · F: Fard · W: Wajib · N: Nafl</p>
+            </div>
+
+            </section>
+
+            <!-- Dhikr & Quran -->
+            <section class="today-section today-section--dhikr">
+            <div class="section-head">
+              <h2 data-i18n="section_dhikr">Dhikr &amp; Quran</h2>
+              <span class="section-count" data-count-keys="morning_dhikr,quran_devotion,evening_dhikr"></span>
+            </div>
+            <div class="card list-card">
+              <label class="habit-row"><input type="checkbox" id="morning-dhikr" class="task-checkbox" data-key="morning_dhikr"><span class="check"></span><span class="habit-icon" aria-hidden="true">📿</span><span class="habit-text"><strong data-i18n="habit_morning_dhikr_title">Morning Dhikr</strong><small data-i18n="habit_morning_dhikr_desc">Morning Remembrance</small></span></label>
+              <label class="habit-row"><input type="checkbox" id="quran-devotion" class="task-checkbox" data-key="quran_devotion"><span class="check"></span><span class="habit-icon" aria-hidden="true">📖</span><span class="habit-text"><strong data-i18n="habit_quran_devotion_title">Quran Devotion</strong><small data-i18n="habit_quran_devotion_desc">Daily Wird</small></span></label>
+              <label class="habit-row"><input type="checkbox" id="evening-dhikr" class="task-checkbox" data-key="evening_dhikr"><span class="check"></span><span class="habit-icon" aria-hidden="true">📿</span><span class="habit-text"><strong data-i18n="habit_evening_dhikr_title">Evening Dhikr</strong><small data-i18n="habit_evening_dhikr_desc">Evening Remembrance</small></span></label>
+            </div>
+
+            </section>
+
+            <!-- Growth -->
+            <section class="today-section today-section--growth">
+            <div class="section-head">
+              <h2 data-i18n="section_growth">Growth</h2>
+              <span class="section-count" data-count-keys="intellectual_growth,physical_training,nutritional_fuel,horizon_sync"></span>
+            </div>
+            <div class="card list-card">
+              <label class="habit-row"><input type="checkbox" id="intellectual-growth" class="task-checkbox" data-key="intellectual_growth"><span class="check"></span><span class="habit-icon" aria-hidden="true">📚</span><span class="habit-text"><strong data-i18n="habit_intellectual_growth_title">Intellectual Growth</strong><small data-i18n="habit_intellectual_growth_desc">Book Reading</small></span></label>
+              <label class="habit-row"><input type="checkbox" id="physical-training" class="task-checkbox" data-key="physical_training"><span class="check"></span><span class="habit-icon" aria-hidden="true">🏋️</span><span class="habit-text"><strong data-i18n="habit_physical_training_title">Physical Training</strong><small data-i18n="habit_physical_training_desc">Workout / Sport</small></span></label>
+              <label class="habit-row"><input type="checkbox" id="nutritional-fuel" class="task-checkbox" data-key="nutritional_fuel"><span class="check"></span><span class="habit-icon" aria-hidden="true">🍳</span><span class="habit-text"><strong data-i18n="habit_nutritional_fuel_title">Nutritional Fuel</strong><small data-i18n="habit_nutritional_fuel_desc">Healthy Breakfast</small></span></label>
+              <label class="habit-row"><input type="checkbox" id="horizon-sync" class="task-checkbox" data-key="horizon_sync"><span class="check"></span><span class="habit-icon" aria-hidden="true">🎯</span><span class="habit-text"><strong data-i18n="habit_horizon_sync_title">Horizon Sync</strong><small data-i18n="habit_horizon_sync_desc">Daily Planning</small></span></label>
+            </div>
+
+            </section>
+
+            <!-- Day close -->
+            <section class="today-section today-section--close">
+            <div class="section-head">
+              <h2 data-i18n="section_close">Day Close</h2>
+              <span class="section-count" data-count-keys="mind_log,fin_flow"></span>
+            </div>
+            <div class="card list-card">
+              <label class="habit-row"><input type="checkbox" id="mind-log" class="task-checkbox" data-key="mind_log"><span class="check"></span><span class="habit-icon" aria-hidden="true">📝</span><span class="habit-text"><strong data-i18n="habit_mind_log_title">Mind Log</strong><small data-i18n="habit_mind_log_desc">Daily Journaling Complete</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
+              <label class="habit-row"><input type="checkbox" id="fin-flow" class="task-checkbox" data-key="fin_flow"><span class="check"></span><span class="habit-icon" aria-hidden="true">💰</span><span class="habit-text"><strong data-i18n="habit_fin_flow_title">FinFlow</strong><small data-i18n="habit_fin_flow_desc">Daily Expenses Logged</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
+            </div>
+            </section>
+
+            <!-- This week -->
+            <section class="today-section today-section--week">
+              <div class="section-head">
+                <h2 data-i18n="section_week">This week</h2>
+                <span class="section-count" id="week-avg"></span>
+              </div>
+              <div class="card week-card">
+                <div class="week-strip" id="week-strip"></div>
+              </div>
+            </section>
+
+            <!-- Verse of the day, with an excerpt of Tafsir Ibn Kathir -->
+            <section class="today-section today-section--verse">
+              <div class="section-head">
+                <h2 data-i18n="section_verse">Verse of the day</h2>
+              </div>
               <figure class="card ayah">
                 <blockquote id="ayah-arabic" lang="ar" dir="rtl"></blockquote>
                 <p id="ayah-translation"></p>
                 <figcaption id="ayah-source"></figcaption>
-              </figure>
-
-              <!-- Agenda for the selected day -->
-              <div class="card agenda-card">
-                <div class="card-head card-head--row">
-                  <h2 data-i18n="today_agenda_title">Agenda</h2>
-                  <button type="button" class="btn btn-secondary btn-sm tab-trigger-btn" data-target-tab="calendar-tab" data-i18n="today_agenda_open">Open</button>
+                <div class="tafsir" lang="ar" dir="rtl">
+                  <span class="tafsir-label">تفسير ابن كثير</span>
+                  <p id="ayah-tafsir"></p>
                 </div>
+              </figure>
+            </section>
+
+            <!-- Hadith of the day -->
+            <section class="today-section today-section--hadith">
+              <div class="section-head">
+                <h2 data-i18n="section_hadith">Hadith of the day</h2>
+              </div>
+              <figure class="card hadith">
+                <blockquote id="hadith-text"></blockquote>
+                <details class="hadith-original" id="hadith-original">
+                  <summary data-i18n="hadith_show_arabic">Arabic text</summary>
+                  <p id="hadith-arabic" lang="ar" dir="rtl"></p>
+                </details>
+                <figcaption id="hadith-source"></figcaption>
+              </figure>
+            </section>
+
+            <!-- Agenda for the selected day -->
+            <section class="today-section today-section--agenda">
+              <div class="section-head">
+                <h2 data-i18n="today_agenda_title">Agenda</h2>
+                <button type="button" class="link-btn tab-trigger-btn" data-target-tab="calendar-tab" data-i18n="today_agenda_open">Open</button>
+              </div>
+              <div class="card agenda-card">
                 <ul class="agenda-list" id="today-agenda-list"></ul>
               </div>
-            </div>
-
-            <div class="today-main">
-              <!-- Prayers -->
-              <section class="today-section today-section--prayers">
-              <div class="section-head">
-                <h2 data-i18n="section_prayers">Prayers</h2>
-                <span class="section-count" data-count-keys="fajr_sunnah,fajr_fard,duha_prayer,dhuhr_sunnah1,dhuhr_fard,dhuhr_sunnah2,asr_sunnah,asr_fard,maghrib_fard,maghrib_sunnah,isha_sunnah1,isha_fard,isha_sunnah2,witr_prayer"></span>
-              </div>
-              <div class="card list-card prayers">
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_fajr">Fajr</strong><small class="prayer-status" data-count-keys="fajr_sunnah,fajr_fard"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="fajr-sunnah" class="task-checkbox" data-key="fajr_sunnah" data-i18n-aria="habit_fajr_sunnah_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                    <label class="chip chip--fard"><input type="checkbox" id="fajr-fard" class="task-checkbox" data-key="fajr_fard" data-i18n-aria="habit_fajr_fard_title"><span><b>2</b><i data-i18n="abbr_fard">F</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_duha">Duha</strong><small class="prayer-status" data-count-keys="duha_prayer"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="duha-prayer" class="task-checkbox" data-key="duha_prayer" data-i18n-aria="habit_duha_prayer_title"><span><i data-i18n="abbr_nafl">N</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_dhuhr">Dhuhr</strong><small class="prayer-status" data-count-keys="dhuhr_sunnah1,dhuhr_fard,dhuhr_sunnah2"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="dhuhr-sunnah1" class="task-checkbox" data-key="dhuhr_sunnah1" data-i18n-aria="habit_dhuhr_sunnah1_title"><span><b>4</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                    <label class="chip chip--fard"><input type="checkbox" id="dhuhr-fard" class="task-checkbox" data-key="dhuhr_fard" data-i18n-aria="habit_dhuhr_fard_title"><span><b>4</b><i data-i18n="abbr_fard">F</i></span></label>
-                    <label class="chip chip--sunnah"><input type="checkbox" id="dhuhr-sunnah2" class="task-checkbox" data-key="dhuhr_sunnah2" data-i18n-aria="habit_dhuhr_sunnah2_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_asr">Asr</strong><small class="prayer-status" data-count-keys="asr_sunnah,asr_fard"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="asr-sunnah" class="task-checkbox" data-key="asr_sunnah" data-i18n-aria="habit_asr_sunnah_title"><span><b>4</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                    <label class="chip chip--fard"><input type="checkbox" id="asr-fard" class="task-checkbox" data-key="asr_fard" data-i18n-aria="habit_asr_fard_title"><span><b>4</b><i data-i18n="abbr_fard">F</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_maghrib">Maghrib</strong><small class="prayer-status" data-count-keys="maghrib_fard,maghrib_sunnah"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--fard"><input type="checkbox" id="maghrib-fard" class="task-checkbox" data-key="maghrib_fard" data-i18n-aria="habit_maghrib_fard_title"><span><b>3</b><i data-i18n="abbr_fard">F</i></span></label>
-                    <label class="chip chip--sunnah"><input type="checkbox" id="maghrib-sunnah" class="task-checkbox" data-key="maghrib_sunnah" data-i18n-aria="habit_maghrib_sunnah_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_isha">Isha</strong><small class="prayer-status" data-count-keys="isha_sunnah1,isha_fard,isha_sunnah2"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--sunnah"><input type="checkbox" id="isha-sunnah1" class="task-checkbox" data-key="isha_sunnah1" data-i18n-aria="habit_isha_sunnah1_title"><span><b>4</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                    <label class="chip chip--fard"><input type="checkbox" id="isha-fard" class="task-checkbox" data-key="isha_fard" data-i18n-aria="habit_isha_fard_title"><span><b>4</b><i data-i18n="abbr_fard">F</i></span></label>
-                    <label class="chip chip--sunnah"><input type="checkbox" id="isha-sunnah2" class="task-checkbox" data-key="isha_sunnah2" data-i18n-aria="habit_isha_sunnah2_title"><span><b>2</b><i data-i18n="abbr_sunnah">S</i></span></label>
-                  </div>
-                </div>
-                <div class="prayer-row">
-                  <div class="prayer-name"><strong data-i18n="prayer_witr">Witr</strong><small class="prayer-status" data-count-keys="witr_prayer"></small></div>
-                  <div class="chips">
-                    <label class="chip chip--fard"><input type="checkbox" id="witr-prayer" class="task-checkbox" data-key="witr_prayer" data-i18n-aria="habit_witr_prayer_title"><span><b>3</b><i data-i18n="abbr_wajib">W</i></span></label>
-                  </div>
-                </div>
-                <p class="chip-legend" data-i18n="chip_legend">S: Sunnah · F: Fard · W: Wajib · N: Nafl</p>
-              </div>
-
-              </section>
-
-              <!-- Dhikr & Quran -->
-              <section class="today-section today-section--dhikr">
-              <div class="section-head">
-                <h2 data-i18n="section_dhikr">Dhikr &amp; Quran</h2>
-                <span class="section-count" data-count-keys="morning_dhikr,quran_devotion,evening_dhikr"></span>
-              </div>
-              <div class="card list-card">
-                <label class="habit-row"><input type="checkbox" id="morning-dhikr" class="task-checkbox" data-key="morning_dhikr"><span class="check"></span><span class="habit-icon" aria-hidden="true">📿</span><span class="habit-text"><strong data-i18n="habit_morning_dhikr_title">Morning Dhikr</strong><small data-i18n="habit_morning_dhikr_desc">Morning Remembrance</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="quran-devotion" class="task-checkbox" data-key="quran_devotion"><span class="check"></span><span class="habit-icon" aria-hidden="true">📖</span><span class="habit-text"><strong data-i18n="habit_quran_devotion_title">Quran Devotion</strong><small data-i18n="habit_quran_devotion_desc">Daily Wird</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="evening-dhikr" class="task-checkbox" data-key="evening_dhikr"><span class="check"></span><span class="habit-icon" aria-hidden="true">📿</span><span class="habit-text"><strong data-i18n="habit_evening_dhikr_title">Evening Dhikr</strong><small data-i18n="habit_evening_dhikr_desc">Evening Remembrance</small></span></label>
-              </div>
-
-              </section>
-
-              <!-- Growth -->
-              <section class="today-section today-section--growth">
-              <div class="section-head">
-                <h2 data-i18n="section_growth">Growth</h2>
-                <span class="section-count" data-count-keys="intellectual_growth,physical_training,nutritional_fuel,horizon_sync"></span>
-              </div>
-              <div class="card list-card">
-                <label class="habit-row"><input type="checkbox" id="intellectual-growth" class="task-checkbox" data-key="intellectual_growth"><span class="check"></span><span class="habit-icon" aria-hidden="true">📚</span><span class="habit-text"><strong data-i18n="habit_intellectual_growth_title">Intellectual Growth</strong><small data-i18n="habit_intellectual_growth_desc">Book Reading</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="physical-training" class="task-checkbox" data-key="physical_training"><span class="check"></span><span class="habit-icon" aria-hidden="true">🏋️</span><span class="habit-text"><strong data-i18n="habit_physical_training_title">Physical Training</strong><small data-i18n="habit_physical_training_desc">Workout / Sport</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="nutritional-fuel" class="task-checkbox" data-key="nutritional_fuel"><span class="check"></span><span class="habit-icon" aria-hidden="true">🍳</span><span class="habit-text"><strong data-i18n="habit_nutritional_fuel_title">Nutritional Fuel</strong><small data-i18n="habit_nutritional_fuel_desc">Healthy Breakfast</small></span></label>
-                <label class="habit-row"><input type="checkbox" id="horizon-sync" class="task-checkbox" data-key="horizon_sync"><span class="check"></span><span class="habit-icon" aria-hidden="true">🎯</span><span class="habit-text"><strong data-i18n="habit_horizon_sync_title">Horizon Sync</strong><small data-i18n="habit_horizon_sync_desc">Daily Planning</small></span></label>
-              </div>
-
-              </section>
-
-              <!-- Day close -->
-              <section class="today-section today-section--close">
-              <div class="section-head">
-                <h2 data-i18n="section_close">Day Close</h2>
-                <span class="section-count" data-count-keys="mind_log,fin_flow"></span>
-              </div>
-              <div class="card list-card">
-                <label class="habit-row"><input type="checkbox" id="mind-log" class="task-checkbox" data-key="mind_log"><span class="check"></span><span class="habit-icon" aria-hidden="true">📝</span><span class="habit-text"><strong data-i18n="habit_mind_log_title">Mind Log</strong><small data-i18n="habit_mind_log_desc">Daily Journaling Complete</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
-                <label class="habit-row"><input type="checkbox" id="fin-flow" class="task-checkbox" data-key="fin_flow"><span class="check"></span><span class="habit-icon" aria-hidden="true">💰</span><span class="habit-text"><strong data-i18n="habit_fin_flow_title">FinFlow</strong><small data-i18n="habit_fin_flow_desc">Daily Expenses Logged</small></span><span class="tag" data-i18n="tag_auto">auto</span></label>
-              </div>
-              </section>
-
-              <!-- This week -->
-              <section class="today-section today-section--week">
-                <div class="section-head">
-                  <h2 data-i18n="section_week">This week</h2>
-                  <span class="section-count" id="week-avg"></span>
-                </div>
-                <div class="card week-card">
-                  <div class="week-strip" id="week-strip"></div>
-                </div>
-              </section>
-            </div>
-
+            </section>
           </div>
         </section>
 
@@ -808,6 +834,7 @@
     </div>
   </div>
 
-  <script src="app.js?v=5.3" defer></script>
+  <script src="daily.js?v=1" defer></script>
+  <script src="app.js?v=5.4" defer></script>
 </body>
 </html>

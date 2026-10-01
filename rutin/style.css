@@ -345,8 +345,7 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .tab-btn[data-tab="settings-tab"] use[href="#i-more"] { fill: currentColor; }
 
 /* ================= TODAY ================= */
-.today-grid, .today-side { display: grid; gap: 16px; }
-.today-main { display: grid; gap: 20px; align-content: start; }
+.today-flow { display: grid; gap: 18px; }
 .today-section { min-width: 0; }
 
 .day-card { display: grid; gap: 14px; }
@@ -379,10 +378,20 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .mini-stat b { font-size: 1rem; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .mini-stat span { font-size: 0.72rem; color: var(--muted); line-height: 1.25; }
 
-.ayah { text-align: center; display: grid; gap: 6px; }
+.ayah { text-align: center; display: grid; gap: 8px; }
 .ayah blockquote { font-family: var(--font-quran); font-size: 1.6rem; line-height: 1.9; }
-.ayah p { color: var(--muted); font-size: 0.9rem; }
-.ayah figcaption { color: var(--accent-text); font-size: 0.8rem; font-weight: 600; }
+.ayah > p { color: var(--muted); font-size: 0.92rem; }
+.ayah figcaption, .hadith figcaption { color: var(--accent-text); font-size: 0.8rem; font-weight: 600; }
+.tafsir { text-align: right; margin-top: 4px; padding-top: 12px; border-top: 1px dashed var(--border-strong); display: grid; gap: 4px; }
+.tafsir-label { font-family: "IBM Plex Sans Arabic", sans-serif; font-size: 0.75rem; font-weight: 700; color: var(--accent-text); }
+.tafsir p { font-family: var(--font-quran); font-size: 1.05rem; line-height: 1.9; color: var(--text); }
+.hadith { display: grid; gap: 10px; }
+.hadith blockquote { font-size: 0.95rem; line-height: 1.65; }
+.hadith blockquote.is-arabic, .hadith-original p { font-family: var(--font-quran); font-size: 1.15rem; line-height: 1.95; text-align: right; }
+.hadith-original summary { cursor: pointer; color: var(--accent-text); font-size: 0.82rem; font-weight: 600; min-height: 32px; display: flex; align-items: center; }
+.hadith-original p { margin-top: 6px; }
+.link-btn { color: var(--accent-text); font-weight: 600; font-size: 0.82rem; min-height: 32px; padding-inline: 4px; }
+.link-btn:hover { text-decoration: underline; }
 
 .list-card { padding: 0; overflow: hidden; }
 .prayer-row, .habit-row {
@@ -436,7 +445,7 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .week-day b { font-size: 0.85rem; color: var(--text); }
 .week-day.is-today b { color: var(--accent-text); text-decoration: underline; text-underline-offset: 3px; }
 
-.agenda-card .card-head { margin-bottom: 8px; }
+.agenda-card { padding-block: 6px; }
 .agenda-list { list-style: none; display: grid; }
 .agenda-list li { display: flex; gap: 12px; align-items: baseline; padding: 8px 0; border-top: 1px solid var(--border); min-width: 0; }
 .agenda-list li:first-child { border-top: 0; }
@@ -753,16 +762,7 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 /* ================= PHONE & SMALL TABLET ================= */
 @media (max-width: 1023px) {
   /* Cards from both Today columns become one list, ordered by what is used most */
-  .today-side, .today-main { display: contents; }
-  #day-card { order: 1; }
-  .today-section--prayers { order: 2; }
-  .today-section--dhikr { order: 3; }
-  .today-section--growth { order: 4; }
-  .today-section--close { order: 5; }
-  .today-section--week { order: 6; }
-  .agenda-card { order: 7; }
-  .ayah { order: 8; }
-  .today-grid { gap: 18px; }
+  .today-section--summary > .section-head { display: none; }
 
   .day-card { gap: 12px; padding: 14px; }
   .ring { width: 60px; height: 60px; }
@@ -845,9 +845,10 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
   .sidebar-sync[hidden] + .sidebar-lock { margin-top: auto; }
   .sidebar-sync:hover { background: var(--bar-hover); color: var(--bar-text); }
 
-  .today-grid { grid-template-columns: minmax(0, 1.25fr) minmax(320px, 1fr); align-items: start; }
-  .today-side { order: 2; position: sticky; top: 28px; }
-  .today-main { order: 1; }
+  /* Cards flow top to bottom and the browser balances the columns, whatever today's verse
+     and hadith lengths are. */
+  .today-flow { display: block; column-count: 2; column-gap: 24px; }
+  .today-section { display: block; break-inside: avoid; margin-bottom: 22px; }
 
   .table-scroll { display: block; }
   .month-calendar { display: none; }
@@ -862,9 +863,7 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 @media (min-width: 1440px) {
   .content { padding-inline: 44px; }
   /* Prayers | other sections | day summary */
-  .today-grid { grid-template-columns: minmax(0, 2.1fr) minmax(360px, 1fr); gap: 24px; }
-  .today-main { display: block; column-count: 2; column-gap: 24px; }
-  .today-section { break-inside: avoid; margin-bottom: 20px; display: block; }
+  .today-flow { column-count: 3; }
   .split { gap: 24px; }
   .accounts-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
 }
