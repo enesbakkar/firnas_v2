@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    name: Build Rutin APK
+    name: Build Istiqamah APK
     runs-on: ubuntu-latest
 
     steps:
@@ -43,6 +43,21 @@ jobs:
           cd rutin
           npx cap add android
 
+      - name: Register istikamet:// deep link (Google sign-in returns here)
+        run: |
+          cd rutin
+          python3 - <<'PY'
+          p = 'android/app/src/main/AndroidManifest.xml'
+          s = open(p).read()
+          f = ('<intent-filter><action android:name="android.intent.action.VIEW" />'
+               '<category android:name="android.intent.category.DEFAULT" />'
+               '<category android:name="android.intent.category.BROWSABLE" />'
+               '<data android:scheme="istikamet" android:host="oauth" /></intent-filter></activity>')
+          assert '</activity>' in s
+          open(p, 'w').write(s.replace('</activity>', f, 1))
+          PY
+          grep -n istikamet android/app/src/main/AndroidManifest.xml
+
       - name: Sync Capacitor
         run: |
           cd rutin
@@ -62,5 +77,5 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Rutin-Tracker-APK
+          name: Istiqamah-APK
           path: rutin/android/app/build/outputs/apk/debug/app-debug.apk

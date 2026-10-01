@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex">
+  <title>İstikâmet</title>
+  <link rel="icon" type="image/svg+xml" href="logo.svg?v=1">
+  <style>
+    :root { color-scheme: light dark; --bg: #f0f7fb; --text: #0f2e4a; --muted: #4a6478; --accent: #00b8d4; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #051421; --text: #e6f2f8; --muted: #8fa9bb; } }
+    body { margin: 0; min-height: 100vh; display: grid; place-items: center; background: var(--bg); color: var(--text);
+      font-family: system-ui, -apple-system, "Segoe UI", sans-serif; text-align: center; padding: 16px; box-sizing: border-box; }
+    main { display: grid; gap: 14px; justify-items: center; max-width: 360px; }
+    img { width: 72px; height: 72px; border-radius: 18px; }
+    h1 { font-size: 1.25rem; margin: 0; }
+    p { margin: 0; color: var(--muted); line-height: 1.5; }
+    a.btn { display: inline-block; background: var(--accent); color: #04202b; font-weight: 700; text-decoration: none;
+      padding: 14px 24px; border-radius: 12px; }
+  </style>
+</head>
+<body>
+  <main>
+    <img src="logo.svg?v=1" alt="">
+    <h1 id="title">Google bağlantısı tamamlandı</h1>
+    <p id="msg">Uygulamaya dönülüyor…</p>
+    <a class="btn" id="back" href="#">Uygulamaya dön</a>
+  </main>
+  <script>
+    // Google sends the token in the fragment; hand it to the Android app through the istikamet:// link.
+    (function () {
+      var hash = new URLSearchParams(location.hash.slice(1));
+      var out = new URLSearchParams();
+      ['access_token', 'expires_in', 'scope', 'state', 'error'].forEach(function (k) {
+        if (hash.get(k)) out.set(k, hash.get(k));
+      });
+      history.replaceState(null, '', location.pathname);
+      if (hash.get('error') || !hash.get('access_token')) {
+        document.getElementById('title').textContent = 'Google bağlantısı yapılamadı';
+        document.getElementById('msg').textContent = 'Uygulamaya dönüp tekrar deneyin. (' + (hash.get('error') || 'no_token') + ')';
+      }
+      var link = 'intent://oauth?' + out.toString() + '#Intent;scheme=istikamet;package=com.horizon.rutin;end';
+      document.getElementById('back').href = link;
+      location.replace(link);
+    })();
+  </script>
+</body>
+</html>

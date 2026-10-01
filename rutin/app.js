@@ -158,6 +158,7 @@ const GOOGLE_CLIENT_ID = "335043330325-2jmm3bel2c5pe6c5km2ndbqafd64dmrn.apps.goo
 const GOOGLE_CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";
 // drive.appdata: a hidden per-app folder; the app cannot see any other Drive files.
 const GOOGLE_DRIVE_SCOPE = "https://www.googleapis.com/auth/drive.appdata";
+const GOOGLE_NATIVE_REDIRECT = 'https://firnastechnologies.com/rutin/oauth.html';
 
 // ================= APPLICATION STATE =================
 const STATE = {
@@ -515,7 +516,8 @@ const TRANSLATIONS = {
     ov_open_journal: "Write",
     brand_name: "Istiqamah",
     brand_tagline: "So remain on a right course as you have been commanded.",
-    brand_tagline_src: "Surah Hud, 11:112"
+    brand_tagline_src: "Surah Hud, 11:112",
+    sync_state_renew_native: "Google session expired. Tap here to renew."
   },
   tr: {
     nav_journal: "Günlük",
@@ -791,7 +793,8 @@ const TRANSLATIONS = {
     ov_open_journal: "Yaz",
     brand_name: "İstikâmet",
     brand_tagline: "Emrolunduğun gibi dosdoğru ol.",
-    brand_tagline_src: "Hûd Sûresi, 112. âyet"
+    brand_tagline_src: "Hûd Sûresi, 112. âyet",
+    sync_state_renew_native: "Google oturumu sona erdi. Yenilemek için buraya dokunun."
   },
   ar: {
     nav_journal: "اليوميات",
@@ -1067,7 +1070,8 @@ const TRANSLATIONS = {
     ov_open_journal: "اكتب",
     brand_name: "استقامة",
     brand_tagline: "فاستقم كما أمرت",
-    brand_tagline_src: "سورة هود، الآية 112"
+    brand_tagline_src: "سورة هود، الآية 112",
+    sync_state_renew_native: "انتهت جلسة جوجل. المس هنا للتجديد."
   }
 };
 
@@ -1622,8 +1626,56 @@ const SyncEngine = {
     return (localStorage.getItem('google_token_scopes') || '').includes(GOOGLE_CALENDAR_SCOPE);
   },
 
+  isNative() {
+    return !!(window.Capacitor && Capacitor.isNativePlatform && Capacitor.isNativePlatform());
+  },
+
+  // Android app: the WebView origin (https://localhost) can't use Google's popup, so sign-in runs in
+  // the system browser, which comes back through oauth.html and the istikamet:// deep link.
+  nativeRequestToken(prompt) {
+    const { Browser, App } = Capacitor.Plugins;
+    if (!Browser || !App) return Promise.resolve(null);
+    const state = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2, '0')).join('');
+    const params = new URLSearchParams({
+      client_id: GOOGLE_CLIENT_ID,
+      redirect_uri: GOOGLE_NATIVE_REDIRECT,
+      response_type: 'token',
+      scope: `${GOOGLE_DRIVE_SCOPE} ${GOOGLE_CALENDAR_SCOPE}`,
+      include_granted_scopes: 'true',
+      state
+    });
+    if (prompt) params.set('prompt', prompt);
+    return new Promise((resolve) => {
+      let done = false, urlHandle = null, closeHandle = null, closeTimer = null;
+      const finish = (token) => {
+        if (done) return;
+        done = true;
+        clearTimeout(closeTimer);
+        if (urlHandle) urlHandle.remove();
+        if (closeHandle) closeHandle.remove();
+        resolve(token);
+      };
+      Promise.resolve(App.addListener('appUrlOpen', ({ url }) => {
+        if (!url || !url.startsWith('istikamet://oauth')) return;
+        const q = new URLSearchParams(url.split('?')[1] || '');
+        Browser.close().catch(() => {});
+        if (q.get('state') !== state || !q.get('access_token')) return finish(null);
+        localStorage.setItem('google_access_token', q.get('access_token'));
+        localStorage.setItem('google_token_expiry', String(Date.now() + (Number(q.get('expires_in')) || 3600) * 1000));
+        localStorage.setItem('google_token_scopes', q.get('scope') || '');
+        finish(q.get('access_token'));
+      })).then(h => { urlHandle = h; });
+      // The tab also reports "finished" when the app comes back to the front, so give the deep link a moment.
+      Promise.resolve(Browser.addListener('browserFinished', () => {
+        closeTimer = setTimeout(() => finish(null), 4000);
+      })).then(h => { closeHandle = h; });
+      Browser.open({ url: `https://accounts.google.com/o/oauth2/v2/auth?${params}` }).catch(() => finish(null));
+    });
+  },
+
   // Must run inside a user gesture, otherwise the browser blocks Google's popup.
   requestToken(prompt) {
+    if (this.isNative()) return this.nativeRequestToken(prompt);
     return new Promise((resolve) => {
       if (!window.google || !google.accounts || !google.accounts.oauth2) return resolve(null);
       if (!this._tokenClient) {
@@ -1670,7 +1722,8 @@ const SyncEngine = {
     if (!this._waitingGesture) {
       this._waitingGesture = true;
       this.setState('renew');
-      const renew = async () => {
+      const renew = async (e) => {
+        if (this.isNative() && !(e.target.closest && e.target.closest('#topbar-sync, #sidebar-sync, #sync-status, #sync-now-btn'))) return;
         document.removeEventListener('click', renew, true);
         document.removeEventListener('touchend', renew, true);
         this._waitingGesture = false;
@@ -1687,6 +1740,8 @@ const SyncEngine = {
     const token = localStorage.getItem('google_access_token');
     if (token && window.google && google.accounts && google.accounts.oauth2) {
       try { google.accounts.oauth2.revoke(token, () => {}); } catch (e) {}
+    } else if (token) {
+      fetch(`https://oauth2.googleapis.com/revoke?token=${encodeURIComponent(token)}`, { method: 'POST' }).catch(() => {});
     }
     [this.ENABLED_KEY, this.FILE_ID_KEY, this.LAST_KEY, 'google_access_token', 'google_token_expiry', 'google_token_scopes']
       .forEach(k => localStorage.removeItem(k));
@@ -2807,7 +2862,7 @@ const UIController = {
 
     let state = enabled ? SyncEngine.state : 'off';
     if (enabled && state === 'off') state = last ? 'ok' : 'syncing';
-    let message = dict[`sync_state_${state}`] || '';
+    let message = (state === 'renew' && SyncEngine.isNative() && dict.sync_state_renew_native) || dict[`sync_state_${state}`] || '';
     if (state === 'ok') {
       const time = new Date(last).toLocaleString(appLocale(), { dateStyle: 'medium', timeStyle: 'short' });
       message = last ? message.replace('{time}', time) : dict.sync_state_waiting;
