@@ -517,7 +517,15 @@ const TRANSLATIONS = {
     brand_name: "Istiqamah",
     brand_tagline: "So remain on a right course as you have been commanded.",
     brand_tagline_src: "Surah Hud, 11:112",
-    sync_state_renew_native: "Google session expired. Tap here to renew."
+    sync_state_renew_native: "Google session expired. Tap here to renew.",
+    fin_nospend_ask: "No spending today?",
+    fin_nospend_btn: "I didn't spend today",
+    fin_nospend_done: "No spending today",
+    fin_nospend_undo: "Undo",
+    fin_nospend_yesterday: "Mark yesterday too",
+    fin_nospend_count: "{n} no-spend days this month",
+    fin_nospend_month: "No-spend days",
+    fin_nospend_day: "No spending"
   },
   tr: {
     nav_journal: "Günlük",
@@ -794,7 +802,15 @@ const TRANSLATIONS = {
     brand_name: "İstikâmet",
     brand_tagline: "Emrolunduğun gibi dosdoğru ol.",
     brand_tagline_src: "Hûd Sûresi, 112. âyet",
-    sync_state_renew_native: "Google oturumu sona erdi. Yenilemek için buraya dokunun."
+    sync_state_renew_native: "Google oturumu sona erdi. Yenilemek için buraya dokunun.",
+    fin_nospend_ask: "Bugün hiç para harcamadın mı?",
+    fin_nospend_btn: "Bugün harcama yapmadım",
+    fin_nospend_done: "Bugün harcama yapılmadı",
+    fin_nospend_undo: "Geri al",
+    fin_nospend_yesterday: "Dün için de işaretle",
+    fin_nospend_count: "Bu ay {n} harcamasız gün",
+    fin_nospend_month: "Harcamasız günler",
+    fin_nospend_day: "Harcama yapılmadı"
   },
   ar: {
     nav_journal: "اليوميات",
@@ -1071,7 +1087,15 @@ const TRANSLATIONS = {
     brand_name: "استقامة",
     brand_tagline: "فاستقم كما أمرت",
     brand_tagline_src: "سورة هود، الآية 112",
-    sync_state_renew_native: "انتهت جلسة جوجل. المس هنا للتجديد."
+    sync_state_renew_native: "انتهت جلسة جوجل. المس هنا للتجديد.",
+    fin_nospend_ask: "ألم تنفق شيئًا اليوم؟",
+    fin_nospend_btn: "لم أنفق شيئًا اليوم",
+    fin_nospend_done: "لا إنفاق اليوم",
+    fin_nospend_undo: "تراجع",
+    fin_nospend_yesterday: "حدِّد الأمس أيضًا",
+    fin_nospend_count: "أيام بلا إنفاق هذا الشهر: {n}",
+    fin_nospend_month: "أيام بلا إنفاق",
+    fin_nospend_day: "لا إنفاق"
   }
 };
 
@@ -3800,6 +3824,7 @@ const UIController = {
         // Auto check checklist finance task
         const dayData = StorageManager.getDayState(dateVal);
         dayData.fin_flow = true;
+        if (selectedType === 'expense') delete dayData.no_spend;
         StorageManager.saveDayState(dateVal, dayData);
         this.loadDateData();
         
@@ -4042,10 +4067,73 @@ const UIController = {
     }
   },
 
+  // "No spending" marks live on the day record (hrt_db), so they sync and back up with the day.
+  isNoSpendDay(dateKey) {
+    return !!(STATE.db[dateKey] && STATE.db[dateKey].no_spend === true);
+  },
+
+  hasExpense(dateKey) {
+    return STATE.finance.transactions.some(tx => tx.date === dateKey && tx.type === 'expense');
+  },
+
+  setNoSpendDay(dateKey, on) {
+    const dayData = StorageManager.getDayState(dateKey);
+    if (on) {
+      dayData.no_spend = true;
+      dayData.fin_flow = true; // a no-spend day counts as finances logged
+    } else {
+      delete dayData.no_spend;
+      if (!STATE.finance.transactions.some(tx => tx.date === dateKey)) dayData.fin_flow = false;
+    }
+    StorageManager.saveDayState(dateKey, dayData);
+    AudioFeedback.playSuccess();
+    this.loadDateData();
+    this.renderFinance();
+    this.renderToday();
+  },
+
+  renderNoSpendCard() {
+    const box = document.getElementById('fin-nospend');
+    if (!box) return;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    const todayKey = formatDateKey(STATE.todayDate);
+    const yesterday = new Date(STATE.todayDate);
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayKey = formatDateKey(yesterday);
+    const month = STATE.financeActiveMonth;
+    const count = Object.keys(STATE.db).filter(k => k.startsWith(month) && this.isNoSpendDay(k) && !this.hasExpense(k)).length;
+    const spentToday = this.hasExpense(todayKey);
+    const markedToday = this.isNoSpendDay(todayKey) && !spentToday;
+
+    if (spentToday && !count) { box.hidden = true; return; }
+    box.hidden = false;
+    box.classList.toggle('is-done', markedToday);
+    let title;
+    let actions = '';
+    if (spentToday) {
+      title = dict.fin_nospend_month;
+    } else if (markedToday) {
+      title = `✓ ${dict.fin_nospend_done}`;
+      actions = `<button type="button" class="link-btn" data-nospend="${todayKey}" data-on="0">${dict.fin_nospend_undo}</button>`;
+    } else {
+      title = dict.fin_nospend_ask;
+      actions = `<button type="button" class="btn btn-primary" data-nospend="${todayKey}" data-on="1">${dict.fin_nospend_btn}</button>`;
+    }
+    if (!this.isNoSpendDay(yesterdayKey) && !this.hasExpense(yesterdayKey)) {
+      actions += `<button type="button" class="link-btn" data-nospend="${yesterdayKey}" data-on="1">${dict.fin_nospend_yesterday}</button>`;
+    }
+    const sub = count ? `<small>${dict.fin_nospend_count.replace('{n}', count)}</small>` : '';
+    box.innerHTML = `<div class="fin-nospend-text"><strong>${title}</strong>${sub}</div>${actions ? `<div class="fin-nospend-actions">${actions}</div>` : ''}`;
+    box.querySelectorAll('[data-nospend]').forEach(btn => {
+      btn.addEventListener('click', () => this.setNoSpendDay(btn.dataset.nospend, btn.dataset.on === '1'));
+    });
+  },
+
   renderFinanceDaily() {
     const dailyList = document.getElementById('fin-daily-grouped-list');
     if (!dailyList) return;
     dailyList.innerHTML = '';
+    this.renderNoSpendCard();
 
     const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
     const monthlyTxs = STATE.finance.transactions.filter(tx => tx.date.startsWith(STATE.financeActiveMonth));
@@ -4055,6 +4143,10 @@ const UIController = {
     monthlyTxs.forEach(tx => {
       if (!grouped[tx.date]) grouped[tx.date] = [];
       grouped[tx.date].push(tx);
+    });
+    // Days marked "no spending" without transactions still get a row in the list
+    Object.keys(STATE.db).forEach(k => {
+      if (k.startsWith(STATE.financeActiveMonth) && this.isNoSpendDay(k) && !grouped[k]) grouped[k] = [];
     });
 
     // Monthly totals
@@ -4109,6 +4201,9 @@ const UIController = {
       `;
 
       const listContainer = groupEl.querySelector('.fin-daily-tx-list');
+      if (this.isNoSpendDay(dateStr) && dayExpense === 0) {
+        listContainer.insertAdjacentHTML('beforeend', `<div class="fin-nospend-row">✓ ${dict.fin_nospend_day}</div>`);
+      }
       txs.forEach(tx => {
         const itemEl = document.createElement('div');
         itemEl.className = 'fin-daily-tx-item';
@@ -4219,6 +4314,7 @@ const UIController = {
       let valuesMarkup = '';
       if (dayIncome > 0) valuesMarkup += `<span class="income-val">+${dayIncome.toFixed(0)}</span>`;
       if (dayExpense > 0) valuesMarkup += `<span class="expense-val">-${dayExpense.toFixed(0)}</span>`;
+      else if (this.isNoSpendDay(dateKey)) valuesMarkup += `<span class="nospend-val" title="${dict.fin_nospend_day}">✓ 0</span>`;
 
       cell.innerHTML = `
         <span class="fin-calendar-day-num">${day}</span>
