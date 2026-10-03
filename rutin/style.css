@@ -157,6 +157,7 @@ a { color: var(--accent-text); }
 .field { display: grid; gap: 6px; min-width: 0; }
 .field-row { display: flex; gap: 12px; flex-wrap: wrap; }
 .field-row > .field { flex: 1 1 130px; }
+.field-row > .field:has(.acc-picker-btn) { flex-basis: 240px; }
 .field--grow { flex-grow: 3 !important; }
 .field > label, .field > .label { font-size: 0.8rem; font-weight: 600; color: var(--muted); }
 
@@ -735,6 +736,45 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .bank-chip span:last-child { max-width: 100%; overflow-wrap: anywhere; }
 .bank-chip.active { border-color: var(--accent); background: var(--accent-soft); }
 .currency-picker { margin-bottom: 0; }
+
+/* Account picker (transaction form) */
+.acc-picker-btn {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 54px; padding: 8px 12px;
+  border: 1.5px solid var(--border); border-radius: var(--radius-sm); background: var(--surface); color: var(--text);
+  text-align: start; cursor: pointer; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.acc-picker-btn:hover { border-color: color-mix(in srgb, var(--accent) 45%, var(--border)); }
+.acc-picker-btn[aria-expanded="true"], .acc-picker-btn:focus-visible { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); outline: none; }
+.acc-picker-text { display: grid; flex: 1; min-width: 0; line-height: 1.25; }
+.acc-picker-text b { font-weight: 600; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-picker-text small { font-size: 0.72rem; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-picker-bal { flex: none; font-family: var(--font-display); font-weight: 600; font-size: 0.86rem; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--muted); }
+.acc-picker-btn .acc-picker-bal { color: var(--text); }
+.acc-picker-bal.is-neg, .acc-picker-btn .acc-picker-bal.is-neg { color: var(--danger); }
+.acc-picker-chev { width: 18px; height: 18px; color: var(--muted); transition: transform 0.15s; }
+.acc-picker-btn[aria-expanded="true"] .acc-picker-chev { transform: rotate(180deg); }
+.acc-picker-panel {
+  position: fixed; z-index: 60; overflow-y: auto; overscroll-behavior: contain; padding: 6px;
+  background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: 14px;
+  box-shadow: 0 18px 44px rgba(5, 20, 33, 0.22), 0 2px 6px rgba(5, 20, 33, 0.08);
+  animation: picker-in 0.14s ease-out;
+}
+.acc-picker-panel.is-up { animation-name: picker-in-up; }
+@keyframes picker-in { from { opacity: 0; transform: translateY(-4px); } }
+@keyframes picker-in-up { from { opacity: 0; transform: translateY(4px); } }
+.acc-picker-group + .acc-picker-group { margin-top: 4px; padding-top: 4px; border-top: 1px solid var(--border); }
+.acc-picker-group-head { display: flex; align-items: center; gap: 8px; padding: 8px 8px 4px; font-size: 0.76rem; font-weight: 700; color: var(--muted); }
+.bank-mark--xs { width: 22px; height: 22px; border-radius: 6px; font-size: 0.55rem; box-shadow: none; }
+.bank-mark--xs .icon { width: 13px; height: 13px; }
+.acc-picker-opt {
+  display: flex; align-items: center; gap: 10px; width: 100%; min-height: 42px; padding-block: 8px; padding-inline: 38px 10px;
+  border-radius: 10px; text-align: start; color: var(--text); cursor: pointer;
+}
+.acc-picker-opt:hover, .acc-picker-opt:focus-visible { background: var(--surface-2); outline: none; }
+.acc-picker-opt.is-selected { background: var(--accent-soft); }
+.acc-picker-opt-name { flex: 1; min-width: 0; font-weight: 500; font-size: 0.9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-picker-check { width: 16px; height: 16px; color: var(--accent-text); visibility: hidden; }
+.acc-picker-opt.is-selected .acc-picker-check { visibility: visible; }
 .summary-currency { margin: 4px 0 8px; align-self: start; width: fit-content; }
 
 /* ================= CALENDAR ================= */

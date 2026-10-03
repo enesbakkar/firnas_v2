@@ -1381,6 +1381,178 @@ function moneyLinesHTML(totals, fractionDigits = 2) {
   return keys.map(c => `<span class="money-line${totals[c] < 0 ? ' is-neg' : ''}" dir="ltr">${formatMoney(totals[c], fractionDigits, c)}</span>`).join('');
 }
 
+// Account dropdown for the transaction form: bank marks, balances and keyboard support. The native
+// <select> stays in the form as the value, so the rest of the form logic is unchanged.
+const AccountPicker = {
+  pickers: [],
+
+  enhance(select) {
+    if (!select || select.dataset.enhanced) return;
+    select.dataset.enhanced = '1';
+    select.classList.add('sr-only');
+    select.tabIndex = -1;
+    select.setAttribute('aria-hidden', 'true');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.id = `${select.id}-btn`;
+    btn.className = 'acc-picker-btn';
+    btn.setAttribute('aria-haspopup', 'listbox');
+    btn.setAttribute('aria-expanded', 'false');
+    const label = document.querySelector(`label[for="${select.id}"]`);
+    if (label) label.setAttribute('for', btn.id);
+    select.insertAdjacentElement('afterend', btn);
+    const picker = { select, btn, panel: null };
+    btn.addEventListener('click', () => (picker.panel ? this.close(picker) : this.open(picker)));
+    btn.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        this.open(picker);
+      }
+    });
+    select.addEventListener('change', () => this.render(picker));
+    this.pickers.push(picker);
+    this.render(picker);
+  },
+
+  refresh() {
+    this.pickers.forEach(p => this.render(p));
+  },
+
+  closeAll() {
+    this.pickers.forEach(p => this.close(p));
+  },
+
+  balanceHTML(key) {
+    const acc = STATE.finance.accounts[key];
+    const balance = Number(acc.balance) || 0;
+    return `<span class="acc-picker-bal${balance < 0 ? ' is-neg' : ''}" dir="ltr">${formatMoney(balance, 2, accCurrency(key))}</span>`;
+  },
+
+  render(p) {
+    const key = p.select.value;
+    const acc = STATE.finance.accounts[key];
+    if (!acc) {
+      p.btn.innerHTML = '<span class="acc-picker-text"><b>–</b></span>';
+      return;
+    }
+    const bank = accountBank(key);
+    p.btn.innerHTML = `${bankMark(bank, 'bank-mark--sm')}
+      <span class="acc-picker-text"><b>${escapeHTML(acc.name)}</b><small>${escapeHTML(bankName(bank))}</small></span>
+      ${this.balanceHTML(key)}
+      <svg class="icon acc-picker-chev" aria-hidden="true"><use href="#i-chevron-down"/></svg>`;
+  },
+
+  open(p) {
+    this.pickers.forEach(o => { if (o !== p) this.close(o); });
+    const keys = [...p.select.options].map(o => o.value).filter(k => STATE.finance.accounts[k]);
+    const panel = document.createElement('div');
+    panel.className = 'acc-picker-panel';
+    panel.setAttribute('role', 'listbox');
+    const label = document.querySelector(`label[for="${p.btn.id}"]`);
+    if (label) panel.setAttribute('aria-label', label.textContent);
+    panel.innerHTML = BANK_ORDER.map(b => {
+      const inBank = keys.filter(k => accountBank(k) === b);
+      if (!inBank.length) return '';
+      const options = inBank.map(k => {
+        const selected = k === p.select.value;
+        return `<button type="button" class="acc-picker-opt${selected ? ' is-selected' : ''}" role="option" aria-selected="${selected}" data-value="${escapeHTML(k)}">
+          <span class="acc-picker-opt-name">${escapeHTML(STATE.finance.accounts[k].name)}</span>
+          ${this.balanceHTML(k)}
+          <svg class="icon acc-picker-check" aria-hidden="true"><use href="#i-check-mark"/></svg>
+        </button>`;
+      }).join('');
+      return `<div class="acc-picker-group" role="group" aria-label="${escapeHTML(bankName(b))}">
+        <div class="acc-picker-group-head">${bankMark(b, 'bank-mark--xs')}<span>${escapeHTML(bankName(b))}</span></div>
+        ${options}
+      </div>`;
+    }).join('');
+    document.body.appendChild(panel);
+    p.panel = panel;
+    p.btn.setAttribute('aria-expanded', 'true');
+    this.position(p);
+    panel.addEventListener('click', (e) => {
+      const opt = e.target.closest('[data-value]');
+      if (opt) this.choose(p, opt.dataset.value);
+    });
+    panel.addEventListener('keydown', (e) => this.onKey(p, e));
+    const current = panel.querySelector('.is-selected') || panel.querySelector('[data-value]');
+    if (current) {
+      current.focus({ preventScroll: true });
+      current.scrollIntoView({ block: 'nearest' });
+    }
+    p.onOutside = (e) => {
+      if (!panel.contains(e.target) && !p.btn.contains(e.target)) this.close(p);
+    };
+    p.onMove = (e) => {
+      if (e && e.target && panel.contains(e.target)) return;
+      this.position(p);
+    };
+    document.addEventListener('pointerdown', p.onOutside, true);
+    window.addEventListener('resize', p.onMove);
+    document.addEventListener('scroll', p.onMove, true);
+  },
+
+  // Fixed to the viewport so the modal never clips it; opens upwards when there is more room above.
+  position(p) {
+    const panel = p.panel;
+    if (!panel) return;
+    const r = p.btn.getBoundingClientRect();
+    const gap = 6;
+    const edge = 8;
+    const width = Math.min(Math.max(r.width, 280), innerWidth - edge * 2);
+    const below = innerHeight - r.bottom - edge - gap;
+    const above = r.top - edge - gap;
+    const natural = Math.min(panel.scrollHeight, 380);
+    const up = below < natural && above > below;
+    panel.style.width = `${width}px`;
+    panel.style.maxHeight = `${Math.max(160, Math.min(380, up ? above : below))}px`;
+    const start = document.documentElement.dir === 'rtl' ? r.right - width : r.left;
+    panel.style.left = `${Math.max(edge, Math.min(start, innerWidth - width - edge))}px`;
+    panel.style.top = up ? '' : `${r.bottom + gap}px`;
+    panel.style.bottom = up ? `${innerHeight - r.top + gap}px` : '';
+    panel.classList.toggle('is-up', up);
+  },
+
+  close(p) {
+    if (!p.panel) return;
+    p.panel.remove();
+    p.panel = null;
+    p.btn.setAttribute('aria-expanded', 'false');
+    document.removeEventListener('pointerdown', p.onOutside, true);
+    window.removeEventListener('resize', p.onMove);
+    document.removeEventListener('scroll', p.onMove, true);
+  },
+
+  choose(p, value) {
+    p.select.value = value;
+    p.select.dispatchEvent(new Event('change'));
+    this.close(p);
+    p.btn.focus();
+  },
+
+  onKey(p, e) {
+    const opts = [...p.panel.querySelectorAll('[data-value]')];
+    const i = opts.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      (opts[i + 1] || opts[0]).focus();
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      (opts[i - 1] || opts[opts.length - 1]).focus();
+    } else if (e.key === 'Home' || e.key === 'End') {
+      e.preventDefault();
+      opts[e.key === 'Home' ? 0 : opts.length - 1].focus();
+    } else if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      this.close(p);
+      p.btn.focus();
+    } else if (e.key === 'Tab') {
+      this.close(p);
+    }
+  }
+};
+
 function catIcon(cat) {
   return `<svg class="icon"><use href="#i-cat-${cat.icon || 'other'}"/></svg>`;
 }
@@ -1448,6 +1620,7 @@ const StorageManager = {
       this.saveFinance();
     }
     this.migrateAccounts();
+    this.fixAccountCurrencies();
   },
 
   saveFinance() {
@@ -1484,6 +1657,27 @@ const StorageManager = {
     });
     localStorage.setItem('hrt_fin_accounts_v2', '1');
     this.saveFinance();
+  },
+
+  // Accounts v3: accounts named for a foreign currency ("Albaraka USD") were tagged TL by v2.
+  // They hold that currency, and so do all their transactions.
+  fixAccountCurrencies() {
+    if (localStorage.getItem('hrt_fin_accounts_v3') === '1') return;
+    const patterns = [['USD', /\b(usd|dolar|dollar)\b|\$/i], ['SAR', /\b(sar|riyal)\b/i], ['SYP', /\b(syp|suriye)\b/i]];
+    let changed = false;
+    Object.keys(STATE.finance.accounts || {}).forEach(k => {
+      const acc = STATE.finance.accounts[k];
+      if (acc.seed || (acc.currency && acc.currency !== 'TRY')) return;
+      const hit = patterns.find(([, re]) => re.test(acc.name || ''));
+      if (!hit) return;
+      acc.currency = hit[0];
+      STATE.finance.transactions.forEach(tx => {
+        if (tx.account === k && (!tx.currency || tx.currency === 'TRY')) tx.currency = hit[0];
+      });
+      changed = true;
+    });
+    localStorage.setItem('hrt_fin_accounts_v3', '1');
+    if (changed) this.saveFinance();
   },
 
   loadCalendar() {
@@ -3940,10 +4134,13 @@ const UIController = {
       if (el) el.addEventListener('change', () => this.updateTxCurrencyUI());
     });
     document.querySelectorAll('.fin-modal-type-switcher .type-btn').forEach(b => b.addEventListener('click', () => this.updateTxCurrencyUI()));
+    AccountPicker.enhance(document.getElementById('fin-account-select'));
+    AccountPicker.enhance(document.getElementById('fin-target-account-select'));
     const txModalEl = document.getElementById('fin-tx-modal');
     if (txModalEl) {
       new MutationObserver(() => {
         if (txModalEl.classList.contains('active')) this.updateTxCurrencyUI();
+        else AccountPicker.closeAll();
       }).observe(txModalEl, { attributes: true, attributeFilter: ['class'] });
     }
 
@@ -4765,6 +4962,7 @@ const UIController = {
     if (group) group.classList.toggle('hidden', !(STATE.financeSelectedTxType === 'transfer' && from !== to));
     const targetSuffix = document.getElementById('fin-target-amount-currency');
     if (targetSuffix) targetSuffix.textContent = CURRENCIES[to].label;
+    AccountPicker.refresh();
   },
 
   renderSummaryCurrencySwitch(curs) {
