@@ -169,10 +169,7 @@ const STATE = {
   db: {}, // Loaded daily records
   journal: {}, // Loaded journal entries {"YYYY-MM-DD": {mood, content, tags}}
   finance: {
-    accounts: {
-      cash: { name: "Cash Wallet", balance: 0 },
-      bank: { name: "Bank Account", balance: 0 }
-    },
+    accounts: {},
     transactions: []
   },
   calendar: [], // Loaded calendar events [{id, title, startTime, endTime, desc}]
@@ -399,7 +396,6 @@ const TRANSLATIONS = {
     fin_delete_account: "Delete Account",
     fin_account_name: "Account Name",
     fin_initial_balance: "Balance",
-    fin_select_icon: "Icon / Emoji",
     fin_confirm_delete_account: "Are you sure you want to delete this account? This action cannot be undone.",
     auth_error: "Incorrect passcode. Please try again.",
     settings_security_title: "Passcode",
@@ -525,7 +521,18 @@ const TRANSLATIONS = {
     fin_nospend_yesterday: "Mark yesterday too",
     fin_nospend_count: "{n} no-spend days this month",
     fin_nospend_month: "No-spend days",
-    fin_nospend_day: "No spending"
+    fin_nospend_day: "No spending",
+    fin_bank_label: "Bank",
+    fin_currency_label: "Currency",
+    fin_target_amount: "Amount received",
+    bank_cash: "Cash",
+    bank_other: "Other bank",
+    cur_TRY: "Turkish lira",
+    cur_USD: "US dollar",
+    cur_SAR: "Saudi riyal",
+    cur_SYP: "Syrian pound",
+    fin_accounts_one: "1 account",
+    fin_accounts_many: "{n} accounts"
   },
   tr: {
     nav_journal: "Günlük",
@@ -684,7 +691,6 @@ const TRANSLATIONS = {
     fin_delete_account: "Hesabı Sil",
     fin_account_name: "Hesap Adı",
     fin_initial_balance: "Bakiye",
-    fin_select_icon: "Simge / Emoji",
     fin_confirm_delete_account: "Bu hesabı silmek istediğinizden emin misiniz? Bu işlem geri alınamaz.",
     auth_error: "Şifre hatalı. Lütfen tekrar deneyin.",
     settings_security_title: "Giriş şifresi",
@@ -810,7 +816,18 @@ const TRANSLATIONS = {
     fin_nospend_yesterday: "Dün için de işaretle",
     fin_nospend_count: "Bu ay {n} harcamasız gün",
     fin_nospend_month: "Harcamasız günler",
-    fin_nospend_day: "Harcama yapılmadı"
+    fin_nospend_day: "Harcama yapılmadı",
+    fin_bank_label: "Banka",
+    fin_currency_label: "Para birimi",
+    fin_target_amount: "Karşı hesaba geçen tutar",
+    bank_cash: "Nakit",
+    bank_other: "Diğer banka",
+    cur_TRY: "Türk lirası",
+    cur_USD: "ABD doları",
+    cur_SAR: "Suudi riyali",
+    cur_SYP: "Suriye lirası",
+    fin_accounts_one: "1 hesap",
+    fin_accounts_many: "{n} hesap"
   },
   ar: {
     nav_journal: "اليوميات",
@@ -964,7 +981,6 @@ const TRANSLATIONS = {
     fin_delete_account: "حذف الحساب",
     fin_account_name: "اسم الحساب",
     fin_initial_balance: "الرصيد",
-    fin_select_icon: "الرمز",
     fin_confirm_delete_account: "هل أنت متأكد من رغبتك في حذف هذا الحساب؟ لا يمكن التراجع عن هذا الإجراء.",
     auth_error: "رمز الدخول غير صحيح. حاول مرة أخرى.",
     settings_security_title: "رمز الدخول",
@@ -1095,7 +1111,18 @@ const TRANSLATIONS = {
     fin_nospend_yesterday: "حدِّد الأمس أيضًا",
     fin_nospend_count: "أيام بلا إنفاق هذا الشهر: {n}",
     fin_nospend_month: "أيام بلا إنفاق",
-    fin_nospend_day: "لا إنفاق"
+    fin_nospend_day: "لا إنفاق",
+    fin_bank_label: "البنك",
+    fin_currency_label: "العملة",
+    fin_target_amount: "المبلغ المستلم",
+    bank_cash: "نقدًا",
+    bank_other: "بنك آخر",
+    cur_TRY: "الليرة التركية",
+    cur_USD: "الدولار الأمريكي",
+    cur_SAR: "الريال السعودي",
+    cur_SYP: "الليرة السورية",
+    fin_accounts_one: "حساب واحد",
+    fin_accounts_many: "{n} حسابات"
   }
 };
 
@@ -1122,8 +1149,10 @@ function escapeHTML(value) {
   return String(value).replace(/[&<>"']/g, ch => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[ch]));
 }
 
-function formatMoney(amount, fractionDigits = 2) {
-  return `${amount.toLocaleString(appLocale(), { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits })} TL`;
+function formatMoney(amount, fractionDigits = 2, currency = 'TRY') {
+  const c = CURRENCIES[currency] || CURRENCIES.TRY;
+  const n = Math.abs(amount).toLocaleString(appLocale(), { minimumFractionDigits: fractionDigits, maximumFractionDigits: fractionDigits });
+  return `${amount < 0 ? '-' : ''}${c.prefix}${n}${c.suffix}`;
 }
 
 function scoreClass(pct) {
@@ -1231,26 +1260,26 @@ function setupKeypad(inputEl, keypadEl, onOkCallback) {
 
 const FINANCE_CATEGORIES = {
   expense: [
-    { id: "cat_food", val: "Gıda", emoji: "🍔", color: "#f59e0b" },
-    { id: "cat_cafe", val: "Kafe", emoji: "☕", color: "#b45309" },
-    { id: "cat_transport", val: "Ulaşım", emoji: "🚗", color: "#3b82f6" },
-    { id: "cat_tech", val: "Teknoloji", emoji: "💻", color: "#06b6d4" },
-    { id: "cat_bills", val: "Faturalar", emoji: "⚡", color: "#ef4444" },
-    { id: "cat_invest", val: "Yatırım", emoji: "📈", color: "#eab308" },
-    { id: "cat_edu", val: "Eğitim", emoji: "📚", color: "#f97316" },
-    { id: "cat_shopping", val: "Alışveriş", emoji: "🛒", color: "#ec4899" },
-    { id: "cat_housing", val: "Konut", emoji: "🏠", color: "#10b981" },
-    { id: "cat_health", val: "Sağlık", emoji: "⚕️", color: "#06b6d4" },
-    { id: "cat_entertainment", val: "Eğlence", emoji: "🎬", color: "#8b5cf6" },
-    { id: "cat_other", val: "Diğer", emoji: "📦", color: "#6b7280" }
+    { id: "cat_food", val: "Gıda", icon: "food", color: "#f59e0b" },
+    { id: "cat_cafe", val: "Kafe", icon: "cafe", color: "#b45309" },
+    { id: "cat_transport", val: "Ulaşım", icon: "transport", color: "#3b82f6" },
+    { id: "cat_tech", val: "Teknoloji", icon: "tech", color: "#06b6d4" },
+    { id: "cat_bills", val: "Faturalar", icon: "bills", color: "#ef4444" },
+    { id: "cat_invest", val: "Yatırım", icon: "invest", color: "#eab308" },
+    { id: "cat_edu", val: "Eğitim", icon: "edu", color: "#f97316" },
+    { id: "cat_shopping", val: "Alışveriş", icon: "shopping", color: "#ec4899" },
+    { id: "cat_housing", val: "Konut", icon: "housing", color: "#10b981" },
+    { id: "cat_health", val: "Sağlık", icon: "health", color: "#06b6d4" },
+    { id: "cat_entertainment", val: "Eğlence", icon: "entertainment", color: "#8b5cf6" },
+    { id: "cat_other", val: "Diğer", icon: "other", color: "#6b7280" }
   ],
   income: [
-    { id: "cat_income", val: "Gelir", emoji: "💰", color: "#10b981" },
-    { id: "cat_salary", val: "Maaş", emoji: "💼", color: "#10b981" },
-    { id: "cat_invest", val: "Yatırım", emoji: "📈", color: "#eab308" },
-    { id: "cat_freelance", val: "Ek Gelir", emoji: "💻", color: "#06b6d4" },
-    { id: "cat_gift", val: "Hediye", emoji: "🎁", color: "#ec4899" },
-    { id: "cat_other", val: "Diğer", emoji: "💰", color: "#6b7280" }
+    { id: "cat_income", val: "Gelir", icon: "income", color: "#10b981" },
+    { id: "cat_salary", val: "Maaş", icon: "salary", color: "#10b981" },
+    { id: "cat_invest", val: "Yatırım", icon: "invest", color: "#eab308" },
+    { id: "cat_freelance", val: "Ek Gelir", icon: "tech", color: "#06b6d4" },
+    { id: "cat_gift", val: "Hediye", icon: "gift", color: "#ec4899" },
+    { id: "cat_other", val: "Diğer", icon: "income", color: "#6b7280" }
   ]
 };
 
@@ -1259,8 +1288,112 @@ const catInfo = (category, type) => {
   const found = list.find(c => c.val === category);
   if (found) return found;
   const fallback = [...FINANCE_CATEGORIES.expense, ...FINANCE_CATEGORIES.income].find(c => c.val === category);
-  return fallback || { val: category, emoji: "📦", color: "#6b7280" };
+  return fallback || { val: category, icon: category === 'Transfer' ? 'transfer' : 'other', color: category === 'Transfer' ? '#0e7490' : '#6b7280' };
 };
+
+// Currencies an account can hold. Amounts are never converted: totals are kept per currency.
+const CURRENCIES = {
+  TRY: { label: 'TL', prefix: '', suffix: ' TL', short: '₺' },
+  USD: { label: 'USD', prefix: '$', suffix: '', short: '$' },
+  SAR: { label: 'SAR', prefix: '', suffix: ' SAR', short: 'SR' },
+  SYP: { label: 'SYP', prefix: '', suffix: ' SYP', short: 'LS' }
+};
+const CURRENCY_ORDER = ['TRY', 'USD', 'SAR', 'SYP'];
+
+// Banks get a brand-coloured mark; cash and other banks use a line icon.
+const BANKS = {
+  ziraat:   { name: 'Ziraat Bankası', mark: 'Z', color: '#e30613' },
+  albaraka: { name: 'Albaraka Türk', mark: 'AT', color: '#008d5b' },
+  kuveyt:   { name: 'Kuveyt Türk', mark: 'KT', color: '#0b4d3a', ink: '#f2c94c' },
+  papara:   { name: 'Papara', mark: 'P', color: '#16161d' },
+  cash:     { icon: 'wallet', color: '#0f2e4a' },
+  other:    { icon: 'bank', color: '#5b7489' }
+};
+const BANK_ORDER = ['ziraat', 'albaraka', 'kuveyt', 'papara', 'cash', 'other'];
+
+// The user's accounts, added once by StorageManager.migrateAccounts (balance 0 until edited).
+const ACCOUNT_SEED = {
+  ziraat_fatih: ['ziraat', 'Fatih', 'TRY'],
+  ziraat_mine: ['ziraat', 'Mine', 'TRY'],
+  ziraat_cumhuriyet: ['ziraat', 'Cumhuriyet', 'TRY'],
+  ziraat_other: ['ziraat', 'Diğer', 'TRY'],
+  albaraka_try: ['albaraka', 'TL hesabı', 'TRY'],
+  albaraka_usd: ['albaraka', 'Dolar hesabı', 'USD'],
+  kuveyt_main: ['kuveyt', 'Ana hesap', 'TRY'],
+  papara_main: ['papara', 'Ana hesap', 'TRY'],
+  cash: ['cash', 'Nakit', 'TRY']
+};
+
+function bankName(id) {
+  if (BANKS[id] && BANKS[id].name) return BANKS[id].name;
+  const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+  return id === 'cash' ? dict.bank_cash : dict.bank_other;
+}
+
+function bankMark(id, extraClass = '') {
+  const b = BANKS[id] || BANKS.other;
+  const inner = b.icon ? `<svg class="icon"><use href="#i-${b.icon}"/></svg>` : escapeHTML(b.mark);
+  return `<span class="bank-mark ${extraClass}" style="--bank:${b.color};--bank-ink:${b.ink || '#fff'}" aria-hidden="true">${inner}</span>`;
+}
+
+function accountBank(key) {
+  const acc = STATE.finance.accounts[key];
+  return acc && BANKS[acc.bank] ? acc.bank : 'other';
+}
+
+function accCurrency(key) {
+  const acc = STATE.finance.accounts[key];
+  return acc && CURRENCIES[acc.currency] ? acc.currency : 'TRY';
+}
+
+function txCurrency(tx) {
+  return CURRENCIES[tx.currency] ? tx.currency : accCurrency(tx.account);
+}
+
+// "Ziraat Bankası · Fatih"; a bank with a single account is shown by its name alone.
+function accountLabel(key) {
+  const acc = STATE.finance.accounts[key];
+  if (!acc) return key;
+  const bank = accountBank(key);
+  if (bank === 'cash' || bank === 'other') return acc.name;
+  const siblings = Object.keys(STATE.finance.accounts).filter(k => accountBank(k) === bank).length;
+  return siblings > 1 ? `${bankName(bank)} · ${acc.name}` : bankName(bank);
+}
+
+function sumByCurrency(txs) {
+  const totals = {};
+  txs.forEach(tx => {
+    const c = txCurrency(tx);
+    totals[c] = (totals[c] || 0) + tx.amount;
+  });
+  return totals;
+}
+
+function formatTotals(totals, fractionDigits = 2) {
+  const keys = CURRENCY_ORDER.filter(c => totals[c]);
+  return keys.length ? keys.map(c => formatMoney(totals[c], fractionDigits, c)).join(' · ') : formatMoney(0, fractionDigits);
+}
+
+// One line per currency, for the totals boxes.
+function moneyLinesHTML(totals, fractionDigits = 2) {
+  const keys = CURRENCY_ORDER.filter(c => totals[c]);
+  if (!keys.length) return `<span class="money-line" dir="ltr">${formatMoney(0, fractionDigits)}</span>`;
+  return keys.map(c => `<span class="money-line${totals[c] < 0 ? ' is-neg' : ''}" dir="ltr">${formatMoney(totals[c], fractionDigits, c)}</span>`).join('');
+}
+
+function catIcon(cat) {
+  return `<svg class="icon"><use href="#i-cat-${cat.icon || 'other'}"/></svg>`;
+}
+
+function guessBank(key, name) {
+  const s = `${key} ${name || ''}`.toLocaleLowerCase('tr');
+  if (s.includes('ziraat')) return 'ziraat';
+  if (s.includes('albaraka') || s.includes('al baraka')) return 'albaraka';
+  if (s.includes('kuveyt')) return 'kuveyt';
+  if (s.includes('papara')) return 'papara';
+  if (key === 'cash' || /nakit|cash|cüzdan|wallet/.test(s)) return 'cash';
+  return 'other';
+}
 
 // ================= STORAGE ADAPTER =================
 const StorageManager = {
@@ -1314,11 +1447,43 @@ const StorageManager = {
       };
       this.saveFinance();
     }
+    this.migrateAccounts();
   },
 
   saveFinance() {
     localStorage.setItem('hrt_finance', JSON.stringify(STATE.finance));
     SyncEngine.markChanged();
+  },
+
+  // Accounts v2: every account has a bank and a currency, and the user's bank accounts are added once.
+  // Untouched first-run accounts (zero or demo balance, never used) are dropped; everything else is kept.
+  migrateAccounts() {
+    if (localStorage.getItem('hrt_fin_accounts_v2') === '1') return;
+    const accounts = STATE.finance.accounts || (STATE.finance.accounts = {});
+    const used = new Set();
+    (STATE.finance.transactions || []).forEach(tx => {
+      used.add(tx.account);
+      if (tx.targetAccount) used.add(tx.targetAccount);
+    });
+    Object.keys(accounts).forEach(k => {
+      const acc = accounts[k];
+      const balance = Number(acc.balance) || 0;
+      if (!acc.icon && !acc.bank && !used.has(k) && (balance === 0 || DEMO_ACCOUNT_BALANCES.includes(balance))) {
+        delete accounts[k];
+        return;
+      }
+      if (!acc.bank) acc.bank = guessBank(k, acc.name);
+      if (!acc.currency) acc.currency = 'TRY';
+      delete acc.icon;
+    });
+    const present = new Set(Object.values(accounts).map(a => a.bank));
+    Object.keys(ACCOUNT_SEED).forEach(k => {
+      const [bank, name, currency] = ACCOUNT_SEED[k];
+      if (accounts[k] || present.has(bank)) return;
+      accounts[k] = { name, balance: 0, bank, currency, seed: true };
+    });
+    localStorage.setItem('hrt_fin_accounts_v2', '1');
+    this.saveFinance();
   },
 
   loadCalendar() {
@@ -1815,8 +1980,10 @@ const SyncEngine = {
   isPlaceholder(collection, value) {
     if (collection === 'db') return !Object.values(value || {}).some(v => v === true);
     if (collection === 'acc') {
-      if (!value || value.icon) return false;
+      if (!value) return false;
       const balance = Number(value.balance);
+      if (value.seed) return balance === 0;
+      if (value.icon || value.bank) return false;
       return balance === 0 || DEMO_ACCOUNT_BALANCES.includes(balance);
     }
     return false;
@@ -1847,7 +2014,7 @@ const SyncEngine = {
         after[k] = json;
         if (before[k] === json) return;
         // New blank days are not edits. Seeded accounts never are, even when a migration renames them;
-        // a real edit always sets an icon, which makes the account real.
+        // a real edit clears the seed flag (or, in old versions, set an icon), which makes the account real.
         if ((!(k in before) || c === 'acc') && this.isPlaceholder(c, all[c][k])) return;
         meta[c][k] = { t: now };
       });
@@ -3478,10 +3645,8 @@ const UIController = {
     document.getElementById('brief-yesterday-score').textContent =
       yesterdayData ? `${StreakEngine.calculateDailyPercentage(yesterdayData)}%` : '–';
 
-    const spent = STATE.finance.transactions
-      .filter(tx => tx.date === yesterdayKey && tx.type === 'expense')
-      .reduce((sum, tx) => sum + tx.amount, 0);
-    document.getElementById('brief-yesterday-spending').textContent = formatMoney(spent, 0);
+    const spent = sumByCurrency(STATE.finance.transactions.filter(tx => tx.date === yesterdayKey && tx.type === 'expense'));
+    document.getElementById('brief-yesterday-spending').textContent = formatTotals(spent, 0);
 
     const todayKey = formatDateKey(STATE.todayDate);
     document.getElementById('brief-today-events').textContent = STATE.calendar.filter(e => e.date === todayKey).length;
@@ -3769,6 +3934,19 @@ const UIController = {
       });
     }
 
+    // Amount suffix and the "amount received" field follow the chosen accounts
+    ['fin-account-select', 'fin-target-account-select'].forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', () => this.updateTxCurrencyUI());
+    });
+    document.querySelectorAll('.fin-modal-type-switcher .type-btn').forEach(b => b.addEventListener('click', () => this.updateTxCurrencyUI()));
+    const txModalEl = document.getElementById('fin-tx-modal');
+    if (txModalEl) {
+      new MutationObserver(() => {
+        if (txModalEl.classList.contains('active')) this.updateTxCurrencyUI();
+      }).observe(txModalEl, { attributes: true, attributeFilter: ['class'] });
+    }
+
     // 5. Submit transaction form
     const form = document.getElementById('finance-transaction-form');
     if (form) {
@@ -3783,6 +3961,7 @@ const UIController = {
         let category = STATE.financeSelectedCategory;
         
         if (isNaN(amount) || amount <= 0) return;
+        let targetAmount = amount;
         
         if (selectedType !== 'transfer' && !category) {
           const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
@@ -3797,13 +3976,23 @@ const UIController = {
             alert(dict.alert_same_accounts || "Source and target accounts cannot be the same!");
             return;
           }
+          if (accCurrency(account) !== accCurrency(targetAccount)) {
+            const targetInput = document.getElementById('fin-target-amount-input');
+            targetAmount = parseFloat((targetInput.value || '').replace(',', '.'));
+            if (isNaN(targetAmount) || targetAmount <= 0) {
+              targetInput.focus();
+              return;
+            }
+          }
           STATE.finance.accounts[account].balance -= amount;
-          STATE.finance.accounts[targetAccount].balance += amount;
+          STATE.finance.accounts[targetAccount].balance += targetAmount;
+          delete STATE.finance.accounts[targetAccount].seed;
         } else if (selectedType === 'expense') {
           STATE.finance.accounts[account].balance -= amount;
         } else if (selectedType === 'income') {
           STATE.finance.accounts[account].balance += amount;
         }
+        delete STATE.finance.accounts[account].seed;
         
         // Add transaction
         const newTx = {
@@ -3814,6 +4003,8 @@ const UIController = {
           category: category,
           account: account,
           targetAccount: selectedType === 'transfer' ? targetAccount : '',
+          currency: accCurrency(account),
+          ...(selectedType === 'transfer' && accCurrency(account) !== accCurrency(targetAccount) ? { targetAmount } : {}),
           description: description || (TRANSLATIONS[STATE.language] || TRANSLATIONS.en)[catInfo(category, selectedType).id] || category
         };
         
@@ -3872,7 +4063,6 @@ const UIController = {
     const accountKeyInput = document.getElementById('fin-account-key-hidden');
     const accountNameInput = document.getElementById('fin-account-name-input');
     const accountBalanceInput = document.getElementById('fin-account-balance-input');
-    const accountIconInput = document.getElementById('fin-account-icon-input');
 
     const closeAccountModal = () => {
       if (accountModal) accountModal.classList.remove('active');
@@ -3886,16 +4076,21 @@ const UIController = {
       });
     }
 
-    // Emoji/Icon Grid Interaction
-    const emojiBtns = accountModal ? accountModal.querySelectorAll('.emoji-btn') : [];
-    emojiBtns.forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.preventDefault();
-        emojiBtns.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        if (accountIconInput) accountIconInput.value = btn.getAttribute('data-emoji');
+    // Bank and currency pickers
+    const bankPicker = document.getElementById('fin-bank-picker');
+    if (bankPicker) {
+      bankPicker.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-bank]');
+        if (btn) this.setAccountPickers(btn.dataset.bank, null);
       });
-    });
+    }
+    const currencyPicker = document.getElementById('fin-currency-picker');
+    if (currencyPicker) {
+      currencyPicker.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-currency]');
+        if (btn) this.setAccountPickers(null, btn.dataset.currency);
+      });
+    }
 
     // Opening modal for Add Account
     if (addAccountBtn && accountModal) {
@@ -3903,13 +4098,9 @@ const UIController = {
         if (accountKeyInput) accountKeyInput.value = ''; // empty means create new
         if (accountNameInput) accountNameInput.value = '';
         if (accountBalanceInput) accountBalanceInput.value = '';
-        if (accountIconInput) accountIconInput.value = '💰';
+        this.setAccountPickers('other', 'TRY');
         
-        // Reset emoji active class
-        emojiBtns.forEach(b => {
-          if (b.getAttribute('data-emoji') === '💰') b.classList.add('active');
-          else b.classList.remove('active');
-        });
+
 
         // Set title
         const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
@@ -3930,7 +4121,8 @@ const UIController = {
         const name = accountNameInput.value.trim();
         const rawBalance = (accountBalanceInput.value || '').replace(/\s/g, '').replace(',', '.');
         const balance = parseFloat(rawBalance);
-        const icon = accountIconInput.value || '💰';
+        const bank = document.getElementById('fin-account-bank-input').value || 'other';
+        const currency = document.getElementById('fin-account-currency-input').value || 'TRY';
 
         if (!name) {
           accountNameInput.focus();
@@ -3946,14 +4138,21 @@ const UIController = {
         }
 
         if (key) {
-          if (STATE.finance.accounts[key]) {
-            STATE.finance.accounts[key].name = name;
-            STATE.finance.accounts[key].balance = balance;
-            STATE.finance.accounts[key].icon = icon;
+          const acc = STATE.finance.accounts[key];
+          if (acc) {
+            // Past transactions keep the currency they were made in
+            if (accCurrency(key) !== currency) {
+              STATE.finance.transactions.forEach(tx => {
+                if (tx.account === key && !tx.currency) tx.currency = accCurrency(key);
+              });
+            }
+            Object.assign(acc, { name, balance, bank, currency });
+            delete acc.icon;
+            delete acc.seed;
           }
         } else {
           const newKey = 'acc_' + Date.now();
-          STATE.finance.accounts[newKey] = { name, balance, icon };
+          STATE.finance.accounts[newKey] = { name, balance, bank, currency };
         }
 
         StorageManager.saveFinance();
@@ -4003,7 +4202,7 @@ const UIController = {
       const localizedLabel = dict[cat.id] || cat.val;
       
       item.innerHTML = `
-        <div class="badge" style="background:${cat.color}22; color:${cat.color};">${cat.emoji}</div>
+        <div class="badge" style="background:${cat.color}22; color:${cat.color};">${catIcon(cat)}</div>
         <span class="cat-label">${localizedLabel}</span>
       `;
       
@@ -4046,13 +4245,19 @@ const UIController = {
     const sourceSelect = document.getElementById('fin-account-select');
     const targetSelect = document.getElementById('fin-target-account-select');
     if (sourceSelect && targetSelect) {
-      const accountsMarkup = Object.keys(STATE.finance.accounts).map(k => {
-        const acc = STATE.finance.accounts[k];
-        // acc.name is always the authoritative name (user-editable)
-        return `<option value="${escapeHTML(k)}">${escapeHTML(acc.name)} (${acc.balance.toFixed(0)} TL)</option>`;
+      const accounts = STATE.finance.accounts;
+      const accountsMarkup = BANK_ORDER.map(b => {
+        const keys = Object.keys(accounts).filter(k => accountBank(k) === b);
+        if (!keys.length) return '';
+        const options = keys.map(k => `<option value="${escapeHTML(k)}">${escapeHTML(accounts[k].name)} · ${escapeHTML(formatMoney(accounts[k].balance, 0, accCurrency(k)))}</option>`).join('');
+        return `<optgroup label="${escapeHTML(bankName(b))}">${options}</optgroup>`;
       }).join('');
-      sourceSelect.innerHTML = accountsMarkup;
-      targetSelect.innerHTML = accountsMarkup;
+      [sourceSelect, targetSelect].forEach(sel => {
+        const prev = sel.value;
+        sel.innerHTML = accountsMarkup;
+        if (prev && accounts[prev]) sel.value = prev;
+      });
+      this.updateTxCurrencyUI();
     }
 
     // Call sub-view renderer
@@ -4150,14 +4355,17 @@ const UIController = {
     });
 
     // Monthly totals
-    const totalIncome = monthlyTxs.filter(tx => tx.type === 'income').reduce((sum, tx) => sum + tx.amount, 0);
-    const totalExpense = monthlyTxs.filter(tx => tx.type === 'expense').reduce((sum, tx) => sum + tx.amount, 0);
-    const netTotal = totalIncome - totalExpense;
+    const totalIncome = sumByCurrency(monthlyTxs.filter(tx => tx.type === 'income'));
+    const totalExpense = sumByCurrency(monthlyTxs.filter(tx => tx.type === 'expense'));
+    const netTotal = {};
+    CURRENCY_ORDER.forEach(c => {
+      if (totalIncome[c] || totalExpense[c]) netTotal[c] = (totalIncome[c] || 0) - (totalExpense[c] || 0);
+    });
 
     const localeCode = appLocale();
-    document.getElementById('fin-daily-summary-income').textContent = `${totalIncome.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
-    document.getElementById('fin-daily-summary-expense').textContent = `${totalExpense.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
-    document.getElementById('fin-daily-summary-total').textContent = `${netTotal.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
+    document.getElementById('fin-daily-summary-income').innerHTML = moneyLinesHTML(totalIncome);
+    document.getElementById('fin-daily-summary-expense').innerHTML = moneyLinesHTML(totalExpense);
+    document.getElementById('fin-daily-summary-total').innerHTML = moneyLinesHTML(netTotal);
 
     const sortedDates = Object.keys(grouped).sort().reverse();
     if (sortedDates.length === 0) {
@@ -4184,8 +4392,14 @@ const UIController = {
       groupEl.className = 'fin-daily-group';
 
       let headerSums = '';
-      if (dayIncome > 0) headerSums += `<span class="day-income">+${dayIncome.toLocaleString(appLocale(), { maximumFractionDigits: 0 })}</span>`;
-      if (dayExpense > 0) headerSums += `<span class="day-expense">-${dayExpense.toLocaleString(appLocale(), { maximumFractionDigits: 0 })}</span>`;
+      const dayInc = sumByCurrency(txs.filter(tx => tx.type === 'income'));
+      const dayExp = sumByCurrency(txs.filter(tx => tx.type === 'expense'));
+      CURRENCY_ORDER.forEach(c => {
+        if (dayInc[c]) headerSums += `<span class="day-income" dir="ltr">+${formatMoney(dayInc[c], 0, c)}</span>`;
+      });
+      CURRENCY_ORDER.forEach(c => {
+        if (dayExp[c]) headerSums += `<span class="day-expense" dir="ltr">-${formatMoney(dayExp[c], 0, c)}</span>`;
+      });
 
       groupEl.innerHTML = `
         <div class="fin-daily-group-header">
@@ -4210,8 +4424,8 @@ const UIController = {
 
         const cat = catInfo(tx.category, tx.type);
         const localizedCatLabel = dict[cat.id] || cat.val;
-        const localizedAccName = dict[`acc_${tx.account}`] || (STATE.finance.accounts[tx.account] ? STATE.finance.accounts[tx.account].name : tx.account);
-        const localizedTargetName = tx.targetAccount ? (dict[`acc_${tx.targetAccount}`] || (STATE.finance.accounts[tx.targetAccount] ? STATE.finance.accounts[tx.targetAccount].name : tx.targetAccount)) : '';
+        const localizedAccName = accountLabel(tx.account);
+        const localizedTargetName = tx.targetAccount ? accountLabel(tx.targetAccount) : '';
 
         let amtClass = 'expense';
         let amtPrefix = '-';
@@ -4225,7 +4439,7 @@ const UIController = {
 
         itemEl.innerHTML = `
           <div class="fin-daily-tx-left">
-            <div class="fin-daily-tx-icon-badge" style="background:${cat.color}15; color:${cat.color};">${cat.emoji}</div>
+            <div class="fin-daily-tx-icon-badge" style="background:${cat.color}15; color:${cat.color};">${catIcon(cat)}</div>
             <div class="fin-daily-tx-details">
               <span class="fin-daily-tx-desc">${escapeHTML(tx.description)}</span>
               <div class="fin-daily-tx-sub">
@@ -4235,7 +4449,7 @@ const UIController = {
             </div>
           </div>
           <div class="fin-daily-tx-right">
-            <span class="fin-daily-tx-amount ${amtClass}" dir="ltr">${amtPrefix}${formatMoney(tx.amount)}</span>
+            <span class="fin-daily-tx-amount ${amtClass}" dir="ltr">${amtPrefix}${formatMoney(tx.amount, 2, txCurrency(tx))}${tx.targetAmount ? ` → ${formatMoney(tx.targetAmount, 2, accCurrency(tx.targetAccount))}` : ''}</span>
             <button type="button" class="fin-daily-tx-delete-btn" aria-label="${dict.journal_delete}">&times;</button>
           </div>
         `;
@@ -4255,7 +4469,7 @@ const UIController = {
                 STATE.finance.accounts[tx.account].balance += tx.amount;
               }
               if (STATE.finance.accounts[tx.targetAccount]) {
-                STATE.finance.accounts[tx.targetAccount].balance -= tx.amount;
+                STATE.finance.accounts[tx.targetAccount].balance -= (tx.targetAmount || tx.amount);
               }
             }
 
@@ -4312,9 +4526,11 @@ const UIController = {
       if (dateKey === todayKey) cell.classList.add('today');
 
       let valuesMarkup = '';
-      if (dayIncome > 0) valuesMarkup += `<span class="income-val">+${dayIncome.toFixed(0)}</span>`;
-      if (dayExpense > 0) valuesMarkup += `<span class="expense-val">-${dayExpense.toFixed(0)}</span>`;
-      else if (this.isNoSpendDay(dateKey)) valuesMarkup += `<span class="nospend-val" title="${dict.fin_nospend_day}">✓ 0</span>`;
+      const compact = (map, sign, cls) => CURRENCY_ORDER.filter(c => map[c])
+        .map(c => `<span class="${cls}" dir="ltr">${sign}${c === 'TRY' ? '' : CURRENCIES[c].short}${Math.round(map[c])}</span>`).join('');
+      valuesMarkup += compact(sumByCurrency(dayTxs.filter(tx => tx.type === 'income')), '+', 'income-val');
+      valuesMarkup += compact(sumByCurrency(dayTxs.filter(tx => tx.type === 'expense')), '-', 'expense-val');
+      if (dayExpense === 0 && this.isNoSpendDay(dateKey)) valuesMarkup += `<span class="nospend-val" title="${dict.fin_nospend_day}">✓ 0</span>`;
 
       cell.innerHTML = `
         <span class="fin-calendar-day-num">${day}</span>
@@ -4364,7 +4580,11 @@ const UIController = {
     const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
     const type = STATE.financeSummaryToggleType || 'expense';
     const monthlyTxs = STATE.finance.transactions.filter(tx => tx.date.startsWith(STATE.financeActiveMonth));
-    const targetTxs = monthlyTxs.filter(tx => tx.type === type);
+    const curs = CURRENCY_ORDER.filter(c => monthlyTxs.some(tx => tx.type === type && txCurrency(tx) === c));
+    if (!curs.includes(STATE.financeSummaryCurrency)) STATE.financeSummaryCurrency = curs[0] || 'TRY';
+    const summaryCur = STATE.financeSummaryCurrency;
+    this.renderSummaryCurrencySwitch(curs);
+    const targetTxs = monthlyTxs.filter(tx => tx.type === type && txCurrency(tx) === summaryCur);
 
     const titleHeader = document.getElementById('fin-summary-category-header');
     if (titleHeader) {
@@ -4385,7 +4605,7 @@ const UIController = {
     const centerPercent = document.getElementById('fin-donut-center-percent');
     const localeCode = appLocale();
     if (centerPercent) {
-      centerPercent.textContent = `${totalSum.toLocaleString(localeCode, {maximumFractionDigits:0})} TL`;
+      centerPercent.textContent = formatMoney(totalSum, 0, summaryCur);
     }
 
     if (totalSum === 0) {
@@ -4433,11 +4653,11 @@ const UIController = {
       const catLabel = dict[cat.id] || cat.val;
 
       item.innerHTML = `
-        <div class="badge" style="background:${cat.color}15; color:${cat.color};">${cat.emoji}</div>
+        <div class="badge" style="background:${cat.color}15; color:${cat.color};">${catIcon(cat)}</div>
         <div class="fin-category-progress-details">
           <div class="fin-category-progress-row">
             <span class="cat-name">${catLabel}<span class="cat-percent">${cat.percent.toFixed(1)}%</span></span>
-            <span class="cat-amount">${cat.total.toLocaleString(localeCode, {minimumFractionDigits:2})} TL</span>
+            <span class="cat-amount" dir="ltr">${formatMoney(cat.total, 2, summaryCur)}</span>
           </div>
           <div class="fin-category-progress-track">
             <div class="fin-category-progress-fill" style="width:0%; background:${cat.color};"></div>
@@ -4453,84 +4673,110 @@ const UIController = {
     });
   },
 
+  // Accounts grouped by bank; balances stay in each account's own currency.
   renderFinanceAccounts() {
     const grid = document.getElementById('fin-accounts-grid');
     if (!grid) return;
-    grid.innerHTML = '';
-
     const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
-    const totalBalance = Object.keys(STATE.finance.accounts).reduce((sum, k) => sum + STATE.finance.accounts[k].balance, 0);
-    const localeCode = appLocale();
-    
-    document.getElementById('fin-accounts-total-balance').textContent = `${totalBalance.toLocaleString(localeCode, {minimumFractionDigits:2})} TL`;
-
-    const accountIcons = {
-      cash: "👛",
-      bank: "🏦",
-      credit: "💳",
-      business: "💼"
-    };
-
-    Object.keys(STATE.finance.accounts).forEach(k => {
-      const acc = STATE.finance.accounts[k];
-      // acc.name is the authoritative name — user edits update it directly.
-      // Dict translations are ONLY for brand-new installs where acc.name hasn't been set yet.
-      const localizedAccName = acc.name || dict[`acc_${k}`] || k;
-      const emoji = acc.icon || accountIcons[k] || "💰";
-
-      const card = document.createElement('div');
-      // Built-in accounts use their key as CSS class; dynamic ones get 'custom-acc' + color rotation
-      const builtInClasses = ['cash', 'bank', 'credit', 'business'];
-      const cardClass = builtInClasses.includes(k) ? k : `custom-acc acc-color-${Object.keys(STATE.finance.accounts).indexOf(k) % 4}`;
-      card.className = `account-card ${cardClass}`;
-      
-      card.innerHTML = `
-        <div class="account-card-header">
-          <span class="acc-title">${escapeHTML(localizedAccName)}</span>
-          <span class="acc-icon">${escapeHTML(emoji)}</span>
-        </div>
-        <div class="account-card-body">
-          <span class="acc-balance">${acc.balance.toLocaleString(localeCode, {minimumFractionDigits:2})} TL</span>
-        </div>
-        <div class="account-card-footer">
-          <button class="account-card-edit-btn">${dict.fin_edit_account || 'Edit Account'}</button>
-        </div>
-      `;
-
-      card.querySelector('.account-card-edit-btn').addEventListener('click', () => {
-        const titleEl = document.getElementById('fin-account-modal-title');
-        if (titleEl) {
-          titleEl.textContent = dict.fin_edit_account || 'Edit Account';
-        }
-        
-        const accountKeyInput = document.getElementById('fin-account-key-hidden');
-        const accountNameInput = document.getElementById('fin-account-name-input');
-        const accountBalanceInput = document.getElementById('fin-account-balance-input');
-        const accountIconInput = document.getElementById('fin-account-icon-input');
-        const accountModalDelete = document.getElementById('fin-account-delete-btn');
-        const accountModal = document.getElementById('fin-account-modal');
-
-        if (accountKeyInput) accountKeyInput.value = k;
-        // acc.name is authoritative — show what's actually stored
-        if (accountNameInput) accountNameInput.value = acc.name;
-        if (accountBalanceInput) accountBalanceInput.value = acc.balance;
-        if (accountIconInput) accountIconInput.value = emoji;
-
-        // Set matching emoji class active
-        const emojiBtns = accountModal ? accountModal.querySelectorAll('.emoji-btn') : [];
-        emojiBtns.forEach(b => {
-          if (b.getAttribute('data-emoji') === emoji) b.classList.add('active');
-          else b.classList.remove('active');
-        });
-
-        if (accountModalDelete) accountModalDelete.hidden = false;
-        if (accountModal) {
-          accountModal.classList.add('active');
-          setTimeout(() => accountNameInput.focus(), 150);
-        }
+    const accounts = STATE.finance.accounts;
+    const totalsOf = keys => {
+      const totals = {};
+      keys.forEach(k => {
+        const c = accCurrency(k);
+        totals[c] = (totals[c] || 0) + (Number(accounts[k].balance) || 0);
       });
+      return totals;
+    };
+    document.getElementById('fin-accounts-total-balance').innerHTML = moneyLinesHTML(totalsOf(Object.keys(accounts)));
 
-      grid.appendChild(card);
+    grid.innerHTML = BANK_ORDER.map(b => {
+      const keys = Object.keys(accounts).filter(k => accountBank(k) === b);
+      if (!keys.length) return '';
+      const count = keys.length === 1 ? dict.fin_accounts_one : dict.fin_accounts_many.replace('{n}', keys.length);
+      const rows = keys.map(k => {
+        const acc = accounts[k];
+        const cur = accCurrency(k);
+        return `<li class="acc-row">
+          <span class="acc-row-name">${escapeHTML(acc.name)}</span>
+          <b class="acc-row-balance${acc.balance < 0 ? ' is-neg' : ''}" dir="ltr">${formatMoney(Number(acc.balance) || 0, 2, cur)}</b>
+          <button type="button" class="icon-btn icon-btn--sm acc-edit" data-acc="${escapeHTML(k)}" aria-label="${escapeHTML(dict.fin_edit_account)}: ${escapeHTML(acc.name)}"><svg class="icon"><use href="#i-edit"/></svg></button>
+        </li>`;
+      }).join('');
+      return `<section class="bank-card">
+        <header class="bank-card-head">
+          ${bankMark(b)}
+          <div class="bank-card-title"><strong>${escapeHTML(bankName(b))}</strong><small>${count}</small></div>
+          <div class="bank-card-total">${moneyLinesHTML(totalsOf(keys))}</div>
+        </header>
+        <ul class="acc-rows">${rows}</ul>
+      </section>`;
+    }).join('');
+    grid.querySelectorAll('.acc-edit').forEach(btn => {
+      btn.addEventListener('click', () => this.openAccountEditor(btn.dataset.acc));
+    });
+  },
+
+  openAccountEditor(key) {
+    const acc = STATE.finance.accounts[key];
+    if (!acc) return;
+    const dict = TRANSLATIONS[STATE.language] || TRANSLATIONS.en;
+    document.getElementById('fin-account-modal-title').textContent = dict.fin_edit_account;
+    document.getElementById('fin-account-key-hidden').value = key;
+    document.getElementById('fin-account-name-input').value = acc.name;
+    document.getElementById('fin-account-balance-input').value = acc.balance;
+    this.setAccountPickers(accountBank(key), accCurrency(key));
+    document.getElementById('fin-account-delete-btn').hidden = false;
+    document.getElementById('fin-account-modal').classList.add('active');
+  },
+
+  // Account form: bank chips, currency buttons and the balance suffix.
+  setAccountPickers(bank, currency) {
+    const bankInput = document.getElementById('fin-account-bank-input');
+    const curInput = document.getElementById('fin-account-currency-input');
+    if (!bankInput || !curInput) return;
+    if (bank) bankInput.value = bank;
+    if (currency) curInput.value = currency;
+    const picker = document.getElementById('fin-bank-picker');
+    if (picker) {
+      picker.innerHTML = BANK_ORDER.map(b => {
+        const on = b === bankInput.value;
+        return `<button type="button" class="bank-chip${on ? ' active' : ''}" data-bank="${b}" aria-pressed="${on}">${bankMark(b, 'bank-mark--sm')}<span>${escapeHTML(bankName(b))}</span></button>`;
+      }).join('');
+    }
+    document.querySelectorAll('#fin-currency-picker [data-currency]').forEach(btn => {
+      const on = btn.dataset.currency === curInput.value;
+      btn.classList.toggle('active', on);
+      btn.setAttribute('aria-pressed', String(on));
+    });
+    const suffix = document.getElementById('fin-account-currency-suffix');
+    if (suffix) suffix.textContent = CURRENCIES[curInput.value].label;
+  },
+
+  // Transaction form: currency of the amount, and a second amount for transfers across currencies.
+  updateTxCurrencyUI() {
+    const src = document.getElementById('fin-account-select');
+    const dst = document.getElementById('fin-target-account-select');
+    if (!src) return;
+    const from = accCurrency(src.value);
+    const to = dst ? accCurrency(dst.value) : from;
+    const suffix = document.getElementById('fin-amount-currency');
+    if (suffix) suffix.textContent = CURRENCIES[from].label;
+    const group = document.getElementById('fin-target-amount-group');
+    if (group) group.classList.toggle('hidden', !(STATE.financeSelectedTxType === 'transfer' && from !== to));
+    const targetSuffix = document.getElementById('fin-target-amount-currency');
+    if (targetSuffix) targetSuffix.textContent = CURRENCIES[to].label;
+  },
+
+  renderSummaryCurrencySwitch(curs) {
+    const box = document.getElementById('fin-summary-currency');
+    if (!box) return;
+    box.hidden = curs.length < 2;
+    box.innerHTML = curs.map(c => `<button type="button" class="${c === STATE.financeSummaryCurrency ? 'active' : ''}" data-currency="${c}">${CURRENCIES[c].label}</button>`).join('');
+    box.querySelectorAll('[data-currency]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        STATE.financeSummaryCurrency = btn.dataset.currency;
+        this.renderFinanceSummary();
+      });
     });
   },
 

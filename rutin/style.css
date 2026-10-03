@@ -652,7 +652,7 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .fin-daily-group-date { display: flex; align-items: baseline; gap: 8px; }
 .fin-daily-group-date .day-num { font-family: var(--font-display); font-size: 1.15rem; font-weight: 600; }
 .fin-daily-group-date .day-name { color: var(--muted); }
-.fin-daily-group-sums { display: flex; gap: 10px; font-weight: 700; }
+.fin-daily-group-sums { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 2px 10px; font-weight: 700; }
 .fin-daily-tx-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 14px; border-top: 1px solid var(--border); }
 .fin-daily-tx-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
 .fin-daily-tx-icon-badge, .fin-category-progress-item .badge, .category-grid-item .badge {
@@ -698,19 +698,44 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .fin-assets { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
 .fin-assets span { display: block; font-size: 0.78rem; color: var(--muted); font-weight: 600; }
 .fin-assets b { font-family: var(--font-display); font-size: 1.5rem; font-weight: 600; }
-.accounts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
-.account-card {
-  display: grid; gap: 8px; padding: 14px; border-radius: var(--radius);
-  background: var(--surface); border: 1px solid var(--border); border-inline-start: 4px solid var(--accent);
+.accounts-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 14px; align-items: start; }
+.bank-mark {
+  display: inline-grid; place-items: center; flex: none; width: 42px; height: 42px; border-radius: 12px;
+  background: var(--bank); color: var(--bank-ink, #fff);
+  font-family: var(--font-display); font-weight: 700; font-size: 0.95rem; letter-spacing: -0.02em;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14), 0 2px 6px rgba(15, 46, 74, 0.16);
 }
-.account-card.bank, .account-card.acc-color-1 { border-inline-start-color: #3b82f6; }
-.account-card.credit, .account-card.acc-color-2 { border-inline-start-color: var(--danger); }
-.account-card.business, .account-card.acc-color-3 { border-inline-start-color: var(--gold); }
-.account-card-header { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-.acc-title { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.acc-icon { font-size: 1.3rem; }
-.acc-balance { font-family: var(--font-display); font-size: 1.25rem; font-weight: 600; }
-.account-card-edit-btn { color: var(--accent-text); font-weight: 600; font-size: 0.85rem; min-height: 36px; }
+.bank-mark .icon { width: 20px; height: 20px; }
+.bank-mark--sm { width: 32px; height: 32px; border-radius: 9px; font-size: 0.72rem; }
+.bank-mark--sm .icon { width: 16px; height: 16px; }
+.bank-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; }
+.bank-card-head { display: flex; align-items: center; gap: 12px; padding: 14px 16px; background: var(--surface-2); border-bottom: 1px solid var(--border); }
+.bank-card-title { display: grid; gap: 1px; min-width: 0; flex: 1; }
+.bank-card-title strong { font-size: 0.98rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.bank-card-title small { font-size: 0.75rem; color: var(--muted); }
+.bank-card-total { display: grid; justify-items: end; font-family: var(--font-display); font-weight: 600; font-size: 0.92rem; font-variant-numeric: tabular-nums; }
+.acc-rows { list-style: none; margin: 0; padding: 0; }
+.acc-row { display: flex; align-items: center; gap: 10px; padding-block: 8px; padding-inline: 16px 8px; border-top: 1px solid var(--border); }
+.acc-row:first-child { border-top: 0; }
+.acc-row-name { flex: 1; min-width: 0; font-weight: 600; font-size: 0.92rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.acc-row-balance { font-family: var(--font-display); font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.acc-row-balance.is-neg, .money-line.is-neg { color: var(--danger); }
+.icon-btn--sm { width: 36px; height: 36px; border-color: transparent; }
+.icon-btn--sm .icon { width: 18px; height: 18px; }
+.money-line { display: block; }
+.fin-assets b .money-line, .fin-total b .money-line { font-size: inherit; font-weight: inherit; color: inherit; }
+.fin-assets b .money-line.is-neg, .fin-total b .money-line.is-neg { color: var(--danger); }
+.fin-daily-tx-icon-badge .icon, .fin-category-progress-item .badge .icon, .category-grid-item .badge .icon { width: 19px; height: 19px; }
+.bank-picker { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.bank-chip {
+  display: grid; justify-items: center; gap: 6px; padding: 10px 4px; min-width: 0;
+  border-radius: var(--radius-sm); border: 1.5px solid var(--border);
+  font-size: 0.72rem; font-weight: 600; line-height: 1.2; text-align: center; color: var(--text);
+}
+.bank-chip span:last-child { max-width: 100%; overflow-wrap: anywhere; }
+.bank-chip.active { border-color: var(--accent); background: var(--accent-soft); }
+.currency-picker { margin-bottom: 0; }
+.summary-currency { margin: 4px 0 8px; align-self: start; width: fit-content; }
 
 /* ================= CALENDAR ================= */
 .calendar-grid { display: grid; gap: 16px; }
@@ -791,9 +816,6 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
 .category-grid-item.selected { border-color: var(--accent); background: var(--accent-soft); }
 .cat-label { font-size: 0.68rem; font-weight: 500; text-align: center; line-height: 1.2; max-width: 100%; overflow-wrap: anywhere; }
 
-.emoji-grid { display: flex; flex-wrap: wrap; gap: 6px; }
-.emoji-btn { width: 44px; height: 44px; border-radius: var(--radius-sm); border: 1.5px solid var(--border); font-size: 1.25rem; }
-.emoji-btn.active { border-color: var(--accent); background: var(--accent-soft); }
 
 /* ================= PHONE & SMALL TABLET ================= */
 @media (max-width: 1023px) {
@@ -907,7 +929,7 @@ input:focus-visible + .check, .chip input:focus-visible + span { outline: 2px so
   .content { padding-inline: 44px; }
   /* Prayers | other sections | day summary */
   .split { gap: 24px; }
-  .accounts-grid { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+
 }
 
 @media (prefers-reduced-motion: reduce) {
