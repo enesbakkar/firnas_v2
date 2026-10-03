@@ -1,7 +1,7 @@
 // Offline support for the web version. Network first, so a new deploy is picked up on the
 // next load; the cache is only the fallback when there is no connection.
-const CACHE = 'istiqamah-shell-v3';
-const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'daily.js', 'logo.svg', 'manifest.json', 'icon-192.png', 'icon-512.png'];
+const CACHE = 'istiqamah-shell-v4';
+const SHELL = ['./', 'index.html', 'style.css', 'app.js', 'daily.js', 'logo.svg', 'banks/ziraat.jpg', 'banks/albaraka.svg', 'banks/kuveyt.png', 'banks/papara.png', 'manifest.json', 'icon-192.png', 'icon-512.png'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(SHELL)).then(() => self.skipWaiting()));

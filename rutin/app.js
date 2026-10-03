@@ -1300,12 +1300,13 @@ const CURRENCIES = {
 };
 const CURRENCY_ORDER = ['TRY', 'USD', 'SAR', 'SYP'];
 
-// Banks get a brand-coloured mark; cash and other banks use a line icon.
+// Banks show their own logo (rutin/banks, taken from each bank's website; `zoom` trims the
+// logo's built-in margin); cash and other banks use a line icon.
 const BANKS = {
-  ziraat:   { name: 'Ziraat Bankası', mark: 'Z', color: '#e30613' },
-  albaraka: { name: 'Albaraka Türk', mark: 'AT', color: '#008d5b' },
-  kuveyt:   { name: 'Kuveyt Türk', mark: 'KT', color: '#0b4d3a', ink: '#f2c94c' },
-  papara:   { name: 'Papara', mark: 'P', color: '#16161d' },
+  ziraat:   { name: 'Ziraat Bankası', mark: 'Z', color: '#e30613', logo: 'banks/ziraat.jpg', zoom: 1.45 },
+  albaraka: { name: 'Albaraka Türk', mark: 'AT', color: '#008d5b', logo: 'banks/albaraka.svg', zoom: 1.05 },
+  kuveyt:   { name: 'Kuveyt Türk', mark: 'KT', color: '#0b4d3a', ink: '#f2c94c', logo: 'banks/kuveyt.png', zoom: 1.28 },
+  papara:   { name: 'Papara', mark: 'P', color: '#16161d', logo: 'banks/papara.png', zoom: 1.35 },
   cash:     { icon: 'wallet', color: '#0f2e4a' },
   other:    { icon: 'bank', color: '#5b7489' }
 };
@@ -1332,6 +1333,9 @@ function bankName(id) {
 
 function bankMark(id, extraClass = '') {
   const b = BANKS[id] || BANKS.other;
+  if (b.logo) {
+    return `<span class="bank-mark bank-mark--logo ${extraClass}" aria-hidden="true"><img src="${b.logo}?v=3" alt="" decoding="async" style="--zoom:${b.zoom || 1}"></span>`;
+  }
   const inner = b.icon ? `<svg class="icon"><use href="#i-${b.icon}"/></svg>` : escapeHTML(b.mark);
   return `<span class="bank-mark ${extraClass}" style="--bank:${b.color};--bank-ink:${b.ink || '#fff'}" aria-hidden="true">${inner}</span>`;
 }

@@ -37,6 +37,7 @@ jobs:
           cd rutin
           mkdir -p www
           cp index.html style.css app.js daily.js logo.svg manifest.json icon-192.png icon-512.png www/
+          cp -r banks www/
 
       - name: Initialize Capacitor & Add Android
         run: |
